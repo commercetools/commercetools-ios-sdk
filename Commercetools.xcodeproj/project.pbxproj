@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		210BE0FB35AF665054D028C4 /* Commercetools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE7EF595235524206718F /* Commercetools.swift */; };
+		210BE9F03FC6EB74CA205C35 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BEAADF7135452064FD935 /* Log.swift */; };
+		210BEDC4D05E071DA9248E17 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE36824D8A23C8CFDB13F /* Config.swift */; };
 		21C653461CBE6292008E84B2 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C653451CBE6292008E84B2 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		21C6534D1CBE6292008E84B2 /* Commercetools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21C653421CBE6291008E84B2 /* Commercetools.framework */; };
 		21C653521CBE6292008E84B2 /* CommercetoolsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C653511CBE6292008E84B2 /* CommercetoolsTests.swift */; };
@@ -24,6 +27,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		210BE36824D8A23C8CFDB13F /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		210BE7EF595235524206718F /* Commercetools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Commercetools.swift; sourceTree = "<group>"; };
+		210BEAADF7135452064FD935 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		21C653421CBE6291008E84B2 /* Commercetools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Commercetools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		21C653451CBE6292008E84B2 /* Commercetools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Commercetools.h; sourceTree = "<group>"; };
 		21C653471CBE6292008E84B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -105,6 +111,9 @@
 		21C6535D1CBE7465008E84B2 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				210BE7EF595235524206718F /* Commercetools.swift */,
+				210BE36824D8A23C8CFDB13F /* Config.swift */,
+				210BEAADF7135452064FD935 /* Log.swift */,
 			);
 			path = Source;
 			sourceTree = SOURCE_ROOT;
@@ -261,6 +270,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				210BE0FB35AF665054D028C4 /* Commercetools.swift in Sources */,
+				210BEDC4D05E071DA9248E17 /* Config.swift in Sources */,
+				210BE9F03FC6EB74CA205C35 /* Log.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
