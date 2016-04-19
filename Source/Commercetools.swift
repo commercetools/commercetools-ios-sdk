@@ -15,5 +15,11 @@ public var config: Config? {
     }
     set(newConfig) {
         Config.currentConfig = newConfig
+        // After setting new configuration, we try to obtain the access token
+        AuthManager.sharedInstance.token { token, error in
+            if let error = error {
+                Log.error("Could not obtain auth token \(error.userInfo[NSLocalizedFailureReasonErrorKey] ?? nil)")
+            }
+        }
     }
 }
