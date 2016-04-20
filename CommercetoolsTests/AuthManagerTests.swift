@@ -55,7 +55,8 @@ class AuthManagerTests: XCTestCase {
         })
 
         authManager.token { token, error in
-            if let token = token, oldToken = oldToken where !token.isEmpty && token != oldToken && error == nil {
+            if let token = token, oldToken = oldToken where !token.isEmpty && token != oldToken &&
+                    error == nil && authManager.state == .Authenticated {
                 tokenExpectation.fulfill()
             }
         }
@@ -71,7 +72,7 @@ class AuthManagerTests: XCTestCase {
         let authManager = AuthManager.sharedInstance
 
         authManager.token { token, error in
-            if let token = token where !token.isEmpty && error == nil {
+            if let token = token where !token.isEmpty && error == nil && authManager.state == .Anonymous {
                 tokenExpectation.fulfill()
             }
         }

@@ -106,6 +106,14 @@ Similarly, after logging out, all further interactions continue to use new anony
 AuthManager.sharedInstance.logoutUser()
 ```
 
+Access and refresh tokens are being preserved across app launches by the `AuthManager`. In order to inspect whether it's currently handling authenticated or anonymous user, `state` property should be used:
+
+```swift
+if authManager.state == .Anonymous {
+    // Present login form or other logic
+}
+```
+
 [](definitions for the top badges)
 
 [travis]:https://travis-ci.org/sphereio/commercetools-ios-sdk

@@ -10,10 +10,26 @@ import Alamofire
 */
 public class AuthManager {
 
+    /**
+        Enum used to specify current authorization state.
+
+        - Anonymous:     Auth manager is handling tokens for anonymous user.
+        - Authenticated: Auth manager is handling tokens for logged in user.
+        - Undefined:     Auth manager is in an undefined state (i.e Commercetools configuration is not valid)
+    */
+    public enum AuthState: Int {
+        case Anonymous
+        case Authenticated
+        case Undefined
+    }
+
     // MARK: - Properties
 
     /// A shared instance of `AuthManager`, which should be used by other SDK objects.
     public static let sharedInstance = AuthManager()
+
+    /// The current state auth manager is handling.
+    public private(set) var state: AuthState = .Undefined
 
     /// The key used for storing access token.
     private let kAuthAccessTokenKey = "com.commercetools.authAccessTokenKey"
@@ -111,6 +127,14 @@ public class AuthManager {
         refreshToken = nil
         tokenValidDate = nil
         storeTokens()
+        state = .Undefined
+
+        Log.debug("Getting new anonymous access token after user logout")
+        token { _, error in
+            if let error = error {
+                Log.error("Could not obtain auth token \(error.userInfo[NSLocalizedFailureReasonErrorKey] ?? nil)")
+            }
+        }
     }
 
     /**
@@ -162,6 +186,7 @@ public class AuthManager {
         if let loginUrl = loginUrl, authHeaders = authHeaders, scope = Config.currentConfig?.scope {
             Alamofire.request(.POST, loginUrl, parameters: ["grant_type": "password", "scope": scope, "username": username, "password": password], encoding: .URLEncodedInURL, headers: authHeaders)
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+                self.state = .Authenticated
                 self.handleAuthResponse(response, completionHandler: completionHandler)
             })
         }
@@ -171,6 +196,7 @@ public class AuthManager {
         if let authUrl = clientCredentialsUrl, authHeaders = authHeaders, scope = Config.currentConfig?.scope {
             Alamofire.request(.POST, authUrl, parameters: ["grant_type": "client_credentials", "scope": scope], encoding: .URLEncodedInURL, headers: authHeaders)
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+                self.state = .Anonymous
                 self.handleAuthResponse(response, completionHandler: completionHandler)
             })
         }
@@ -201,6 +227,7 @@ public class AuthManager {
                 completionHandler(nil, Error.error(code: .AccessTokenRetrievalFailed, failureReason: responseDict["error"] as? String ?? "Unknown"))
             }
         } else {
+            state = .Undefined
             completionHandler(nil, response.result.error)
         }
     }
