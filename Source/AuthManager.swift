@@ -18,8 +18,8 @@ public class AuthManager {
     /// The key used for storing access token.
     private let kAuthAccessTokenKey = "com.commercetools.authAccessTokenKey"
 
-    /// The key used for storing rrefresh token.
-    private let kAuthRrefreshTokenKey = "com.commercetools.authRrefreshTokenKey"
+    /// The key used for storing refresh token.
+    private let kAuthRefreshTokenKey = "com.commercetools.authRefreshTokenKey"
 
     /// The key used for storing auth token valid date.
     private let kAuthTokenValidKey = "com.commercetools.authTokenValidKey"
@@ -210,7 +210,7 @@ public class AuthManager {
     private func storeTokens() {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         userDefaults.setObject(accessToken, forKey: kAuthAccessTokenKey)
-        userDefaults.setObject(refreshToken, forKey: kAuthRrefreshTokenKey)
+        userDefaults.setObject(refreshToken, forKey: kAuthRefreshTokenKey)
         userDefaults.setObject(tokenValidDate, forKey: kAuthTokenValidKey)
         userDefaults.synchronize()
     }
@@ -218,7 +218,7 @@ public class AuthManager {
     private func loadTokens() {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         accessToken = userDefaults.objectForKey(kAuthAccessTokenKey) as? String
-        refreshToken = userDefaults.objectForKey(kAuthRrefreshTokenKey) as? String
+        refreshToken = userDefaults.objectForKey(kAuthRefreshTokenKey) as? String
         tokenValidDate = userDefaults.objectForKey(kAuthTokenValidKey) as? NSDate
     }
 

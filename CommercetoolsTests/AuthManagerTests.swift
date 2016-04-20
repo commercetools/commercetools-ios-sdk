@@ -23,7 +23,7 @@ class AuthManagerTests: XCTestCase {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         
         userDefaults.removeObjectForKey("com.commercetools.authAccessTokenKey")
-        userDefaults.removeObjectForKey("com.commercetools.authRrefreshTokenKey")
+        userDefaults.removeObjectForKey("com.commercetools.authRefreshTokenKey")
         userDefaults.removeObjectForKey("com.commercetools.authTokenValidKey")
     }
     
