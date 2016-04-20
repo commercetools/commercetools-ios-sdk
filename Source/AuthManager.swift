@@ -190,8 +190,8 @@ public class AuthManager {
             if let accessToken = responseDict["access_token"] as? String, expiresIn = responseDict["expires_in"] as? Double {
                 completionHandler(accessToken, nil)
                 self.accessToken = accessToken
-                // Subtracting 10 seconds from the valid period to compensate for the latency
-                self.tokenValidDate = NSDate().dateByAddingTimeInterval(expiresIn - 10)
+                // Subtracting 10 minutes from the valid period to compensate for the latency
+                self.tokenValidDate = NSDate().dateByAddingTimeInterval(expiresIn - 600)
                 self.refreshToken = responseDict["refresh_token"] as? String ?? self.refreshToken
                 self.storeTokens()
 
