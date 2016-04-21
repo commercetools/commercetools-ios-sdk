@@ -81,6 +81,39 @@ if let configuration = Config() {
 }
 ```
 
+## Authenticated and anonymous usage
+
+Endpoints from the Commercetools services can be consumed by both anonymous and authenticated users. After you specify the configuration, all further interactions with the Commercetools platform will be performed with anonymous user token.
+
+If at some point you wish to login the user, that can be achieved using `AuthManager` `loginUser` method:
+
+```swift
+let authManager = AuthManager.sharedInstance
+
+let username = "swift.sdk.test.user@commercetools.com"
+let password = "password"
+
+authManager.loginUser(username, password: password, completionHandler: { error in
+    if let error = error {
+        // Handle error, and possibly get some more information from error.userInfo[NSLocalizedFailureReasonErrorKey]
+    }
+})
+```
+
+Similarly, after logging out, all further interactions continue to use new anonymous user token.
+
+```swift
+AuthManager.sharedInstance.logoutUser()
+```
+
+Access and refresh tokens are being preserved across app launches by the `AuthManager`. In order to inspect whether it's currently handling authenticated or anonymous user, `state` property should be used:
+
+```swift
+if authManager.state == .PlainToken {
+    // Present login form or other logic
+}
+```
+
 [](definitions for the top badges)
 
 [travis]:https://travis-ci.org/sphereio/commercetools-ios-sdk

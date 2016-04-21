@@ -64,12 +64,8 @@ public class Config {
         - returns: The new `Config` instance if all configuration parameters were valid, 'nil' otherwise.
     */
     public convenience init?(loggingEnabled: Bool = true, logLevel: LogLevel = .Debug) {
-        guard let path = NSBundle.mainBundle().pathForResource("CommercetoolsConfig", ofType: "plist") else {
-            Log.error("The CommercetoolsConfig.plist file is missing.")
-            return nil
-        }
-
-        self.init(path: path, loggingEnabled: loggingEnabled, logLevel: logLevel)
+        
+        self.init(path: "CommercetoolsConfig.plist", loggingEnabled: loggingEnabled, logLevel: logLevel)
     }
 
     /**
@@ -82,20 +78,45 @@ public class Config {
 
         - returns: The new `Config` instance if all configuration parameters were valid, 'nil' otherwise.
     */
-    public init?(path: String, loggingEnabled: Bool = true, logLevel: LogLevel = .Debug) {
-        guard let configDictionary = NSDictionary(contentsOfFile: path) else {
-            Log.error("Specified config file at \(path) is missing.")
+    public convenience init?(path: String, loggingEnabled: Bool = true, logLevel: LogLevel = .Debug) {
+        let plistFileName = path.hasSuffix(".plist") ? path.substringToIndex(path.endIndex.advancedBy(-6)) : path
+
+        guard let path = NSBundle.mainBundle().pathForResource(plistFileName, ofType: "plist"),
+        config = NSDictionary(contentsOfFile: path) else {
+            Log.error("Specified config file at \(plistFileName).plist is missing.")
             return nil
         }
 
+        self.init(config: config, loggingEnabled: loggingEnabled, logLevel: logLevel)
+    }
+
+    /**
+        Initializes the `Config` from the configuration dictionary.
+
+        - parameter config:                   The configuration dictionary.
+        - parameter loggingEnabled:           The setting which determines whether SDK will log any
+                                              messages. `true` by default.
+        - parameter logLevel:                 The SDK log level. `.Debug` by default.
+
+        - returns: The new `Config` instance if all configuration parameters were valid, 'nil' otherwise.
+    */
+    init?(config: NSDictionary, loggingEnabled: Bool = true, logLevel: LogLevel = .Debug) {
         self.loggingEnabled = loggingEnabled
         self.logLevel = logLevel
-        projectKey = configDictionary["projectKey"] as? String
-        clientId = configDictionary["clientId"] as? String
-        clientSecret = configDictionary["clientSecret"] as? String
-        authUrl = configDictionary["authUrl"] as? String
-        apiUrl = configDictionary["apiUrl"] as? String
-        scope = configDictionary["scope"] as? String
+        projectKey = config["projectKey"] as? String
+        clientId = config["clientId"] as? String
+        clientSecret = config["clientSecret"] as? String
+        scope = config["scope"] as? String
+        authUrl = config["authUrl"] as? String
+        apiUrl = config["apiUrl"] as? String
+
+        if let apiUrl = apiUrl where !apiUrl.hasSuffix("/") {
+            self.apiUrl = apiUrl + "/"
+        }
+
+        if let authUrl = authUrl where !authUrl.hasSuffix("/") {
+            self.authUrl = authUrl + "/"
+        }
 
         if !validate() {
             return nil
