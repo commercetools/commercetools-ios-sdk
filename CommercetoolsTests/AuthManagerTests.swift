@@ -64,6 +64,36 @@ class AuthManagerTests: XCTestCase {
         waitForExpectationsWithTimeout(10, handler: nil)
     }
 
+    func testUserLogout() {
+        setupTestConfiguration()
+
+        let tokenExpectation = expectationWithDescription("token expectation")
+
+        let username = "swift.sdk.test.user@commercetools.com"
+        let password = "password"
+        let authManager = AuthManager.sharedInstance
+
+        authManager.loginUser(username, password: password, completionHandler: { error in
+            if error == nil {
+                // Get the access token after login
+                authManager.token { oldToken, error in
+                    if let oldToken = oldToken {
+                        // Then logout user
+                        authManager.logoutUser()
+                        // Get the access token after logout
+                        authManager.token { newToken, error in
+                            if let newToken = newToken where newToken != oldToken {
+                                tokenExpectation.fulfill()
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
     func testIncorrectLogin() {
         setupTestConfiguration()
 
