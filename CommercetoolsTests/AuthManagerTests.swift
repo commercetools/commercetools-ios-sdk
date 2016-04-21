@@ -64,6 +64,36 @@ class AuthManagerTests: XCTestCase {
         waitForExpectationsWithTimeout(10, handler: nil)
     }
 
+    func testIncorrectLogin() {
+        setupTestConfiguration()
+
+        let loginExpectation = expectationWithDescription("login expectation")
+        let tokenExpectation = expectationWithDescription("token expectation")
+
+        let username = "incorrect.sdk.test.user@commercetools.com"
+        let password = "password"
+        let authManager = AuthManager.sharedInstance
+
+        var oldToken: String?
+        authManager.token { token, error in oldToken = token }
+
+        authManager.loginUser(username, password: password, completionHandler: { error in
+            if let error = error, errorInfo = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
+                where errorInfo == "invalid_customer_account_credentials" {
+                loginExpectation.fulfill()
+            }
+        })
+
+        authManager.token { token, error in
+            if let token = token, oldToken = oldToken where !token.isEmpty && token != oldToken &&
+                    error == nil && authManager.state == .Anonymous {
+                tokenExpectation.fulfill()
+            }
+        }
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
     func testAnonymousToken() {
         setupTestConfiguration()
 
