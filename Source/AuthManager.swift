@@ -11,16 +11,19 @@ import Alamofire
 public class AuthManager {
 
     /**
-        Enum used to specify current authorization state.
+        Enum used to specify current token state.
 
-        - Anonymous:     Auth manager is handling tokens for anonymous user.
-        - Authenticated: Auth manager is handling tokens for logged in user.
-        - Undefined:     Auth manager is in an undefined state (i.e Commercetools configuration is not valid)
+        - CustomerToken:    Auth manager is handling tokens for a logged in customer.
+        - AnonymousToken:   Auth manager is handling tokens for an anonymous customer.
+        - PlainToken:       Auth manager is handling a token without an associated customer.
+        - NoToken:          Auth manager does not have a token (i.e. because Commercetools configuration is not valid)
     */
-    public enum AuthState: Int {
-        case Anonymous
-        case Authenticated
-        case Undefined
+
+    public enum TokenState: Int {
+        case CustomerToken
+        case AnonymousToken
+        case PlainToken
+        case NoToken
     }
 
     // MARK: - Properties
@@ -29,46 +32,61 @@ public class AuthManager {
     public static let sharedInstance = AuthManager()
 
     /// The current state auth manager is handling.
-    public private(set) var state: AuthState = .Undefined
+    public private(set) var state: TokenState = .NoToken
 
-    /// The key used for storing access token.
-    private let kAuthAccessTokenKey = "com.commercetools.authAccessTokenKey"
-
-    /// The key used for storing refresh token.
-    private let kAuthRefreshTokenKey = "com.commercetools.authRefreshTokenKey"
-
-    /// The key used for storing auth token valid date.
-    private let kAuthTokenValidKey = "com.commercetools.authTokenValidKey"
+    /// The token store used for loading and storing access and refresh tokens.
+    let tokenStore = TokenStore()
 
     /// The auth token which should be included in all requests against Commercetools service.
-    private var accessToken: String?
+    private var accessToken: String? {
+        get {
+            return tokenStore.accessToken
+        }
+        set {
+            tokenStore.accessToken = newValue
+        }
+    }
 
     /// The refresh token used to obtain new auth token for password flow.
-    private var refreshToken: String?
+    private var refreshToken: String? {
+        get {
+            return tokenStore.refreshToken
+        }
+        set {
+            tokenStore.refreshToken = newValue
+        }
+    }
 
     /// The auth token valid before date.
-    private var tokenValidDate: NSDate?
+    private var tokenValidDate: NSDate? {
+        get {
+            return tokenStore.tokenValidDate
+        }
+        set {
+            tokenStore.tokenValidDate = newValue
+        }
+    }
 
     /// The URL used for requesting token for client credentials and refresh token flow.
-    private var clientCredentialsUrl: String? = {
+    private var clientCredentialsUrl: String? {
         if let config = Config.currentConfig, baseAuthUrl = config.authUrl where config.validate() {
             return baseAuthUrl + "oauth/token"
         }
         return nil
-    }()
+    }
 
     /// The URL used for requesting token for password flow.
-    private var loginUrl: String? = {
+    private var loginUrl: String? {
         if let config = Config.currentConfig, baseAuthUrl = config.authUrl, projectKey = config.projectKey
         where config.validate() {
             return "\(baseAuthUrl)oauth/\(projectKey)/customers/token"
 
         }
         return nil
-    }()
+    }
 
     /// The HTTP headers containing basic HTTP auth needed to obtain the tokens.
-    private var authHeaders: [String: String]? = {
+    private var authHeaders: [String: String]? {
         if let config = Config.currentConfig, clientId = config.clientId, clientSecret = config.clientSecret,
         authData = "\(clientId):\(clientSecret)".dataUsingEncoding(NSUTF8StringEncoding) where config.validate() {
 
@@ -78,7 +96,7 @@ public class AuthManager {
 
         }
         return nil
-    }()
+    }
 
     /// The serial queue used for processing token requests.
     private let serialQueue = dispatch_queue_create("com.commercetools.authQueue", DISPATCH_QUEUE_SERIAL);
@@ -86,11 +104,9 @@ public class AuthManager {
     // MARK: - Lifecycle
 
     /**
-        Initializes the `AuthManager` by loading previously stored token and valid period.
+        Private initializer prevents `AuthManager` usage without using `sharedInstance`.
     */
-    private init() {
-        loadTokens()
-    }
+    private init() {}
 
     // MARK: - Accessing token
 
@@ -126,8 +142,7 @@ public class AuthManager {
         accessToken = nil
         refreshToken = nil
         tokenValidDate = nil
-        storeTokens()
-        state = .Undefined
+        state = .NoToken
 
         Log.debug("Getting new anonymous access token after user logout")
         token { _, error in
@@ -186,7 +201,7 @@ public class AuthManager {
         if let loginUrl = loginUrl, authHeaders = authHeaders, scope = Config.currentConfig?.scope {
             Alamofire.request(.POST, loginUrl, parameters: ["grant_type": "password", "scope": scope, "username": username, "password": password], encoding: .URLEncodedInURL, headers: authHeaders)
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
-                self.state = .Authenticated
+                self.state = .CustomerToken
                 self.handleAuthResponse(response, completionHandler: completionHandler)
             })
         }
@@ -196,7 +211,7 @@ public class AuthManager {
         if let authUrl = clientCredentialsUrl, authHeaders = authHeaders, scope = Config.currentConfig?.scope {
             Alamofire.request(.POST, authUrl, parameters: ["grant_type": "client_credentials", "scope": scope], encoding: .URLEncodedInURL, headers: authHeaders)
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
-                self.state = .Anonymous
+                self.state = .PlainToken
                 self.handleAuthResponse(response, completionHandler: completionHandler)
             })
         }
@@ -206,6 +221,7 @@ public class AuthManager {
         if let authUrl = clientCredentialsUrl, authHeaders = authHeaders, refreshToken = refreshToken {
             Alamofire.request(.POST, authUrl, parameters: ["grant_type": "refresh_token", "refresh_token": refreshToken], encoding: .URLEncodedInURL, headers: authHeaders)
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+                self.state = .CustomerToken
                 self.handleAuthResponse(response, completionHandler: completionHandler)
             })
         }
@@ -219,7 +235,6 @@ public class AuthManager {
                 // Subtracting 10 minutes from the valid period to compensate for the latency
                 self.tokenValidDate = NSDate().dateByAddingTimeInterval(expiresIn - 600)
                 self.refreshToken = responseDict["refresh_token"] as? String ?? self.refreshToken
-                self.storeTokens()
 
             } else {
                 // In case we got an error while using refresh token, we want to clear token storage - there's no way to recover from this
@@ -227,26 +242,26 @@ public class AuthManager {
                 completionHandler(nil, Error.error(code: .AccessTokenRetrievalFailed, failureReason: responseDict["error"] as? String ?? "Unknown"))
             }
         } else {
-            state = .Undefined
+            state = .NoToken
             completionHandler(nil, response.result.error)
         }
     }
 
     // MARK: - Token persistence
 
-    private func storeTokens() {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setObject(accessToken, forKey: kAuthAccessTokenKey)
-        userDefaults.setObject(refreshToken, forKey: kAuthRefreshTokenKey)
-        userDefaults.setObject(tokenValidDate, forKey: kAuthTokenValidKey)
-        userDefaults.synchronize()
-    }
-
-    private func loadTokens() {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        accessToken = userDefaults.objectForKey(kAuthAccessTokenKey) as? String
-        refreshToken = userDefaults.objectForKey(kAuthRefreshTokenKey) as? String
-        tokenValidDate = userDefaults.objectForKey(kAuthTokenValidKey) as? NSDate
-    }
+//    private func storeTokens() {
+//        let userDefaults = NSUserDefaults.standardUserDefaults()
+//        userDefaults.setObject(accessToken, forKey: kAuthAccessTokenKey)
+//        userDefaults.setObject(refreshToken, forKey: kAuthRefreshTokenKey)
+//        userDefaults.setObject(tokenValidDate, forKey: kAuthTokenValidKey)
+//        userDefaults.synchronize()
+//    }
+//
+//    private func loadTokens() {
+//        let userDefaults = NSUserDefaults.standardUserDefaults()
+//        accessToken = userDefaults.objectForKey(kAuthAccessTokenKey) as? String
+//        refreshToken = userDefaults.objectForKey(kAuthRefreshTokenKey) as? String
+//        tokenValidDate = userDefaults.objectForKey(kAuthTokenValidKey) as? NSDate
+//    }
 
 }

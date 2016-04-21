@@ -109,7 +109,7 @@ AuthManager.sharedInstance.logoutUser()
 Access and refresh tokens are being preserved across app launches by the `AuthManager`. In order to inspect whether it's currently handling authenticated or anonymous user, `state` property should be used:
 
 ```swift
-if authManager.state == .Anonymous {
+if authManager.state == .PlainToken {
     // Present login form or other logic
 }
 ```

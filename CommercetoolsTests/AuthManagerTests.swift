@@ -9,7 +9,7 @@ class AuthManagerTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-
+    
         cleanPersistedTokens()
     }
     
@@ -20,11 +20,10 @@ class AuthManagerTests: XCTestCase {
     }
 
     private func cleanPersistedTokens() {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        
-        userDefaults.removeObjectForKey("com.commercetools.authAccessTokenKey")
-        userDefaults.removeObjectForKey("com.commercetools.authRefreshTokenKey")
-        userDefaults.removeObjectForKey("com.commercetools.authTokenValidKey")
+        let tokenStore = AuthManager.sharedInstance.tokenStore
+        tokenStore.accessToken = nil
+        tokenStore.refreshToken = nil
+        tokenStore.tokenValidDate = nil
     }
     
     private func setupTestConfiguration() {
@@ -56,7 +55,7 @@ class AuthManagerTests: XCTestCase {
 
         authManager.token { token, error in
             if let token = token, oldToken = oldToken where !token.isEmpty && token != oldToken &&
-                    error == nil && authManager.state == .Authenticated {
+                    error == nil && authManager.state == .CustomerToken {
                 tokenExpectation.fulfill()
             }
         }
@@ -77,12 +76,12 @@ class AuthManagerTests: XCTestCase {
             if error == nil {
                 // Get the access token after login
                 authManager.token { oldToken, error in
-                    if let oldToken = oldToken {
+                    if let oldToken = oldToken where authManager.state == .CustomerToken {
                         // Then logout user
                         authManager.logoutUser()
                         // Get the access token after logout
                         authManager.token { newToken, error in
-                            if let newToken = newToken where newToken != oldToken {
+                            if let newToken = newToken where newToken != oldToken && authManager.state == .PlainToken {
                                 tokenExpectation.fulfill()
                             }
                         }
@@ -116,7 +115,7 @@ class AuthManagerTests: XCTestCase {
 
         authManager.token { token, error in
             if let token = token, oldToken = oldToken where !token.isEmpty && token != oldToken &&
-                    error == nil && authManager.state == .Anonymous {
+                    error == nil && authManager.state == .PlainToken {
                 tokenExpectation.fulfill()
             }
         }
@@ -132,7 +131,28 @@ class AuthManagerTests: XCTestCase {
         let authManager = AuthManager.sharedInstance
 
         authManager.token { token, error in
-            if let token = token where !token.isEmpty && error == nil && authManager.state == .Anonymous {
+            if let token = token where !token.isEmpty && error == nil && authManager.state == .PlainToken {
+                tokenExpectation.fulfill()
+            }
+        }
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
+    func testRefreshToken() {
+        let tokenExpectation = expectationWithDescription("token expectation")
+
+        let authManager = AuthManager.sharedInstance
+        let tokenStore = authManager.tokenStore
+        let oldToken = tokenStore.accessToken
+
+        tokenStore.refreshToken = "o_iJjDxTrVTPtUAYSVt7MK_8uHYyniAVRlD15lasbqg"
+        tokenStore.tokenValidDate = nil
+
+        setupTestConfiguration()
+
+        authManager.token { token, error in
+            if let token = token where !token.isEmpty && error == nil && authManager.state == .CustomerToken && token != oldToken {
                 tokenExpectation.fulfill()
             }
         }
