@@ -140,22 +140,36 @@ class AuthManagerTests: XCTestCase {
     }
 
     func testRefreshToken() {
+        setupTestConfiguration()
+
         let tokenExpectation = expectationWithDescription("token expectation")
 
         let authManager = AuthManager.sharedInstance
         let tokenStore = authManager.tokenStore
-        let oldToken = tokenStore.accessToken
 
-        tokenStore.refreshToken = "o_iJjDxTrVTPtUAYSVt7MK_8uHYyniAVRlD15lasbqg"
-        tokenStore.tokenValidDate = nil
+        let username = "swift.sdk.test.user@commercetools.com"
+        let password = "password"
 
-        setupTestConfiguration()
+        authManager.loginUser(username, password: password, completionHandler: { error in
+            if error == nil {
 
-        authManager.token { token, error in
-            if let token = token where !token.isEmpty && error == nil && authManager.state == .CustomerToken && token != oldToken {
-                tokenExpectation.fulfill()
+                var oldToken: String?
+                authManager.token { token, error in
+                    oldToken = token
+                    // Remove the access token valid date after login, in order to test the refresh token flow
+                    tokenStore.tokenValidDate = nil
+                    XCTAssert(!tokenStore.refreshToken!.isEmpty)
+                    XCTAssert(oldToken != nil)
+                }
+
+                authManager.token { token, error in
+                    if let token = token, oldToken = oldToken where error == nil && oldToken != token &&
+                            authManager.state == .CustomerToken {
+                        tokenExpectation.fulfill()
+                    }
+                }
             }
-        }
+        })
 
         waitForExpectationsWithTimeout(10, handler: nil)
     }
