@@ -125,7 +125,9 @@ public class AuthManager {
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
         dispatch_async(serialQueue, {
             let semaphore = dispatch_semaphore_create(0)
-            self.logoutUser()
+            if self.state != .PlainToken {
+                self.logoutUser()
+            }
             self.processLoginUser(username, password: password, completionHandler: { token, error in
                 completionHandler(error)
                 dispatch_semaphore_signal(semaphore)
@@ -191,9 +193,9 @@ public class AuthManager {
                 }
             }
         } else {
-            let reason = "Cannot obtain access token without valid configuration present."
-            Log.error(reason)
-            completionHandler(nil, Error.error(code: .AccessTokenRetrievalFailed, failureReason: reason))
+            let description = "Cannot obtain access token without valid configuration present."
+            Log.error(description)
+            completionHandler(nil, Error.error(code: .ConfigurationValidationFailed, failureReason: "invalid_configuration", description: description))
         }
     }
 
@@ -237,31 +239,17 @@ public class AuthManager {
                 self.refreshToken = responseDict["refresh_token"] as? String ?? self.refreshToken
 
             } else {
-                // In case we got an error while using refresh token, we want to clear token storage - there's no way to recover from this
+                // In case we got an error while using refresh token, we want to clear token storage - there's no way
+                // to recover from this
                 logoutUser()
-                completionHandler(nil, Error.error(code: .AccessTokenRetrievalFailed, failureReason: responseDict["error"] as? String ?? "Unknown"))
+                completionHandler(nil, Error.error(code: .AccessTokenRetrievalFailed,
+                        failureReason: responseDict["error"] as? String,
+                        description: responseDict["error_description"] as? String))
             }
         } else {
             state = .NoToken
             completionHandler(nil, response.result.error)
         }
     }
-
-    // MARK: - Token persistence
-
-//    private func storeTokens() {
-//        let userDefaults = NSUserDefaults.standardUserDefaults()
-//        userDefaults.setObject(accessToken, forKey: kAuthAccessTokenKey)
-//        userDefaults.setObject(refreshToken, forKey: kAuthRefreshTokenKey)
-//        userDefaults.setObject(tokenValidDate, forKey: kAuthTokenValidKey)
-//        userDefaults.synchronize()
-//    }
-//
-//    private func loadTokens() {
-//        let userDefaults = NSUserDefaults.standardUserDefaults()
-//        accessToken = userDefaults.objectForKey(kAuthAccessTokenKey) as? String
-//        refreshToken = userDefaults.objectForKey(kAuthRefreshTokenKey) as? String
-//        tokenValidDate = userDefaults.objectForKey(kAuthTokenValidKey) as? NSDate
-//    }
 
 }

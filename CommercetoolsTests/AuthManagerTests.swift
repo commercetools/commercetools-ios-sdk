@@ -107,8 +107,10 @@ class AuthManagerTests: XCTestCase {
         authManager.token { token, error in oldToken = token }
 
         authManager.loginUser(username, password: password, completionHandler: { error in
-            if let error = error, errorInfo = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-                where errorInfo == "invalid_customer_account_credentials" {
+            if let error = error, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
+                where errorReason == "invalid_customer_account_credentials" &&
+                        errorDesc == "Customer account with the given credentials not found." {
                 loginExpectation.fulfill()
             }
         })
