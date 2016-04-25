@@ -180,6 +180,7 @@ public class AuthManager {
     private func processTokenRequest(completionHandler: (String?, NSError?) -> Void) {
         if let config = Config.currentConfig where config.validate() {
             if let accessToken = accessToken, tokenValidDate = tokenValidDate where tokenValidDate.compare(NSDate()) == .OrderedDescending {
+                self.state = refreshToken != nil ? .CustomerToken : .PlainToken
                 completionHandler(accessToken, nil)
 
             } else {
@@ -230,23 +231,26 @@ public class AuthManager {
     }
 
     private func handleAuthResponse(response: Response<AnyObject, NSError>, completionHandler: (String?, NSError?) -> Void) {
-        if let responseDict = response.result.value as? [String: AnyObject] where response.result.isSuccess {
-            if let accessToken = responseDict["access_token"] as? String, expiresIn = responseDict["expires_in"] as? Double {
-                completionHandler(accessToken, nil)
-                self.accessToken = accessToken
-                // Subtracting 10 minutes from the valid period to compensate for the latency
-                self.tokenValidDate = NSDate().dateByAddingTimeInterval(expiresIn - 600)
-                self.refreshToken = responseDict["refresh_token"] as? String ?? self.refreshToken
+        if let responseDict = response.result.value as? [String: AnyObject],
+                accessToken = responseDict["access_token"] as? String,
+                  expiresIn = responseDict["expires_in"] as? Double where response.result.isSuccess {
 
-            } else {
-                // In case we got an error while using refresh token, we want to clear token storage - there's no way
-                // to recover from this
-                logoutUser()
-                completionHandler(nil, Error.error(code: .AccessTokenRetrievalFailed,
-                        failureReason: responseDict["error"] as? String,
-                        description: responseDict["error_description"] as? String))
-            }
+            completionHandler(accessToken, nil)
+            self.accessToken = accessToken
+            // Subtracting 10 minutes from the valid period to compensate for the latency
+            self.tokenValidDate = NSDate().dateByAddingTimeInterval(expiresIn - 600)
+            self.refreshToken = responseDict["refresh_token"] as? String ?? self.refreshToken
+
+        } else if let responseDict = response.result.value as? [String: AnyObject],
+                     failureReason = responseDict["error"] as? String,
+                        statusCode = response.response?.statusCode where statusCode > 299 {
+            // In case we got an error while using refresh token, we want to clear token storage - there's no way
+            // to recover from this
+            logoutUser()
+            completionHandler(nil, Error.error(code: .AccessTokenRetrievalFailed,
+                    failureReason: failureReason, description: responseDict["error_description"] as? String))
         } else {
+            // Any other error from NSURLErrorDomain (e.g internet offline) - we won't clear token storage
             state = .NoToken
             completionHandler(nil, response.result.error)
         }

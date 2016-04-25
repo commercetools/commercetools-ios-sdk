@@ -14,9 +14,27 @@ public struct Error {
     public enum Code: Int {
         case ConfigurationValidationFailed   = -7000
         case AccessTokenRetrievalFailed      = -7001
+        case InvalidJsonInputError           = -7002
+        case ResourceNotFoundError           = -7003
+        case GeneralCommercetoolsError       = -7099
+
+        init(code: String) {
+            switch code {
+            case "ConfigurationValidationFailed":
+                self = .ConfigurationValidationFailed
+            case "AccessTokenRetrievalFailed":
+                self = .AccessTokenRetrievalFailed
+            case "InvalidJsonInput":
+                self = .InvalidJsonInputError
+            case "ResourceNotFound":
+                self = .ResourceNotFoundError
+            default:
+                self = .GeneralCommercetoolsError
+            }
+        }
     }
 
-    static func error(domain domain: String = Error.Domain, code: Code, failureReason: String?, description: String? = nil) -> NSError {
+    static func error(domain domain: String = Error.Domain, code: Code, failureReason: String? = nil, description: String? = nil) -> NSError {
         return error(domain: domain, code: code.rawValue, failureReason: failureReason ?? "Unknown", description: description)
     }
 
