@@ -54,9 +54,9 @@ class ByIdEndpointTests: XCTestCase {
         TestCart.create(["currency": "EUR"], result: { response, errors in
             if let response = response, id = response["id"] as? String where errors == nil {
                 TestCart.byId(id, result: { response, errors in
-                    if let response = response, type = response["type"] as? String,
+                    if let response = response, cartState = response["cartState"] as? String,
                             version = response["version"] as? Int, obtainedId = response["id"] as? String
-                            where errors == nil && type == "Cart" && version == 1 && obtainedId == id {
+                            where errors == nil && cartState == "Active" && version == 1 && obtainedId == id {
                         byIdExpectation.fulfill()
                     }
                 })

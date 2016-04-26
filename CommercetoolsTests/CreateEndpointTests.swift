@@ -48,8 +48,8 @@ class CreateEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.create(["currency": "EUR"], result: { response, errors in
-            if let response = response, type = response["type"] as? String, version = response["version"] as? Int
-                    where errors == nil && type == "Cart" && version == 1 {
+            if let response = response, cartState = response["cartState"] as? String, version = response["version"] as? Int
+                    where errors == nil && cartState == "Active" && version == 1 {
                 createExpectation.fulfill()
             }
         })
