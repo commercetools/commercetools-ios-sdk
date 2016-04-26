@@ -40,7 +40,7 @@ public extension CreateEndpoint {
                 return
             }
 
-            let fullPath = expansion?.count > 0 ? pathWithExpansion(path, expansion: expansion!) : path
+            let fullPath = pathWithExpansion(path, expansion: expansion)
 
             Alamofire.request(.POST, fullPath, parameters: object, encoding: .JSON, headers: self.headers(token))
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in

@@ -39,10 +39,7 @@ public extension ByIdEndpoint {
                 return
             }
 
-            var fullPath = path + id
-            if let expansion = expansion where expansion.count > 0 {
-                fullPath = pathWithExpansion(fullPath, expansion: expansion)
-            }
+            let fullPath = pathWithExpansion(path + id, expansion: expansion)
 
             Alamofire.request(.GET, fullPath, parameters: nil, encoding: .JSON, headers: self.headers(token))
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in

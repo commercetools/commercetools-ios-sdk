@@ -52,8 +52,8 @@ public extension Endpoint {
 
         - returns: The full path with expansion parameters included.
     */
-    static func pathWithExpansion(path: String, expansion: [String]) -> String {
-        if expansion.count > 0 {
+    static func pathWithExpansion(path: String, expansion: [String]?) -> String {
+        if let expansion = expansion where expansion.count > 0 {
             var pathWithExpansion = path.hasSuffix("/") ? path.substringToIndex(path.endIndex.advancedBy(-1)) : path
             pathWithExpansion += "?expand=" + expansion.joinWithSeparator("&expand=")
             return pathWithExpansion
