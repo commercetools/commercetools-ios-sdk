@@ -36,12 +36,12 @@ class ByIdEndpointTests: XCTestCase {
         
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
         
-        TestCart.create(["currency": "EUR"], result: { response, errors in
-            if let response = response, id = response["id"] as? String where errors == nil {
-                TestCart.byId(id, result: { response, errors in
-                    if let response = response, cartState = response["cartState"] as? String,
+        TestCart.create(["currency": "EUR"], result: { result in
+            if let response = result.response, id = response["id"] as? String where result.isSuccess {
+                TestCart.byId(id, result: { result in
+                    if let response = result.response, cartState = response["cartState"] as? String,
                             version = response["version"] as? Int, obtainedId = response["id"] as? String
-                            where errors == nil && cartState == "Active" && version == 1 && obtainedId == id {
+                            where result.isSuccess && cartState == "Active" && version == 1 && obtainedId == id {
                         byIdExpectation.fulfill()
                     }
                 })
@@ -60,8 +60,8 @@ class ByIdEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestCart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { response, errors in
-            if let error = errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
+        TestCart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
+            if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
                 where errorReason == "The Resource with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." &&
                        error.code == Error.Code.ResourceNotFoundError.rawValue {
                 byIdExpectation.fulfill()
@@ -80,10 +80,10 @@ class ByIdEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestProductProjections.byId("a9fd9c74-d00a-4de7-8258-6a9920abc66b", expansion: ["productType"], result: { response, errors in
-            if let response = response, productType = response["productType"] as? [String: AnyObject],
+        TestProductProjections.byId("a9fd9c74-d00a-4de7-8258-6a9920abc66b", expansion: ["productType"], result: { result in
+            if let response = result.response, productType = response["productType"] as? [String: AnyObject],
                     productTypeObject = productType["obj"] as? [String: AnyObject]
-                    where errors == nil && productTypeObject.count > 0 {
+                    where result.isSuccess && productTypeObject.count > 0 {
                 byIdExpectation.fulfill()
             }
         })

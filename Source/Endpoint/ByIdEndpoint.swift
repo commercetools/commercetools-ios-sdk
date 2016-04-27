@@ -17,17 +17,15 @@ public protocol ByIdEndpoint: Endpoint {
 
         - parameter id:                       Unique ID of the object to be retrieved.
         - parameter expansion:                An optional array of expansion property names.
-        - parameter result:                   The code to be executed after processing the response. Either one of two
-                                              optionals (response dictionary or an array) will have some value,
-                                              depending on the request's success.
+        - parameter result:                   The code to be executed after processing the response.
     */
-    static func byId(id: String, expansion: [String]?, result: Result)
+    static func byId(id: String, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)
 
 }
 
 public extension ByIdEndpoint {
 
-    static func byId(id: String, expansion: [String]? = nil, result: Result) {
+    static func byId(id: String, expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
         guard let config = Config.currentConfig, path = fullPath where config.validate() else {
             Log.error("Cannot execute byId command - check if the configuration is valid.")
             return
@@ -35,7 +33,7 @@ public extension ByIdEndpoint {
 
         AuthManager.sharedInstance.token { token, error in
             guard let token = token else {
-                result(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)])
+                result(Result.Failure([error ?? Error.error(code: .GeneralCommercetoolsError)]))
                 return
             }
 

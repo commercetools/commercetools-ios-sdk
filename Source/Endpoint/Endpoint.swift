@@ -6,11 +6,6 @@ import Foundation
 import Alamofire
 
 /**
-    A closure used to process the result obtained from an endpoint.
-*/
-public typealias Result = ([String: AnyObject]?, [NSError]?) -> Void
-
-/**
     Base type which all endpoints must conform to.
 
     Types adopting the `Endpoint` protocol can be used to retrieve the full path, from the relative, based on
@@ -24,7 +19,7 @@ public typealias Result = ([String: AnyObject]?, [NSError]?) -> Void
     form the full path, regardless of the request method.
 
     Finally, default `Endpoint` extension provides easy Commercetools response handling, using
-    `static func handleResponse(response: Response<AnyObject, NSError>, result: Result)`.
+    `static func handleResponse`.
 */
 public protocol Endpoint {
 
@@ -81,14 +76,12 @@ public extension Endpoint {
         This method provides default response handling from all endpoints.
 
         - parameter token:                    Auth token to be included in the headers.
-        - parameter result:                   The code to be executed after processing the response. Either one of two
-                                              optionals (response dictionary or an array) will have some value,
-                                              depending on the request's success.
+        - parameter result:                   The code to be executed after processing the response.
     */
-    static func handleResponse(response: Response<AnyObject, NSError>, result: Result) {
+    static func handleResponse(response: Response<AnyObject, NSError>, result: (Result<[String: AnyObject], NSError>) -> Void) {
         if let responseDict = response.result.value as? [String: AnyObject], response = response.response {
             if case 200 ... 299 = response.statusCode {
-                result(responseDict, nil)
+                result(Result.Success(responseDict))
 
             } else if let errorsResponse = responseDict["errors"] as? [[String: AnyObject]] {
                 var errors = [NSError]()
@@ -97,13 +90,13 @@ public extension Endpoint {
                             failureReason: $0["message"] as? String,
                             description: $0["detailedErrorMessage"] as? String)]
                 }
-                result(nil, errors)
+                result(Result.Failure(errors))
 
             } else {
-                result(nil, [Error.error(code: .GeneralCommercetoolsError, failureReason: responseDict["error"] as? String)])
+                result(Result.Failure([Error.error(code: .GeneralCommercetoolsError, failureReason: responseDict["error"] as? String)]))
             }
         } else {
-            result(nil, [response.result.error ?? Error.error(code: .GeneralCommercetoolsError)])
+            result(Result.Failure([response.result.error ?? Error.error(code: .GeneralCommercetoolsError)]))
         }
     }
 }

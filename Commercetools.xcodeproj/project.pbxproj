@@ -12,6 +12,7 @@
 		210BE40C5DD231FC289ACC9F /* ByIdEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE12054F8D0CB0147CBD9 /* ByIdEndpoint.swift */; };
 		210BE7E502CA456C30566881 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE57833F74D2656716AF8 /* Error.swift */; };
 		210BE9F03FC6EB74CA205C35 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BEAADF7135452064FD935 /* Log.swift */; };
+		210BED47512A21301ACEFE86 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE2D37FC5D53E1528CEBB /* Result.swift */; };
 		210BEDC4D05E071DA9248E17 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE36824D8A23C8CFDB13F /* Config.swift */; };
 		210BEE7F0EF61808761BDBB5 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE69087D43E8630A27203 /* AuthManager.swift */; };
 		210BEF7772BC10CA87E61644 /* TokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BEF4B389CAF21987D0F00 /* TokenStore.swift */; };
@@ -39,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		210BE12054F8D0CB0147CBD9 /* ByIdEndpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByIdEndpoint.swift; sourceTree = "<group>"; };
+		210BE2D37FC5D53E1528CEBB /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		210BE36824D8A23C8CFDB13F /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		210BE57833F74D2656716AF8 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		210BE69087D43E8630A27203 /* AuthManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 				210BE57833F74D2656716AF8 /* Error.swift */,
 				210BEF4B389CAF21987D0F00 /* TokenStore.swift */,
 				210BEC3CECE84C25122CFBE3 /* Endpoint */,
+				210BE2D37FC5D53E1528CEBB /* Result.swift */,
 			);
 			path = Source;
 			sourceTree = SOURCE_ROOT;
@@ -320,6 +323,7 @@
 				210BEFC6EB3105F2FC9CEDA1 /* Endpoint.swift in Sources */,
 				210BE01F162E3933AA6871EF /* CreateEndpoint.swift in Sources */,
 				210BE40C5DD231FC289ACC9F /* ByIdEndpoint.swift in Sources */,
+				210BED47512A21301ACEFE86 /* Result.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
