@@ -28,7 +28,7 @@ public extension ByIdEndpoint {
     static func byId(id: String, expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
         guard let config = Config.currentConfig, path = fullPath where config.validate() else {
             Log.error("Cannot execute byId command - check if the configuration is valid.")
-            Error.error(code: .GeneralCommercetoolsError)
+            result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
             return
         }
 
