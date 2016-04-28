@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		210BE01F162E3933AA6871EF /* CreateEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BEF34FFFADD720A136729 /* CreateEndpoint.swift */; };
 		210BE0FB35AF665054D028C4 /* Commercetools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE7EF595235524206718F /* Commercetools.swift */; };
+		210BE2F771FF1894369D01B5 /* UpdateEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BEC9E16C430A31F462309 /* UpdateEndpoint.swift */; };
 		210BE3925983FE6D33226BD1 /* DeleteEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE80A6E99FC9F608AC3A6 /* DeleteEndpoint.swift */; };
 		210BE40C5DD231FC289ACC9F /* ByIdEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE12054F8D0CB0147CBD9 /* ByIdEndpoint.swift */; };
 		210BE7E502CA456C30566881 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE57833F74D2656716AF8 /* Error.swift */; };
@@ -27,6 +28,7 @@
 		21C653521CBE6292008E84B2 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C653511CBE6292008E84B2 /* AuthManagerTests.swift */; };
 		21F26D8F1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F26D8E1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift */; };
 		21F26D911CD15A0D00DFFEB8 /* DeleteEndpointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F26D901CD15A0D00DFFEB8 /* DeleteEndpointTests.swift */; };
+		21F26D931CD172B000DFFEB8 /* UpdateEndpointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F26D921CD172B000DFFEB8 /* UpdateEndpointTests.swift */; };
 		5282479BE674314D916A0355 /* Pods_Commercetools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A456D0DAC39F1D37C1FEDB0 /* Pods_Commercetools.framework */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +52,7 @@
 		210BE80A6E99FC9F608AC3A6 /* DeleteEndpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteEndpoint.swift; sourceTree = "<group>"; };
 		210BEA9FB39CC0B4C382E087 /* Endpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		210BEAADF7135452064FD935 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		210BEC9E16C430A31F462309 /* UpdateEndpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateEndpoint.swift; sourceTree = "<group>"; };
 		210BEF34FFFADD720A136729 /* CreateEndpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateEndpoint.swift; sourceTree = "<group>"; };
 		210BEF4B389CAF21987D0F00 /* TokenStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokenStore.swift; sourceTree = "<group>"; };
 		211B59361CC77C7200246522 /* CommercetoolsTestConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CommercetoolsTestConfig.plist; sourceTree = "<group>"; };
@@ -63,6 +66,7 @@
 		21C653511CBE6292008E84B2 /* AuthManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManagerTests.swift; sourceTree = "<group>"; };
 		21F26D8E1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Configuration.swift"; sourceTree = "<group>"; };
 		21F26D901CD15A0D00DFFEB8 /* DeleteEndpointTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteEndpointTests.swift; sourceTree = "<group>"; };
+		21F26D921CD172B000DFFEB8 /* UpdateEndpointTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateEndpointTests.swift; sourceTree = "<group>"; };
 		29502A041BA37E6BD22C3C21 /* Pods-Commercetools.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools.release.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools/Pods-Commercetools.release.xcconfig"; sourceTree = "<group>"; };
 		9A456D0DAC39F1D37C1FEDB0 /* Pods_Commercetools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Commercetools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4BC5B13A5FAE631F09B678E /* Pods-Commercetools.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools/Pods-Commercetools.debug.xcconfig"; sourceTree = "<group>"; };
@@ -103,6 +107,7 @@
 				210BEF34FFFADD720A136729 /* CreateEndpoint.swift */,
 				210BE12054F8D0CB0147CBD9 /* ByIdEndpoint.swift */,
 				210BE80A6E99FC9F608AC3A6 /* DeleteEndpoint.swift */,
+				210BEC9E16C430A31F462309 /* UpdateEndpoint.swift */,
 			);
 			path = Endpoint;
 			sourceTree = "<group>";
@@ -147,6 +152,7 @@
 				211B593D1CCF95B600246522 /* ByIdEndpointTests.swift */,
 				21F26D8E1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift */,
 				21F26D901CD15A0D00DFFEB8 /* DeleteEndpointTests.swift */,
+				21F26D921CD172B000DFFEB8 /* UpdateEndpointTests.swift */,
 			);
 			path = CommercetoolsTests;
 			sourceTree = "<group>";
@@ -331,6 +337,7 @@
 				210BE40C5DD231FC289ACC9F /* ByIdEndpoint.swift in Sources */,
 				210BED47512A21301ACEFE86 /* Result.swift in Sources */,
 				210BE3925983FE6D33226BD1 /* DeleteEndpoint.swift in Sources */,
+				210BE2F771FF1894369D01B5 /* UpdateEndpoint.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,6 +346,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				211B593C1CCA592300246522 /* CreateEndpointTests.swift in Sources */,
+				21F26D931CD172B000DFFEB8 /* UpdateEndpointTests.swift in Sources */,
 				211B593E1CCF95B600246522 /* ByIdEndpointTests.swift in Sources */,
 				21C653521CBE6292008E84B2 /* AuthManagerTests.swift in Sources */,
 				21F26D8F1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift in Sources */,
