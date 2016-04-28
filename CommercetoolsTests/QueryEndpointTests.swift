@@ -24,9 +24,9 @@ class QueryEndpointTests: XCTestCase {
     }
 
     func testQueryPredicate() {
-        
+
         let queryExpectation = expectationWithDescription("query expectation")
-        
+
         let predicate = "slug(en=\"michael-kors-bag-30T3GTVT7L-lightbrown\")"
 
         TestProductProjections.query(predicates: [predicate], result: { result in
@@ -36,7 +36,7 @@ class QueryEndpointTests: XCTestCase {
                 queryExpectation.fulfill()
             }
         })
-        
+
         waitForExpectationsWithTimeout(10, handler: nil)
     }
 
@@ -65,6 +65,22 @@ class QueryEndpointTests: XCTestCase {
                     results = response["results"] as? [[String: AnyObject]],
                     name = results.first?["name"] as? [String: String], enName = name["en"]
                     where result.isSuccess && count == 2 && enName == "Bag DKNY beige" {
+                queryExpectation.fulfill()
+            }
+        })
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
+    func testMultiSortQuery() {
+
+        let queryExpectation = expectationWithDescription("query expectation")
+
+        TestProductProjections.query(sort: ["name.en asc", "slug.en asc"], limit: 1, result: { result in
+            if let response = result.response, count = response["count"] as? Int,
+            results = response["results"] as? [[String: AnyObject]],
+            name = results.first?["name"] as? [String: String], enName = name["en"]
+            where result.isSuccess && count == 1 && enName == "Alberto Guardiani – Slip on “Cherie”" {
                 queryExpectation.fulfill()
             }
         })

@@ -43,31 +43,40 @@ public extension QueryEndpoint {
                 return
             }
 
-            let fullPath = pathWithExpansion(path, expansion: expansion)
-            let parameters = self.queryParameters(predicates: predicates, sort: sort, limit: limit, offset: offset)
+            let fullPath = pathWithQueryOptions(basePath: path, predicates: predicates, sort: sort, expansion: expansion,
+                                                limit: limit, offset: offset)
 
-            Alamofire.request(.GET, fullPath, parameters: parameters, encoding: .URLEncodedInURL, headers: self.headers(token))
+            Alamofire.request(.GET, fullPath, parameters: nil, encoding: .URL, headers: self.headers(token))
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
                 handleResponse(response, result: result)
             })
         }
     }
 
-    private static func queryParameters(predicates predicates: [String]? = nil, sort: [String]? = nil, limit: UInt? = nil,
-                                 offset: UInt? = nil) -> [String: AnyObject] {
-        var parameters = [String: AnyObject]()
+    private static func pathWithQueryOptions(basePath basePath: String, predicates: [String]? = nil, sort: [String]? = nil,
+                                        expansion: [String]? = nil, limit: UInt? = nil,
+                                        offset: UInt? = nil) -> String {
+        var fullPath = pathWithExpansion(basePath, expansion: expansion)
+
+        if fullPath.hasSuffix("/") {
+            fullPath = fullPath.substringToIndex(fullPath.endIndex.advancedBy(-1))
+        }
+        if !fullPath.characters.contains("?") {
+            fullPath += "?"
+        }
+
         if let predicates = predicates where predicates.count > 0 {
-            predicates.forEach { parameters["where"] = $0 }
+            fullPath += "&where=" + predicates.map({ ParameterEncoding.URL.escape($0) }).joinWithSeparator("&where=")
         }
         if let sort = sort where sort.count > 0 {
-            sort.forEach { parameters["sort"] = $0 }
+            fullPath += "&sort=" + sort.map({ ParameterEncoding.URL.escape($0) }).joinWithSeparator("&sort=")
         }
         if let limit = limit {
-            parameters["limit"] = limit
+            fullPath += "&limit=\(limit)"
         }
         if let offset = offset {
-            parameters["offset"] = limit
+            fullPath += "&offset=\(offset)"
         }
-        return parameters
+        return fullPath
     }
 }
