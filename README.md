@@ -114,6 +114,26 @@ if authManager.state == .PlainToken {
 }
 ```
 
+## Consuming Commercetools endpoints
+
+Consuming and managing resources provided through available endpoints is very easy for any of the available endpoint classes.
+
+Depending on the capabilities of the resource, you can retrieve by specific UUID, use more detailed query options, and also perform create or update operations.
+
+All of these functionalities are provided by static methods for any specific supported endpoint. For an example, you can creating shopping cart using provided `Cart` class:
+```swift
+let createDraft = ["currency": "EUR"]
+
+Cart.create(createDraft, result: { result in
+	if let response = result.response where result.isSuccess {
+		// Do any work with response dictionary containing created `Cart` resource, i.e:
+		if let cartState = response["cartState"] as? String where cartState == "Active" {
+			// Our cart is active!
+		}
+	}
+})
+```
+
 [](definitions for the top badges)
 
 [travis]:https://travis-ci.org/sphereio/commercetools-ios-sdk
