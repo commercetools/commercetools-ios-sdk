@@ -27,11 +27,6 @@ class QueryEndpointTests: XCTestCase {
         
         let queryExpectation = expectationWithDescription("query expectation")
         
-        let username = "swift.sdk.test.user2@commercetools.com"
-        let password = "password"
-        
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
-
         let predicate = "slug(en=\"michael-kors-bag-30T3GTVT7L-lightbrown\")"
 
         TestProductProjections.query(predicates: [predicate], result: { result in
@@ -49,11 +44,6 @@ class QueryEndpointTests: XCTestCase {
 
         let queryExpectation = expectationWithDescription("query expectation")
 
-        let username = "swift.sdk.test.user2@commercetools.com"
-        let password = "password"
-
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
-
         TestProductProjections.query(sort: ["name.en asc"], limit: 8, result: { result in
             if let response = result.response, count = response["count"] as? Int,
                     results = response["results"] as? [[String: AnyObject]],
@@ -70,11 +60,6 @@ class QueryEndpointTests: XCTestCase {
 
         let queryExpectation = expectationWithDescription("query expectation")
 
-        let username = "swift.sdk.test.user2@commercetools.com"
-        let password = "password"
-
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
-
         TestProductProjections.query(sort: ["name.en asc"], limit: 2, offset: 1, result: { result in
             if let response = result.response, count = response["count"] as? Int,
                     results = response["results"] as? [[String: AnyObject]],
@@ -90,11 +75,6 @@ class QueryEndpointTests: XCTestCase {
     func testExpansionQueryEndpoint() {
 
         let queryExpectation = expectationWithDescription("query expectation")
-
-        let username = "swift.sdk.test.user2@commercetools.com"
-        let password = "password"
-
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         let predicate = "name(en=\"Bag “Jet Set Travel” Michael Kors light brown\")"
 
