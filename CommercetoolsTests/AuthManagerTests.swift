@@ -18,21 +18,6 @@ class AuthManagerTests: XCTestCase {
         
         super.tearDown()
     }
-
-    private func cleanPersistedTokens() {
-        let tokenStore = AuthManager.sharedInstance.tokenStore
-        tokenStore.accessToken = nil
-        tokenStore.refreshToken = nil
-        tokenStore.tokenValidDate = nil
-    }
-    
-    private func setupTestConfiguration() {
-        let testBundle = NSBundle(forClass: AuthManagerTests.self)
-        if let path = testBundle.pathForResource("CommercetoolsTestConfig", ofType: "plist"),
-            config = NSDictionary(contentsOfFile: path) {
-            Commercetools.config = Config(config: config)
-        }
-    }
     
     func testUserLogin() {
         setupTestConfiguration()
@@ -107,8 +92,10 @@ class AuthManagerTests: XCTestCase {
         authManager.token { token, error in oldToken = token }
 
         authManager.loginUser(username, password: password, completionHandler: { error in
-            if let error = error, errorInfo = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-                where errorInfo == "invalid_customer_account_credentials" {
+            if let error = error, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
+                where errorReason == "invalid_customer_account_credentials" &&
+                        errorDesc == "Customer account with the given credentials not found." {
                 loginExpectation.fulfill()
             }
         })
