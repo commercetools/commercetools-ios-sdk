@@ -6,28 +6,29 @@ import Foundation
 import Alamofire
 
 /**
-    All endpoints capable of being retrieved by UUID should conform to this protocol.
+    All endpoints capable of being deleted by UUID should conform to this protocol.
 
-    Default implementation provides retrieval by UUID capability for all Commercetools endpoints which do support it.
+    Default implementation provides deletion by UUID capability for all Commercetools endpoints which do support it.
 */
-public protocol ByIdEndpoint: Endpoint {
+public protocol DeleteEndpoint: Endpoint {
 
     /**
-        Retrieves an object by UUID at the endpoint specified with `path` value.
+        Deletes an object by UUID at the endpoint specified with `path` value.
 
-        - parameter id:                       Unique ID of the object to be retrieved.
+        - parameter id:                       Unique ID of the object to be deleted.
+        - parameter version:                  Version of the object (for optimistic concurrency control).
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func byId(id: String, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)
+    static func delete(id: String, version: UInt, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)
 
 }
 
-public extension ByIdEndpoint {
+public extension DeleteEndpoint {
 
-    static func byId(id: String, expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    static func delete(id: String, version: UInt, expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
         guard let config = Config.currentConfig, path = fullPath where config.validate() else {
-            Log.error("Cannot execute byId command - check if the configuration is valid.")
+            Log.error("Cannot execute delete command - check if the configuration is valid.")
             result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
             return
         }
@@ -40,7 +41,7 @@ public extension ByIdEndpoint {
 
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
 
-            Alamofire.request(.GET, fullPath, parameters: nil, encoding: .JSON, headers: self.headers(token))
+            Alamofire.request(.DELETE, fullPath, parameters: ["version": version], encoding: .URL, headers: self.headers(token))
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
                 handleResponse(response, result: result)
             })

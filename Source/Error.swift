@@ -16,6 +16,7 @@ public struct Error {
         case AccessTokenRetrievalFailed      = -7001
         case InvalidJsonInputError           = -7002
         case ResourceNotFoundError           = -7003
+        case ConcurrentModificationError     = -7004
         case GeneralCommercetoolsError       = -7099
 
         init(code: String) {
@@ -28,6 +29,8 @@ public struct Error {
                 self = .InvalidJsonInputError
             case "ResourceNotFound":
                 self = .ResourceNotFoundError
+            case "ConcurrentModification":
+                self = .ConcurrentModificationError
             default:
                 self = .GeneralCommercetoolsError
             }
