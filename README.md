@@ -81,7 +81,7 @@ if let configuration = Config() {
 }
 ```
 
-## Authenticated and anonymous usage
+## Authenticated and Anonymous Usage
 
 Endpoints from the Commercetools services can be consumed by both anonymous and authenticated users. After you specify the configuration, all further interactions with the Commercetools platform will be performed with anonymous user token.
 
@@ -114,7 +114,7 @@ if authManager.state == .PlainToken {
 }
 ```
 
-## Consuming Commercetools endpoints
+## Consuming Commercetools Endpoints
 
 Consuming and managing resources provided through available endpoints is very easy for any of the available endpoint classes.
 

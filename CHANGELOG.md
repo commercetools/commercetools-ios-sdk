@@ -2,9 +2,20 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
+- `0.0.x` Releases - [0.0.2](#002)
 - `0.0.x` Releases - [0.0.1](#001)
 
 ---
+
+## [0.0.2](https://github.com/sphereio/commercetools-ios-sdk/releases/tag/0.0.2)
+Released on 2016-04-28.
+
+#### Added
+- Complete shopping cart support.
+- Support for query endpoints.
+- Support for byId endpoints.
+- Support for delete endpoints.
+- Support for create endpoints.
 
 ## [0.0.1](https://github.com/sphereio/commercetools-ios-sdk/releases/tag/0.0.1)
 Released on 2016-04-21.
