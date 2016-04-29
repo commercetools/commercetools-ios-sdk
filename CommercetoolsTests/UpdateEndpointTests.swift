@@ -11,6 +11,10 @@ class UpdateEndpointTests: XCTestCase {
         static let path = "me/carts"
     }
 
+    private class TestProductProjections: QueryEndpoint {
+        static let path = "product-projections"
+    }
+
     override func setUp() {
         super.setUp()
 
@@ -32,16 +36,22 @@ class UpdateEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        let addLineItemAction = ["action": "addLineItem", "productId": "a9fd9c74-d00a-4de7-8258-6a9920abc66b", "variantId": 1]
+        TestProductProjections.query(limit: 1, result: { result in
+            if let response = result.response, results = response["results"] as? [[String: AnyObject]],
+            productId = results.first?["id"] as? String where result.isSuccess {
 
-        TestCart.create(["currency": "EUR"], result: { result in
-            if let response = result.response, id = response["id"] as? String, version = response["version"] as? UInt
-                    where result.isSuccess {
-                TestCart.update(id, version: version, actions: [addLineItemAction], result: { result in
-                    if let response = result.response, updatedId = response["id"] as? String,
-                            newVersion = response["version"] as? UInt where result.isSuccess  && updatedId == id
-                            && newVersion > version {
-                        updateExpectation.fulfill()
+                let addLineItemAction: [String: AnyObject] = ["action": "addLineItem", "productId": productId, "variantId": 1]
+
+                TestCart.create(["currency": "EUR"], result: { result in
+                    if let response = result.response, id = response["id"] as? String, version = response["version"] as? UInt
+                            where result.isSuccess {
+                        TestCart.update(id, version: version, actions: [addLineItemAction], result: { result in
+                            if let response = result.response, updatedId = response["id"] as? String,
+                                    newVersion = response["version"] as? UInt where result.isSuccess  && updatedId == id
+                                    && newVersion > version {
+                                updateExpectation.fulfill()
+                            }
+                        })
                     }
                 })
             }
@@ -59,16 +69,22 @@ class UpdateEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        let addLineItemAction = ["action": "addLineItem", "productId": "a9fd9c74-d00a-4de7-8258-6a9920abc66b", "variantId": 1]
+        TestProductProjections.query(limit: 1, result: { result in
+            if let response = result.response, results = response["results"] as? [[String: AnyObject]],
+                    productId = results.first?["id"] as? String where result.isSuccess {
 
-        TestCart.create(["currency": "EUR"], result: { result in
-            if let response = result.response, id = response["id"] as? String, version = response["version"] as? UInt
-            where result.isSuccess {
-                TestCart.update(id, version: version + 1, actions: [addLineItemAction], result: { result in
-                    if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-                            where errorReason == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." &&
-                            error.code == Error.Code.ConcurrentModificationError.rawValue {
-                        updateExpectation.fulfill()
+                let addLineItemAction: [String: AnyObject] = ["action": "addLineItem", "productId": productId, "variantId": 1]
+
+                TestCart.create(["currency": "EUR"], result: { result in
+                    if let response = result.response, id = response["id"] as? String, version = response["version"] as? UInt
+                            where result.isSuccess {
+                        TestCart.update(id, version: version + 1, actions: [addLineItemAction], result: { result in
+                            if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
+                                    where errorReason == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." &&
+                                    error.code == Error.Code.ConcurrentModificationError.rawValue {
+                                updateExpectation.fulfill()
+                            }
+                        })
                     }
                 })
             }

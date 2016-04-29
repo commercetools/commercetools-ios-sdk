@@ -11,7 +11,7 @@ class ByIdEndpointTests: XCTestCase {
         static let path = "me/carts"
     }
 
-    private class TestProductProjections: ByIdEndpoint {
+    private class TestProductProjections: ByIdEndpoint, QueryEndpoint {
         static let path = "product-projections"
     }
     
@@ -75,16 +75,16 @@ class ByIdEndpointTests: XCTestCase {
 
         let byIdExpectation = expectationWithDescription("byId expectation")
 
-        let username = "swift.sdk.test.user2@commercetools.com"
-        let password = "password"
-
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
-
-        TestProductProjections.byId("a9fd9c74-d00a-4de7-8258-6a9920abc66b", expansion: ["productType"], result: { result in
-            if let response = result.response, productType = response["productType"] as? [String: AnyObject],
+        TestProductProjections.query(limit: 1, result: { result in
+            if let response = result.response, results = response["results"] as? [[String: AnyObject]],
+                    id = results.first?["id"] as? String where result.isSuccess {
+                TestProductProjections.byId(id, expansion: ["productType"], result: { result in
+                    if let response = result.response, productType = response["productType"] as? [String: AnyObject],
                     productTypeObject = productType["obj"] as? [String: AnyObject]
                     where result.isSuccess && productTypeObject.count > 0 {
-                byIdExpectation.fulfill()
+                        byIdExpectation.fulfill()
+                    }
+                })
             }
         })
 
