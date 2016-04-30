@@ -3,6 +3,7 @@
 ![SPHERE.IO icon](https://admin.sphere.io/assets/images/sphere_logo_rgb_long.png)
 
 [![][travis img]][travis]
+[![][cocoapods img]][cocoapods]
 [![][license img]][license]
 
 ## Installation
@@ -134,10 +135,30 @@ Cart.create(createDraft, result: { result in
 })
 ```
 
+In case you need resources from an endpoint which hasn't been implemented in our SDK yet, you can easily create class representing that endpoint, and conform to appropriate protocols which take care of abstract endpoint implementations for many common use cases.
+
+The following list represents currently supported abstract endpoints. For each protocol, there is a default extension provided, which will almost always cover your needs:
+
+* Create endpoint - `create(object: [String: AnyObject], expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
+* Update endpoint - `update(id: String, version: UInt, actions: [[String: AnyObject]], expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
+* Query endpoint - `query(predicates predicates: [String]?, sort: [String]?, expansion: [String]?, limit: UInt?, offset: UInt?, result: (Result<[String: AnyObject], NSError>) -> Void)`
+* Retrieve resource by ID endpoint - `byId(id: String, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
+* Retrieve resource by key endpoint - `byKey(key: String, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
+* Delete endpoint - `delete(id: String, version: UInt, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
+
+## Handling Results
+
+In order to check whether any action with Commercetools services was successfully executed, you should use `isSuccess` or `isFailure` property of the result in question. For all successful operations, `response` property contains values returned from the server.
+
+For all failed operations, `errors` property should be used from the result in question to present or handle specific issues. `NSError` instances with domain equal to `com.commercetools.error` usually contain descriptive information about the error, returned by the API. Those can be found by `NSLocalizedFailureReasonErrorKey` for general issue cause, and by `NSLocalizedDescriptionKey` for more detailed description, where applicable.
+
 [](definitions for the top badges)
 
 [travis]:https://travis-ci.org/sphereio/commercetools-ios-sdk
 [travis img]:https://travis-ci.org/sphereio/commercetools-ios-sdk.svg?branch=master
+
+[cocoapods]:https://cocoapods.org/pods/Commercetools
+[cocoapods img]:https://img.shields.io/cocoapods/v/Commercetools.svg
 
 [license]:LICENSE
 [license img]:https://img.shields.io/badge/License-Apache%202-blue.svg
