@@ -32,7 +32,7 @@ public extension QueryEndpoint {
     static func query(predicates predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
                       limit: UInt? = nil, offset: UInt? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
         guard let config = Config.currentConfig, path = fullPath where config.validate() else {
-            Log.error("Cannot execute delete command - check if the configuration is valid.")
+            Log.error("Cannot execute query command - check if the configuration is valid.")
             result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
             return
         }
