@@ -37,6 +37,11 @@
                BlueprintName = "CommercetoolsTests"
                ReferencedContainer = "container:Commercetools.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "UpdateByKeyEndpointTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>
