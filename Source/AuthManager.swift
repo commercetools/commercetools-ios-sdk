@@ -149,7 +149,8 @@ public class AuthManager {
         Log.debug("Getting new anonymous access token after user logout")
         token { _, error in
             if let error = error {
-                Log.error("Could not obtain auth token \(error.userInfo[NSLocalizedFailureReasonErrorKey] ?? nil)")
+                Log.error("Could not obtain auth token "
+                        + (error.userInfo[NSLocalizedFailureReasonErrorKey] as? String ?? ""))
             }
         }
     }

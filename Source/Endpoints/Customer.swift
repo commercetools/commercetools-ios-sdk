@@ -57,6 +57,63 @@ public class Customer: Endpoint {
         customerProfileAction(method: .DELETE, parameters: ["version": version], result: result)
     }
 
+    // MARK: - Password management
+
+    /**
+        Changes password for the currently logged in user.
+
+        - parameter currentPassword:          The current password.
+        - parameter newPassword:              The new password.
+        - parameter version:                  Customer profile version (for optimistic concurrency control).
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    static func changePassword(currentPassword currentPassword: String, newPassword: String, version: UInt,
+                               result: (Result<[String: AnyObject], NSError>) -> Void) {
+
+        customerProfileAction(method: .POST, basePath: "password", parameters: ["currentPassword": currentPassword,
+                              "newPassword": newPassword, "version": version], encoding: .JSON, result: { changePasswordResult in
+
+            if let response = changePasswordResult.response, email = response["email"] as? String where changePasswordResult.isSuccess {
+                AuthManager.sharedInstance.loginUser(email, password: newPassword, completionHandler: { error in
+                    if let error = error {
+                        Log.error("Could not login automatically after password change "
+                                + (error.userInfo[NSLocalizedFailureReasonErrorKey] as? String ?? ""))
+                    }
+                })
+            }
+            result(changePasswordResult)
+        })
+    }
+
+    /**
+        Resets password for the user with matching token. Most common use case for this method is if your app
+        handles custom URLs, so you can process user's tap on the password reset link (e.g in mail).
+
+        - parameter token:                    The token obtained from the customers/password-token endpoint.
+                                              Usually parsed from the reset password URL.
+        - parameter newPassword:              The new password.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    static func resetPassword(token token: String, newPassword: String, result: (Result<[String: AnyObject], NSError>) -> Void) {
+
+        customerProfileAction(method: .POST, basePath: "password/reset", parameters: ["tokenValue": token,
+                              "newPassword": newPassword], encoding: .JSON, result: result)
+    }
+
+    /**
+        Verifies email address for the user with matching token. Most common use case for this method is if your app
+        handles custom URLs, so you can process user's tap on the account activation link (e.g in mail).
+
+        - parameter token:                    The token obtained from the customers/email-token endpoint.
+                                              Usually parsed from the account activation URL.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    static func verifyEmail(token token: String, result: (Result<[String: AnyObject], NSError>) -> Void) {
+
+        customerProfileAction(method: .POST, basePath: "email/confirm", parameters: ["tokenValue": token],
+                              encoding: .JSON, result: result)
+    }
+
     private static func customerProfileAction(method method: Alamofire.Method, basePath: String? = nil,
                                               parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL,
                                               result: (Result<[String: AnyObject], NSError>) -> Void) {
