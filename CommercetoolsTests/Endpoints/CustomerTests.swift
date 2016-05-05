@@ -23,13 +23,6 @@ class CustomerTests: XCTestCase {
         super.tearDown()
     }
 
-    private func setupProjectManagementConfiguration() {
-        // For creating password reset and account activation tokens, we need a configuration which
-        // contains manage_customers scope.
-        let config = [:]
-        Commercetools.config = Config(config: config)
-    }
-
     func testRetrieveCustomerProfile() {
         setupTestConfiguration()
 

@@ -15,19 +15,12 @@ class UpdateByKeyEndpointTests: XCTestCase {
         super.setUp()
 
         cleanPersistedTokens()
-        setupTestConfiguration()
+        setupProjectManagementConfiguration()
     }
 
     override func tearDown() {
         cleanPersistedTokens()
         super.tearDown()
-    }
-
-    override func setupTestConfiguration() {
-        // For update by key tests which include product type, we need a configuration which
-        // contains manage_products scope.
-        let config = [:]
-        Commercetools.config = Config(config: config)
     }
 
     func testUpdateEndpoint() {
