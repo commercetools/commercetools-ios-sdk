@@ -15,7 +15,7 @@ public class Customer: Endpoint {
 
     public static let path = "me"
 
-    // MARK: - Customer endpoint functionalities
+    // MARK: - Customer endpoint functionality
 
     /**
         Retrieves customer profile for the currently logged in user.

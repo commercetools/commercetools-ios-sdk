@@ -13,7 +13,7 @@ import Alamofire
 public protocol QueryEndpoint: Endpoint {
 
     /**
-        Queries objects by UUID at the endpoint specified with `path` value.
+        Queries for objects at the endpoint specified with `path` value.
 
         - parameter predicate:                An optional array of predicates used for querying for objects.
         - parameter sort:                     An optional array of sort options used for sorting the results.
@@ -54,7 +54,7 @@ public extension QueryEndpoint {
         }
     }
 
-    private static func queryParameters(predicates predicates: [String]? = nil, sort: [String]? = nil,
+    static func queryParameters(predicates predicates: [String]? = nil, sort: [String]? = nil,
                                         expansion: [String]? = nil, limit: UInt? = nil,
                                         offset: UInt? = nil) -> [String: AnyObject] {
         var parameters = [String: AnyObject]()
