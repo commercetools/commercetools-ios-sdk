@@ -37,17 +37,6 @@
                BlueprintName = "CommercetoolsTests"
                ReferencedContainer = "container:Commercetools.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "CustomerTests/testResetPassword()">
-               </Test>
-               <Test
-                  Identifier = "CustomerTests/testVerifyEmail()">
-               </Test>
-               <Test
-                  Identifier = "UpdateByKeyEndpointTests">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>
@@ -81,6 +70,28 @@
             ReferencedContainer = "container:Commercetools.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "PROJECT_KEY"
+            value = "$(CT_SDK_TEST_PROJECT_KEY)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "SCOPE"
+            value = "$(CT_SDK_TEST_SCOPE)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "CLIENT_ID"
+            value = "$(CT_SDK_TEST_CLIENT_ID)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "CLIENT_SECRET"
+            value = "$(CT_SDK_TEST_CLIENT_SECRET)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
