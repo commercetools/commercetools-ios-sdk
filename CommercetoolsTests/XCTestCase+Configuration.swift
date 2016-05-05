@@ -24,6 +24,9 @@ extension XCTestCase {
 
             let config = ["projectKey": projectKey, "scope": scope, "clientId": clientId, "clientSecret": clientSecret]
             Commercetools.config = Config(config: config)
+        } else {
+            Log.error("No configuration with extended scope found in environment variables. This configuration is" +
+                      " needed to run the test successfully.")
         }
     }
     
