@@ -279,6 +279,10 @@ Customer.verifyEmail(token: token, result: { result in
 })
 ```
 
+#### Order
+
+Order endpoint provides the ability to create an order from an existing `Cart`, but also retrieve orders by UUID, and perform queries for orders.
+
 ## Handling Results
 
 In order to check whether any action with Commercetools services was successfully executed, you should use `isSuccess` or `isFailure` property of the result in question. For all successful operations, `response` property contains values returned from the server.
