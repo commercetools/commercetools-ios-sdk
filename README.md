@@ -157,7 +157,7 @@ Cart endpoint supports all common operations:
 Cart.query(limit: 2, offset: 1, result: { result in
     if let response = result.response, count = response["count"] as? Int,
             results = response["results"] as? [[String: AnyObject]] where result.isSuccess {
-        // response contain an array of cart dictionary responses
+        // response contains an array of cart dictionary responses
     }
 })
 ```
@@ -282,6 +282,29 @@ Customer.verifyEmail(token: token, result: { result in
 #### Order
 
 Order endpoint provides the ability to create an order from an existing `Cart`, but also retrieve orders by UUID, and perform queries for orders.
+
+#### Product Projection
+
+Most common way for your iOS app to retrieve the product data is by consuming the product projection endpoint. The following actions are currently supported:
+- Query for product projections
+```swift
+let predicate = "slug(en=\"michael-kors-bag-30T3GTVT7L-lightbrown\")"
+
+ProductProjection.query(predicates: [predicate], sort: ["name.en asc"], limit: 10, offset: 10, result: { result in
+    if let response = result.response, count = response["count"] as? Int,
+			results = response["results"] as? [[String: AnyObject]] where result.isSuccess {
+        // results contains an array of product projections dictionary responses
+    }
+})
+```
+- Retrieve product projection by UUID
+```swift
+ProductProjection.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
+    if let response = result.response where result.isSuccess {
+        // response contains product projection dictionary
+    }
+})
+```
 
 ## Handling Results
 
