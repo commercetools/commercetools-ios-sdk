@@ -2,10 +2,21 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
+- `0.0.x` Releases - [0.0.3](#003)
 - `0.0.x` Releases - [0.0.2](#002)
 - `0.0.x` Releases - [0.0.1](#001)
 
 ---
+
+## [0.0.3](https://github.com/sphereio/commercetools-ios-sdk/releases/tag/0.0.3)
+Released on 2016-05-06.
+
+#### Added
+- Support for byKey retrieve and update endpoints.
+- Customer profile endpoint and sign up.
+- Advanced customer actions - account verification, password reset.
+- Support for orders endpoint.
+- Product projection endpoint query and retrieval functionality.
 
 ## [0.0.2](https://github.com/sphereio/commercetools-ios-sdk/releases/tag/0.0.2)
 Released on 2016-04-28.
