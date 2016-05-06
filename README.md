@@ -149,6 +149,59 @@ The following list represents currently supported abstract endpoints. For each p
 
 ### Currently Supported Endpoints
 
+#### Cart
+
+Cart endpoint supports all common operations:
+- Query for carts (user must be logged in)
+```swift
+Cart.query(limit: 2, offset: 1, result: { result in
+    if let response = result.response, count = response["count"] as? Int,
+            results = response["results"] as? [[String: AnyObject]] where result.isSuccess {
+        // response contain an array of cart dictionary responses
+    }
+})
+```
+- Create new cart (user must be logged in)
+```swift
+let cartDraft = ["currency": "EUR"]
+
+Cart.create(cartDraft, result: { result in
+    if let response = result.response, cartState = response["cartState"] as? String where result.isSuccess {
+        // Cart successfully created, response contains created cart in dictionary representation
+    }
+})
+```
+- Update existing cart (user must be logged in)
+```swift
+let version = 1 // Set the appropriate current version
+let addLineItemAction: [String: AnyObject] = ["action": "addLineItem", "productId": productId, "variantId": 1]
+
+Cart.update(cartId, version: version, actions: [addLineItemAction], result: { result in
+    if let response = result.response where result.isSuccess {
+        // Cart successfully updated, response contains updated cart in dictionary representation
+    }
+})
+```
+- Delete existing cart (user must be logged in)
+```swift
+let version = 1 // Set the appropriate current version
+
+Cart.delete(cartId, version: version, result: { result in
+    if let response = result.response where result.isSuccess {
+        // Cart successfully deleted
+    }
+})
+```
+- Retrieve cart by UUID (user must be logged in)
+```swift
+Cart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
+    if let response = result.response, cartState = response["cartState"] as? String where result.isSuccess
+    		&& cartState == "Active" {
+        // response contains cart dictionary
+    }
+})
+```
+
 #### Customer
 
 Customer endpoint offers you several possible actions to use from your iOS app:

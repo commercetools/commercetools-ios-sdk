@@ -7,7 +7,7 @@ import Foundation
 /**
     Provides complete set of interactions for querying, retrieving, creating and updating shopping cart.
 */
-public class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint {
+public class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, DeleteEndpoint {
 
     public static let path = "me/carts"
 
