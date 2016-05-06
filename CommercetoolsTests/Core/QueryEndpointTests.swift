@@ -96,7 +96,7 @@ class QueryEndpointTests: XCTestCase {
 
         let predicate = "name(en=\"Bag “Jet Set Travel” Michael Kors light brown\")"
 
-        ProductProjection.query(predicates: [predicate], expansion: ["productType"], result: { result in
+        TestProductProjections.query(predicates: [predicate], expansion: ["productType"], result: { result in
             if let response = result.response, _ = response["count"] as? Int,
                     results = response["results"] as? [[String: AnyObject]],
                     productType = results.first?["productType"] as? [String: AnyObject],

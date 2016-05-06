@@ -122,4 +122,23 @@ class ProductProjectionTests: XCTestCase {
         waitForExpectationsWithTimeout(10, handler: nil)
     }
 
+    func testExpansionQueryEndpoint() {
+
+        let queryExpectation = expectationWithDescription("query expectation")
+
+        let predicate = "name(en=\"Bag “Jet Set Travel” Michael Kors light brown\")"
+
+        ProductProjection.query(predicates: [predicate], expansion: ["productType"], result: { result in
+            if let response = result.response, _ = response["count"] as? Int,
+                    results = response["results"] as? [[String: AnyObject]],
+                    productType = results.first?["productType"] as? [String: AnyObject],
+                    productTypeObject = productType["obj"] as? [String: AnyObject] where result.isSuccess
+                    && productTypeObject.count > 0 {
+                queryExpectation.fulfill()
+            }
+        })
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
 }

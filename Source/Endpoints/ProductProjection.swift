@@ -44,7 +44,7 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
 
             let fullPath = pathWithExpansion(path, expansion: expansion)
             var parameters = paramsWithStaged(staged, params: queryParameters(predicates: predicates, sort: sort,
-                                              expansion: expansion, limit: limit, offset: offset))
+                                              limit: limit, offset: offset))
 
             Alamofire.request(.GET, fullPath, parameters: parameters, encoding: .URL, headers: self.headers(token))
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
