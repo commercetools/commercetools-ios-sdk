@@ -147,6 +147,85 @@ The following list represents currently supported abstract endpoints. For each p
 * Retrieve resource by key endpoint - `byKey(key: String, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
 * Delete endpoint - `delete(id: String, version: UInt, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
 
+### Currently Supported Endpoints
+
+#### Customer
+
+Customer endpoint offers you several possible actions to use from your iOS app:
+- Retrieve user profile (user must be logged in)
+```swift
+Customer.profile { result in
+    if let response = result.response, firstName = response["firstName"] as? String,
+            lastName = response["lastName"] as? String where result.isSuccess {
+        // E.g present user profile details
+    }
+}
+```
+- Sign up for a new account (anonymous user is being handled by `AuthManager`)
+```swift
+let username = "new.swift.sdk.test.user@commercetools.com"
+let signupDraft = ["email": username, "password": "password"]
+
+Customer.signup(signupDraft, result: { result in
+    if let response = result.response, customer = response["customer"] as? [String: AnyObject],
+    		version = customer["version"] as? UInt where result.isSuccess {
+        // User has been successfully signed up.
+        // Now, you'd probably want to present the login form, or simply
+        // use AuthManager to login user automatically
+    }
+})
+```
+- Update customer account (user must be logged in)
+```swift
+var setFirstNameAction: [String: AnyObject] = ["action": "setFirstName", "firstName": "newName"]
+
+Customer.update(version: version, actions: [setFirstNameAction], result: { result in
+    if let response = result.response, version = response["version"] as? UInt where result.isSuccess {
+    	// User profile successfully updated
+    }
+})
+```
+- Delete customer account (user must be logged in)
+```swift
+var setFirstNameAction: [String: AnyObject] = ["action": "setFirstName", "firstName": "newName"]
+
+Customer.delete(version: version, result: { result in
+    if let response = result.response where result.isSuccess {
+        // Customer was successfully deleted
+    }
+})
+```
+- Change password (user must be logged in)
+```swift
+let  version = 1 // Set the appropriate current version
+
+Customer.changePassword(currentPassword: "password", newPassword: "newPassword", version: version, result: { result in
+    if let response = result.response where result.isSuccess {
+    	// Password has been changed, and now AuthManager has automatically obtained new access token
+    }
+})
+```
+- Reset password with token (anonymous user is being handled by `AuthManager`)
+```swift
+let token = "" // Usually this token is retrieved from the password reset link, in case your app does support universal links
+
+Customer.resetPassword(token: token, newPassword: "password", result: { result in
+    if let response = result.response, email = response["email"] as? String where result.isSuccess {
+        // Password has been successfully reset, now would be a good time to present the login screen
+    }
+})
+```
+- Verify email with token (user must be logged in)
+```swift
+let token = "" // Usually this token is retrieved from the activation link, in case your app does support universal links
+
+Customer.verifyEmail(token: token, result: { result in
+    if let response = result.response, email = response["email"] as? String where result.isSuccess {
+        // Email has been successfully verified, probably show UIAlertController with this info
+    }
+})
+```
+
 ## Handling Results
 
 In order to check whether any action with Commercetools services was successfully executed, you should use `isSuccess` or `isFailure` property of the result in question. For all successful operations, `response` property contains values returned from the server.
