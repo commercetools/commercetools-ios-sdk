@@ -37,7 +37,8 @@
 		211B59371CC77C7200246522 /* CommercetoolsTestConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 211B59361CC77C7200246522 /* CommercetoolsTestConfig.plist */; };
 		211B593A1CC782B400246522 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 211B59391CC782B400246522 /* Info.plist */; };
 		213398191CDB8BB2003248BD /* ProductProjectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213398181CDB8BB2003248BD /* ProductProjectionTests.swift */; };
-		21C653461CBE6292008E84B2 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C653451CBE6292008E84B2 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		21C6080A1CE006EE001A68A7 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C608081CE006EE001A68A7 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		21C6080B1CE006EE001A68A7 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 21C608091CE006EE001A68A7 /* Info.plist */; };
 		21C6534D1CBE6292008E84B2 /* Commercetools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21C653421CBE6291008E84B2 /* Commercetools.framework */; };
 		21C653521CBE6292008E84B2 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C653511CBE6292008E84B2 /* AuthManagerTests.swift */; };
 		21F26D8F1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F26D8E1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift */; };
@@ -85,9 +86,9 @@
 		211B59361CC77C7200246522 /* CommercetoolsTestConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CommercetoolsTestConfig.plist; sourceTree = "<group>"; };
 		211B59391CC782B400246522 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		213398181CDB8BB2003248BD /* ProductProjectionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductProjectionTests.swift; sourceTree = "<group>"; };
+		21C608081CE006EE001A68A7 /* Commercetools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Commercetools.h; sourceTree = "<group>"; };
+		21C608091CE006EE001A68A7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		21C653421CBE6291008E84B2 /* Commercetools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Commercetools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		21C653451CBE6292008E84B2 /* Commercetools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Commercetools.h; sourceTree = "<group>"; };
-		21C653471CBE6292008E84B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		21C6534C1CBE6292008E84B2 /* CommercetoolsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CommercetoolsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		21C653511CBE6292008E84B2 /* AuthManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManagerTests.swift; sourceTree = "<group>"; };
 		21F26D8E1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Configuration.swift"; sourceTree = "<group>"; };
@@ -173,11 +174,20 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
+		21C6080C1CE00A71001A68A7 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				21C608081CE006EE001A68A7 /* Commercetools.h */,
+				21C608091CE006EE001A68A7 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		21C653381CBE6291008E84B2 = {
 			isa = PBXGroup;
 			children = (
-				21C653441CBE6292008E84B2 /* Commercetools */,
-				21C653501CBE6292008E84B2 /* CommercetoolsTests */,
+				21C6535D1CBE7465008E84B2 /* Source */,
+				21C653501CBE6292008E84B2 /* Tests */,
 				21C653431CBE6291008E84B2 /* Products */,
 				CB1FFB69F4CD60CC05B6E787 /* Pods */,
 				1ED781DF76A2C1868F060799 /* Frameworks */,
@@ -193,17 +203,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		21C653441CBE6292008E84B2 /* Commercetools */ = {
-			isa = PBXGroup;
-			children = (
-				21C6535D1CBE7465008E84B2 /* Source */,
-				21C653451CBE6292008E84B2 /* Commercetools.h */,
-				21C653471CBE6292008E84B2 /* Info.plist */,
-			);
-			path = Commercetools;
-			sourceTree = "<group>";
-		};
-		21C653501CBE6292008E84B2 /* CommercetoolsTests */ = {
+		21C653501CBE6292008E84B2 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				21C653511CBE6292008E84B2 /* AuthManagerTests.swift */,
@@ -213,21 +213,22 @@
 				210BEC3C800BFC27FD53DCE3 /* Core */,
 				210BE453058150E1F794B91A /* Endpoints */,
 			);
-			path = CommercetoolsTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		21C6535D1CBE7465008E84B2 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				210BEC3CECE84C25122CFBE3 /* Core */,
+				210BE57E609238C63F1BC032 /* Endpoints */,
 				210BE7EF595235524206718F /* Commercetools.swift */,
 				210BE36824D8A23C8CFDB13F /* Config.swift */,
 				210BEAADF7135452064FD935 /* Log.swift */,
 				210BE69087D43E8630A27203 /* AuthManager.swift */,
 				210BE57833F74D2656716AF8 /* Error.swift */,
 				210BEF4B389CAF21987D0F00 /* TokenStore.swift */,
-				210BEC3CECE84C25122CFBE3 /* Core */,
 				210BE2D37FC5D53E1528CEBB /* Result.swift */,
-				210BE57E609238C63F1BC032 /* Endpoints */,
+				21C6080C1CE00A71001A68A7 /* Supporting Files */,
 			);
 			path = Source;
 			sourceTree = SOURCE_ROOT;
@@ -248,7 +249,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				21C653461CBE6292008E84B2 /* Commercetools.h in Headers */,
+				21C6080A1CE006EE001A68A7 /* Commercetools.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,6 +335,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21C6080B1CE006EE001A68A7 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,7 +538,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Commercetools/Info.plist;
+				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.sdk.ios.Commercetools;
@@ -553,7 +555,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Commercetools/Info.plist;
+				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.sdk.ios.Commercetools;
@@ -565,7 +567,7 @@
 		21C6535A1CBE6292008E84B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = CommercetoolsTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.sdk.jvm.ios.CommercetoolsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -575,7 +577,7 @@
 		21C6535B1CBE6292008E84B2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = CommercetoolsTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.sdk.jvm.ios.CommercetoolsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
