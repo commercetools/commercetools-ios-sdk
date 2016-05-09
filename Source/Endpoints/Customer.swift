@@ -114,6 +114,8 @@ public class Customer: Endpoint {
                               encoding: .JSON, result: result)
     }
 
+    // MARK: - Helpers
+
     private static func customerProfileAction(method method: Alamofire.Method, basePath: String? = nil,
                                               parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL,
                                               result: (Result<[String: AnyObject], NSError>) -> Void) {

@@ -19,6 +19,38 @@ class ProductProjectionTests: XCTestCase {
         super.tearDown()
     }
 
+    func testSearch() {
+
+        let searchExpectation = expectationWithDescription("search expectation")
+
+        ProductProjection.search(sort: ["name.en asc"], limit: 10, text: ["en": "Michael Kors"], result: { result in
+            if let response = result.response, total = response["total"] as? Int,
+            results = response["results"] as? [[String: AnyObject]] where result.isSuccess && total == 103 {
+                searchExpectation.fulfill()
+            }
+        })
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
+    func testSearchWithExpansion() {
+
+        let searchExpectation = expectationWithDescription("search expectation")
+
+        ProductProjection.search(limit: 10, expansion: ["productType"], text: ["en": "Michael Kors"],
+                result: { result in
+                    if let response = result.response, _ = response["count"] as? Int,
+                    results = response["results"] as? [[String: AnyObject]],
+                    productType = results.first?["productType"] as? [String: AnyObject],
+                    productTypeObject = productType["obj"] as? [String: AnyObject] where result.isSuccess
+                            && productTypeObject.count > 0 {
+                        searchExpectation.fulfill()
+                    }
+                })
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
     func testById() {
 
         let byIdExpectation = expectationWithDescription("byId expectation")
