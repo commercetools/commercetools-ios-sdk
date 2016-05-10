@@ -23,7 +23,7 @@ class ProductProjectionTests: XCTestCase {
 
         let searchExpectation = expectationWithDescription("search expectation")
 
-        ProductProjection.search(sort: ["name.en asc"], limit: 10, text: ["en": "Michael Kors"], result: { result in
+        ProductProjection.search(sort: ["name.en asc"], limit: 10, text: "Michael Kors", result: { result in
             if let response = result.response, total = response["total"] as? Int,
             results = response["results"] as? [[String: AnyObject]] where result.isSuccess && total == 103 {
                 searchExpectation.fulfill()
@@ -37,7 +37,7 @@ class ProductProjectionTests: XCTestCase {
 
         let searchExpectation = expectationWithDescription("search expectation")
 
-        ProductProjection.search(limit: 10, expansion: ["productType"], text: ["en": "Michael Kors"],
+        ProductProjection.search(limit: 10, expansion: ["productType"], text: "Michael Kors",
                 result: { result in
                     if let response = result.response, _ = response["count"] as? Int,
                     results = response["results"] as? [[String: AnyObject]],

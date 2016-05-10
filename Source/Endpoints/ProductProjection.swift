@@ -44,10 +44,11 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter result:                   The code to be executed after processing the response.
     */
     public static func search(staged staged: Bool? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil,
-                              offset: UInt? = nil, text: [String: String]? = nil, fuzzy: Bool? = nil, filter: String? = nil,
-                              filterQuery: String? = nil, filterFacets: String? = nil, facets: [String: AnyObject]? = nil,
-                              priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
-                              priceChannel: String? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+                              offset: UInt? = nil, lang: NSLocale = NSLocale.currentLocale(), text: String? = nil,
+                              fuzzy: Bool? = nil, filter: String? = nil, filterQuery: String? = nil, filterFacets: String? = nil,
+                              facets: [[String: AnyObject]]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
+                              priceCustomerGroup: String? = nil, priceChannel: String? = nil,
+                              result: (Result<[String: AnyObject], NSError>) -> Void) {
 
         guard let config = Config.currentConfig, path = fullPath where config.validate() else {
             Log.error("Cannot execute query command - check if the configuration is valid.")
@@ -65,7 +66,7 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
 
             var parameters = paramsWithStaged(staged, params: queryParameters(predicates: nil, sort: sort,
                     limit: limit, offset: offset))
-            parameters = searchParams(text: text, fuzzy: fuzzy, filter: filter, filterQuery: filterQuery,
+            parameters = searchParams(lang: lang, text: text, fuzzy: fuzzy, filter: filter, filterQuery: filterQuery,
                     filterFacets: filterFacets, facets: facets, priceCurrency: priceCurrency,
                     priceCountry: priceCountry, priceCustomerGroup: priceCustomerGroup,
                     priceChannel: priceChannel, params: parameters)
@@ -157,14 +158,14 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
         return params
     }
 
-    private static func searchParams(text text: [String: String]?, fuzzy: Bool?, filter: String?, filterQuery: String?,
-                                     filterFacets: String?, facets: [String: AnyObject]?, priceCurrency: String?,
-                                     priceCountry: String?, priceCustomerGroup: String?, priceChannel: String?,
+    private static func searchParams(lang lang: NSLocale = NSLocale.currentLocale(), text: String? = nil, fuzzy: Bool?,
+                                     filter: String?, filterQuery: String?, filterFacets: String?, facets: [[String: AnyObject]]?,
+                                     priceCurrency: String?, priceCountry: String?, priceCustomerGroup: String?, priceChannel: String?,
                                      params: [String: AnyObject]? = nil) -> [String: AnyObject] {
         var params = params ?? [String: AnyObject]()
 
-        if let text = text where text.count > 0 {
-            params["text.\(text.first!.0)"] = text.first!.1
+        if let text = text, lang = NSLocale.componentsFromLocaleIdentifier(lang.localeIdentifier)["kCFLocaleLanguageCodeKey"] {
+            params["text.\(lang)"] = text
         }
 
         if let fuzzy = fuzzy {
