@@ -25,9 +25,9 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter limit:                    An optional parameter to limit the number of returned results.
         - parameter offset:                   An optional parameter to set the offset of the first returned result.
-        - parameter text:                     Dictionary representing the text to analyze and search for.
-                                              It should contain one entry, where the value is the text to search for,
-                                              and the key represents the language in form of an IETF language tag.
+        - parameter lang:                     Locale for text search. If no locale is provided, current locale will be
+                                              the default value.
+        - parameter text:                     Localized text to analyze and search for.
         - parameter fuzzy:                    An optional parameter determining whether to apply fuzzy search on
                                               the text to analyze.
         - parameter filter:                   An optional filter to be applied to the search results
@@ -46,7 +46,7 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
     public static func search(staged staged: Bool? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil,
                               offset: UInt? = nil, lang: NSLocale = NSLocale.currentLocale(), text: String? = nil,
                               fuzzy: Bool? = nil, filter: String? = nil, filterQuery: String? = nil, filterFacets: String? = nil,
-                              facets: [[String: AnyObject]]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
+                              facets: [String]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
                               priceCustomerGroup: String? = nil, priceChannel: String? = nil,
                               result: (Result<[String: AnyObject], NSError>) -> Void) {
 
@@ -158,14 +158,14 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
         return params
     }
 
-    private static func searchParams(lang lang: NSLocale = NSLocale.currentLocale(), text: String? = nil, fuzzy: Bool?,
-                                     filter: String?, filterQuery: String?, filterFacets: String?, facets: [[String: AnyObject]]?,
+    private static func searchParams(lang lang: NSLocale, text: String? = nil, fuzzy: Bool?,
+                                     filter: String?, filterQuery: String?, filterFacets: String?, facets: [String]?,
                                      priceCurrency: String?, priceCountry: String?, priceCustomerGroup: String?, priceChannel: String?,
                                      params: [String: AnyObject]? = nil) -> [String: AnyObject] {
         var params = params ?? [String: AnyObject]()
 
-        if let text = text, lang = NSLocale.componentsFromLocaleIdentifier(lang.localeIdentifier)["kCFLocaleLanguageCodeKey"] {
-            params["text.\(lang)"] = text
+        if let text = text {
+            params["text." + lang.localeIdentifier.stringByReplacingOccurrencesOfString("_", withString: "-")] = text
         }
 
         if let fuzzy = fuzzy {
@@ -185,7 +185,7 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
         }
 
         if let facets = facets where facets.count > 0 {
-            params["facets"] = facets
+            params["facet"] = facets
         }
 
         if let priceCurrency = priceCurrency {
