@@ -17,7 +17,7 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
     // MARK: - Product projection endpoint functionality
 
     /**
-        High performance search queries over product projections endpoint.
+        Full-text search queries over product projections endpoint.
 
         - parameter staged:                   An optional bool value, determining whether to query
                                               for the current or staged projections.
