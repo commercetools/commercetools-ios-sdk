@@ -79,6 +79,44 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
     }
 
     /**
+        Retrieves suggestions based on the `searchKeyword` product field.
+
+        - parameter staged:                   An optional bool value, determining whether to query
+                                              for the current or staged projections.
+        - parameter limit:                    An optional parameter to limit the number of returned results.
+        - parameter lang:                     Locale for text search. If no locale is provided, current locale will be
+                                              the default value.
+        - parameter searchKeywords:           Localized text to analyze retrieve suggestions for.
+        - parameter fuzzy:                    An optional parameter determining whether to apply fuzzy search on
+                                              the text to analyze.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    public static func suggest(staged staged: Bool? = nil, limit: UInt? = nil, lang: NSLocale = NSLocale.currentLocale(),
+                               searchKeywords: String, fuzzy: Bool? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+        guard let config = Config.currentConfig, path = fullPath where config.validate() else {
+            Log.error("Cannot execute query command - check if the configuration is valid.")
+            result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
+            return
+        }
+
+        AuthManager.sharedInstance.token { token, error in
+            guard let token = token else {
+                result(Result.Failure([error ?? Error.error(code: .GeneralCommercetoolsError)]))
+                return
+            }
+
+            var parameters = paramsWithStaged(staged, params: queryParameters(limit: limit))
+            parameters = searchParams(fuzzy: fuzzy)
+            parameters["searchKeywords." + lang.localeIdentifier.stringByReplacingOccurrencesOfString("_", withString: "-")] = searchKeywords
+
+            Alamofire.request(.GET, "\(path)suggest", parameters: parameters, encoding: .URL, headers: self.headers(token))
+            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+                handleResponse(response, result: result)
+            })
+        }
+    }
+
+    /**
         Queries for product projection.
 
         - parameter staged:                   An optional bool value, determining whether to query
@@ -158,9 +196,10 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
         return params
     }
 
-    private static func searchParams(lang lang: NSLocale, text: String? = nil, fuzzy: Bool?,
-                                     filter: String?, filterQuery: String?, filterFacets: String?, facets: [String]?,
-                                     priceCurrency: String?, priceCountry: String?, priceCustomerGroup: String?, priceChannel: String?,
+    private static func searchParams(lang lang: NSLocale = NSLocale.currentLocale(), text: String? = nil, fuzzy: Bool? = nil,
+                                     filter: String? = nil, filterQuery: String? = nil, filterFacets: String? = nil,
+                                     facets: [String]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
+                                     priceCustomerGroup: String? = nil, priceChannel: String? = nil,
                                      params: [String: AnyObject]? = nil) -> [String: AnyObject] {
         var params = params ?? [String: AnyObject]()
 

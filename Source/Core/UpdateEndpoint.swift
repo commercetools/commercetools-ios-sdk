@@ -29,7 +29,7 @@ public extension UpdateEndpoint {
 
     static func update(id: String, version: UInt, actions: [[String: AnyObject]], expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
         guard let config = Config.currentConfig, path = fullPath where config.validate() else {
-            Log.error("Cannot execute delete command - check if the configuration is valid.")
+            Log.error("Cannot execute update command - check if the configuration is valid.")
             result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
             return
         }

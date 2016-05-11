@@ -294,11 +294,13 @@ ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: NSLocale(locale
         // results contains an array of product projections dictionary responses
     }
 })
-
-ProductProjection.query(predicates: [predicate], sort: ["name.en asc"], limit: 10, offset: 10, result: { result in
-    if let response = result.response, count = response["count"] as? Int,
-			results = response["results"] as? [[String: AnyObject]] where result.isSuccess {
-        // results contains an array of product projections dictionary responses
+```
+- Product projection keyword suggestions
+```swift
+ProductProjection.suggest(lang: NSLocale(localeIdentifier: "en"), searchKeywords: "michael", result: { result in
+    if let response = result.response, keywords = response["searchKeywords.en"] as? [[String: AnyObject]],
+    		firstKeyword = keywords.first?["text"] as? String where result.isSuccess {
+        // keywords contains an array of suggestions in dictionary representation
     }
 })
 ```
