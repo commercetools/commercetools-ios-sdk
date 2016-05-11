@@ -7,6 +7,10 @@ import XCTest
 
 class ProductProjectionTests: XCTestCase {
 
+    private class TestTaxCategory: QueryEndpoint {
+        static let path = "tax-categories"
+    }
+
     override func setUp() {
         super.setUp()
 
@@ -17,6 +21,86 @@ class ProductProjectionTests: XCTestCase {
     override func tearDown() {
         cleanPersistedTokens()
         super.tearDown()
+    }
+
+    func testSearch() {
+
+        let searchExpectation = expectationWithDescription("search expectation")
+
+        ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: NSLocale(localeIdentifier: "en"),
+                                 text: "Michael Kors", result: { result in
+            if let response = result.response, total = response["total"] as? Int,
+                    results = response["results"] as? [[String: AnyObject]] where result.isSuccess && total == 103 {
+                searchExpectation.fulfill()
+            }
+        })
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
+    func testSearchFacets() {
+
+        let searchExpectation = expectationWithDescription("search expectation")
+
+        ProductProjection.search(staged: true, filterFacets: "variants.attributes.color.key:\"red\"",
+                facets: ["variants.attributes.color.key", "variants.attributes.commonSize.key"], result: { result in
+            if let response = result.response, facets = response["facets"] as? [String: AnyObject],
+                    colorFacets = facets["variants.attributes.color.key"] as? [String: AnyObject],
+                    colorFacetsTotal = colorFacets["total"] as? UInt, colorTerms = colorFacets["terms"] as? [[String: AnyObject]],
+                    blueTerm = colorTerms.first!["term"] as? String, blueCount = colorTerms.first!["count"] as? UInt,
+
+                    sizeFacets = facets["variants.attributes.commonSize.key"] as? [String: AnyObject],
+                    sizeFacetsTotal = sizeFacets["total"] as? UInt, sizeTerms = sizeFacets["terms"] as? [[String: AnyObject]],
+                    xxxlTerm = sizeTerms.first!["term"] as? String, xxxlCount = sizeTerms.first!["count"] as? UInt
+
+            where result.isSuccess && colorFacetsTotal == 8703 && blueTerm == "blue" && blueCount == 1865
+                    && sizeFacetsTotal == 278 && xxxlTerm == "xxxl" && xxxlCount == 45 {
+
+                searchExpectation.fulfill()
+            }
+        })
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
+    func testSearchFilter() {
+
+        let searchExpectation = expectationWithDescription("search expectation")
+
+        TestTaxCategory.query(limit: 1, result: { result in
+            if let response = result.response, results = response["results"] as? [[String: AnyObject]],
+                    taxCategoryId = results.first?["id"] as? String where result.isSuccess {
+
+                ProductProjection.search(staged: true, limit: 1, filterQuery: "taxCategory.id:\"\(taxCategoryId)\"",
+                        result: { result in
+
+                    if let response = result.response, total = response["total"] as? Int, results = response["results"] as? [[String: AnyObject]]
+                            where result.isSuccess && total == 999 {
+                        searchExpectation.fulfill()
+                    }
+                })
+            }
+        })
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
+    func testSearchWithExpansion() {
+
+        let searchExpectation = expectationWithDescription("search expectation")
+
+        ProductProjection.search(limit: 10, expansion: ["productType"],  lang: NSLocale(localeIdentifier: "en"), text: "Michael Kors",
+                result: { result in
+                    if let response = result.response, _ = response["count"] as? Int,
+                            results = response["results"] as? [[String: AnyObject]],
+                            productType = results.first?["productType"] as? [String: AnyObject],
+                            productTypeObject = productType["obj"] as? [String: AnyObject] where result.isSuccess
+                            && productTypeObject.count > 0 {
+                        searchExpectation.fulfill()
+                    }
+                })
+
+        waitForExpectationsWithTimeout(10, handler: nil)
     }
 
     func testById() {
