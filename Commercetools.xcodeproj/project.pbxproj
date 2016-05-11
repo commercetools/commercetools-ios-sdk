@@ -19,6 +19,7 @@
 		210BE35D4CAA2F56F2E62062 /* QueryEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE75EF663DC6979FE0FCF /* QueryEndpoint.swift */; };
 		210BE3925983FE6D33226BD1 /* DeleteEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE80A6E99FC9F608AC3A6 /* DeleteEndpoint.swift */; };
 		210BE40C5DD231FC289ACC9F /* ByIdEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE12054F8D0CB0147CBD9 /* ByIdEndpoint.swift */; };
+		210BE46ADE08AB809FFB22DD /* ProductType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE258C80D22ECAA4660A4 /* ProductType.swift */; };
 		210BE69C056B75CF70357AFF /* UpdateEndpointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BEEF193D03D0E260EF170 /* UpdateEndpointTests.swift */; };
 		210BE6C3063D6C460F6D8601 /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE4DCEEE2B368FC013FF0 /* Order.swift */; };
 		210BE7E502CA456C30566881 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210BE57833F74D2656716AF8 /* Error.swift */; };
@@ -57,6 +58,7 @@
 
 /* Begin PBXFileReference section */
 		210BE12054F8D0CB0147CBD9 /* ByIdEndpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByIdEndpoint.swift; sourceTree = "<group>"; };
+		210BE258C80D22ECAA4660A4 /* ProductType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductType.swift; sourceTree = "<group>"; };
 		210BE2D37FC5D53E1528CEBB /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		210BE36824D8A23C8CFDB13F /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		210BE3AEF096B27E48F86A4B /* Cart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cart.swift; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 				210BE57902D25B9BD0342A69 /* Customer.swift */,
 				210BE4DCEEE2B368FC013FF0 /* Order.swift */,
 				210BEB9F8FEDA82BE1A8C60E /* ProductProjection.swift */,
+				210BE258C80D22ECAA4660A4 /* ProductType.swift */,
 			);
 			path = Endpoints;
 			sourceTree = "<group>";
@@ -407,6 +410,7 @@
 				210BE317383AF01BE274933A /* Customer.swift in Sources */,
 				210BE6C3063D6C460F6D8601 /* Order.swift in Sources */,
 				210BE30354065747CA48F92C /* ProductProjection.swift in Sources */,
+				210BE46ADE08AB809FFB22DD /* ProductType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
