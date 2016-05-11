@@ -103,6 +103,20 @@ class ProductProjectionTests: XCTestCase {
         waitForExpectationsWithTimeout(10, handler: nil)
     }
 
+    func testSuggestions() {
+
+        let suggestExpectation = expectationWithDescription("suggest expectation")
+
+        ProductProjection.suggest(lang: NSLocale(localeIdentifier: "en"), searchKeywords: "michael", result: { result in
+            if let response = result.response, keywords = response["searchKeywords.en"] as? [[String: AnyObject]],
+            firstKeyword = keywords.first?["text"] as? String where result.isSuccess {
+                suggestExpectation.fulfill()
+            }
+        })
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
     func testById() {
 
         let byIdExpectation = expectationWithDescription("byId expectation")
