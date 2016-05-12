@@ -380,6 +380,17 @@ In order to check whether any action with Commercetools services was successfull
 
 For all failed operations, `errors` property should be used from the result in question to present or handle specific issues. `NSError` instances with domain equal to `com.commercetools.error` usually contain descriptive information about the error, returned by the API. Those can be found by `NSLocalizedFailureReasonErrorKey` for general issue cause, and by `NSLocalizedDescriptionKey` for more detailed description, where applicable.
 
+## Tests Setup
+
+If there is a need to implement a custom endpoint which communicates with Commercetools services, it is recommended that such endpoint is also tested. Our `XCTestCase` extension provides good examples on how to setup test configuration. For some tests regular mobile client scope is sufficient (in most cases `view_products manage_my_profile manage_my_orders`). If your tests require setup or configuration with higher level privileges (scope), you can setup them as well. SDK tests consume this configuration from the environment variables for safety reasons.
+
+Setting up helper endpoints in test classes is also very easy. You can declare a private class conforming to specific endpoint protocols:
+```swift
+private class Foobar: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, DeleteEndpoint {
+    static let path = "foobar"
+}
+```
+
 [](definitions for the top badges)
 
 [travis]:https://travis-ci.org/sphereio/commercetools-ios-sdk
