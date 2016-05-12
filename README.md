@@ -202,6 +202,27 @@ Cart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
 })
 ```
 
+#### Category
+
+Using regular mobile scope, it is possible to retrieve by UUID and query for categories.
+- Query for categories
+```swift
+Category.query(limit: 10, offset: 1, result: { result in
+    if let response = result.response, count = response["count"] as? Int,
+            categories = response["results"] as? [[String: AnyObject]] where result.isSuccess {
+        // categories contains an array of category dictionary responses
+    }
+})
+```
+- Retrieve category by UUID
+```swift
+Cart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
+    if let response = result.response where result.isSuccess {
+        // response contains category dictionary representation
+    }
+})
+```
+
 #### Customer
 
 Customer endpoint offers you several possible actions to use from your iOS app:
@@ -320,6 +341,35 @@ ProductProjection.query(predicates: [predicate], sort: ["name.en asc"], limit: 1
 ProductProjection.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
     if let response = result.response where result.isSuccess {
         // response contains product projection dictionary
+    }
+})
+```
+
+#### Product Type
+
+Using regular mobile scope, it is possible to retrieve by UUID, key and query for product types.
+- Query for product types
+```swift
+ProductType.query(limit: 10, offset: 1, result: { result in
+    if let response = result.response, count = response["count"] as? Int,
+            productTypes = response["results"] as? [[String: AnyObject]] where result.isSuccess {
+        // productTypes contains an array of product type dictionary responses
+    }
+})
+```
+- Retrieve product type by UUID
+```swift
+ProductType.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
+    if let response = result.response where result.isSuccess {
+        // response contains product type dictionary representation
+    }
+})
+```
+- Retrieve product type by key
+```swift
+ProductType.byKey("main", result: { result in
+    if let response = result.response where result.isSuccess {
+        // response contains product type dictionary representation
     }
 })
 ```
