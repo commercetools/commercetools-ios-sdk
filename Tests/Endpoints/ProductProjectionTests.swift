@@ -14,7 +14,6 @@ class ProductProjectionTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        cleanPersistedTokens()
         setupTestConfiguration()
     }
 
@@ -30,7 +29,7 @@ class ProductProjectionTests: XCTestCase {
         ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: NSLocale(localeIdentifier: "en"),
                                  text: "Michael Kors", result: { result in
             if let response = result.response, total = response["total"] as? Int,
-                    results = response["results"] as? [[String: AnyObject]] where result.isSuccess && total == 103 {
+                    _ = response["results"] as? [[String: AnyObject]] where result.isSuccess && total == 103 {
                 searchExpectation.fulfill()
             }
         })
@@ -74,7 +73,7 @@ class ProductProjectionTests: XCTestCase {
                 ProductProjection.search(staged: true, limit: 1, filterQuery: "taxCategory.id:\"\(taxCategoryId)\"",
                         result: { result in
 
-                    if let response = result.response, total = response["total"] as? Int, results = response["results"] as? [[String: AnyObject]]
+                    if let response = result.response, total = response["total"] as? Int, _ = response["results"] as? [[String: AnyObject]]
                             where result.isSuccess && total == 999 {
                         searchExpectation.fulfill()
                     }
@@ -109,7 +108,7 @@ class ProductProjectionTests: XCTestCase {
 
         ProductProjection.suggest(lang: NSLocale(localeIdentifier: "en"), searchKeywords: "michael", result: { result in
             if let response = result.response, keywords = response["searchKeywords.en"] as? [[String: AnyObject]],
-            firstKeyword = keywords.first?["text"] as? String where result.isSuccess {
+            _ = keywords.first?["text"] as? String where result.isSuccess {
                 suggestExpectation.fulfill()
             }
         })

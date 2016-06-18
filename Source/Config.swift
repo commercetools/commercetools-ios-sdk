@@ -14,7 +14,13 @@ public class Config {
     // MARK: - Properties
 
     /// The current configuration used by Commercetools SDK.
-    static var currentConfig: Config?
+    static var currentConfig: Config? {
+        didSet {
+            // When the current configuration changes, we want to invoke reload tokens on the token store
+            // for the specific project from the newly specified config.
+            AuthManager.sharedInstance.tokenStore.reloadTokens()
+        }
+    }
 
     /// The log level for the Commercetools library. Debug level is the default.
     public var logLevel = LogLevel.Debug

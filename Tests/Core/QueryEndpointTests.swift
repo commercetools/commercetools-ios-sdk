@@ -14,7 +14,6 @@ class QueryEndpointTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        cleanPersistedTokens()
         setupTestConfiguration()
     }
     

@@ -14,7 +14,6 @@ class UpdateByKeyEndpointTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        cleanPersistedTokens()
         setupProjectManagementConfiguration()
     }
 
