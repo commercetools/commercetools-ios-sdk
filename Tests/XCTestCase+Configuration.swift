@@ -12,6 +12,7 @@ extension XCTestCase {
         if let path = testBundle.pathForResource("CommercetoolsTestConfig", ofType: "plist"),
             config = NSDictionary(contentsOfFile: path) {
             Commercetools.config = Config(config: config)
+            cleanPersistedTokens()
         }
     }
 

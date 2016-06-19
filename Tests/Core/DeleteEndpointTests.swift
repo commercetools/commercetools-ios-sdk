@@ -14,7 +14,6 @@ class DeleteEndpointTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        cleanPersistedTokens()
         setupTestConfiguration()
     }
 

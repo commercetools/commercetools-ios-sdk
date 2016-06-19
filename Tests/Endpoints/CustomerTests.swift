@@ -14,8 +14,6 @@ class CustomerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
-        cleanPersistedTokens()
     }
 
     override func tearDown() {

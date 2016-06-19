@@ -18,13 +18,21 @@ class TokenStore {
     private let SecAttrAccount: String! = kSecAttrAccount as String
 
     /// The key used for storing access token.
-    private let kAuthAccessTokenKey = "com.commercetools.authAccessTokenKey"
+    private var authAccessTokenKey: String {
+        // Appending project key from the current configuration if it is set, so we have unique
+        // per project token entries.
+        return "com.commercetools.authAccessTokenKey" + (Config.currentConfig?.projectKey ?? "")
+    }
 
     /// The key used for storing refresh token.
-    private let kAuthRefreshTokenKey = "com.commercetools.authRefreshTokenKey"
+    private var authRefreshTokenKey: String {
+        return "com.commercetools.authRefreshTokenKey" + (Config.currentConfig?.projectKey ?? "")
+    }
 
     /// The key used for storing auth token valid date.
-    private let kAuthTokenValidKey = "com.commercetools.authTokenValidKey"
+    private var authTokenValidKey: String {
+        return "com.commercetools.authTokenValidKey" + (Config.currentConfig?.projectKey ?? "")
+    }
 
     /// The value for kSecAttrService property which uniquely identifies keychain accessor.
     private let kKeychainServiceName = "com.commercetools.sdk"
@@ -34,7 +42,7 @@ class TokenStore {
         didSet {
             // Keychain write operation can be expensive, and we can do it asynchronously.
             dispatch_async(serialQueue, {
-                self.setObject(self.accessToken, forKey: self.kAuthAccessTokenKey)
+                self.setObject(self.accessToken, forKey: self.authAccessTokenKey)
             })
         }
     }
@@ -44,7 +52,7 @@ class TokenStore {
         didSet {
             // Keychain write operation can be expensive, and we can do it asynchronously.
             dispatch_async(serialQueue, {
-                self.setObject(self.refreshToken, forKey: self.kAuthRefreshTokenKey)
+                self.setObject(self.refreshToken, forKey: self.authRefreshTokenKey)
             })
         }
     }
@@ -54,7 +62,7 @@ class TokenStore {
         didSet {
             // Keychain write operation can be expensive, and we can do it asynchronously.
             dispatch_async(serialQueue, {
-                self.setObject(self.tokenValidDate, forKey: self.kAuthTokenValidKey)
+                self.setObject(self.tokenValidDate, forKey: self.authTokenValidKey)
             })
         }
     }
@@ -68,9 +76,16 @@ class TokenStore {
         Initializes the `TokenStore` by loading previously stored tokens and valid period.
     */
     init() {
-        accessToken = objectForKey(kAuthAccessTokenKey) as? String
-        refreshToken = objectForKey(kAuthRefreshTokenKey) as? String
-        tokenValidDate = objectForKey(kAuthTokenValidKey) as? NSDate
+        reloadTokens()
+    }
+
+    /**
+        Loads previously stored tokens and valid period for the currently set Commercetools project.
+    */
+    func reloadTokens() {
+        accessToken = objectForKey(authAccessTokenKey) as? String
+        refreshToken = objectForKey(authRefreshTokenKey) as? String
+        tokenValidDate = objectForKey(authTokenValidKey) as? NSDate
     }
 
     // MARK: - Keychain access
