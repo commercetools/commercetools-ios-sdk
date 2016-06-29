@@ -129,7 +129,6 @@ public class AuthManager {
                 self.logoutUser()
             }
             self.processLoginUser(username, password: password, completionHandler: { token, error in
-                print("\(token) access token")
                 completionHandler(error)
                 dispatch_semaphore_signal(semaphore)
             })

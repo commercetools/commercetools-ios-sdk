@@ -8,9 +8,9 @@ import Alamofire
 /**
     Provides access to active cart endpoint.
 */
-public class ActiveCart: Endpoint {
+class ActiveCart: Endpoint {
 
-    public static let path = "me/active-cart"
+    static let path = "me/active-cart"
 
     /**
         Retrieves the cart with state Active which has the most recent lastModifiedAt.
