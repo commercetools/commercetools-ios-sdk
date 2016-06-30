@@ -157,6 +157,8 @@ Cart endpoint supports all common operations:
 Cart.active(result: { result in
     if let response = result.response where result.isSuccess {
         // Cart successfully retrieved, response contains currently active cart in dictionary representation
+    } else {
+        // Your user might not have an active cart at the moment
     }
 })
 ```
