@@ -152,6 +152,14 @@ The following list represents currently supported abstract endpoints. For each p
 #### Cart
 
 Cart endpoint supports all common operations:
+- Retrieve active cart (user must be logged in)
+```swift
+Cart.active(result: { result in
+    if let response = result.response where result.isSuccess {
+        // Cart successfully retrieved, response contains currently active cart in dictionary representation
+    }
+})
+```
 - Query for carts (user must be logged in)
 ```swift
 Cart.query(limit: 2, offset: 1, result: { result in
