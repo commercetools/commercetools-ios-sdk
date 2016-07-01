@@ -18,12 +18,11 @@ public class AuthManager {
         - PlainToken:       Auth manager is handling a token without an associated customer.
         - NoToken:          Auth manager does not have a token (i.e. because Commercetools configuration is not valid)
     */
-
     public enum TokenState: Int {
-        case CustomerToken
-        case AnonymousToken
-        case PlainToken
-        case NoToken
+        case CustomerToken   = 0
+        case AnonymousToken  = 1
+        case PlainToken      = 2
+        case NoToken         = 3
     }
 
     // MARK: - Properties
@@ -31,8 +30,18 @@ public class AuthManager {
     /// A shared instance of `AuthManager`, which should be used by other SDK objects.
     public static let sharedInstance = AuthManager()
 
+    /// A property used for setting the `anonymous_id` while obtaining anonymous session access and refresh tokens.
+    public var anonymousId: String?
+
     /// The current state auth manager is handling.
-    public private(set) var state: TokenState = .NoToken
+    public private(set) var state: TokenState {
+        get {
+            return tokenStore.tokenState ?? .NoToken
+        }
+        set {
+            tokenStore.tokenState = newValue
+        }
+    }
 
     /// The token store used for loading and storing access and refresh tokens.
     let tokenStore = TokenStore()
@@ -75,15 +84,27 @@ public class AuthManager {
         return nil
     }
 
+    /// The URL used for requesting an access and refresh token for an anonymous session
+    private var anonymousSessionTokenUrl: String? {
+        if let config = Config.currentConfig, baseAuthUrl = config.authUrl, projectKey = config.projectKey
+                where config.validate() {
+            return "\(baseAuthUrl)oauth/\(projectKey)/anonymous/token"
+        }
+        return nil
+    }
+
     /// The URL used for requesting token for password flow.
     private var loginUrl: String? {
         if let config = Config.currentConfig, baseAuthUrl = config.authUrl, projectKey = config.projectKey
-        where config.validate() {
+                where config.validate() {
             return "\(baseAuthUrl)oauth/\(projectKey)/customers/token"
 
         }
         return nil
     }
+
+    /// Bool property indicating whether the manager should obtain anonymous session token or plain token.
+    private var usingAnonymousSession = false
 
     /// The HTTP headers containing basic HTTP auth needed to obtain the tokens.
     private var authHeaders: [String: String]? {
@@ -156,6 +177,19 @@ public class AuthManager {
     }
 
     /**
+        This method should be used to override `anonymousSession` Bool parameter from the configuration and get new tokens.
+        Once this method is invoked, any previously logged in user will be logged out. In case there was an anonymous
+        session active, the refresh token will be removed, and the session will not be recoverable any more.
+        Most common use case for this method is user logout.
+
+        - parameter usingSession:       Bool parameter indicating whether anonymous session should be used.
+    */
+    public func getAnonymousToken(usingSession usingSession: Bool) {
+        usingAnonymousSession = usingSession
+        logoutUser()
+    }
+
+    /**
         This method provides auth token to be used in all requests to Commercetools services.
         In case the token has already been obtained, and it's still valid, completion handler
         gets called without network request.
@@ -176,12 +210,32 @@ public class AuthManager {
         })
     }
 
+    /**
+        When the current configuration changes, we want to invoke reload tokens on the token store
+        for the specific project from the newly specified config. Also, in case the new configuration contains
+        different anonymous token preferences, they will be applied after this method call.
+    */
+    func updatedConfig() {
+        tokenStore.reloadTokens()
+
+        if let config = Config.currentConfig where config.validate() {
+            usingAnonymousSession = config.anonymousSession ?? false
+        }
+
+        if (state == .AnonymousToken && !usingAnonymousSession) ||
+                (state == .PlainToken && usingAnonymousSession) {
+            logoutUser()
+        }
+    }
+
     // MARK: - Retrieving tokens from the auth API
 
     private func processTokenRequest(completionHandler: (String?, NSError?) -> Void) {
         if let config = Config.currentConfig where config.validate() {
             if let accessToken = accessToken, tokenValidDate = tokenValidDate where tokenValidDate.compare(NSDate()) == .OrderedDescending {
-                self.state = refreshToken != nil ? .CustomerToken : .PlainToken
+                if refreshToken == nil {
+                    self.state = .PlainToken
+                }
                 completionHandler(accessToken, nil)
 
             } else {
@@ -212,6 +266,25 @@ public class AuthManager {
     }
 
     private func obtainAnonymousToken(completionHandler: (String?, NSError?) -> Void) {
+        usingAnonymousSession ? obtainAnonymousSessionToken(completionHandler) : obtainPlainAnonymousToken(completionHandler)
+    }
+
+    private func obtainAnonymousSessionToken(completionHandler: (String?, NSError?) -> Void) {
+        if let authUrl = anonymousSessionTokenUrl, authHeaders = authHeaders, scope = Config.currentConfig?.scope {
+            var parameters = ["grant_type": "client_credentials", "scope": scope]
+            if let anonymousId = anonymousId {
+                parameters["anonymous_id"] = anonymousId
+            }
+
+            Alamofire.request(.POST, authUrl, parameters: parameters, encoding: .URLEncodedInURL, headers: authHeaders)
+            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+                self.state = .AnonymousToken
+                self.handleAuthResponse(response, completionHandler: completionHandler)
+            })
+        }
+    }
+
+    private func obtainPlainAnonymousToken(completionHandler: (String?, NSError?) -> Void) {
         if let authUrl = clientCredentialsUrl, authHeaders = authHeaders, scope = Config.currentConfig?.scope {
             Alamofire.request(.POST, authUrl, parameters: ["grant_type": "client_credentials", "scope": scope], encoding: .URLEncodedInURL, headers: authHeaders)
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
@@ -225,7 +298,6 @@ public class AuthManager {
         if let authUrl = clientCredentialsUrl, authHeaders = authHeaders, refreshToken = refreshToken {
             Alamofire.request(.POST, authUrl, parameters: ["grant_type": "refresh_token", "refresh_token": refreshToken], encoding: .URLEncodedInURL, headers: authHeaders)
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
-                self.state = .CustomerToken
                 self.handleAuthResponse(response, completionHandler: completionHandler)
             })
         }
