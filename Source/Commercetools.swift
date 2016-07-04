@@ -24,3 +24,39 @@ public var config: Config? {
         }
     }
 }
+
+// MARK: - Authorization management
+
+/**
+    This method should be used for user login. After successful login the new auth token is used for all
+    further requests with Commercetools services.
+    In case this method is called before previously logging user out, it will automatically logout (i.e remove
+    previously stored tokens).
+
+    - parameter username:           The user's username.
+    - parameter password:           The user's password.
+    - parameter completionHandler:  The code to be executed once the token fetching completes.
+*/
+public func loginUser(username: String, password: String, completionHandler: (NSError?) -> Void) {
+    AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: completionHandler)
+}
+
+/**
+    This method will clear all tokens both from memory and persistent storage.
+    Most common use case for this method is user logout.
+*/
+public func logoutUser() {
+    AuthManager.sharedInstance.logoutUser()
+}
+
+/**
+    This method should be used to override `anonymousSession` Bool parameter from the configuration and get new tokens.
+    Once this method is invoked, any previously logged in user will be logged out. In case there was an anonymous
+    session active, the refresh token will be removed, and the session will not be recoverable any more.
+    Most common use case for this method is user logout.
+
+    - parameter usingSession:       Bool parameter indicating whether anonymous session should be used.
+*/
+public func obtainAnonymousToken(usingSession usingSession: Bool, anonymousId: String? = nil) {
+    AuthManager.sharedInstance.obtainAnonymousToken(usingSession: usingSession, anonymousId: anonymousId)
+}

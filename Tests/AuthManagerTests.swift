@@ -118,7 +118,7 @@ class AuthManagerTests: XCTestCase {
         let tokenExpectation = expectationWithDescription("token expectation")
 
         let authManager = AuthManager.sharedInstance
-        authManager.getAnonymousToken(usingSession: false)
+        authManager.obtainAnonymousToken(usingSession: false)
 
         authManager.token { token, error in
             if let token = token where !token.isEmpty && error == nil && authManager.state == .PlainToken {
@@ -164,13 +164,35 @@ class AuthManagerTests: XCTestCase {
         waitForExpectationsWithTimeout(10, handler: nil)
     }
 
-    func testAnonymousSessionDuplicateId() {
-        let anonymousSessionExpectation = expectationWithDescription("anonymous session expectation")
-
-        let authManager = AuthManager.sharedInstance
-        authManager.anonymousId = "test"
-
+    func testAssigningAnonymousId() {
         setupTestConfiguration()
+        let anonymousIdExpectation = expectationWithDescription("anonymous id expectation")
+        let anonymousId = NSUUID().UUIDString
+        let authManager = AuthManager.sharedInstance
+
+        authManager.obtainAnonymousToken(usingSession: true, anonymousId: anonymousId)
+
+        authManager.token { token, error in
+            if let _ = token where error == nil && authManager.state == .AnonymousToken {
+                Cart.create(["currency": "EUR"], result: { result in
+                    if let response = result.response, cartAnonymousId = response["anonymousId"] as? String
+                            where result.isSuccess && cartAnonymousId == anonymousId {
+                        anonymousIdExpectation.fulfill()
+                    }
+                })
+            }
+        }
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
+    func testAnonymousSessionDuplicateId() {
+        setupTestConfiguration()
+
+        let anonymousSessionExpectation = expectationWithDescription("anonymous session expectation")
+        let authManager = AuthManager.sharedInstance
+
+        authManager.obtainAnonymousToken(usingSession: true, anonymousId: "test")
 
         // Retrieve token with the anonymousId for the first time
         authManager.token { _, _ in }
@@ -186,6 +208,39 @@ class AuthManagerTests: XCTestCase {
             errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
             where errorReason == "invalid_request" &&
                     errorDesc == "The anonymousId is already in use." {
+                anonymousSessionExpectation.fulfill()
+            }
+        }
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
+    func testPlistUsingAnonymousSessionConfig() {
+        setupTestConfiguration()
+
+        let anonymousSessionExpectation = expectationWithDescription("anonymous session expectation")
+        let authManager = AuthManager.sharedInstance
+
+        // Configuration in plist has anonymousSession usage set to true, so we should get anonymous session token
+        authManager.token { token, error in
+            if let _ = token where error == nil && authManager.state == .AnonymousToken {
+                anonymousSessionExpectation.fulfill()
+            }
+        }
+
+        waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
+    func testOverrideAnonymousSessionConfig() {
+        setupTestConfiguration()
+
+        let authManager = AuthManager.sharedInstance
+        let anonymousSessionExpectation = expectationWithDescription("anonymous session expectation")
+
+        authManager.obtainAnonymousToken(usingSession: false)
+
+        authManager.token { token, error in
+            if let _ = token where error == nil && authManager.state == .PlainToken {
                 anonymousSessionExpectation.fulfill()
             }
         }

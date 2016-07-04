@@ -31,7 +31,7 @@ public class AuthManager {
     public static let sharedInstance = AuthManager()
 
     /// A property used for setting the `anonymous_id` while obtaining anonymous session access and refresh tokens.
-    public var anonymousId: String?
+    var anonymousId: String?
 
     /// The current state auth manager is handling.
     public private(set) var state: TokenState {
@@ -184,7 +184,8 @@ public class AuthManager {
 
         - parameter usingSession:       Bool parameter indicating whether anonymous session should be used.
     */
-    public func getAnonymousToken(usingSession usingSession: Bool) {
+    public func obtainAnonymousToken(usingSession usingSession: Bool, anonymousId: String? = nil) {
+        self.anonymousId = anonymousId
         usingAnonymousSession = usingSession
         logoutUser()
     }
