@@ -27,6 +27,11 @@ public var config: Config? {
 
 // MARK: - Authorization management
 
+/// The current state handled by authentication manager.
+public var authState: TokenState {
+    return AuthManager.sharedInstance.state
+}
+
 /**
     This method should be used for user login. After successful login the new auth token is used for all
     further requests with Commercetools services.
