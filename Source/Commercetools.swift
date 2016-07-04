@@ -56,7 +56,9 @@ public func logoutUser() {
     Most common use case for this method is user logout.
 
     - parameter usingSession:       Bool parameter indicating whether anonymous session should be used.
+    - parameter anonymousId:        Optional argument to assign custom value for `anonymous_id`.
+    - parameter completionHandler:  The code to be executed once the token fetching completes.
 */
-public func obtainAnonymousToken(usingSession usingSession: Bool, anonymousId: String? = nil) {
-    AuthManager.sharedInstance.obtainAnonymousToken(usingSession: usingSession, anonymousId: anonymousId)
+public func obtainAnonymousToken(usingSession usingSession: Bool, anonymousId: String? = nil, completionHandler: (NSError?) -> Void) {
+    AuthManager.sharedInstance.obtainAnonymousToken(usingSession: usingSession, anonymousId: anonymousId, completionHandler: completionHandler)
 }

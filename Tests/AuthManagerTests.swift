@@ -118,13 +118,13 @@ class AuthManagerTests: XCTestCase {
         let tokenExpectation = expectationWithDescription("token expectation")
 
         let authManager = AuthManager.sharedInstance
-        authManager.obtainAnonymousToken(usingSession: false)
-
-        authManager.token { token, error in
-            if let token = token where !token.isEmpty && error == nil && authManager.state == .PlainToken {
-                tokenExpectation.fulfill()
+        authManager.obtainAnonymousToken(usingSession: false, completionHandler: { _ in
+            authManager.token { token, error in
+                if let token = token where !token.isEmpty && error == nil && authManager.state == .PlainToken {
+                    tokenExpectation.fulfill()
+                }
             }
-        }
+        })
 
         waitForExpectationsWithTimeout(10, handler: nil)
     }
@@ -170,18 +170,17 @@ class AuthManagerTests: XCTestCase {
         let anonymousId = NSUUID().UUIDString
         let authManager = AuthManager.sharedInstance
 
-        authManager.obtainAnonymousToken(usingSession: true, anonymousId: anonymousId)
-
-        authManager.token { token, error in
-            if let _ = token where error == nil && authManager.state == .AnonymousToken {
+        authManager.obtainAnonymousToken(usingSession: true, anonymousId: anonymousId, completionHandler: { error in
+            if error == nil && authManager.state == .AnonymousToken {
                 Cart.create(["currency": "EUR"], result: { result in
                     if let response = result.response, cartAnonymousId = response["anonymousId"] as? String
-                            where result.isSuccess && cartAnonymousId == anonymousId {
+                    where result.isSuccess && cartAnonymousId == anonymousId {
                         anonymousIdExpectation.fulfill()
                     }
                 })
             }
-        }
+
+        })
 
         waitForExpectationsWithTimeout(10, handler: nil)
     }
@@ -192,25 +191,21 @@ class AuthManagerTests: XCTestCase {
         let anonymousSessionExpectation = expectationWithDescription("anonymous session expectation")
         let authManager = AuthManager.sharedInstance
 
-        authManager.obtainAnonymousToken(usingSession: true, anonymousId: "test")
-
         // Retrieve token with the anonymousId for the first time
-        authManager.token { _, _ in }
+        print("first")
+        authManager.obtainAnonymousToken(usingSession: true, anonymousId: "test", completionHandler: { error in
 
-        // Now clear all persisted access and refresh tokens obtained by the previously retrieved session
-        cleanPersistedTokens()
-
-        authManager.anonymousId = "test"
-
-        // Try creating anonymous session with the same anonymousId again
-        authManager.token { token, error in
-            if let error = error, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-            errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
-            where errorReason == "invalid_request" &&
-                    errorDesc == "The anonymousId is already in use." {
-                anonymousSessionExpectation.fulfill()
-            }
-        }
+            // Try creating anonymous session with the same anonymousId again
+            print("second")
+            authManager.obtainAnonymousToken(usingSession: true, anonymousId: "test", completionHandler: { error in
+                if let error = error, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                        errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
+                        where errorReason == "invalid_request" &&
+                        errorDesc == "The anonymousId is already in use." {
+                    anonymousSessionExpectation.fulfill()
+                }
+            })
+        })
 
         waitForExpectationsWithTimeout(10, handler: nil)
     }
@@ -237,13 +232,11 @@ class AuthManagerTests: XCTestCase {
         let authManager = AuthManager.sharedInstance
         let anonymousSessionExpectation = expectationWithDescription("anonymous session expectation")
 
-        authManager.obtainAnonymousToken(usingSession: false)
-
-        authManager.token { token, error in
-            if let _ = token where error == nil && authManager.state == .PlainToken {
+        authManager.obtainAnonymousToken(usingSession: false, completionHandler: { error in
+            if error == nil && authManager.state == .PlainToken {
                 anonymousSessionExpectation.fulfill()
             }
-        }
+        })
 
         waitForExpectationsWithTimeout(10, handler: nil)
     }

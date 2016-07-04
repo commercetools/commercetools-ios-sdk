@@ -162,10 +162,7 @@ public class AuthManager {
         Most common use case for this method is user logout.
     */
     public func logoutUser() {
-        accessToken = nil
-        refreshToken = nil
-        tokenValidDate = nil
-        state = .NoToken
+        clearAllTokens()
 
         Log.debug("Getting new anonymous access token after user logout")
         token { _, error in
@@ -183,11 +180,16 @@ public class AuthManager {
         Most common use case for this method is user logout.
 
         - parameter usingSession:       Bool parameter indicating whether anonymous session should be used.
+        - parameter anonymousId:        Optional argument to assign custom value for `anonymous_id`.
+        - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    public func obtainAnonymousToken(usingSession usingSession: Bool, anonymousId: String? = nil) {
+    public func obtainAnonymousToken(usingSession usingSession: Bool, anonymousId: String? = nil, completionHandler: (NSError?) -> Void) {
         self.anonymousId = anonymousId
         usingAnonymousSession = usingSession
-        logoutUser()
+        clearAllTokens()
+        token { _, error in
+            completionHandler(error)
+        }
     }
 
     /**
@@ -304,11 +306,19 @@ public class AuthManager {
         }
     }
 
+    private func clearAllTokens() {
+        accessToken = nil
+        refreshToken = nil
+        tokenValidDate = nil
+        state = .NoToken
+    }
+
     private func handleAuthResponse(response: Response<AnyObject, NSError>, completionHandler: (String?, NSError?) -> Void) {
         if let responseDict = response.result.value as? [String: AnyObject],
                 accessToken = responseDict["access_token"] as? String,
                   expiresIn = responseDict["expires_in"] as? Double where response.result.isSuccess {
 
+            self.anonymousId = nil
             completionHandler(accessToken, nil)
             self.accessToken = accessToken
             // Subtracting 10 minutes from the valid period to compensate for the latency
