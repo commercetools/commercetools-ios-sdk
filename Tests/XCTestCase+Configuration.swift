@@ -32,10 +32,14 @@ extension XCTestCase {
     }
     
     func cleanPersistedTokens() {
-        let tokenStore = AuthManager.sharedInstance.tokenStore
+        let authManager = AuthManager.sharedInstance
+        authManager.anonymousId = nil
+
+        let tokenStore = authManager.tokenStore
         tokenStore.accessToken = nil
         tokenStore.refreshToken = nil
         tokenStore.tokenValidDate = nil
+        tokenStore.tokenState = nil
     }
 
 }

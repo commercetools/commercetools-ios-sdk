@@ -34,6 +34,11 @@ class TokenStore {
         return "com.commercetools.authTokenValidKey" + (Config.currentConfig?.projectKey ?? "")
     }
 
+    /// The key used for storing auth token state.
+    private var authTokenStateKey: String {
+        return "com.commercetools.authTokenStateKey" + (Config.currentConfig?.projectKey ?? "")
+    }
+
     /// The value for kSecAttrService property which uniquely identifies keychain accessor.
     private let kKeychainServiceName = "com.commercetools.sdk"
 
@@ -67,6 +72,16 @@ class TokenStore {
         }
     }
 
+    /// The auth token state.
+    var tokenState: AuthManager.TokenState? {
+        didSet {
+            // Keychain write operation can be expensive, and we can do it asynchronously.
+            dispatch_async(serialQueue, {
+                self.setObject(self.tokenState?.rawValue, forKey: self.authTokenStateKey)
+            })
+        }
+    }
+
     /// The serial queue used for storing tokens to keychain.
     private let serialQueue = dispatch_queue_create("com.commercetools.authQueue", DISPATCH_QUEUE_SERIAL);
 
@@ -86,6 +101,9 @@ class TokenStore {
         accessToken = objectForKey(authAccessTokenKey) as? String
         refreshToken = objectForKey(authRefreshTokenKey) as? String
         tokenValidDate = objectForKey(authTokenValidKey) as? NSDate
+        if let tokenStateValue = objectForKey(authTokenStateKey) as? Int {
+            tokenState = AuthManager.TokenState(rawValue: tokenStateValue)
+        }
     }
 
     // MARK: - Keychain access

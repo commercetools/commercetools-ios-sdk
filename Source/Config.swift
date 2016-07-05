@@ -18,7 +18,7 @@ public class Config {
         didSet {
             // When the current configuration changes, we want to invoke reload tokens on the token store
             // for the specific project from the newly specified config.
-            AuthManager.sharedInstance.tokenStore.reloadTokens()
+            AuthManager.sharedInstance.updatedConfig()
         }
     }
 
@@ -39,6 +39,9 @@ public class Config {
 
     /// The current app client scope.
     public private(set) var scope: String?
+
+    /// Configuration parameter determining whether the SDK should obtain anonymous session token or plain token.
+    public private(set) var anonymousSession: Bool
 
     /**
         The current app authorization server URL.
@@ -115,6 +118,7 @@ public class Config {
         scope = config["scope"] as? String
         authUrl = config["authUrl"] as? String
         apiUrl = config["apiUrl"] as? String
+        anonymousSession = config["anonymousSession"] as? Bool ?? false
 
         if let apiUrl = apiUrl where !apiUrl.hasSuffix("/") {
             self.apiUrl = apiUrl + "/"

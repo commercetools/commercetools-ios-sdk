@@ -55,6 +55,8 @@ The Commercetools SDK uses a `.plist` configuration file named `CommercetoolsCon
 	<string>https://auth.sphere.io/</string>
 	<key>apiUrl</key>
 	<string>https://api.sphere.io</string>
+	<key>anonymousSession</key>
+    <true/>
 </dict>
 </plist> 
 ```
@@ -84,17 +86,15 @@ if let configuration = Config() {
 
 ## Authenticated and Anonymous Usage
 
-Endpoints from the Commercetools services can be consumed by both anonymous and authenticated users. After you specify the configuration, all further interactions with the Commercetools platform will be performed with anonymous user token.
+Endpoints from the Commercetools services can be consumed without Checkout (`PlainToken`), with Guest Checkout (`AnonymousToken`) or with a logged in customer (`CustomerToken`). According to the configuration, all interactions with the Commercetools platform will be performed with a `PlainToken` or a `AnonymousToken` per default.
 
-If at some point you wish to login the user, that can be achieved using `AuthManager` `loginUser` method:
+If at some point you wish to login the user, that can be achieved using `loginUser` method:
 
 ```swift
-let authManager = AuthManager.sharedInstance
-
 let username = "swift.sdk.test.user@commercetools.com"
 let password = "password"
 
-authManager.loginUser(username, password: password, completionHandler: { error in
+Commercetools.loginUser(username, password: password, completionHandler: { error in
     if let error = error {
         // Handle error, and possibly get some more information from error.userInfo[NSLocalizedFailureReasonErrorKey]
     }
@@ -104,15 +104,24 @@ authManager.loginUser(username, password: password, completionHandler: { error i
 Similarly, after logging out, all further interactions continue to use new anonymous user token.
 
 ```swift
-AuthManager.sharedInstance.logoutUser()
+Commercetools.logoutUser()
 ```
 
-Access and refresh tokens are being preserved across app launches by the `AuthManager`. In order to inspect whether it's currently handling authenticated or anonymous user, `state` property should be used:
+Access and refresh tokens are being preserved across app launches. In order to inspect whether it's currently handling authenticated or anonymous user, `authState` property should be used:
 
 ```swift
-if authManager.state == .PlainToken {
+if Commercetools.authState == .PlainToken {
     // Present login form or other logic
 }
+```
+In order for your app to support anonymous session, you should set the `anonymousSession` bool property in your configuration `.plist` file to `true`. Additionally, it is possible to override this setting, and also provide optional custom `anonymous_id` (for metrics and tracking purposes) by invoking:
+```swift
+if Commercetools.obtainAnonymousToken(usingSession: true, anonymousId: "some-custom-id", completionHandler: { error in
+     if error == nil {
+        // It is possible for token retrieval to fail, e.g custom token ID has already been taken,
+        // in which case error.userInfo[NSLocalizedDescriptionKey] is set to The anonymousId is already in use.
+     }
+ })
 ```
 
 ## Consuming Commercetools Endpoints
