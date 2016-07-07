@@ -52,13 +52,13 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
 
         guard let config = Config.currentConfig, path = fullPath where config.validate() else {
             Log.error("Cannot execute query command - check if the configuration is valid.")
-            result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
+            result(Result.Failure(nil, [Error.error(code: .GeneralCommercetoolsError)]))
             return
         }
 
         AuthManager.sharedInstance.token { token, error in
             guard let token = token else {
-                result(Result.Failure([error ?? Error.error(code: .GeneralCommercetoolsError)]))
+                result(Result.Failure(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)]))
                 return
             }
 
@@ -95,13 +95,13 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
                                searchKeywords: String, fuzzy: Bool? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
         guard let config = Config.currentConfig, path = fullPath where config.validate() else {
             Log.error("Cannot execute query command - check if the configuration is valid.")
-            result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
+            result(Result.Failure(nil, [Error.error(code: .GeneralCommercetoolsError)]))
             return
         }
 
         AuthManager.sharedInstance.token { token, error in
             guard let token = token else {
-                result(Result.Failure([error ?? Error.error(code: .GeneralCommercetoolsError)]))
+                result(Result.Failure(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)]))
                 return
             }
 
@@ -132,13 +132,13 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
                       limit: UInt? = nil, offset: UInt? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
         guard let config = Config.currentConfig, path = fullPath where config.validate() else {
             Log.error("Cannot execute query command - check if the configuration is valid.")
-            result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
+            result(Result.Failure(nil, [Error.error(code: .GeneralCommercetoolsError)]))
             return
         }
 
         AuthManager.sharedInstance.token { token, error in
             guard let token = token else {
-                result(Result.Failure([error ?? Error.error(code: .GeneralCommercetoolsError)]))
+                result(Result.Failure(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)]))
                 return
             }
 
@@ -165,13 +165,13 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
     public static func byId(id: String, staged: Bool? = nil, expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
         guard let config = Config.currentConfig, path = fullPath where config.validate() else {
             Log.error("Cannot execute byId command - check if the configuration is valid.")
-            result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
+            result(Result.Failure(nil, [Error.error(code: .GeneralCommercetoolsError)]))
             return
         }
 
         AuthManager.sharedInstance.token { token, error in
             guard let token = token else {
-                result(Result.Failure([error ?? Error.error(code: .GeneralCommercetoolsError)]))
+                result(Result.Failure(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)]))
                 return
             }
 

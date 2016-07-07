@@ -28,13 +28,13 @@ public extension ByKeyEndpoint {
     static func byKey(key: String, expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
         guard let config = Config.currentConfig, path = fullPath where config.validate() else {
             Log.error("Cannot execute byKey command - check if the configuration is valid.")
-            result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
+            result(Result.Failure(nil, [Error.error(code: .GeneralCommercetoolsError)]))
             return
         }
 
         AuthManager.sharedInstance.token { token, error in
             guard let token = token else {
-                result(Result.Failure([error ?? Error.error(code: .GeneralCommercetoolsError)]))
+                result(Result.Failure(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)]))
                 return
             }
 

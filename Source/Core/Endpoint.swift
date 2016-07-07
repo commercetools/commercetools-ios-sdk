@@ -90,13 +90,13 @@ public extension Endpoint {
                             failureReason: $0["message"] as? String,
                             description: $0["detailedErrorMessage"] as? String)]
                 }
-                result(Result.Failure(errors))
+                result(Result.Failure(response.statusCode, errors))
 
             } else {
-                result(Result.Failure([Error.error(code: .GeneralCommercetoolsError, failureReason: responseDict["error"] as? String)]))
+                result(Result.Failure(response.statusCode, [Error.error(code: .GeneralCommercetoolsError, failureReason: responseDict["error"] as? String)]))
             }
         } else {
-            result(Result.Failure([response.result.error ?? Error.error(code: .GeneralCommercetoolsError)]))
+            result(Result.Failure(response.response?.statusCode, [response.result.error ?? Error.error(code: .GeneralCommercetoolsError)]))
         }
     }
 }
