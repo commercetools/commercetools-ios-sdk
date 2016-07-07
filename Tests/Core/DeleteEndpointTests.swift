@@ -61,7 +61,7 @@ class DeleteEndpointTests: XCTestCase {
                 TestCart.delete(id, version: version + 1, result: { result in
                     if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
                             where errorReason == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." &&
-                            error.code == Error.Code.ConcurrentModificationError.rawValue {
+                            error.code == Error.Code.ConcurrentModificationError.rawValue && result.statusCode == 409 {
                         deleteExpectation.fulfill()
                     }
                 })
@@ -83,7 +83,7 @@ class DeleteEndpointTests: XCTestCase {
         TestCart.delete("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", version: 1, result: { result in
             if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
             where errorReason == "The Cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." &&
-                    error.code == Error.Code.ResourceNotFoundError.rawValue {
+                    error.code == Error.Code.ResourceNotFoundError.rawValue && result.statusCode == 404 {
                 deleteExpectation.fulfill()
             }
         })

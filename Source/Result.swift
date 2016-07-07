@@ -51,7 +51,10 @@ public enum Result<Response, Error: ErrorType> {
         }
     }
 
-    /// Returns the status code from the failed response. In case the result was successful, or in case
+    /**
+        Returns the status code from the failed response. In case the result was successful,
+        or if the operation failed without performing a network request, no status code will be available.
+    */
     public var statusCode: Int? {
         switch self {
         case .Success:

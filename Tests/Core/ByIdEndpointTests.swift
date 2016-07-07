@@ -62,7 +62,7 @@ class ByIdEndpointTests: XCTestCase {
         TestCart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
             if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
                 where errorReason == "The Resource with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." &&
-                       error.code == Error.Code.ResourceNotFoundError.rawValue {
+                       error.code == Error.Code.ResourceNotFoundError.rawValue && result.statusCode == 404 {
                 byIdExpectation.fulfill()
             }
         })

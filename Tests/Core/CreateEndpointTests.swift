@@ -55,7 +55,7 @@ class CreateEndpointTests: XCTestCase {
                     errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
                     where errorReason == "Request body does not contain valid JSON." &&
                             errorDesc == "currency: ISO 4217 code JSON String expected" &&
-                           error.code == Error.Code.InvalidJsonInputError.rawValue {
+                           error.code == Error.Code.InvalidJsonInputError.rawValue && result.statusCode == 400 {
                 createExpectation.fulfill()
             }
         })
