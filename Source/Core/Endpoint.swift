@@ -99,4 +99,26 @@ public extension Endpoint {
             result(Result.Failure(response.response?.statusCode, [response.result.error ?? Error.error(code: .GeneralCommercetoolsError)]))
         }
     }
+
+    /**
+        Convenience method for performing requests with authorization token, providing general configuration error handling.
+
+        - parameter result:                   The code to be executed in case an error occurs.
+        - parameter requestHandler:           The code to be executed if no error occurs, providing token and path.
+    */
+    static func requestWithTokenAndPath(result: (Result<[String: AnyObject], NSError>) -> Void, _ requestHandler: (String, String) -> Void) {
+        guard let config = Config.currentConfig, path = fullPath where config.validate() else {
+            Log.error("Cannot execute command - check if the configuration is valid.")
+            result(Result.Failure(nil, [Error.error(code: .GeneralCommercetoolsError)]))
+            return
+        }
+
+        AuthManager.sharedInstance.token { token, error in
+            guard let token = token else {
+                result(Result.Failure(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)]))
+                return
+            }
+            requestHandler(token, path)
+        }
+    }
 }

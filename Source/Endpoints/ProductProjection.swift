@@ -50,18 +50,7 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
                               priceCustomerGroup: String? = nil, priceChannel: String? = nil,
                               result: (Result<[String: AnyObject], NSError>) -> Void) {
 
-        guard let config = Config.currentConfig, path = fullPath where config.validate() else {
-            Log.error("Cannot execute query command - check if the configuration is valid.")
-            result(Result.Failure(nil, [Error.error(code: .GeneralCommercetoolsError)]))
-            return
-        }
-
-        AuthManager.sharedInstance.token { token, error in
-            guard let token = token else {
-                result(Result.Failure(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)]))
-                return
-            }
-
+        requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)search", expansion: expansion)
 
             var parameters = paramsWithStaged(staged, params: queryParameters(predicates: nil, sort: sort,
@@ -75,7 +64,7 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
                 handleResponse(response, result: result)
             })
-        }
+        })
     }
 
     /**
@@ -93,18 +82,8 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
     */
     public static func suggest(staged staged: Bool? = nil, limit: UInt? = nil, lang: NSLocale = NSLocale.currentLocale(),
                                searchKeywords: String, fuzzy: Bool? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
-        guard let config = Config.currentConfig, path = fullPath where config.validate() else {
-            Log.error("Cannot execute query command - check if the configuration is valid.")
-            result(Result.Failure(nil, [Error.error(code: .GeneralCommercetoolsError)]))
-            return
-        }
 
-        AuthManager.sharedInstance.token { token, error in
-            guard let token = token else {
-                result(Result.Failure(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)]))
-                return
-            }
-
+        requestWithTokenAndPath(result, { token, path in
             var parameters = paramsWithStaged(staged, params: queryParameters(limit: limit))
             parameters = searchParams(fuzzy: fuzzy)
             parameters["searchKeywords." + lang.localeIdentifier.stringByReplacingOccurrencesOfString("_", withString: "-")] = searchKeywords
@@ -113,7 +92,7 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
                 handleResponse(response, result: result)
             })
-        }
+        })
     }
 
     /**
@@ -130,27 +109,17 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
     */
     public static func query(staged staged: Bool? = nil, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
                       limit: UInt? = nil, offset: UInt? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
-        guard let config = Config.currentConfig, path = fullPath where config.validate() else {
-            Log.error("Cannot execute query command - check if the configuration is valid.")
-            result(Result.Failure(nil, [Error.error(code: .GeneralCommercetoolsError)]))
-            return
-        }
 
-        AuthManager.sharedInstance.token { token, error in
-            guard let token = token else {
-                result(Result.Failure(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)]))
-                return
-            }
-
+        requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
             let parameters = paramsWithStaged(staged, params: queryParameters(predicates: predicates, sort: sort,
-                                              limit: limit, offset: offset))
+                    limit: limit, offset: offset))
 
             Alamofire.request(.GET, fullPath, parameters: parameters, encoding: .URL, headers: self.headers(token))
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
                 handleResponse(response, result: result)
             })
-        }
+        })
     }
 
     /**
@@ -163,25 +132,15 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter result:                   The code to be executed after processing the response.
     */
     public static func byId(id: String, staged: Bool? = nil, expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
-        guard let config = Config.currentConfig, path = fullPath where config.validate() else {
-            Log.error("Cannot execute byId command - check if the configuration is valid.")
-            result(Result.Failure(nil, [Error.error(code: .GeneralCommercetoolsError)]))
-            return
-        }
 
-        AuthManager.sharedInstance.token { token, error in
-            guard let token = token else {
-                result(Result.Failure(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)]))
-                return
-            }
-
+        requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
 
             Alamofire.request(.GET, fullPath, parameters: paramsWithStaged(staged), encoding: .URL, headers: self.headers(token))
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
                 handleResponse(response, result: result)
             })
-        }
+        })
     }
 
     // MARK: - Helpers
