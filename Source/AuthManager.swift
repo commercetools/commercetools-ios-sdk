@@ -323,11 +323,11 @@ public class AuthManager {
                   expiresIn = responseDict["expires_in"] as? Double where response.result.isSuccess {
 
             self.anonymousId = nil
-            completionHandler(accessToken, nil)
             self.accessToken = accessToken
             // Subtracting 10 minutes from the valid period to compensate for the latency
             self.tokenValidDate = NSDate().dateByAddingTimeInterval(expiresIn - 600)
             self.refreshToken = responseDict["refresh_token"] as? String ?? self.refreshToken
+            completionHandler(accessToken, nil)
 
         } else if let responseDict = response.result.value as? [String: AnyObject],
                      failureReason = responseDict["error"] as? String,

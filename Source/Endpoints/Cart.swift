@@ -18,7 +18,7 @@ public class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, 
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func active(expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    public static func active(expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
         return ActiveCart.get(expansion, result: result)
     }
 

@@ -22,7 +22,7 @@ public class Customer: Endpoint {
 
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func profile(result: (Result<[String: AnyObject], NSError>) -> Void) {
+    public static func profile(result: (Result<[String: AnyObject], NSError>) -> Void) {
         customerProfileAction(method: .GET, result: result)
     }
 
@@ -32,7 +32,7 @@ public class Customer: Endpoint {
         - parameter profile:                  Dictionary representation of the draft customer profile to be created.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func signup(profile: [String: AnyObject], result: (Result<[String: AnyObject], NSError>) -> Void) {
+    public static func signup(profile: [String: AnyObject], result: (Result<[String: AnyObject], NSError>) -> Void) {
         customerProfileAction(method: .POST, basePath: "signup", parameters: profile, encoding: .JSON, result: result)
     }
 
@@ -43,7 +43,7 @@ public class Customer: Endpoint {
         - parameter actions:                  An array of actions to be executed, in dictionary representation.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func update(version version: UInt, actions: [[String: AnyObject]], result: (Result<[String: AnyObject], NSError>) -> Void) {
+    public static func update(version version: UInt, actions: [[String: AnyObject]], result: (Result<[String: AnyObject], NSError>) -> Void) {
         customerProfileAction(method: .POST, parameters: ["version": version, "actions": actions], encoding: .JSON, result: result)
     }
 
@@ -53,7 +53,7 @@ public class Customer: Endpoint {
         - parameter version:                  Customer profile version (for optimistic concurrency control).
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func delete(version version: UInt, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    public static func delete(version version: UInt, result: (Result<[String: AnyObject], NSError>) -> Void) {
         customerProfileAction(method: .DELETE, parameters: ["version": version], result: result)
     }
 
@@ -67,7 +67,7 @@ public class Customer: Endpoint {
         - parameter version:                  Customer profile version (for optimistic concurrency control).
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func changePassword(currentPassword currentPassword: String, newPassword: String, version: UInt,
+    public static func changePassword(currentPassword currentPassword: String, newPassword: String, version: UInt,
                                result: (Result<[String: AnyObject], NSError>) -> Void) {
 
         customerProfileAction(method: .POST, basePath: "password", parameters: ["currentPassword": currentPassword,
@@ -94,7 +94,7 @@ public class Customer: Endpoint {
         - parameter newPassword:              The new password.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func resetPassword(token token: String, newPassword: String, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    public static func resetPassword(token token: String, newPassword: String, result: (Result<[String: AnyObject], NSError>) -> Void) {
 
         customerProfileAction(method: .POST, basePath: "password/reset", parameters: ["tokenValue": token,
                               "newPassword": newPassword], encoding: .JSON, result: result)
@@ -108,7 +108,7 @@ public class Customer: Endpoint {
                                               Usually parsed from the account activation URL.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func verifyEmail(token token: String, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    public static func verifyEmail(token token: String, result: (Result<[String: AnyObject], NSError>) -> Void) {
 
         customerProfileAction(method: .POST, basePath: "email/confirm", parameters: ["tokenValue": token],
                               encoding: .JSON, result: result)
