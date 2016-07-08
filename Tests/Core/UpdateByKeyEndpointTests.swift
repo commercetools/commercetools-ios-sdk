@@ -66,7 +66,7 @@ class UpdateByKeyEndpointTests: XCTestCase {
                 TestProductType.updateByKey("main", version: version + 1, actions: [changeNameAction], result: { result in
                     if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
                             where errorReason.hasPrefix("Object \(id) has a different version than expected.") &&
-                            error.code == Error.Code.ConcurrentModificationError.rawValue {
+                            error.code == Error.Code.ConcurrentModificationError.rawValue && result.statusCode == 409 {
                         updateExpectation.fulfill()
                     }
                 })
@@ -85,7 +85,7 @@ class UpdateByKeyEndpointTests: XCTestCase {
         TestProductType.updateByKey("incorrect_key", version: 1, actions: [changeNameAction], result: { result in
             if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
                     where errorReason == "The product-type with key 'incorrect_key' was not found." &&
-                    error.code == Error.Code.ResourceNotFoundError.rawValue {
+                    error.code == Error.Code.ResourceNotFoundError.rawValue && result.statusCode == 404 {
                 updateExpectation.fulfill()
             }
         })

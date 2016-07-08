@@ -31,18 +31,8 @@ public extension QueryEndpoint {
 
     static func query(predicates predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
                       limit: UInt? = nil, offset: UInt? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
-        guard let config = Config.currentConfig, path = fullPath where config.validate() else {
-            Log.error("Cannot execute query command - check if the configuration is valid.")
-            result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
-            return
-        }
 
-        AuthManager.sharedInstance.token { token, error in
-            guard let token = token else {
-                result(Result.Failure([error ?? Error.error(code: .GeneralCommercetoolsError)]))
-                return
-            }
-
+        requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
             let parameters = queryParameters(predicates: predicates, sort: sort, limit: limit, offset: offset)
 
@@ -50,7 +40,7 @@ public extension QueryEndpoint {
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
                 handleResponse(response, result: result)
             })
-        }
+        })
     }
 
     static func queryParameters(predicates predicates: [String]? = nil, sort: [String]? = nil, limit: UInt? = nil,

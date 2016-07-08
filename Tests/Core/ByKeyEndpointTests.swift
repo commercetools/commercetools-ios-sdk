@@ -43,7 +43,7 @@ class ByKeyEndpointTests: XCTestCase {
         TestProductType.byKey("second", result: { result in
             if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
                     where errorReason == "The Resource with key 'second' was not found." &&
-                    error.code == Error.Code.ResourceNotFoundError.rawValue {
+                    error.code == Error.Code.ResourceNotFoundError.rawValue && result.statusCode == 404 {
                 byKeyExpectation.fulfill()
             }
 

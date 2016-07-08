@@ -28,24 +28,14 @@ public protocol UpdateByKeyEndpoint: Endpoint {
 public extension UpdateByKeyEndpoint {
 
     static func updateByKey(key: String, version: UInt, actions: [[String: AnyObject]], expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
-        guard let config = Config.currentConfig, path = fullPath where config.validate() else {
-            Log.error("Cannot execute update by key command - check if the configuration is valid.")
-            result(Result.Failure([Error.error(code: .GeneralCommercetoolsError)]))
-            return
-        }
 
-        AuthManager.sharedInstance.token { token, error in
-            guard let token = token else {
-                result(Result.Failure([error ?? Error.error(code: .GeneralCommercetoolsError)]))
-                return
-            }
-
+        requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)key=\(key)", expansion: expansion)
 
             Alamofire.request(.POST, fullPath, parameters: ["version": version, "actions": actions], encoding: .JSON, headers: self.headers(token))
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
                 handleResponse(response, result: result)
             })
-        }
+        })
     }
 }

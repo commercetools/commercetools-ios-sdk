@@ -9,12 +9,12 @@ import Foundation
 
     - Success: The result from the Commercetools endpoint and all post processing operations were successful
                resulting in the serialization of the returned data.
-    - Failure: The result from the Commercetools endpoint encountered an error resulting in a failure. Provided
-               array of errors should be used to examine the origin of the problem.
+    - Failure: The result from the Commercetools endpoint encountered an error resulting in a failure. Provided status
+               code and an array of errors should be used to examine the origin of the problem.
 */
 public enum Result<Response, Error: ErrorType> {
     case Success(Response)
-    case Failure([Error])
+    case Failure(Int?, [Error])
 
     /// Returns `true` if the result is a success, `false` otherwise.
     public var isSuccess: Bool {
@@ -46,8 +46,21 @@ public enum Result<Response, Error: ErrorType> {
         switch self {
         case .Success:
             return nil
-        case .Failure(let errors):
+        case .Failure(_, let errors):
             return errors
+        }
+    }
+
+    /**
+        Returns the status code from the failed response. In case the result was successful,
+        or if the operation failed without performing a network request, no status code will be available.
+    */
+    public var statusCode: Int? {
+        switch self {
+        case .Success:
+            return nil
+        case .Failure(let statusCode, _):
+            return statusCode
         }
     }
 }
@@ -76,8 +89,8 @@ extension Result: CustomDebugStringConvertible {
         switch self {
         case .Success(let value):
             return "SUCCESS: \(value)"
-        case .Failure(let errors):
-            return "FAILURE: \(errors)"
+        case .Failure(let statusCode, let errors):
+            return "FAILURE: StatusCode: \(statusCode ?? -1), Errors: \(errors)"
         }
     }
 }

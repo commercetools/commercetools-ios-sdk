@@ -184,12 +184,16 @@ public class AuthManager {
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
     public func obtainAnonymousToken(usingSession usingSession: Bool, anonymousId: String? = nil, completionHandler: (NSError?) -> Void) {
-        self.anonymousId = anonymousId
-        usingAnonymousSession = usingSession
-        clearAllTokens()
-        token { _, error in
-            completionHandler(error)
-        }
+        // Process session changes using private serial queue to avoid issues with race conditions
+        // when switching between anonymous and plain modes.
+        dispatch_async(serialQueue, {
+            self.anonymousId = anonymousId
+            self.usingAnonymousSession = usingSession
+            self.clearAllTokens()
+            self.token { _, error in
+                completionHandler(error)
+            }
+        })
     }
 
     /**
