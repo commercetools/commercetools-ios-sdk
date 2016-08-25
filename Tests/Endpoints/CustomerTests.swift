@@ -214,9 +214,7 @@ class CustomerTests: XCTestCase {
 
         // Obtain password reset token
         AuthManager.sharedInstance.token { token, error in
-            guard let token = token, path = TestCustomer.fullPath else {
-                return
-            }
+            guard let token = token, path = TestCustomer.fullPath else { return }
 
             Alamofire.request(.POST, "\(path)password-token", parameters: ["email": username], encoding: .JSON, headers: TestCustomer.headers(token))
             .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in

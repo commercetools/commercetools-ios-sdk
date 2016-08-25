@@ -4,3 +4,7 @@ use_frameworks!
 target 'Commercetools' do
     pod 'Alamofire', '~> 3.3'
 end
+
+target 'CommercetoolsTests' do
+    pod 'Alamofire', '~> 3.3'
+end
