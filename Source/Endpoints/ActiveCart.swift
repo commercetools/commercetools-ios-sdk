@@ -18,13 +18,13 @@ class ActiveCart: Endpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func get(expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    static func get(_ expansion: [String]? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
 
-            Alamofire.request(.GET, fullPath, parameters: nil, encoding: .JSON, headers: self.headers(token))
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+            Alamofire.request(fullPath, parameters: nil, encoding: URLEncoding.httpBody, headers: self.headers(token))
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })
         })

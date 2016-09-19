@@ -7,8 +7,8 @@ import Foundation
 /**
     Provides complete set of interactions for querying, retrieving and creating an order.
 */
-public class Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint {
+open class Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint {
 
-    public static let path = "me/orders"
+    open static let path = "me/orders"
 
 }

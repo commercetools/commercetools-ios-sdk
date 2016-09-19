@@ -46,8 +46,8 @@ class TokenStore {
     var accessToken: String? {
         didSet {
             // Keychain write operation can be expensive, and we can do it asynchronously.
-            dispatch_async(serialQueue, {
-                self.setObject(self.accessToken, forKey: self.authAccessTokenKey)
+            serialQueue.async(execute: {
+                self.setObject(self.accessToken as NSCoding?, forKey: self.authAccessTokenKey)
             })
         }
     }
@@ -56,18 +56,18 @@ class TokenStore {
     var refreshToken: String? {
         didSet {
             // Keychain write operation can be expensive, and we can do it asynchronously.
-            dispatch_async(serialQueue, {
-                self.setObject(self.refreshToken, forKey: self.authRefreshTokenKey)
+            serialQueue.async(execute: {
+                self.setObject(self.refreshToken as NSCoding?, forKey: self.authRefreshTokenKey)
             })
         }
     }
 
     /// The auth token valid before date.
-    var tokenValidDate: NSDate? {
+    var tokenValidDate: Date? {
         didSet {
             // Keychain write operation can be expensive, and we can do it asynchronously.
-            dispatch_async(serialQueue, {
-                self.setObject(self.tokenValidDate, forKey: self.authTokenValidKey)
+            serialQueue.async(execute: {
+                self.setObject(self.tokenValidDate as NSCoding?, forKey: self.authTokenValidKey)
             })
         }
     }
@@ -76,14 +76,14 @@ class TokenStore {
     var tokenState: AuthManager.TokenState? {
         didSet {
             // Keychain write operation can be expensive, and we can do it asynchronously.
-            dispatch_async(serialQueue, {
-                self.setObject(self.tokenState?.rawValue, forKey: self.authTokenStateKey)
+            serialQueue.async(execute: {
+                self.setObject(self.tokenState?.rawValue as NSCoding?, forKey: self.authTokenStateKey)
             })
         }
     }
 
     /// The serial queue used for storing tokens to keychain.
-    private let serialQueue = dispatch_queue_create("com.commercetools.authQueue", DISPATCH_QUEUE_SERIAL);
+    private let serialQueue = DispatchQueue(label: "com.commercetools.authQueue", attributes: []);
 
     // MARK: - Lifecycle
 
@@ -100,7 +100,7 @@ class TokenStore {
     func reloadTokens() {
         accessToken = objectForKey(authAccessTokenKey) as? String
         refreshToken = objectForKey(authRefreshTokenKey) as? String
-        tokenValidDate = objectForKey(authTokenValidKey) as? NSDate
+        tokenValidDate = objectForKey(authTokenValidKey) as? Date
         if let tokenStateValue = objectForKey(authTokenStateKey) as? Int {
             tokenState = AuthManager.TokenState(rawValue: tokenStateValue)
         }
@@ -108,15 +108,15 @@ class TokenStore {
 
     // MARK: - Keychain access
 
-    private func objectForKey(keyName: String) -> NSCoding? {
+    private func objectForKey(_ keyName: String) -> NSCoding? {
         guard let keychainData = dataForKey(keyName) else {
             return nil
         }
 
-        return NSKeyedUnarchiver.unarchiveObjectWithData(keychainData) as? NSCoding
+        return NSKeyedUnarchiver.unarchiveObject(with: keychainData) as? NSCoding
     }
 
-    private func dataForKey(keyName: String) -> NSData? {
+    private func dataForKey(_ keyName: String) -> Data? {
         var keychainQuery = keychainQueryForKey(keyName)
 
         // Limit search results to one
@@ -126,16 +126,16 @@ class TokenStore {
         keychainQuery[SecReturnData] = kCFBooleanTrue
 
         var result: AnyObject?
-        let status = withUnsafeMutablePointer(&result) {
-            SecItemCopyMatching(keychainQuery, UnsafeMutablePointer($0))
+        let status = withUnsafeMutablePointer(to: &result) {
+            SecItemCopyMatching(keychainQuery as CFDictionary, UnsafeMutablePointer($0))
         }
 
-        return status == noErr ? result as? NSData : nil
+        return status == noErr ? result as? Data : nil
     }
 
-    private func setObject(value: NSCoding?, forKey keyName: String) {
+    private func setObject(_ value: NSCoding?, forKey keyName: String) {
         if let value = value {
-            let data = NSKeyedArchiver.archivedDataWithRootObject(value)
+            let data = NSKeyedArchiver.archivedData(withRootObject: value)
             setData(data, forKey: keyName)
 
         } else if let _ = objectForKey(keyName) {
@@ -143,24 +143,24 @@ class TokenStore {
         }
     }
 
-    private func removeObjectForKey(keyName: String) {
+    private func removeObjectForKey(_ keyName: String) {
         let keychainQuery = keychainQueryForKey(keyName)
 
-        let status: OSStatus =  SecItemDelete(keychainQuery);
+        let status: OSStatus =  SecItemDelete(keychainQuery as CFDictionary);
         if status != errSecSuccess {
             Log.error("Error while deleting '\(keyName)' keychain entry.")
         }
     }
 
-    private func setData(value: NSData, forKey keyName: String) {
+    private func setData(_ value: Data, forKey keyName: String) {
         var keychainQuery = keychainQueryForKey(keyName)
 
-        keychainQuery[SecValueData] = value
+        keychainQuery[SecValueData] = value as AnyObject?
 
         // Protect the keychain entry so it's only available after first device unlocked
         keychainQuery[SecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
 
-        let status: OSStatus = SecItemAdd(keychainQuery, nil)
+        let status: OSStatus = SecItemAdd(keychainQuery as CFDictionary, nil)
 
         if status == errSecDuplicateItem {
             updateData(value, forKey: keyName)
@@ -169,28 +169,28 @@ class TokenStore {
         }
     }
 
-    private func updateData(value: NSData, forKey keyName: String) {
+    private func updateData(_ value: Data, forKey keyName: String) {
         let keychainQuery = keychainQueryForKey(keyName)
 
-        let status: OSStatus = SecItemUpdate(keychainQuery, [SecValueData: value])
+        let status: OSStatus = SecItemUpdate(keychainQuery as CFDictionary, [SecValueData: value] as CFDictionary)
 
         if status != errSecSuccess {
             Log.error("Error while updating '\(keyName)' keychain entry.")
         }
     }
 
-    private func keychainQueryForKey(key: String) -> [String: AnyObject] {
+    private func keychainQueryForKey(_ key: String) -> [String: AnyObject] {
         // Setup dictionary to access keychain and specify we are using a generic password (rather than a certificate, internet password, etc)
         var keychainQueryDictionary: [String: AnyObject] = [SecClass: kSecClassGenericPassword]
 
         // Uniquely identify this keychain accessor
-        keychainQueryDictionary[SecAttrService] = kKeychainServiceName
+        keychainQueryDictionary[SecAttrService] = kKeychainServiceName as AnyObject?
 
         // Uniquely identify the account who will be accessing the keychain
-        let encodedIdentifier: NSData? = key.dataUsingEncoding(NSUTF8StringEncoding)
+        let encodedIdentifier: Data? = key.data(using: String.Encoding.utf8)
 
-        keychainQueryDictionary[SecAttrGeneric] = encodedIdentifier
-        keychainQueryDictionary[SecAttrAccount] = encodedIdentifier
+        keychainQueryDictionary[SecAttrGeneric] = encodedIdentifier as AnyObject?
+        keychainQueryDictionary[SecAttrAccount] = encodedIdentifier as AnyObject?
 
         return keychainQueryDictionary
     }

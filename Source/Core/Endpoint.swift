@@ -31,9 +31,9 @@ public extension Endpoint {
 
     /// The full path used to form requests for endpoints.
     static var fullPath: String? {
-        if let config = Config.currentConfig, apiUrl = config.apiUrl, projectKey = config.projectKey {
+        if let config = Config.currentConfig, let apiUrl = config.apiUrl, let projectKey = config.projectKey {
             return "\(apiUrl)\(projectKey)/"
-                    + (path.hasPrefix("/") ? path.substringFromIndex(path.startIndex.advancedBy(1)) : path)
+                    + (path.hasPrefix("/") ? path.substring(from: path.characters.index(path.startIndex, offsetBy: 1)) : path)
                     + (path.hasSuffix("/") ? "" : "/")
         }
         return nil
@@ -47,10 +47,10 @@ public extension Endpoint {
 
         - returns: The full path with expansion parameters included.
     */
-    static func pathWithExpansion(path: String, expansion: [String]?) -> String {
-        if let expansion = expansion where expansion.count > 0 {
-            var pathWithExpansion = path.hasSuffix("/") ? path.substringToIndex(path.endIndex.advancedBy(-1)) : path
-            pathWithExpansion += "?expand=" + expansion.joinWithSeparator("&expand=")
+    static func pathWithExpansion(_ path: String, expansion: [String]?) -> String {
+        if let expansion = expansion , expansion.count > 0 {
+            var pathWithExpansion = path.hasSuffix("/") ? path.substring(to: path.characters.index(path.endIndex, offsetBy: -1)) : path
+            pathWithExpansion += "?expand=" + expansion.joined(separator: "&expand=")
             return pathWithExpansion
 
         } else {
@@ -66,8 +66,8 @@ public extension Endpoint {
         - returns: Headers containing auth token, along with default values for
                    the "Accept-Encoding", "Accept-Language" and "User-Agent" headers.
     */
-    static func headers(token: String) -> [String: String] {
-        var headers = Manager.defaultHTTPHeaders
+    static func headers(_ token: String) -> [String: String] {
+        var headers = SessionManager.defaultHTTPHeaders
         headers["Authorization"] = "Bearer \(token)"
         return headers
     }
@@ -78,25 +78,25 @@ public extension Endpoint {
         - parameter token:                    Auth token to be included in the headers.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func handleResponse(response: Response<AnyObject, NSError>, result: (Result<[String: AnyObject], NSError>) -> Void) {
-        if let responseDict = response.result.value as? [String: AnyObject], response = response.response {
+    static func handleResponse(_ response: DataResponse<Any>, result: (Result<[String: AnyObject]>) -> Void) {
+        if let responseDict = response.result.value as? [String: AnyObject], let response = response.response {
             if case 200 ... 299 = response.statusCode {
-                result(Result.Success(responseDict))
+                result(Result.success(responseDict))
 
             } else if let errorsResponse = responseDict["errors"] as? [[String: AnyObject]] {
                 var errors = [NSError]()
                 errorsResponse.forEach {
-                    errors += [Error.error(code: Error.Code(code: $0["code"] as? String ?? ""),
+                    errors += [CTError.error(code: CTError.Code(code: $0["code"] as? String ?? ""),
                             failureReason: $0["message"] as? String,
                             description: $0["detailedErrorMessage"] as? String)]
                 }
-                result(Result.Failure(response.statusCode, errors))
+                result(Result.failure(response.statusCode, errors))
 
             } else {
-                result(Result.Failure(response.statusCode, [Error.error(code: .GeneralCommercetoolsError, failureReason: responseDict["error"] as? String)]))
+                result(Result.failure(response.statusCode, [CTError.error(code: .generalCommercetoolsError, failureReason: responseDict["error"] as? String)]))
             }
         } else {
-            result(Result.Failure(response.response?.statusCode, [response.result.error ?? Error.error(code: .GeneralCommercetoolsError)]))
+            result(Result.failure(response.response?.statusCode, [response.result.error ?? CTError.error(code: .generalCommercetoolsError)]))
         }
     }
 
@@ -106,16 +106,16 @@ public extension Endpoint {
         - parameter result:                   The code to be executed in case an error occurs.
         - parameter requestHandler:           The code to be executed if no error occurs, providing token and path.
     */
-    static func requestWithTokenAndPath(result: (Result<[String: AnyObject], NSError>) -> Void, _ requestHandler: (String, String) -> Void) {
-        guard let config = Config.currentConfig, path = fullPath where config.validate() else {
+    static func requestWithTokenAndPath(_ result: @escaping (Result<[String: AnyObject]>) -> Void, _ requestHandler: @escaping (String, String) -> Void) {
+        guard let config = Config.currentConfig, let path = fullPath , config.validate() else {
             Log.error("Cannot execute command - check if the configuration is valid.")
-            result(Result.Failure(nil, [Error.error(code: .GeneralCommercetoolsError)]))
+            result(Result.failure(nil, [CTError.error(code: .generalCommercetoolsError)]))
             return
         }
 
         AuthManager.sharedInstance.token { token, error in
             guard let token = token else {
-                result(Result.Failure(nil, [error ?? Error.error(code: .GeneralCommercetoolsError)]))
+                result(Result.failure(nil, [error ?? CTError.error(code: .generalCommercetoolsError)]))
                 return
             }
             requestHandler(token, path)

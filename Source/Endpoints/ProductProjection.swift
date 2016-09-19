@@ -8,11 +8,11 @@ import Alamofire
 /**
     Provides complete set of interactions for querying, retrieving and creating an order.
 */
-public class ProductProjection: QueryEndpoint, ByIdEndpoint {
+open class ProductProjection: QueryEndpoint, ByIdEndpoint {
 
     // MARK: - Properties
 
-    public static let path = "product-projections"
+    open static let path = "product-projections"
 
     // MARK: - Product projection endpoint functionality
 
@@ -43,12 +43,12 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter priceChannel:             An optional price channel UUID.
         - parameter result:                   The code to be executed after processing the response.
     */
-    public static func search(staged staged: Bool? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil,
-                              offset: UInt? = nil, lang: NSLocale = NSLocale.currentLocale(), text: String? = nil,
+    open static func search(staged: Bool? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil,
+                              offset: UInt? = nil, lang: Locale = Locale.current, text: String? = nil,
                               fuzzy: Bool? = nil, filter: String? = nil, filterQuery: String? = nil, filterFacets: String? = nil,
                               facets: [String]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
                               priceCustomerGroup: String? = nil, priceChannel: String? = nil,
-                              result: (Result<[String: AnyObject], NSError>) -> Void) {
+                              result: @escaping (Result<[String: AnyObject]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)search", expansion: expansion)
@@ -60,8 +60,8 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
                     priceCountry: priceCountry, priceCustomerGroup: priceCustomerGroup,
                     priceChannel: priceChannel, params: parameters)
 
-            Alamofire.request(.GET, fullPath, parameters: parameters, encoding: .URL, headers: self.headers(token))
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+            Alamofire.request(fullPath, parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })
         })
@@ -80,16 +80,16 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
                                               the text to analyze.
         - parameter result:                   The code to be executed after processing the response.
     */
-    public static func suggest(staged staged: Bool? = nil, limit: UInt? = nil, lang: NSLocale = NSLocale.currentLocale(),
-                               searchKeywords: String, fuzzy: Bool? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    open static func suggest(staged: Bool? = nil, limit: UInt? = nil, lang: Locale = Locale.current,
+                               searchKeywords: String, fuzzy: Bool? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             var parameters = paramsWithStaged(staged, params: queryParameters(limit: limit))
             parameters = searchParams(fuzzy: fuzzy)
-            parameters["searchKeywords." + lang.localeIdentifier.stringByReplacingOccurrencesOfString("_", withString: "-")] = searchKeywords
+            parameters["searchKeywords." + lang.identifier.replacingOccurrences(of: "_", with: "-")] = searchKeywords as NSString
 
-            Alamofire.request(.GET, "\(path)suggest", parameters: parameters, encoding: .URL, headers: self.headers(token))
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+            Alamofire.request("\(path)suggest", parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })
         })
@@ -107,16 +107,16 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter offset:                   An optional parameter to set the offset of the first returned result.
         - parameter result:                   The code to be executed after processing the response.
     */
-    public static func query(staged staged: Bool? = nil, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
-                      limit: UInt? = nil, offset: UInt? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    open static func query(staged: Bool? = nil, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
+                      limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
             let parameters = paramsWithStaged(staged, params: queryParameters(predicates: predicates, sort: sort,
                     limit: limit, offset: offset))
 
-            Alamofire.request(.GET, fullPath, parameters: parameters, encoding: .URL, headers: self.headers(token))
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+            Alamofire.request(fullPath, parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })
         })
@@ -131,13 +131,13 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    public static func byId(id: String, staged: Bool? = nil, expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    open static func byId(_ id: String, staged: Bool? = nil, expansion: [String]? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
 
-            Alamofire.request(.GET, fullPath, parameters: paramsWithStaged(staged), encoding: .URL, headers: self.headers(token))
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+            Alamofire.request(fullPath, parameters: paramsWithStaged(staged), encoding: URLEncoding.queryString, headers: self.headers(token))
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })
         })
@@ -145,8 +145,8 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
 
     // MARK: - Helpers
 
-    private static func paramsWithStaged(staged: Bool?, params: [String: AnyObject]? = nil) -> [String: AnyObject] {
-        var params = params ?? [String: AnyObject]()
+    fileprivate static func paramsWithStaged(_ staged: Bool?, params: [String: Any]? = nil) -> [String: Any] {
+        var params = params ?? [String: Any]()
 
         if let staged = staged {
             params["staged"] = staged ? "true" : "false"
@@ -155,15 +155,15 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
         return params
     }
 
-    private static func searchParams(lang lang: NSLocale = NSLocale.currentLocale(), text: String? = nil, fuzzy: Bool? = nil,
+    fileprivate static func searchParams(lang: Locale = Locale.current, text: String? = nil, fuzzy: Bool? = nil,
                                      filter: String? = nil, filterQuery: String? = nil, filterFacets: String? = nil,
                                      facets: [String]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
                                      priceCustomerGroup: String? = nil, priceChannel: String? = nil,
-                                     params: [String: AnyObject]? = nil) -> [String: AnyObject] {
-        var params = params ?? [String: AnyObject]()
+                                     params: [String: Any]? = nil) -> [String: Any] {
+        var params = params ?? [String: Any]()
 
         if let text = text {
-            params["text." + lang.localeIdentifier.stringByReplacingOccurrencesOfString("_", withString: "-")] = text
+            params["text." + lang.identifier.replacingOccurrences(of: "_", with: "-")] = text
         }
 
         if let fuzzy = fuzzy {
@@ -182,7 +182,7 @@ public class ProductProjection: QueryEndpoint, ByIdEndpoint {
             params["filter.facets"] = filterFacets
         }
 
-        if let facets = facets where facets.count > 0 {
+        if let facets = facets , facets.count > 0 {
             params["facet"] = facets
         }
 

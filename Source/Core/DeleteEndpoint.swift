@@ -20,19 +20,19 @@ public protocol DeleteEndpoint: Endpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func delete(id: String, version: UInt, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)
+    static func delete(_ id: String, version: UInt, expansion: [String]?, result: @escaping (Result<[String: AnyObject]>) -> Void)
 
 }
 
 public extension DeleteEndpoint {
 
-    static func delete(id: String, version: UInt, expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    static func delete(_ id: String, version: UInt, expansion: [String]? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
 
-            Alamofire.request(.DELETE, fullPath, parameters: ["version": version], encoding: .URL, headers: self.headers(token))
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+            Alamofire.request(fullPath, method: .delete, parameters: ["version": version], encoding: URLEncoding.queryString, headers: self.headers(token))
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })
         })
