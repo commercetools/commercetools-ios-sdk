@@ -22,8 +22,8 @@ class AuthManagerTests: XCTestCase {
     func testUserLogin() {
         setupTestConfiguration()
 
-        let loginExpectation = expectationWithDescription("login expectation")
-        let tokenExpectation = expectationWithDescription("token expectation")
+        let loginExpectation = expectation(description: "login expectation")
+        let tokenExpectation = expectation(description: "token expectation")
 
         let username = "swift.sdk.test.user@commercetools.com"
         let password = "password"
@@ -39,19 +39,19 @@ class AuthManagerTests: XCTestCase {
         })
 
         authManager.token { token, error in
-            if let token = token, oldToken = oldToken where !token.isEmpty && token != oldToken &&
-                    error == nil && authManager.state == .CustomerToken {
+            if let token = token, let oldToken = oldToken , !token.isEmpty && token != oldToken &&
+                    error == nil && authManager.state == .customerToken {
                 tokenExpectation.fulfill()
             }
         }
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testUserLogout() {
         setupTestConfiguration()
 
-        let tokenExpectation = expectationWithDescription("token expectation")
+        let tokenExpectation = expectation(description: "token expectation")
 
         let username = "swift.sdk.test.user@commercetools.com"
         let password = "password"
@@ -61,12 +61,12 @@ class AuthManagerTests: XCTestCase {
             if error == nil {
                 // Get the access token after login
                 authManager.token { oldToken, error in
-                    if let oldToken = oldToken where authManager.state == .CustomerToken {
+                    if let oldToken = oldToken , authManager.state == .customerToken {
                         // Then logout user
                         authManager.logoutUser()
                         // Get the access token after logout
                         authManager.token { newToken, error in
-                            if let newToken = newToken where newToken != oldToken && authManager.state == .AnonymousToken {
+                            if let newToken = newToken , newToken != oldToken && authManager.state == .anonymousToken {
                                 tokenExpectation.fulfill()
                             }
                         }
@@ -75,14 +75,14 @@ class AuthManagerTests: XCTestCase {
             }
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testIncorrectLogin() {
         setupTestConfiguration()
 
-        let loginExpectation = expectationWithDescription("login expectation")
-        let tokenExpectation = expectationWithDescription("token expectation")
+        let loginExpectation = expectation(description: "login expectation")
+        let tokenExpectation = expectation(description: "token expectation")
 
         let username = "incorrect.sdk.test.user@commercetools.com"
         let password = "password"
@@ -92,45 +92,45 @@ class AuthManagerTests: XCTestCase {
         authManager.token { token, error in oldToken = token }
 
         authManager.loginUser(username, password: password, completionHandler: { error in
-            if let error = error, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
-                where errorReason == "invalid_customer_account_credentials" &&
+            if let error = error, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
+                , errorReason == "invalid_customer_account_credentials" &&
                         errorDesc == "Customer account with the given credentials not found." {
                 loginExpectation.fulfill()
             }
         })
 
         authManager.token { token, error in
-            if let token = token, oldToken = oldToken where !token.isEmpty && token != oldToken &&
-                    error == nil && authManager.state == .AnonymousToken {
+            if let token = token, let oldToken = oldToken , !token.isEmpty && token != oldToken &&
+                    error == nil && authManager.state == .anonymousToken {
                 tokenExpectation.fulfill()
             }
         }
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testAnonymousToken() {
         setupTestConfiguration()
 
-        let tokenExpectation = expectationWithDescription("token expectation")
+        let tokenExpectation = expectation(description: "token expectation")
 
         let authManager = AuthManager.sharedInstance
         authManager.obtainAnonymousToken(usingSession: false, completionHandler: { _ in
             authManager.token { token, error in
-                if let token = token where !token.isEmpty && error == nil && authManager.state == .PlainToken {
+                if let token = token , !token.isEmpty && error == nil && authManager.state == .plainToken {
                     tokenExpectation.fulfill()
                 }
             }
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testRefreshToken() {
         setupTestConfiguration()
 
-        let tokenExpectation = expectationWithDescription("token expectation")
+        let tokenExpectation = expectation(description: "token expectation")
 
         let authManager = AuthManager.sharedInstance
         let tokenStore = authManager.tokenStore
@@ -151,28 +151,28 @@ class AuthManagerTests: XCTestCase {
                 }
 
                 authManager.token { token, error in
-                    if let token = token, oldToken = oldToken where error == nil && oldToken != token &&
-                            authManager.state == .CustomerToken {
+                    if let token = token, let oldToken = oldToken , error == nil && oldToken != token &&
+                            authManager.state == .customerToken {
                         tokenExpectation.fulfill()
                     }
                 }
             }
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testAssigningAnonymousId() {
         setupTestConfiguration()
-        let anonymousIdExpectation = expectationWithDescription("anonymous id expectation")
-        let anonymousId = NSUUID().UUIDString
+        let anonymousIdExpectation = expectation(description: "anonymous id expectation")
+        let anonymousId = UUID().uuidString
         let authManager = AuthManager.sharedInstance
 
         authManager.obtainAnonymousToken(usingSession: true, anonymousId: anonymousId, completionHandler: { error in
-            if error == nil && authManager.state == .AnonymousToken {
+            if error == nil && authManager.state == .anonymousToken {
                 Cart.create(["currency": "EUR"], result: { result in
-                    if let response = result.response, cartAnonymousId = response["anonymousId"] as? String
-                    where result.isSuccess && cartAnonymousId == anonymousId {
+                    if let response = result.response, let cartAnonymousId = response["anonymousId"] as? String,
+                            result.isSuccess && cartAnonymousId == anonymousId {
                         anonymousIdExpectation.fulfill()
                     }
                 })
@@ -180,13 +180,13 @@ class AuthManagerTests: XCTestCase {
 
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testAnonymousSessionDuplicateId() {
         setupTestConfiguration()
 
-        let anonymousSessionExpectation = expectationWithDescription("anonymous session expectation")
+        let anonymousSessionExpectation = expectation(description: "anonymous session expectation")
         let authManager = AuthManager.sharedInstance
 
         // Retrieve token with the anonymousId for the first time
@@ -194,47 +194,47 @@ class AuthManagerTests: XCTestCase {
 
             // Try creating anonymous session with the same anonymousId again
             authManager.obtainAnonymousToken(usingSession: true, anonymousId: "test", completionHandler: { error in
-                if let error = error, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                        errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
-                        where errorReason == "invalid_request" &&
+                if let error = error, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                        let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
+                        , errorReason == "invalid_request" &&
                         errorDesc == "The anonymousId is already in use." {
                     anonymousSessionExpectation.fulfill()
                 }
             })
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testPlistUsingAnonymousSessionConfig() {
         setupTestConfiguration()
 
-        let anonymousSessionExpectation = expectationWithDescription("anonymous session expectation")
+        let anonymousSessionExpectation = expectation(description: "anonymous session expectation")
         let authManager = AuthManager.sharedInstance
 
         // Configuration in plist has anonymousSession usage set to true, so we should get anonymous session token
         authManager.token { token, error in
-            if let _ = token where error == nil && authManager.state == .AnonymousToken {
+            if let _ = token , error == nil && authManager.state == .anonymousToken {
                 anonymousSessionExpectation.fulfill()
             }
         }
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testOverrideAnonymousSessionConfig() {
         setupTestConfiguration()
 
         let authManager = AuthManager.sharedInstance
-        let anonymousSessionExpectation = expectationWithDescription("anonymous session expectation")
+        let anonymousSessionExpectation = expectation(description: "anonymous session expectation")
 
         authManager.obtainAnonymousToken(usingSession: false, completionHandler: { error in
-            if error == nil && authManager.state == .PlainToken {
+            if error == nil && authManager.state == .plainToken {
                 anonymousSessionExpectation.fulfill()
             }
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
     
 }

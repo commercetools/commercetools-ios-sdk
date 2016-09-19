@@ -22,7 +22,7 @@ open class Customer: Endpoint {
 
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func profile(_ result: @escaping (Result<[String: AnyObject]>) -> Void) {
+    open static func profile(_ result: @escaping (Result<[String: Any]>) -> Void) {
         customerProfileAction(method: .get, result: result)
     }
 
@@ -32,8 +32,8 @@ open class Customer: Endpoint {
         - parameter profile:                  Dictionary representation of the draft customer profile to be created.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func signup(_ profile: [String: AnyObject], result: @escaping (Result<[String: AnyObject]>) -> Void) {
-        customerProfileAction(method: .post, basePath: "signup", parameters: profile, encoding: URLEncoding.httpBody, result: result)
+    open static func signup(_ profile: [String: Any], result: @escaping (Result<[String: Any]>) -> Void) {
+        customerProfileAction(method: .post, basePath: "signup", parameters: profile, encoding: JSONEncoding.default, result: result)
     }
 
     /**
@@ -43,8 +43,8 @@ open class Customer: Endpoint {
         - parameter actions:                  An array of actions to be executed, in dictionary representation.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func update(version: UInt, actions: [[String: AnyObject]], result: @escaping (Result<[String: AnyObject]>) -> Void) {
-        customerProfileAction(method: .post, parameters: ["version": version as NSNumber, "actions": actions as AnyObject], encoding: URLEncoding.httpBody, result: result)
+    open static func update(version: UInt, actions: [[String: Any]], result: @escaping (Result<[String: Any]>) -> Void) {
+        customerProfileAction(method: .post, parameters: ["version": version, "actions": actions], encoding: JSONEncoding.default, result: result)
     }
 
     /**
@@ -53,8 +53,8 @@ open class Customer: Endpoint {
         - parameter version:                  Customer profile version (for optimistic concurrency control).
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func delete(version: UInt, result: @escaping (Result<[String: AnyObject]>) -> Void) {
-        customerProfileAction(method: .delete, parameters: ["version": version as NSNumber], result: result)
+    open static func delete(version: UInt, result: @escaping (Result<[String: Any]>) -> Void) {
+        customerProfileAction(method: .delete, parameters: ["version": version], result: result)
     }
 
     // MARK: - Password management
@@ -68,10 +68,10 @@ open class Customer: Endpoint {
         - parameter result:                   The code to be executed after processing the response.
     */
     open static func changePassword(currentPassword: String, newPassword: String, version: UInt,
-                               result: @escaping (Result<[String: AnyObject]>) -> Void) {
+                               result: @escaping (Result<[String: Any]>) -> Void) {
 
-        customerProfileAction(method: .post, basePath: "password", parameters: ["currentPassword": currentPassword as NSString,
-                              "newPassword": newPassword as NSString, "version": version as NSNumber], encoding: URLEncoding.httpBody, result: { changePasswordResult in
+        customerProfileAction(method: .post, basePath: "password", parameters: ["currentPassword": currentPassword,
+                              "newPassword": newPassword, "version": version], encoding: JSONEncoding.default, result: { changePasswordResult in
 
             if let response = changePasswordResult.response, let email = response["email"] as? String , changePasswordResult.isSuccess {
                 AuthManager.sharedInstance.loginUser(email, password: newPassword, completionHandler: { error in
@@ -94,10 +94,10 @@ open class Customer: Endpoint {
         - parameter newPassword:              The new password.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func resetPassword(token: String, newPassword: String, result: @escaping (Result<[String: AnyObject]>) -> Void) {
+    open static func resetPassword(token: String, newPassword: String, result: @escaping (Result<[String: Any]>) -> Void) {
 
-        customerProfileAction(method: .post, basePath: "password/reset", parameters: ["tokenValue": token as NSString,
-                              "newPassword": newPassword as NSString], encoding: URLEncoding.httpBody, result: result)
+        customerProfileAction(method: .post, basePath: "password/reset", parameters: ["tokenValue": token,
+                              "newPassword": newPassword], encoding: JSONEncoding.default, result: result)
     }
 
     /**
@@ -108,17 +108,17 @@ open class Customer: Endpoint {
                                               Usually parsed from the account activation URL.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func verifyEmail(token: String, result: @escaping (Result<[String: AnyObject]>) -> Void) {
+    open static func verifyEmail(token: String, result: @escaping (Result<[String: Any]>) -> Void) {
 
-        customerProfileAction(method: .post, basePath: "email/confirm", parameters: ["tokenValue": token as NSString],
-                              encoding: URLEncoding.httpBody, result: result)
+        customerProfileAction(method: .post, basePath: "email/confirm", parameters: ["tokenValue": token],
+                              encoding: JSONEncoding.default, result: result)
     }
 
     // MARK: - Helpers
 
-    fileprivate static func customerProfileAction(method: HTTPMethod, basePath: String? = nil,
-                                              parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = URLEncoding.default,
-                                              result: @escaping (Result<[String: AnyObject]>) -> Void) {
+    private static func customerProfileAction(method: HTTPMethod, basePath: String? = nil,
+                                              parameters: [String: Any]? = nil, encoding: ParameterEncoding = URLEncoding.default,
+                                              result: @escaping (Result<[String: Any]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             Alamofire.request(path + (basePath ?? ""), method: method, parameters: parameters, encoding: encoding, headers: self.headers(token))

@@ -34,7 +34,7 @@ open class AuthManager {
     var anonymousId: String?
 
     /// The current state auth manager is handling.
-    open fileprivate(set) var state: TokenState {
+    open private(set) var state: TokenState {
         get {
             return tokenStore.tokenState ?? .noToken
         }
@@ -69,7 +69,7 @@ open class AuthManager {
     /// The auth token valid before date.
     private var tokenValidDate: Date? {
         get {
-            return tokenStore.tokenValidDate as Date?
+            return tokenStore.tokenValidDate
         }
         set {
             tokenStore.tokenValidDate = newValue

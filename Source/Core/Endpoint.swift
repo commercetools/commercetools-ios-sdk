@@ -78,7 +78,7 @@ public extension Endpoint {
         - parameter token:                    Auth token to be included in the headers.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func handleResponse(_ response: DataResponse<Any>, result: (Result<[String: AnyObject]>) -> Void) {
+    static func handleResponse(_ response: DataResponse<Any>, result: (Result<[String: Any]>) -> Void) {
         if let responseDict = response.result.value as? [String: AnyObject], let response = response.response {
             if case 200 ... 299 = response.statusCode {
                 result(Result.success(responseDict))
@@ -106,7 +106,7 @@ public extension Endpoint {
         - parameter result:                   The code to be executed in case an error occurs.
         - parameter requestHandler:           The code to be executed if no error occurs, providing token and path.
     */
-    static func requestWithTokenAndPath(_ result: @escaping (Result<[String: AnyObject]>) -> Void, _ requestHandler: @escaping (String, String) -> Void) {
+    static func requestWithTokenAndPath(_ result: @escaping (Result<[String: Any]>) -> Void, _ requestHandler: @escaping (String, String) -> Void) {
         guard let config = Config.currentConfig, let path = fullPath , config.validate() else {
             Log.error("Cannot execute command - check if the configuration is valid.")
             result(Result.failure(nil, [CTError.error(code: .generalCommercetoolsError)]))

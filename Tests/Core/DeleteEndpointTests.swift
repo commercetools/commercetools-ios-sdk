@@ -24,7 +24,7 @@ class DeleteEndpointTests: XCTestCase {
 
     func testDeleteEndpoint() {
 
-        let deleteExpectation = expectationWithDescription("delete expectation")
+        let deleteExpectation = expectation(description: "delete expectation")
 
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
@@ -32,10 +32,10 @@ class DeleteEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.create(["currency": "EUR"], result: { result in
-            if let response = result.response, id = response["id"] as? String, version = response["version"] as? UInt
-                    where result.isSuccess {
+            if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt
+                    , result.isSuccess {
                 TestCart.delete(id, version: version, result: { result in
-                    if let response = result.response, deletedId = response["id"] as? String where result.isSuccess
+                    if let response = result.response, let deletedId = response["id"] as? String , result.isSuccess
                             && deletedId == id {
                         deleteExpectation.fulfill()
                     }
@@ -43,12 +43,12 @@ class DeleteEndpointTests: XCTestCase {
             }
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testConcurrentModification() {
 
-        let deleteExpectation = expectationWithDescription("delete expectation")
+        let deleteExpectation = expectation(description: "delete expectation")
 
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
@@ -56,24 +56,24 @@ class DeleteEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.create(["currency": "EUR"], result: { result in
-            if let response = result.response, id = response["id"] as? String, version = response["version"] as? UInt
-            where result.isSuccess {
+            if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt
+            , result.isSuccess {
                 TestCart.delete(id, version: version + 1, result: { result in
-                    if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-                            where errorReason == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." &&
-                            error.code == Error.Code.ConcurrentModificationError.rawValue && result.statusCode == 409 {
+                    if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
+                            , errorReason == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." &&
+                            error.code == CTError.Code.concurrentModificationError.rawValue && result.statusCode == 409 {
                         deleteExpectation.fulfill()
                     }
                 })
             }
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testDeleteEndpointError() {
 
-        let deleteExpectation = expectationWithDescription("delete expectation")
+        let deleteExpectation = expectation(description: "delete expectation")
 
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
@@ -81,14 +81,14 @@ class DeleteEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.delete("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", version: 1, result: { result in
-            if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-            where errorReason == "The Cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." &&
-                    error.code == Error.Code.ResourceNotFoundError.rawValue && result.statusCode == 404 {
+            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
+            , errorReason == "The Cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." &&
+                    error.code == CTError.Code.resourceNotFoundError.rawValue && result.statusCode == 404 {
                 deleteExpectation.fulfill()
             }
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
 }

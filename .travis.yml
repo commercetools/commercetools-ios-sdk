@@ -2,7 +2,7 @@ language: objective-c
 
 osx_image: xcode8
 
-xcode_sdk: iphonesimulator10
+xcode_sdk: iphonesimulator10.0
 
 script: xcodebuild -workspace Commercetools.xcworkspace -scheme "Commercetools" -destination "platform=iOS Simulator,name=iPhone 6" test | xcpretty -f `xcpretty-travis-formatter`
 

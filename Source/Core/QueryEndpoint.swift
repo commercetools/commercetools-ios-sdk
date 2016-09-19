@@ -23,14 +23,14 @@ public protocol QueryEndpoint: Endpoint {
         - parameter result:                   The code to be executed after processing the response.
     */
     static func query(predicates: [String]?, sort: [String]?, expansion: [String]?,
-                      limit: UInt?, offset: UInt?, result: @escaping (Result<[String: AnyObject]>) -> Void)
+                      limit: UInt?, offset: UInt?, result: @escaping (Result<[String: Any]>) -> Void)
 
 }
 
 public extension QueryEndpoint {
 
     static func query(predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
-                      limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
+                      limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)

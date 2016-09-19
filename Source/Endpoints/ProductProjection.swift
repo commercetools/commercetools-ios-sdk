@@ -48,7 +48,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
                               fuzzy: Bool? = nil, filter: String? = nil, filterQuery: String? = nil, filterFacets: String? = nil,
                               facets: [String]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
                               priceCustomerGroup: String? = nil, priceChannel: String? = nil,
-                              result: @escaping (Result<[String: AnyObject]>) -> Void) {
+                              result: @escaping (Result<[String: Any]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)search", expansion: expansion)
@@ -81,7 +81,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter result:                   The code to be executed after processing the response.
     */
     open static func suggest(staged: Bool? = nil, limit: UInt? = nil, lang: Locale = Locale.current,
-                               searchKeywords: String, fuzzy: Bool? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
+                               searchKeywords: String, fuzzy: Bool? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             var parameters = paramsWithStaged(staged, params: queryParameters(limit: limit))
@@ -108,7 +108,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter result:                   The code to be executed after processing the response.
     */
     open static func query(staged: Bool? = nil, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
-                      limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
+                      limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
@@ -131,7 +131,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func byId(_ id: String, staged: Bool? = nil, expansion: [String]? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
+    open static func byId(_ id: String, staged: Bool? = nil, expansion: [String]? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
@@ -145,7 +145,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
 
     // MARK: - Helpers
 
-    fileprivate static func paramsWithStaged(_ staged: Bool?, params: [String: Any]? = nil) -> [String: Any] {
+    private static func paramsWithStaged(_ staged: Bool?, params: [String: Any]? = nil) -> [String: Any] {
         var params = params ?? [String: Any]()
 
         if let staged = staged {
@@ -155,7 +155,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
         return params
     }
 
-    fileprivate static func searchParams(lang: Locale = Locale.current, text: String? = nil, fuzzy: Bool? = nil,
+    private static func searchParams(lang: Locale = Locale.current, text: String? = nil, fuzzy: Bool? = nil,
                                      filter: String? = nil, filterQuery: String? = nil, filterFacets: String? = nil,
                                      facets: [String]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
                                      priceCustomerGroup: String? = nil, priceChannel: String? = nil,

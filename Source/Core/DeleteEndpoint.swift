@@ -20,13 +20,13 @@ public protocol DeleteEndpoint: Endpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func delete(_ id: String, version: UInt, expansion: [String]?, result: @escaping (Result<[String: AnyObject]>) -> Void)
+    static func delete(_ id: String, version: UInt, expansion: [String]?, result: @escaping (Result<[String: Any]>) -> Void)
 
 }
 
 public extension DeleteEndpoint {
 
-    static func delete(_ id: String, version: UInt, expansion: [String]? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
+    static func delete(_ id: String, version: UInt, expansion: [String]? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)

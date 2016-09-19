@@ -19,18 +19,18 @@ public protocol ByKeyEndpoint: Endpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func byKey(_ key: String, expansion: [String]?, result: @escaping (Result<[String: AnyObject]>) -> Void)
+    static func byKey(_ key: String, expansion: [String]?, result: @escaping (Result<[String: Any]>) -> Void)
 
 }
 
 public extension ByKeyEndpoint {
 
-    static func byKey(_ key: String, expansion: [String]? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
+    static func byKey(_ key: String, expansion: [String]? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)key=\(key)", expansion: expansion)
 
-            Alamofire.request(fullPath, parameters: nil, encoding: URLEncoding.httpBody, headers: self.headers(token))
+            Alamofire.request(fullPath, parameters: nil, encoding: JSONEncoding.default, headers: self.headers(token))
             .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })

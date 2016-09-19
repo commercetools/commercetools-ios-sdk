@@ -21,18 +21,18 @@ public protocol UpdateEndpoint: Endpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func update(_ id: String, version: UInt, actions: [[String: Any]], expansion: [String]?, result: @escaping (Result<[String: AnyObject]>) -> Void)
+    static func update(_ id: String, version: UInt, actions: [[String: Any]], expansion: [String]?, result: @escaping (Result<[String: Any]>) -> Void)
 
 }
 
 public extension UpdateEndpoint {
 
-    static func update(_ id: String, version: UInt, actions: [[String: Any]], expansion: [String]? = nil, result: @escaping (Result<[String: AnyObject]>) -> Void) {
+    static func update(_ id: String, version: UInt, actions: [[String: Any]], expansion: [String]? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
 
-            Alamofire.request(fullPath, method: .post, parameters: ["version": version, "actions": actions], encoding: URLEncoding.httpBody, headers: self.headers(token))
+            Alamofire.request(fullPath, method: .post, parameters: ["version": version, "actions": actions], encoding: JSONEncoding.default, headers: self.headers(token))
             .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })

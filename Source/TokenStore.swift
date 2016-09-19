@@ -179,18 +179,18 @@ class TokenStore {
         }
     }
 
-    private func keychainQueryForKey(_ key: String) -> [String: AnyObject] {
+    private func keychainQueryForKey(_ key: String) -> [String: Any] {
         // Setup dictionary to access keychain and specify we are using a generic password (rather than a certificate, internet password, etc)
-        var keychainQueryDictionary: [String: AnyObject] = [SecClass: kSecClassGenericPassword]
+        var keychainQueryDictionary: [String: Any] = [SecClass: kSecClassGenericPassword]
 
         // Uniquely identify this keychain accessor
-        keychainQueryDictionary[SecAttrService] = kKeychainServiceName as AnyObject?
+        keychainQueryDictionary[SecAttrService] = kKeychainServiceName
 
         // Uniquely identify the account who will be accessing the keychain
         let encodedIdentifier: Data? = key.data(using: String.Encoding.utf8)
 
-        keychainQueryDictionary[SecAttrGeneric] = encodedIdentifier as AnyObject?
-        keychainQueryDictionary[SecAttrAccount] = encodedIdentifier as AnyObject?
+        keychainQueryDictionary[SecAttrGeneric] = encodedIdentifier
+        keychainQueryDictionary[SecAttrAccount] = encodedIdentifier
 
         return keychainQueryDictionary
     }
