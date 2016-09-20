@@ -32,7 +32,7 @@ class QueryEndpointTests: XCTestCase {
             if let response = result.response, let count = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
                     let slug = results.first?["slug"] as? [String: String],
-                    let enSlug = slug["en"] , result.isSuccess && count == 1
+                    let enSlug = slug["en"], result.isSuccess && count == 1
                     && enSlug == "michael-kors-bag-30T3GTVT7L-lightbrown" {
                 queryExpectation.fulfill()
             }
@@ -48,8 +48,8 @@ class QueryEndpointTests: XCTestCase {
         TestProductProjections.query(sort: ["name.en asc"], limit: 8, result: { result in
             if let response = result.response, let count = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
-                    let name = results.first?["name"] as? [String: String], let enName = name["en"]
-                    , result.isSuccess && count == 8 && enName == "Alberto Guardiani – Slip on “Cherie”" {
+                    let name = results.first?["name"] as? [String: String], let enName = name["en"],
+                    result.isSuccess && count == 8 && enName == "Alberto Guardiani – Slip on “Cherie”" {
                 queryExpectation.fulfill()
             }
         })
@@ -64,8 +64,8 @@ class QueryEndpointTests: XCTestCase {
         TestProductProjections.query(sort: ["name.en asc"], limit: 2, offset: 1, result: { result in
             if let response = result.response, let count = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
-                    let name = results.first?["name"] as? [String: String], let enName = name["en"]
-                    , result.isSuccess && count == 2 && enName == "Bag DKNY beige" {
+                    let name = results.first?["name"] as? [String: String], let enName = name["en"],
+                    result.isSuccess && count == 2 && enName == "Bag DKNY beige" {
                 queryExpectation.fulfill()
             }
         })
@@ -80,8 +80,8 @@ class QueryEndpointTests: XCTestCase {
         TestProductProjections.query(sort: ["name.en asc", "slug.en asc"], limit: 1, result: { result in
             if let response = result.response, let count = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
-                    let name = results.first?["name"] as? [String: String], let enName = name["en"]
-                    , result.isSuccess && count == 1 && enName == "Alberto Guardiani – Slip on “Cherie”" {
+                    let name = results.first?["name"] as? [String: String], let enName = name["en"],
+                    result.isSuccess && count == 1 && enName == "Alberto Guardiani – Slip on “Cherie”" {
                 queryExpectation.fulfill()
             }
         })
@@ -99,8 +99,8 @@ class QueryEndpointTests: XCTestCase {
             if let response = result.response, let _ = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
                     let productType = results.first?["productType"] as? [String: AnyObject],
-                    let productTypeObject = productType["obj"] as? [String: AnyObject]
-                    , result.isSuccess && productTypeObject.count > 0 {
+                    let productTypeObject = productType["obj"] as? [String: AnyObject],
+                    result.isSuccess && productTypeObject.count > 0 {
                 queryExpectation.fulfill()
             }
         })

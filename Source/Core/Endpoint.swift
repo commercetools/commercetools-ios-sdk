@@ -48,7 +48,7 @@ public extension Endpoint {
         - returns: The full path with expansion parameters included.
     */
     static func pathWithExpansion(_ path: String, expansion: [String]?) -> String {
-        if let expansion = expansion , expansion.count > 0 {
+        if let expansion = expansion, expansion.count > 0 {
             var pathWithExpansion = path.hasSuffix("/") ? path.substring(to: path.characters.index(path.endIndex, offsetBy: -1)) : path
             pathWithExpansion += "?expand=" + expansion.joined(separator: "&expand=")
             return pathWithExpansion
@@ -107,7 +107,7 @@ public extension Endpoint {
         - parameter requestHandler:           The code to be executed if no error occurs, providing token and path.
     */
     static func requestWithTokenAndPath(_ result: @escaping (Result<[String: Any]>) -> Void, _ requestHandler: @escaping (String, String) -> Void) {
-        guard let config = Config.currentConfig, let path = fullPath , config.validate() else {
+        guard let config = Config.currentConfig, let path = fullPath, config.validate() else {
             Log.error("Cannot execute command - check if the configuration is valid.")
             result(Result.failure(nil, [CTError.error(code: .generalCommercetoolsError)]))
             return

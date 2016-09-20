@@ -182,7 +182,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
             params["filter.facets"] = filterFacets
         }
 
-        if let facets = facets , facets.count > 0 {
+        if let facets = facets, facets.count > 0 {
             params["facet"] = facets
         }
 

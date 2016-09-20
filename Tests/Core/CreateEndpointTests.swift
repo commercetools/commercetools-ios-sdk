@@ -32,8 +32,8 @@ class CreateEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.create(["currency": "EUR"], result: { result in
-            if let response = result.response, let cartState = response["cartState"] as? String, let version = response["version"] as? Int
-                    , result.isSuccess && cartState == "Active" && version == 1 {
+            if let response = result.response, let cartState = response["cartState"] as? String, let version = response["version"] as? Int,
+                    result.isSuccess && cartState == "Active" && version == 1 {
                 createExpectation.fulfill()
             }
         })
@@ -52,10 +52,10 @@ class CreateEndpointTests: XCTestCase {
 
         TestCart.create(["currency": "BAD"], result: { result in
             if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
-                    , errorReason == "Request body does not contain valid JSON." &&
-                            errorDesc == "currency: ISO 4217 code JSON String expected" &&
-                           error.code == CTError.Code.invalidJsonInputError.rawValue && result.statusCode == 400 {
+                    let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String,
+                    errorReason == "Request body does not contain valid JSON." &&
+                    errorDesc == "currency: ISO 4217 code JSON String expected" &&
+                    error.code == CTError.Code.invalidJsonInputError.rawValue && result.statusCode == 400 {
                 createExpectation.fulfill()
             }
         })

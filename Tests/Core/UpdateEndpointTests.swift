@@ -37,16 +37,15 @@ class UpdateEndpointTests: XCTestCase {
 
         TestProductProjections.query(limit: 1, result: { result in
             if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
-            let productId = results.first?["id"] as? String , result.isSuccess {
+            let productId = results.first?["id"] as? String, result.isSuccess {
 
                 let addLineItemAction: [String: Any] = ["action": "addLineItem", "productId": productId, "variantId": 1]
 
                 TestCart.create(["currency": "EUR"], result: { result in
-                    if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt
-                            , result.isSuccess {
+                    if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
                         TestCart.update(id, version: version, actions: [addLineItemAction], result: { result in
                             if let response = result.response, let updatedId = response["id"] as? String,
-                                    let newVersion = response["version"] as? UInt , result.isSuccess  && updatedId == id
+                                    let newVersion = response["version"] as? UInt, result.isSuccess  && updatedId == id
                                     && newVersion > version {
                                 updateExpectation.fulfill()
                             }
@@ -70,16 +69,15 @@ class UpdateEndpointTests: XCTestCase {
 
         TestProductProjections.query(limit: 1, result: { result in
             if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
-                    let productId = results.first?["id"] as? String , result.isSuccess {
+                    let productId = results.first?["id"] as? String, result.isSuccess {
 
                 let addLineItemAction: [String: Any] = ["action": "addLineItem", "productId": productId, "variantId": 1]
 
                 TestCart.create(["currency": "EUR"], result: { result in
-                    if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt
-                            , result.isSuccess {
+                    if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
                         TestCart.update(id, version: version + 1, actions: [addLineItemAction], result: { result in
-                            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-                                    , errorReason == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." &&
+                            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                                    errorReason == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." &&
                                     error.code == CTError.Code.concurrentModificationError.rawValue && result.statusCode == 409 {
                                 updateExpectation.fulfill()
                             }
@@ -102,8 +100,8 @@ class UpdateEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.update("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", version: 1, actions: [], result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-            , errorReason == "The Cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." &&
+            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                    errorReason == "The Cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." &&
                     error.code == CTError.Code.resourceNotFoundError.rawValue && result.statusCode == 404 {
                 updateExpectation.fulfill()
             }

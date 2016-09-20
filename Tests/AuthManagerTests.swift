@@ -39,7 +39,7 @@ class AuthManagerTests: XCTestCase {
         })
 
         authManager.token { token, error in
-            if let token = token, let oldToken = oldToken , !token.isEmpty && token != oldToken &&
+            if let token = token, let oldToken = oldToken, !token.isEmpty && token != oldToken &&
                     error == nil && authManager.state == .customerToken {
                 tokenExpectation.fulfill()
             }
@@ -61,12 +61,12 @@ class AuthManagerTests: XCTestCase {
             if error == nil {
                 // Get the access token after login
                 authManager.token { oldToken, error in
-                    if let oldToken = oldToken , authManager.state == .customerToken {
+                    if let oldToken = oldToken, authManager.state == .customerToken {
                         // Then logout user
                         authManager.logoutUser()
                         // Get the access token after logout
                         authManager.token { newToken, error in
-                            if let newToken = newToken , newToken != oldToken && authManager.state == .anonymousToken {
+                            if let newToken = newToken, newToken != oldToken && authManager.state == .anonymousToken {
                                 tokenExpectation.fulfill()
                             }
                         }
@@ -93,15 +93,14 @@ class AuthManagerTests: XCTestCase {
 
         authManager.loginUser(username, password: password, completionHandler: { error in
             if let error = error, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
-                , errorReason == "invalid_customer_account_credentials" &&
+                let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String, errorReason == "invalid_customer_account_credentials" &&
                         errorDesc == "Customer account with the given credentials not found." {
                 loginExpectation.fulfill()
             }
         })
 
         authManager.token { token, error in
-            if let token = token, let oldToken = oldToken , !token.isEmpty && token != oldToken &&
+            if let token = token, let oldToken = oldToken, !token.isEmpty && token != oldToken &&
                     error == nil && authManager.state == .anonymousToken {
                 tokenExpectation.fulfill()
             }
@@ -118,7 +117,7 @@ class AuthManagerTests: XCTestCase {
         let authManager = AuthManager.sharedInstance
         authManager.obtainAnonymousToken(usingSession: false, completionHandler: { _ in
             authManager.token { token, error in
-                if let token = token , !token.isEmpty && error == nil && authManager.state == .plainToken {
+                if let token = token, !token.isEmpty && error == nil && authManager.state == .plainToken {
                     tokenExpectation.fulfill()
                 }
             }
@@ -151,7 +150,7 @@ class AuthManagerTests: XCTestCase {
                 }
 
                 authManager.token { token, error in
-                    if let token = token, let oldToken = oldToken , error == nil && oldToken != token &&
+                    if let token = token, let oldToken = oldToken, error == nil && oldToken != token &&
                             authManager.state == .customerToken {
                         tokenExpectation.fulfill()
                     }
@@ -195,8 +194,7 @@ class AuthManagerTests: XCTestCase {
             // Try creating anonymous session with the same anonymousId again
             authManager.obtainAnonymousToken(usingSession: true, anonymousId: "test", completionHandler: { error in
                 if let error = error, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                        let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
-                        , errorReason == "invalid_request" &&
+                        let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String, errorReason == "invalid_request" &&
                         errorDesc == "The anonymousId is already in use." {
                     anonymousSessionExpectation.fulfill()
                 }
@@ -214,7 +212,7 @@ class AuthManagerTests: XCTestCase {
 
         // Configuration in plist has anonymousSession usage set to true, so we should get anonymous session token
         authManager.token { token, error in
-            if let _ = token , error == nil && authManager.state == .anonymousToken {
+            if let _ = token, error == nil && authManager.state == .anonymousToken {
                 anonymousSessionExpectation.fulfill()
             }
         }

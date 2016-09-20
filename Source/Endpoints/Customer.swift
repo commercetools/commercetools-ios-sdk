@@ -73,7 +73,7 @@ open class Customer: Endpoint {
         customerProfileAction(method: .post, basePath: "password", parameters: ["currentPassword": currentPassword,
                               "newPassword": newPassword, "version": version], encoding: JSONEncoding.default, result: { changePasswordResult in
 
-            if let response = changePasswordResult.response, let email = response["email"] as? String , changePasswordResult.isSuccess {
+            if let response = changePasswordResult.response, let email = response["email"] as? String, changePasswordResult.isSuccess {
                 AuthManager.sharedInstance.loginUser(email, password: newPassword, completionHandler: { error in
                     if let error = error {
                         Log.error("Could not login automatically after password change "

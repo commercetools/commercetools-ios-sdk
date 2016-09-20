@@ -33,7 +33,7 @@ class CustomerTests: XCTestCase {
 
         Customer.profile { result in
             if let response = result.response, let _ = response["firstName"] as? String,
-                    let _ = response["lastName"] as? String , result.isSuccess {
+                    let _ = response["lastName"] as? String, result.isSuccess {
                 retrieveProfileExpectation.fulfill()
             }
         }
@@ -47,9 +47,9 @@ class CustomerTests: XCTestCase {
         let retrieveProfileExpectation = expectation(description: "retrieve profile expectation")
 
         Customer.profile { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-                    , errorReason == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." &&
-                           error.code == CTError.Code.insufficientTokenGrantTypeError.rawValue {
+            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                    errorReason == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." &&
+                    error.code == CTError.Code.insufficientTokenGrantTypeError.rawValue {
                 retrieveProfileExpectation.fulfill()
             }
         }
@@ -69,13 +69,13 @@ class CustomerTests: XCTestCase {
 
         Customer.signup(signupDraft, result: { result in
             if let response = result.response, let customer = response["customer"] as? [String: Any],
-                    let email = customer["email"] as? String, let version = customer["version"] as? UInt , result.isSuccess
+                    let email = customer["email"] as? String, let version = customer["version"] as? UInt, result.isSuccess
                     && email == username {
                 createProfileExpectation.fulfill()
 
                 AuthManager.sharedInstance.loginUser(username, password: "password", completionHandler: {_ in})
                 Customer.delete(version: version, result: { result in
-                    if let response = result.response, let email = response["email"] as? String , result.isSuccess
+                    if let response = result.response, let email = response["email"] as? String, result.isSuccess
                             && email == username {
                         deleteProfileExpectation.fulfill()
                     }
@@ -94,8 +94,8 @@ class CustomerTests: XCTestCase {
         let signupDraft = ["email": "swift.sdk.test.user2@commercetools.com", "password": "password"]
 
         Customer.signup(signupDraft, result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-                    , errorReason == "There is already an existing customer with the email '\"swift.sdk.test.user2@commercetools.com\"'." {
+            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                    errorReason == "There is already an existing customer with the email '\"swift.sdk.test.user2@commercetools.com\"'." {
                 createProfileExpectation.fulfill()
             }
         })
@@ -109,9 +109,9 @@ class CustomerTests: XCTestCase {
         let deleteProfileExpectation = expectation(description: "delete profile expectation")
 
         Customer.delete(version: 1, result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-                    , errorReason == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'."
-                        && error.code == CTError.Code.insufficientTokenGrantTypeError.rawValue {
+            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                    errorReason == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." &&
+                    error.code == CTError.Code.insufficientTokenGrantTypeError.rawValue {
                 deleteProfileExpectation.fulfill()
             }
         })
@@ -132,18 +132,17 @@ class CustomerTests: XCTestCase {
         var setFirstNameAction: [String: Any] = ["action": "setFirstName", "firstName": "newName"]
 
         Customer.profile { result in
-            if let response = result.response, let version = response["version"] as? UInt , result.isSuccess {
+            if let response = result.response, let version = response["version"] as? UInt, result.isSuccess {
                 Customer.update(version: version, actions: [setFirstNameAction], result: { result in
                     if let response = result.response, let version = response["version"] as? UInt,
-                            let firstName = response["firstName"] as? String , result.isSuccess
+                            let firstName = response["firstName"] as? String, result.isSuccess
                             && firstName == "newName" {
 
                         // Now revert back to the old name
                         setFirstNameAction["firstName"] = "Test"
 
                         Customer.update(version: version, actions: [setFirstNameAction], result: { result in
-                            if let response = result.response, let firstName = response["firstName"] as? String
-                                    , result.isSuccess && firstName == "Test" {
+                            if let response = result.response, let firstName = response["firstName"] as? String, result.isSuccess && firstName == "Test" {
                                 updateProfileExpectation.fulfill()
                             }
                         })
@@ -163,9 +162,9 @@ class CustomerTests: XCTestCase {
         let setFirstNameAction: [String: Any] = ["action": "setFirstName", "firstName": "newName"]
 
         Customer.update(version: 1, actions: [setFirstNameAction], result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-                    , errorReason == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'."
-                    && error.code == CTError.Code.insufficientTokenGrantTypeError.rawValue {
+            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                    errorReason == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." &&
+                    error.code == CTError.Code.insufficientTokenGrantTypeError.rawValue {
                 updateProfileExpectation.fulfill()
             }
         })
@@ -184,10 +183,10 @@ class CustomerTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         Customer.profile { result in
-            if let response = result.response, let version = response["version"] as? UInt , result.isSuccess {
+            if let response = result.response, let version = response["version"] as? UInt, result.isSuccess {
 
                 Customer.changePassword(currentPassword: password, newPassword: "newPassword", version: version, result: { result in
-                    if let response = result.response, let version = response["version"] as? UInt , result.isSuccess {
+                    if let response = result.response, let version = response["version"] as? UInt, result.isSuccess {
 
                         // Now revert the password change
                         Customer.changePassword(currentPassword: "newPassword", newPassword: password, version: version, result: { result in
@@ -219,13 +218,13 @@ class CustomerTests: XCTestCase {
             Alamofire.request("\(path)password-token", method: .post, parameters: ["email": username], encoding: JSONEncoding.default, headers: TestCustomer.headers(token))
             .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 TestCustomer.handleResponse(response, result: { result in
-                    if let response = result.response, let token = response["value"] as? String , result.isSuccess {
+                    if let response = result.response, let token = response["value"] as? String, result.isSuccess {
 
                         // Now confirm reset password token with regular mobile client scope
                         self.setupTestConfiguration()
 
                         Customer.resetPassword(token: token, newPassword: "password", result: { result in
-                            if let response = result.response, let email = response["email"] as? String , result.isSuccess
+                            if let response = result.response, let email = response["email"] as? String, result.isSuccess
                                     && email == username {
                                 resetPasswordExpectation.fulfill()
                             }
@@ -257,20 +256,20 @@ class CustomerTests: XCTestCase {
             // First query for the UUID of the user we want to activate
             TestCustomer.query(predicates: ["email=\"\(username)\""], result: { result in
                 if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
-                        let id = results.first?["id"] as? String , result.isSuccess {
+                        let id = results.first?["id"] as? String, result.isSuccess {
 
                     // Now generate email activation token
                     Alamofire.request("\(path)email-token", method: .post, parameters: ["id": id, "ttlMinutes": 1], encoding: JSONEncoding.default, headers: TestCustomer.headers(token))
                     .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                         TestCustomer.handleResponse(response, result: { result in
-                            if let response = result.response, let token = response["value"] as? String , result.isSuccess {
+                            if let response = result.response, let token = response["value"] as? String, result.isSuccess {
 
                                 // Confirm email verification token with regular mobile client scope
                                 self.setupTestConfiguration()
                                 AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
                                 Customer.verifyEmail(token: token, result: { result in
-                                    if let response = result.response, let email = response["email"] as? String , result.isSuccess
+                                    if let response = result.response, let email = response["email"] as? String, result.isSuccess
                                             && email == username {
                                         resetPasswordExpectation.fulfill()
                                     }

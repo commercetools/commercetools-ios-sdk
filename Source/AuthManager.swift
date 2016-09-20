@@ -78,7 +78,7 @@ open class AuthManager {
 
     /// The URL used for requesting token for client credentials and refresh token flow.
     private var clientCredentialsUrl: String? {
-        if let config = Config.currentConfig, let baseAuthUrl = config.authUrl , config.validate() {
+        if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, config.validate() {
             return baseAuthUrl + "oauth/token"
         }
         return nil
@@ -86,8 +86,7 @@ open class AuthManager {
 
     /// The URL used for requesting an access and refresh token for an anonymous session
     private var anonymousSessionTokenUrl: String? {
-        if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, let projectKey = config.projectKey
-                , config.validate() {
+        if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, let projectKey = config.projectKey, config.validate() {
             return "\(baseAuthUrl)oauth/\(projectKey)/anonymous/token"
         }
         return nil
@@ -95,8 +94,7 @@ open class AuthManager {
 
     /// The URL used for requesting token for password flow.
     private var loginUrl: String? {
-        if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, let projectKey = config.projectKey
-                , config.validate() {
+        if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, let projectKey = config.projectKey, config.validate() {
             return "\(baseAuthUrl)oauth/\(projectKey)/customers/token"
 
         }
@@ -109,7 +107,7 @@ open class AuthManager {
     /// The HTTP headers containing basic HTTP auth needed to obtain the tokens.
     private var authHeaders: HTTPHeaders? {
         if let config = Config.currentConfig, let clientId = config.clientId, let clientSecret = config.clientSecret,
-        let authData = "\(clientId):\(clientSecret)".data(using: String.Encoding.utf8) , config.validate() {
+        let authData = "\(clientId):\(clientSecret)".data(using: String.Encoding.utf8), config.validate() {
 
             var headers = SessionManager.defaultHTTPHeaders
             headers["Authorization"] = "Basic \(authData.base64EncodedString())"
@@ -225,7 +223,7 @@ open class AuthManager {
     func updatedConfig() {
         tokenStore.reloadTokens()
 
-        if let config = Config.currentConfig , config.validate() {
+        if let config = Config.currentConfig, config.validate() {
             usingAnonymousSession = config.anonymousSession
         }
 
@@ -238,8 +236,8 @@ open class AuthManager {
     // MARK: - Retrieving tokens from the auth API
 
     private func processTokenRequest(_ completionHandler: @escaping (String?, NSError?) -> Void) {
-        if let config = Config.currentConfig , config.validate() {
-            if let accessToken = accessToken, let tokenValidDate = tokenValidDate , tokenValidDate.compare(Date()) == .orderedDescending {
+        if let config = Config.currentConfig, config.validate() {
+            if let accessToken = accessToken, let tokenValidDate = tokenValidDate, tokenValidDate.compare(Date()) == .orderedDescending {
                 if refreshToken == nil {
                     self.state = .plainToken
                 }
@@ -325,7 +323,7 @@ open class AuthManager {
     private func handleAuthResponse(_ response: DataResponse<Any>, completionHandler: (String?, NSError?) -> Void) {
         if let responseDict = response.result.value as? [String: AnyObject],
                 let accessToken = responseDict["access_token"] as? String,
-                  let expiresIn = responseDict["expires_in"] as? Double , response.result.isSuccess {
+                  let expiresIn = responseDict["expires_in"] as? Double, response.result.isSuccess {
 
             self.anonymousId = nil
             self.accessToken = accessToken
@@ -336,7 +334,7 @@ open class AuthManager {
 
         } else if let responseDict = response.result.value as? [String: AnyObject],
                      let failureReason = responseDict["error"] as? String,
-                        let statusCode = response.response?.statusCode , statusCode > 299 {
+                        let statusCode = response.response?.statusCode, statusCode > 299 {
             // In case we got an error while using refresh token, we want to clear token storage - there's no way
             // to recover from this
             logoutUser()

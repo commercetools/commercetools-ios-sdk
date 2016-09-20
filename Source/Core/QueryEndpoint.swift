@@ -47,7 +47,7 @@ public extension QueryEndpoint {
                                 offset: UInt? = nil) -> [String: Any] {
         var parameters = [String: Any]()
 
-        if let predicates = predicates , predicates.count > 0 {
+        if let predicates = predicates, predicates.count > 0 {
             parameters["where"] = predicates
         }
         if let sort = sort, sort.count > 0 {
