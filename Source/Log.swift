@@ -11,8 +11,8 @@ import Foundation
     - Debug: Log both errors and other important messages for development and debugging purposes.
 */
 public enum LogLevel: Int {
-    case Error
-    case Debug
+    case error
+    case debug
 }
 
 /**
@@ -26,14 +26,14 @@ class Log {
 
         - parameter message:                  The message to be logged.
     */
-    class func debug(@autoclosure message: () -> String?) {
+    class func debug(_ message: @autoclosure () -> String?) {
         guard let text = message() else {
             return
         }
 
         let config = Config.currentConfig
 
-        if config == nil || (config!.loggingEnabled && config!.logLevel == .Debug) {
+        if config == nil || (config!.loggingEnabled && config!.logLevel == .debug) {
             NSLog("Commercetools SDK DEBUG - \(text)")
         }
     }
@@ -44,7 +44,7 @@ class Log {
 
         - parameter message:                  The message to be logged.
     */
-    class func error(@autoclosure message: () -> String?) {
+    class func error(_ message: @autoclosure () -> String?) {
         guard let text = message() else {
             return
         }

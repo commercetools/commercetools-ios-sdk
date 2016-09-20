@@ -21,19 +21,19 @@ public protocol UpdateByKeyEndpoint: Endpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func updateByKey(key: String, version: UInt, actions: [[String: AnyObject]], expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)
+    static func updateByKey(_ key: String, version: UInt, actions: [[String: Any]], expansion: [String]?, result: @escaping (Result<[String: Any]>) -> Void)
 
 }
 
 public extension UpdateByKeyEndpoint {
 
-    static func updateByKey(key: String, version: UInt, actions: [[String: AnyObject]], expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    static func updateByKey(_ key: String, version: UInt, actions: [[String: Any]], expansion: [String]? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)key=\(key)", expansion: expansion)
 
-            Alamofire.request(.POST, fullPath, parameters: ["version": version, "actions": actions], encoding: .JSON, headers: self.headers(token))
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+            Alamofire.request(fullPath, method: .post, parameters: ["version": version, "actions": actions], encoding: JSONEncoding.default, headers: self.headers(token))
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })
         })

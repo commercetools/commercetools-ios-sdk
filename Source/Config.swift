@@ -23,7 +23,7 @@ public class Config {
     }
 
     /// The log level for the Commercetools library. Debug level is the default.
-    public var logLevel = LogLevel.Debug
+    public var logLevel = LogLevel.debug
 
     /// Enables or disables logging. Logging is enabled by default.
     public var loggingEnabled = true
@@ -72,7 +72,7 @@ public class Config {
 
         - returns: The new `Config` instance if all configuration parameters were valid, 'nil' otherwise.
     */
-    public convenience init?(loggingEnabled: Bool = true, logLevel: LogLevel = .Debug) {
+    public convenience init?(loggingEnabled: Bool = true, logLevel: LogLevel = .debug) {
         
         self.init(path: "CommercetoolsConfig.plist", loggingEnabled: loggingEnabled, logLevel: logLevel)
     }
@@ -87,11 +87,11 @@ public class Config {
 
         - returns: The new `Config` instance if all configuration parameters were valid, 'nil' otherwise.
     */
-    public convenience init?(path: String, loggingEnabled: Bool = true, logLevel: LogLevel = .Debug) {
-        let plistFileName = path.hasSuffix(".plist") ? path.substringToIndex(path.endIndex.advancedBy(-6)) : path
+    public convenience init?(path: String, loggingEnabled: Bool = true, logLevel: LogLevel = .debug) {
+        let plistFileName = path.hasSuffix(".plist") ? path.substring(to: path.characters.index(path.endIndex, offsetBy: -6)) : path
 
-        guard let path = NSBundle.mainBundle().pathForResource(plistFileName, ofType: "plist"),
-        config = NSDictionary(contentsOfFile: path) else {
+        guard let path = Bundle.main.path(forResource: plistFileName, ofType: "plist"),
+        let config = NSDictionary(contentsOfFile: path) else {
             Log.error("Specified config file at \(plistFileName).plist is missing.")
             return nil
         }
@@ -109,7 +109,7 @@ public class Config {
 
         - returns: The new `Config` instance if all configuration parameters were valid, 'nil' otherwise.
     */
-    init?(config: NSDictionary, loggingEnabled: Bool = true, logLevel: LogLevel = .Debug) {
+    init?(config: NSDictionary, loggingEnabled: Bool = true, logLevel: LogLevel = .debug) {
         self.loggingEnabled = loggingEnabled
         self.logLevel = logLevel
         projectKey = config["projectKey"] as? String
@@ -120,11 +120,11 @@ public class Config {
         apiUrl = config["apiUrl"] as? String
         anonymousSession = config["anonymousSession"] as? Bool ?? false
 
-        if let apiUrl = apiUrl where !apiUrl.hasSuffix("/") {
+        if let apiUrl = apiUrl, !apiUrl.hasSuffix("/") {
             self.apiUrl = apiUrl + "/"
         }
 
-        if let authUrl = authUrl where !authUrl.hasSuffix("/") {
+        if let authUrl = authUrl, !authUrl.hasSuffix("/") {
             self.authUrl = authUrl + "/"
         }
 

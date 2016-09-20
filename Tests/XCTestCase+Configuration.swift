@@ -8,22 +8,22 @@ import XCTest
 extension XCTestCase {
     
     func setupTestConfiguration() {
-        let testBundle = NSBundle(forClass: AuthManagerTests.self)
-        if let path = testBundle.pathForResource("CommercetoolsTestConfig", ofType: "plist"),
-            config = NSDictionary(contentsOfFile: path) {
+        let testBundle = Bundle(for: AuthManagerTests.self)
+        if let path = testBundle.path(forResource: "CommercetoolsTestConfig", ofType: "plist"),
+            let config = NSDictionary(contentsOfFile: path) {
             Commercetools.config = Config(config: config)
             cleanPersistedTokens()
         }
     }
 
     func setupProjectManagementConfiguration() {
-        let envVars = NSProcessInfo.processInfo().environment
+        let envVars = ProcessInfo.processInfo.environment
         // For creating password reset and account activation tokens, we need a configuration which
         // contains manage_customers scope.
-        if let projectKey = envVars["PROJECT_KEY"], scope = envVars["SCOPE"], clientId = envVars["CLIENT_ID"],
-        clientSecret = envVars["CLIENT_SECRET"] {
+        if let projectKey = envVars["PROJECT_KEY"], let scope = envVars["SCOPE"], let clientId = envVars["CLIENT_ID"],
+        let clientSecret = envVars["CLIENT_SECRET"] {
 
-            let config = ["projectKey": projectKey, "scope": scope, "clientId": clientId, "clientSecret": clientSecret]
+            let config = ["projectKey": projectKey, "scope": scope, "clientId": clientId, "clientSecret": clientSecret] as NSDictionary
             Commercetools.config = Config(config: config)
         } else {
             Log.error("No configuration with extended scope found in environment variables. This configuration is" +

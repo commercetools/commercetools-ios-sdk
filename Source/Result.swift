@@ -12,16 +12,16 @@ import Foundation
     - Failure: The result from the Commercetools endpoint encountered an error resulting in a failure. Provided status
                code and an array of errors should be used to examine the origin of the problem.
 */
-public enum Result<Response, Error: ErrorType> {
-    case Success(Response)
-    case Failure(Int?, [Error])
+public enum Result<Response> {
+    case success(Response)
+    case failure(Int?, [Error])
 
     /// Returns `true` if the result is a success, `false` otherwise.
     public var isSuccess: Bool {
         switch self {
-        case .Success:
+        case .success:
             return true
-        case .Failure:
+        case .failure:
             return false
         }
     }
@@ -34,9 +34,9 @@ public enum Result<Response, Error: ErrorType> {
     /// Returns the associated response if the result is a success, `nil` otherwise.
     public var response: Response? {
         switch self {
-        case .Success(let value):
+        case .success(let value):
             return value
-        case .Failure:
+        case .failure:
             return nil
         }
     }
@@ -44,9 +44,9 @@ public enum Result<Response, Error: ErrorType> {
     /// Returns the associated array of error values if the result is a failure, `nil` otherwise.
     public var errors: [Error]? {
         switch self {
-        case .Success:
+        case .success:
             return nil
-        case .Failure(_, let errors):
+        case .failure(_, let errors):
             return errors
         }
     }
@@ -57,9 +57,9 @@ public enum Result<Response, Error: ErrorType> {
     */
     public var statusCode: Int? {
         switch self {
-        case .Success:
+        case .success:
             return nil
-        case .Failure(let statusCode, _):
+        case .failure(let statusCode, _):
             return statusCode
         }
     }
@@ -72,9 +72,9 @@ extension Result: CustomStringConvertible {
     /// success or failure.
     public var description: String {
         switch self {
-        case .Success:
+        case .success:
             return "SUCCESS"
-        case .Failure:
+        case .failure:
             return "FAILURE"
         }
     }
@@ -87,9 +87,9 @@ extension Result: CustomDebugStringConvertible {
     /// success or failure in addition to the response or errors.
     public var debugDescription: String {
         switch self {
-        case .Success(let value):
+        case .success(let value):
             return "SUCCESS: \(value)"
-        case .Failure(let statusCode, let errors):
+        case .failure(let statusCode, let errors):
             return "FAILURE: StatusCode: \(statusCode ?? -1), Errors: \(errors)"
         }
     }

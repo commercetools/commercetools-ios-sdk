@@ -19,7 +19,7 @@ class CartTests: XCTestCase {
     }
     
     func testRetrieveActiveCart() {
-        let activeCartExpectation = expectationWithDescription("active cart expectation")
+        let activeCartExpectation = expectation(description: "active cart expectation")
 
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
@@ -27,17 +27,17 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         Cart.create(["currency": "EUR"], result: { result in
-            if let response = result.response, cartState = response["cartState"] as? String, id = response["id"] as? String
-                    where result.isSuccess && cartState == "Active" {
+            if let response = result.response, let cartState = response["cartState"] as? String, let id = response["id"] as? String,
+                    result.isSuccess && cartState == "Active" {
                 Cart.active(result: { result in
-                    if let response = result.response, activeCartId = response["id"] as? String where activeCartId == id {
+                    if let response = result.response, let activeCartId = response["id"] as? String, activeCartId == id {
                         activeCartExpectation.fulfill()
                     }
                 })
             }
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
     
 }

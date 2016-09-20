@@ -22,35 +22,35 @@ public protocol QueryEndpoint: Endpoint {
         - parameter offset:                   An optional parameter to set the offset of the first returned result.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func query(predicates predicates: [String]?, sort: [String]?, expansion: [String]?,
-                      limit: UInt?, offset: UInt?, result: (Result<[String: AnyObject], NSError>) -> Void)
+    static func query(predicates: [String]?, sort: [String]?, expansion: [String]?,
+                      limit: UInt?, offset: UInt?, result: @escaping (Result<[String: Any]>) -> Void)
 
 }
 
 public extension QueryEndpoint {
 
-    static func query(predicates predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
-                      limit: UInt? = nil, offset: UInt? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    static func query(predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
+                      limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
             let parameters = queryParameters(predicates: predicates, sort: sort, limit: limit, offset: offset)
 
-            Alamofire.request(.GET, fullPath, parameters: parameters, encoding: .URL, headers: self.headers(token))
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+            Alamofire.request(fullPath, parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })
         })
     }
 
-    static func queryParameters(predicates predicates: [String]? = nil, sort: [String]? = nil, limit: UInt? = nil,
-                                offset: UInt? = nil) -> [String: AnyObject] {
-        var parameters = [String: AnyObject]()
+    static func queryParameters(predicates: [String]? = nil, sort: [String]? = nil, limit: UInt? = nil,
+                                offset: UInt? = nil) -> [String: Any] {
+        var parameters = [String: Any]()
 
-        if let predicates = predicates where predicates.count > 0 {
+        if let predicates = predicates, predicates.count > 0 {
             parameters["where"] = predicates
         }
-        if let sort = sort where sort.count > 0 {
+        if let sort = sort, sort.count > 0 {
             parameters["sort"] = sort
         }
         if let limit = limit {

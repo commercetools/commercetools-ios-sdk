@@ -24,7 +24,7 @@ class CreateEndpointTests: XCTestCase {
 
     func testCreateEndpoint() {
 
-        let createExpectation = expectationWithDescription("create expectation")
+        let createExpectation = expectation(description: "create expectation")
 
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
@@ -32,18 +32,18 @@ class CreateEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.create(["currency": "EUR"], result: { result in
-            if let response = result.response, cartState = response["cartState"] as? String, version = response["version"] as? Int
-                    where result.isSuccess && cartState == "Active" && version == 1 {
+            if let response = result.response, let cartState = response["cartState"] as? String, let version = response["version"] as? Int,
+                    result.isSuccess && cartState == "Active" && version == 1 {
                 createExpectation.fulfill()
             }
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testCreateEndpointError() {
 
-        let createExpectation = expectationWithDescription("create expectation")
+        let createExpectation = expectation(description: "create expectation")
 
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
@@ -51,16 +51,16 @@ class CreateEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.create(["currency": "BAD"], result: { result in
-            if let error = result.errors?.first, errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String
-                    where errorReason == "Request body does not contain valid JSON." &&
-                            errorDesc == "currency: ISO 4217 code JSON String expected" &&
-                           error.code == Error.Code.InvalidJsonInputError.rawValue && result.statusCode == 400 {
+            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
+                    let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String,
+                    errorReason == "Request body does not contain valid JSON." &&
+                    errorDesc == "currency: ISO 4217 code JSON String expected" &&
+                    error.code == CTError.Code.invalidJsonInputError.rawValue && result.statusCode == 400 {
                 createExpectation.fulfill()
             }
         })
 
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
     
 }

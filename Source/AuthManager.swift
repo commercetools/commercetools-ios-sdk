@@ -8,7 +8,7 @@ import Alamofire
 /**
     Responsible for obtaining, refreshing and persisting OAuth token, both for client credentials and password flows.
 */
-public class AuthManager {
+open class AuthManager {
 
     /**
         Enum used to specify current token state.
@@ -19,24 +19,24 @@ public class AuthManager {
         - NoToken:          Auth manager does not have a token (i.e. because Commercetools configuration is not valid)
     */
     public enum TokenState: Int {
-        case CustomerToken   = 0
-        case AnonymousToken  = 1
-        case PlainToken      = 2
-        case NoToken         = 3
+        case customerToken   = 0
+        case anonymousToken  = 1
+        case plainToken      = 2
+        case noToken         = 3
     }
 
     // MARK: - Properties
 
     /// A shared instance of `AuthManager`, which should be used by other SDK objects.
-    public static let sharedInstance = AuthManager()
+    open static let sharedInstance = AuthManager()
 
     /// A property used for setting the `anonymous_id` while obtaining anonymous session access and refresh tokens.
     var anonymousId: String?
 
     /// The current state auth manager is handling.
-    public private(set) var state: TokenState {
+    open private(set) var state: TokenState {
         get {
-            return tokenStore.tokenState ?? .NoToken
+            return tokenStore.tokenState ?? .noToken
         }
         set {
             tokenStore.tokenState = newValue
@@ -67,7 +67,7 @@ public class AuthManager {
     }
 
     /// The auth token valid before date.
-    private var tokenValidDate: NSDate? {
+    private var tokenValidDate: Date? {
         get {
             return tokenStore.tokenValidDate
         }
@@ -78,7 +78,7 @@ public class AuthManager {
 
     /// The URL used for requesting token for client credentials and refresh token flow.
     private var clientCredentialsUrl: String? {
-        if let config = Config.currentConfig, baseAuthUrl = config.authUrl where config.validate() {
+        if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, config.validate() {
             return baseAuthUrl + "oauth/token"
         }
         return nil
@@ -86,8 +86,7 @@ public class AuthManager {
 
     /// The URL used for requesting an access and refresh token for an anonymous session
     private var anonymousSessionTokenUrl: String? {
-        if let config = Config.currentConfig, baseAuthUrl = config.authUrl, projectKey = config.projectKey
-                where config.validate() {
+        if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, let projectKey = config.projectKey, config.validate() {
             return "\(baseAuthUrl)oauth/\(projectKey)/anonymous/token"
         }
         return nil
@@ -95,8 +94,7 @@ public class AuthManager {
 
     /// The URL used for requesting token for password flow.
     private var loginUrl: String? {
-        if let config = Config.currentConfig, baseAuthUrl = config.authUrl, projectKey = config.projectKey
-                where config.validate() {
+        if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, let projectKey = config.projectKey, config.validate() {
             return "\(baseAuthUrl)oauth/\(projectKey)/customers/token"
 
         }
@@ -107,12 +105,12 @@ public class AuthManager {
     private var usingAnonymousSession = false
 
     /// The HTTP headers containing basic HTTP auth needed to obtain the tokens.
-    private var authHeaders: [String: String]? {
-        if let config = Config.currentConfig, clientId = config.clientId, clientSecret = config.clientSecret,
-        authData = "\(clientId):\(clientSecret)".dataUsingEncoding(NSUTF8StringEncoding) where config.validate() {
+    private var authHeaders: HTTPHeaders? {
+        if let config = Config.currentConfig, let clientId = config.clientId, let clientSecret = config.clientSecret,
+        let authData = "\(clientId):\(clientSecret)".data(using: String.Encoding.utf8), config.validate() {
 
-            var headers = Manager.defaultHTTPHeaders
-            headers["Authorization"] = "Basic \(authData.base64EncodedStringWithOptions([]))"
+            var headers = SessionManager.defaultHTTPHeaders
+            headers["Authorization"] = "Basic \(authData.base64EncodedString())"
             return headers
 
         }
@@ -120,7 +118,7 @@ public class AuthManager {
     }
 
     /// The serial queue used for processing token requests.
-    private let serialQueue = dispatch_queue_create("com.commercetools.authQueue", DISPATCH_QUEUE_SERIAL);
+    private let serialQueue = DispatchQueue(label: "com.commercetools.authQueue", attributes: []);
 
     // MARK: - Lifecycle
 
@@ -141,19 +139,19 @@ public class AuthManager {
         - parameter password:           The user's password.
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    public func loginUser(username: String, password: String, completionHandler: (NSError?) -> Void) {
+    open func loginUser(_ username: String, password: String, completionHandler: @escaping (NSError?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
-        dispatch_async(serialQueue, {
-            let semaphore = dispatch_semaphore_create(0)
-            if self.state != .PlainToken {
+        serialQueue.async(execute: {
+            let semaphore = DispatchSemaphore(value: 0)
+            if self.state != .plainToken {
                 self.logoutUser()
             }
             self.processLoginUser(username, password: password, completionHandler: { token, error in
                 completionHandler(error)
-                dispatch_semaphore_signal(semaphore)
+                semaphore.signal()
             })
-            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+            semaphore.wait(timeout: DispatchTime.distantFuture)
         })
     }
 
@@ -161,7 +159,7 @@ public class AuthManager {
         This method will clear all tokens both from memory and persistent storage.
         Most common use case for this method is user logout.
     */
-    public func logoutUser() {
+    open func logoutUser() {
         clearAllTokens()
 
         Log.debug("Getting new anonymous access token after user logout")
@@ -183,10 +181,10 @@ public class AuthManager {
         - parameter anonymousId:        Optional argument to assign custom value for `anonymous_id`.
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    public func obtainAnonymousToken(usingSession usingSession: Bool, anonymousId: String? = nil, completionHandler: (NSError?) -> Void) {
+    open func obtainAnonymousToken(usingSession: Bool, anonymousId: String? = nil, completionHandler: @escaping (NSError?) -> Void) {
         // Process session changes using private serial queue to avoid issues with race conditions
         // when switching between anonymous and plain modes.
-        dispatch_async(serialQueue, {
+        serialQueue.async(execute: {
             self.anonymousId = anonymousId
             self.usingAnonymousSession = usingSession
             self.clearAllTokens()
@@ -204,16 +202,16 @@ public class AuthManager {
 
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    func token(completionHandler: (String?, NSError?) -> Void) {
+    func token(_ completionHandler: @escaping (String?, NSError?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
-        dispatch_async(serialQueue, {
-            let semaphore = dispatch_semaphore_create(0)
+        serialQueue.async(execute: {
+            let semaphore = DispatchSemaphore(value: 0)
             self.processTokenRequest { token, error in
                 completionHandler(token, error)
-                dispatch_semaphore_signal(semaphore)
+                semaphore.signal()
             }
-            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+            semaphore.wait(timeout: DispatchTime.distantFuture)
         })
     }
 
@@ -225,23 +223,23 @@ public class AuthManager {
     func updatedConfig() {
         tokenStore.reloadTokens()
 
-        if let config = Config.currentConfig where config.validate() {
-            usingAnonymousSession = config.anonymousSession ?? false
+        if let config = Config.currentConfig, config.validate() {
+            usingAnonymousSession = config.anonymousSession
         }
 
-        if (state == .AnonymousToken && !usingAnonymousSession) ||
-                (state == .PlainToken && usingAnonymousSession) {
+        if (state == .anonymousToken && !usingAnonymousSession) ||
+                (state == .plainToken && usingAnonymousSession) {
             logoutUser()
         }
     }
 
     // MARK: - Retrieving tokens from the auth API
 
-    private func processTokenRequest(completionHandler: (String?, NSError?) -> Void) {
-        if let config = Config.currentConfig where config.validate() {
-            if let accessToken = accessToken, tokenValidDate = tokenValidDate where tokenValidDate.compare(NSDate()) == .OrderedDescending {
+    private func processTokenRequest(_ completionHandler: @escaping (String?, NSError?) -> Void) {
+        if let config = Config.currentConfig, config.validate() {
+            if let accessToken = accessToken, let tokenValidDate = tokenValidDate, tokenValidDate.compare(Date()) == .orderedDescending {
                 if refreshToken == nil {
-                    self.state = .PlainToken
+                    self.state = .plainToken
                 }
                 completionHandler(accessToken, nil)
 
@@ -258,53 +256,58 @@ public class AuthManager {
         } else {
             let description = "Cannot obtain access token without valid configuration present."
             Log.error(description)
-            completionHandler(nil, Error.error(code: .ConfigurationValidationFailed, failureReason: "invalid_configuration", description: description))
+            completionHandler(nil, CTError.error(code: .configurationValidationFailed, failureReason: "invalid_configuration", description: description))
         }
     }
 
-    private func processLoginUser(username: String, password: String, completionHandler: (String?, NSError?) -> Void) {
-        if let loginUrl = loginUrl, authHeaders = authHeaders, scope = Config.currentConfig?.scope {
-            Alamofire.request(.POST, loginUrl, parameters: ["grant_type": "password", "scope": scope, "username": username, "password": password], encoding: .URLEncodedInURL, headers: authHeaders)
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
-                self.state = .CustomerToken
+    private func processLoginUser(_ username: String, password: String, completionHandler: @escaping (String?, NSError?) -> Void) {
+        if let loginUrl = loginUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
+//            _ url: URLConvertible,
+//            method: HTTPMethod = .get,
+//            parameters: Parameters? = nil,
+//            encoding: ParameterEncoding = URLEncoding.default,
+//            headers: HTTPHeaders? = nil)
+            Alamofire.request(loginUrl, method: .post, parameters: ["grant_type": "password", "scope": scope, "username": username, "password": password], encoding: URLEncoding.queryString, headers: authHeaders)
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                self.state = .customerToken
                 self.handleAuthResponse(response, completionHandler: completionHandler)
             })
         }
     }
 
-    private func obtainAnonymousToken(completionHandler: (String?, NSError?) -> Void) {
+    private func obtainAnonymousToken(_ completionHandler: @escaping (String?, NSError?) -> Void) {
         usingAnonymousSession ? obtainAnonymousSessionToken(completionHandler) : obtainPlainAnonymousToken(completionHandler)
     }
 
-    private func obtainAnonymousSessionToken(completionHandler: (String?, NSError?) -> Void) {
-        if let authUrl = anonymousSessionTokenUrl, authHeaders = authHeaders, scope = Config.currentConfig?.scope {
+    private func obtainAnonymousSessionToken(_ completionHandler: @escaping (String?, NSError?) -> Void) {
+        if let authUrl = anonymousSessionTokenUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
             var parameters = ["grant_type": "client_credentials", "scope": scope]
             if let anonymousId = anonymousId {
                 parameters["anonymous_id"] = anonymousId
             }
 
-            Alamofire.request(.POST, authUrl, parameters: parameters, encoding: .URLEncodedInURL, headers: authHeaders)
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
-                self.state = .AnonymousToken
+            Alamofire.request(authUrl, method: .post, parameters: parameters, encoding: URLEncoding.queryString, headers: authHeaders)
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                self.state = .anonymousToken
                 self.handleAuthResponse(response, completionHandler: completionHandler)
             })
         }
     }
 
-    private func obtainPlainAnonymousToken(completionHandler: (String?, NSError?) -> Void) {
-        if let authUrl = clientCredentialsUrl, authHeaders = authHeaders, scope = Config.currentConfig?.scope {
-            Alamofire.request(.POST, authUrl, parameters: ["grant_type": "client_credentials", "scope": scope], encoding: .URLEncodedInURL, headers: authHeaders)
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
-                self.state = .PlainToken
+    private func obtainPlainAnonymousToken(_ completionHandler: @escaping (String?, NSError?) -> Void) {
+        if let authUrl = clientCredentialsUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
+            Alamofire.request(authUrl, method: .post, parameters: ["grant_type": "client_credentials", "scope": scope], encoding: URLEncoding.queryString, headers: authHeaders)
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                self.state = .plainToken
                 self.handleAuthResponse(response, completionHandler: completionHandler)
             })
         }
     }
 
-    private func refreshToken(completionHandler: (String?, NSError?) -> Void) {
-        if let authUrl = clientCredentialsUrl, authHeaders = authHeaders, refreshToken = refreshToken {
-            Alamofire.request(.POST, authUrl, parameters: ["grant_type": "refresh_token", "refresh_token": refreshToken], encoding: .URLEncodedInURL, headers: authHeaders)
-            .responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+    private func refreshToken(_ completionHandler: @escaping (String?, NSError?) -> Void) {
+        if let authUrl = clientCredentialsUrl, let authHeaders = authHeaders, let refreshToken = refreshToken {
+            Alamofire.request(authUrl, method: .post, parameters: ["grant_type": "refresh_token", "refresh_token": refreshToken], encoding: URLEncoding.queryString, headers: authHeaders)
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 self.handleAuthResponse(response, completionHandler: completionHandler)
             })
         }
@@ -314,33 +317,33 @@ public class AuthManager {
         accessToken = nil
         refreshToken = nil
         tokenValidDate = nil
-        state = .NoToken
+        state = .noToken
     }
 
-    private func handleAuthResponse(response: Response<AnyObject, NSError>, completionHandler: (String?, NSError?) -> Void) {
+    private func handleAuthResponse(_ response: DataResponse<Any>, completionHandler: (String?, NSError?) -> Void) {
         if let responseDict = response.result.value as? [String: AnyObject],
-                accessToken = responseDict["access_token"] as? String,
-                  expiresIn = responseDict["expires_in"] as? Double where response.result.isSuccess {
+                let accessToken = responseDict["access_token"] as? String,
+                  let expiresIn = responseDict["expires_in"] as? Double, response.result.isSuccess {
 
             self.anonymousId = nil
             self.accessToken = accessToken
             // Subtracting 10 minutes from the valid period to compensate for the latency
-            self.tokenValidDate = NSDate().dateByAddingTimeInterval(expiresIn - 600)
+            self.tokenValidDate = Date().addingTimeInterval(expiresIn - 600)
             self.refreshToken = responseDict["refresh_token"] as? String ?? self.refreshToken
             completionHandler(accessToken, nil)
 
         } else if let responseDict = response.result.value as? [String: AnyObject],
-                     failureReason = responseDict["error"] as? String,
-                        statusCode = response.response?.statusCode where statusCode > 299 {
+                     let failureReason = responseDict["error"] as? String,
+                        let statusCode = response.response?.statusCode, statusCode > 299 {
             // In case we got an error while using refresh token, we want to clear token storage - there's no way
             // to recover from this
             logoutUser()
-            completionHandler(nil, Error.error(code: .AccessTokenRetrievalFailed,
+            completionHandler(nil, CTError.error(code: .accessTokenRetrievalFailed,
                     failureReason: failureReason, description: responseDict["error_description"] as? String))
         } else {
             // Any other error from NSURLErrorDomain (e.g internet offline) - we won't clear token storage
-            state = .NoToken
-            completionHandler(nil, response.result.error)
+            state = .noToken
+            completionHandler(nil, response.result.error as? NSError)
         }
     }
 

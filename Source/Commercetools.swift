@@ -42,7 +42,7 @@ public var authState: AuthManager.TokenState {
     - parameter password:           The user's password.
     - parameter completionHandler:  The code to be executed once the token fetching completes.
 */
-public func loginUser(username: String, password: String, completionHandler: (NSError?) -> Void) {
+public func loginUser(_ username: String, password: String, completionHandler: @escaping (NSError?) -> Void) {
     AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: completionHandler)
 }
 
@@ -64,6 +64,6 @@ public func logoutUser() {
     - parameter anonymousId:        Optional argument to assign custom value for `anonymous_id`.
     - parameter completionHandler:  The code to be executed once the token fetching completes.
 */
-public func obtainAnonymousToken(usingSession usingSession: Bool, anonymousId: String? = nil, completionHandler: (NSError?) -> Void) {
+public func obtainAnonymousToken(usingSession: Bool, anonymousId: String? = nil, completionHandler: @escaping (NSError?) -> Void) {
     AuthManager.sharedInstance.obtainAnonymousToken(usingSession: usingSession, anonymousId: anonymousId, completionHandler: completionHandler)
 }

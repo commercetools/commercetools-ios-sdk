@@ -8,9 +8,9 @@ import Alamofire
 /**
     Provides complete set of interactions for querying, retrieving, creating and updating shopping cart.
 */
-public class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, DeleteEndpoint {
+open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, DeleteEndpoint {
 
-    public static let path = "me/carts"
+    open static let path = "me/carts"
 
     /**
         Retrieves the cart with state Active which has the most recent lastModifiedAt.
@@ -18,7 +18,7 @@ public class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, 
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    public static func active(expansion: [String]? = nil, result: (Result<[String: AnyObject], NSError>) -> Void) {
+    open static func active(_ expansion: [String]? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
         return ActiveCart.get(expansion, result: result)
     }
 

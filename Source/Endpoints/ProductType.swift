@@ -7,8 +7,8 @@ import Foundation
 /**
     Provides set of interactions for querying, retrieving by UUID and by key for product types.
 */
-public class ProductType: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint {
+open class ProductType: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint {
 
-    public static let path = "product-types"
+    open static let path = "product-types"
 
 }
