@@ -16,7 +16,7 @@
 $ gem install cocoapods
 ```
 
-> > CocoaPods 1.1.0+ is required to build CommercetoolsSDK 0.3+.
+> CocoaPods 1.1.0+ is required to build CommercetoolsSDK 0.3+.
 
 To integrate CommercetoolsSDK into your Xcode project using CocoaPods, specify it in your `Podfile`:
 

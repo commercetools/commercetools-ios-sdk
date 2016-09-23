@@ -2,12 +2,31 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
+- `0.3.x` Releases - [0.3.0](#030)
+- `0.2.x` Releases - [0.2.0](#020)
 - `0.1.x` Releases - [0.1.0](#010)
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
 
-## [0.1.0](https://github.com/sphereio/commercetools-ios-sdk/releases/tag/0.1.0)
+## [0.3.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.3.0)
+Released on 2016-09-23.
+
+#### Added
+- Migrated codebase to Swift 3.
+- Introduced `CTError` type providing more flexible error handling.
+- Updated project for Alamofire v4.0.
+
+## [0.2.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.2.0)
+Released on 2016-07-08.
+
+#### Added
+- Support for retrieving active cart.
+- Anonymous sessions support, with flexible configuration.
+- Multi target app support.
+- Improved error handling.
+
+## [0.1.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.1.0)
 Released on 2016-05-12.
 
 #### Added
@@ -17,7 +36,7 @@ Released on 2016-05-12.
 - Product type endpoint.
 - Support for categories endpoint.
 
-## [0.0.3](https://github.com/sphereio/commercetools-ios-sdk/releases/tag/0.0.3)
+## [0.0.3](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.0.3)
 Released on 2016-05-06.
 
 #### Added
@@ -27,7 +46,7 @@ Released on 2016-05-06.
 - Support for orders endpoint.
 - Product projection endpoint query and retrieval functionality.
 
-## [0.0.2](https://github.com/sphereio/commercetools-ios-sdk/releases/tag/0.0.2)
+## [0.0.2](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.0.2)
 Released on 2016-04-28.
 
 #### Added
@@ -37,7 +56,7 @@ Released on 2016-04-28.
 - Support for delete endpoints.
 - Support for create endpoints.
 
-## [0.0.1](https://github.com/sphereio/commercetools-ios-sdk/releases/tag/0.0.1)
+## [0.0.1](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.0.1)
 Released on 2016-04-21.
 
 #### Added
