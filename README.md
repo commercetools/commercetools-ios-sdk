@@ -16,16 +16,16 @@
 $ gem install cocoapods
 ```
 
-> CocoaPods 0.39.0+ is required to build CommercetoolsSDK.
+> > CocoaPods 1.1.0+ is required to build CommercetoolsSDK 0.3+.
 
 To integrate CommercetoolsSDK into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '8.0'
+platform :ios, '9.0'
 use_frameworks!
 
-pod 'Commercetools', '~> 0.1'
+pod 'Commercetools', '~> 0.3'
 ```
 
 Then, run the following command:
@@ -95,8 +95,8 @@ let username = "swift.sdk.test.user@commercetools.com"
 let password = "password"
 
 Commercetools.loginUser(username, password: password, completionHandler: { error in
-    if let error = error {
-        // Handle error, and possibly get some more information from error.userInfo[NSLocalizedFailureReasonErrorKey]
+    if let error = error as? CTError, case .accessTokenRetrievalFailed(let reason) = error {
+        // Handle error, and possibly get some more information from reason.message
     }
 })
 ```
@@ -119,7 +119,7 @@ In order for your app to support anonymous session, you should set the `anonymou
 if Commercetools.obtainAnonymousToken(usingSession: true, anonymousId: "some-custom-id", completionHandler: { error in
      if error == nil {
         // It is possible for token retrieval to fail, e.g custom token ID has already been taken,
-        // in which case error.userInfo[NSLocalizedDescriptionKey] is set to The anonymousId is already in use.
+        // in which case reason.message from the returned CTError instance is set to the anonymousId is already in use.
      }
  })
 ```
