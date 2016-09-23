@@ -139,7 +139,7 @@ open class AuthManager {
         - parameter password:           The user's password.
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    open func loginUser(_ username: String, password: String, completionHandler: @escaping (NSError?) -> Void) {
+    open func loginUser(_ username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
         serialQueue.async(execute: {
@@ -164,9 +164,9 @@ open class AuthManager {
 
         Log.debug("Getting new anonymous access token after user logout")
         token { _, error in
-            if let error = error {
+            if let error = error as? CTError {
                 Log.error("Could not obtain auth token "
-                        + (error.userInfo[NSLocalizedFailureReasonErrorKey] as? String ?? ""))
+                        + (error.errorDescription ?? ""))
             }
         }
     }
@@ -181,7 +181,7 @@ open class AuthManager {
         - parameter anonymousId:        Optional argument to assign custom value for `anonymous_id`.
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    open func obtainAnonymousToken(usingSession: Bool, anonymousId: String? = nil, completionHandler: @escaping (NSError?) -> Void) {
+    open func obtainAnonymousToken(usingSession: Bool, anonymousId: String? = nil, completionHandler: @escaping (Error?) -> Void) {
         // Process session changes using private serial queue to avoid issues with race conditions
         // when switching between anonymous and plain modes.
         serialQueue.async(execute: {
@@ -202,7 +202,7 @@ open class AuthManager {
 
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    func token(_ completionHandler: @escaping (String?, NSError?) -> Void) {
+    func token(_ completionHandler: @escaping (String?, Error?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
         serialQueue.async(execute: {
@@ -235,7 +235,7 @@ open class AuthManager {
 
     // MARK: - Retrieving tokens from the auth API
 
-    private func processTokenRequest(_ completionHandler: @escaping (String?, NSError?) -> Void) {
+    private func processTokenRequest(_ completionHandler: @escaping (String?, Error?) -> Void) {
         if let config = Config.currentConfig, config.validate() {
             if let accessToken = accessToken, let tokenValidDate = tokenValidDate, tokenValidDate.compare(Date()) == .orderedDescending {
                 if refreshToken == nil {
@@ -254,13 +254,12 @@ open class AuthManager {
                 }
             }
         } else {
-            let description = "Cannot obtain access token without valid configuration present."
-            Log.error(description)
-            completionHandler(nil, CTError.error(code: .configurationValidationFailed, failureReason: "invalid_configuration", description: description))
+            Log.error("Cannot obtain access token without valid configuration present.")
+            completionHandler(nil, CTError.configurationValidationFailed)
         }
     }
 
-    private func processLoginUser(_ username: String, password: String, completionHandler: @escaping (String?, NSError?) -> Void) {
+    private func processLoginUser(_ username: String, password: String, completionHandler: @escaping (String?, Error?) -> Void) {
         if let loginUrl = loginUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
 //            _ url: URLConvertible,
 //            method: HTTPMethod = .get,
@@ -275,11 +274,11 @@ open class AuthManager {
         }
     }
 
-    private func obtainAnonymousToken(_ completionHandler: @escaping (String?, NSError?) -> Void) {
+    private func obtainAnonymousToken(_ completionHandler: @escaping (String?, Error?) -> Void) {
         usingAnonymousSession ? obtainAnonymousSessionToken(completionHandler) : obtainPlainAnonymousToken(completionHandler)
     }
 
-    private func obtainAnonymousSessionToken(_ completionHandler: @escaping (String?, NSError?) -> Void) {
+    private func obtainAnonymousSessionToken(_ completionHandler: @escaping (String?, Error?) -> Void) {
         if let authUrl = anonymousSessionTokenUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
             var parameters = ["grant_type": "client_credentials", "scope": scope]
             if let anonymousId = anonymousId {
@@ -294,7 +293,7 @@ open class AuthManager {
         }
     }
 
-    private func obtainPlainAnonymousToken(_ completionHandler: @escaping (String?, NSError?) -> Void) {
+    private func obtainPlainAnonymousToken(_ completionHandler: @escaping (String?, Error?) -> Void) {
         if let authUrl = clientCredentialsUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
             Alamofire.request(authUrl, method: .post, parameters: ["grant_type": "client_credentials", "scope": scope], encoding: URLEncoding.queryString, headers: authHeaders)
             .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
@@ -304,7 +303,7 @@ open class AuthManager {
         }
     }
 
-    private func refreshToken(_ completionHandler: @escaping (String?, NSError?) -> Void) {
+    private func refreshToken(_ completionHandler: @escaping (String?, Error?) -> Void) {
         if let authUrl = clientCredentialsUrl, let authHeaders = authHeaders, let refreshToken = refreshToken {
             Alamofire.request(authUrl, method: .post, parameters: ["grant_type": "refresh_token", "refresh_token": refreshToken], encoding: URLEncoding.queryString, headers: authHeaders)
             .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
@@ -320,7 +319,7 @@ open class AuthManager {
         state = .noToken
     }
 
-    private func handleAuthResponse(_ response: DataResponse<Any>, completionHandler: (String?, NSError?) -> Void) {
+    private func handleAuthResponse(_ response: DataResponse<Any>, completionHandler: (String?, Error?) -> Void) {
         if let responseDict = response.result.value as? [String: AnyObject],
                 let accessToken = responseDict["access_token"] as? String,
                   let expiresIn = responseDict["expires_in"] as? Double, response.result.isSuccess {
@@ -338,12 +337,12 @@ open class AuthManager {
             // In case we got an error while using refresh token, we want to clear token storage - there's no way
             // to recover from this
             logoutUser()
-            completionHandler(nil, CTError.error(code: .accessTokenRetrievalFailed,
-                    failureReason: failureReason, description: responseDict["error_description"] as? String))
+            completionHandler(nil, CTError.accessTokenRetrievalFailed(reason: CTError.FailureReason(message: failureReason, details: responseDict["error_description"] as? String)))
+
         } else {
             // Any other error from NSURLErrorDomain (e.g internet offline) - we won't clear token storage
             state = .noToken
-            completionHandler(nil, response.result.error as? NSError)
+            completionHandler(nil, response.result.error)
         }
     }
 

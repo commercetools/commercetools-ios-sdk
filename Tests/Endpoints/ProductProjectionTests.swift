@@ -142,9 +142,8 @@ class ProductProjectionTests: XCTestCase {
         let byIdExpectation = expectation(description: "byId expectation")
 
         ProductProjection.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    errorReason == "The Resource with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." &&
-                    error.code == CTError.Code.resourceNotFoundError.rawValue {
+            if let error = result.errors?.first as? CTError, case .resourceNotFoundError(let reason) = error,
+                    reason.message == "The Resource with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." {
                 byIdExpectation.fulfill()
             }
         })

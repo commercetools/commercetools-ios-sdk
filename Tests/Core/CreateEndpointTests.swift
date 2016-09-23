@@ -51,11 +51,9 @@ class CreateEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.create(["currency": "BAD"], result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String,
-                    errorReason == "Request body does not contain valid JSON." &&
-                    errorDesc == "currency: ISO 4217 code JSON String expected" &&
-                    error.code == CTError.Code.invalidJsonInputError.rawValue && result.statusCode == 400 {
+            if let error = result.errors?.first as? CTError, result.statusCode == 400, case .invalidJsonInputError(let reason) = error,
+                    reason.message == "Request body does not contain valid JSON." &&
+                    reason.details == "currency: ISO 4217 code JSON String expected" {
                 createExpectation.fulfill()
             }
         })

@@ -84,19 +84,18 @@ public extension Endpoint {
                 result(Result.success(responseDict))
 
             } else if let errorsResponse = responseDict["errors"] as? [[String: AnyObject]] {
-                var errors = [NSError]()
+                var errors = [CTError]()
                 errorsResponse.forEach {
-                    errors += [CTError.error(code: CTError.Code(code: $0["code"] as? String ?? ""),
-                            failureReason: $0["message"] as? String,
-                            description: $0["detailedErrorMessage"] as? String)]
+                    errors += [CTError(code: $0["code"] as? String ?? "", failureMessage: $0["message"] as? String,
+                               failureDetails: $0["detailedErrorMessage"] as? String, currentVersion: $0["currentVersion"] as? UInt)]
                 }
                 result(Result.failure(response.statusCode, errors))
 
             } else {
-                result(Result.failure(response.statusCode, [CTError.error(code: .generalCommercetoolsError, failureReason: responseDict["error"] as? String)]))
+                result(Result.failure(response.statusCode, [CTError.generalError(reason: CTError.FailureReason(message: responseDict["error"] as? String, details: nil))]))
             }
         } else {
-            result(Result.failure(response.response?.statusCode, [response.result.error ?? CTError.error(code: .generalCommercetoolsError)]))
+            result(Result.failure(response.response?.statusCode, [response.result.error ?? CTError.generalError(reason: nil)]))
         }
     }
 
@@ -109,13 +108,13 @@ public extension Endpoint {
     static func requestWithTokenAndPath(_ result: @escaping (Result<[String: Any]>) -> Void, _ requestHandler: @escaping (String, String) -> Void) {
         guard let config = Config.currentConfig, let path = fullPath, config.validate() else {
             Log.error("Cannot execute command - check if the configuration is valid.")
-            result(Result.failure(nil, [CTError.error(code: .generalCommercetoolsError)]))
+            result(Result.failure(nil, [CTError.generalError(reason: nil)]))
             return
         }
 
         AuthManager.sharedInstance.token { token, error in
             guard let token = token else {
-                result(Result.failure(nil, [error ?? CTError.error(code: .generalCommercetoolsError)]))
+                result(Result.failure(nil, [error ?? CTError.generalError(reason: nil)]))
                 return
             }
             requestHandler(token, path)

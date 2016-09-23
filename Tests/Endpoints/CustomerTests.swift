@@ -47,9 +47,8 @@ class CustomerTests: XCTestCase {
         let retrieveProfileExpectation = expectation(description: "retrieve profile expectation")
 
         Customer.profile { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    errorReason == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." &&
-                    error.code == CTError.Code.insufficientTokenGrantTypeError.rawValue {
+            if let error = result.errors?.first as? CTError, case .insufficientTokenGrantTypeError(let reason) = error,
+                    reason.message == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." {
                 retrieveProfileExpectation.fulfill()
             }
         }
@@ -94,8 +93,8 @@ class CustomerTests: XCTestCase {
         let signupDraft = ["email": "swift.sdk.test.user2@commercetools.com", "password": "password"]
 
         Customer.signup(signupDraft, result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    errorReason == "There is already an existing customer with the email '\"swift.sdk.test.user2@commercetools.com\"'." {
+            if let error = result.errors?.first as? CTError, case .generalError(let reason) = error,
+                    reason?.message == "There is already an existing customer with the email '\"swift.sdk.test.user2@commercetools.com\"'." {
                 createProfileExpectation.fulfill()
             }
         })
@@ -109,9 +108,8 @@ class CustomerTests: XCTestCase {
         let deleteProfileExpectation = expectation(description: "delete profile expectation")
 
         Customer.delete(version: 1, result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    errorReason == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." &&
-                    error.code == CTError.Code.insufficientTokenGrantTypeError.rawValue {
+            if let error = result.errors?.first as? CTError, case .insufficientTokenGrantTypeError(let reason) = error,
+                    reason.message == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." {
                 deleteProfileExpectation.fulfill()
             }
         })
@@ -162,9 +160,8 @@ class CustomerTests: XCTestCase {
         let setFirstNameAction: [String: Any] = ["action": "setFirstName", "firstName": "newName"]
 
         Customer.update(version: 1, actions: [setFirstNameAction], result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    errorReason == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." &&
-                    error.code == CTError.Code.insufficientTokenGrantTypeError.rawValue {
+            if let error = result.errors?.first as? CTError, case .insufficientTokenGrantTypeError(let reason) = error,
+                    reason.message == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." {
                 updateProfileExpectation.fulfill()
             }
         })

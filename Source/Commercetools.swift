@@ -17,9 +17,9 @@ public var config: Config? {
         Config.currentConfig = newConfig
         // After setting new configuration, we try to obtain the access token
         AuthManager.sharedInstance.token { token, error in
-            if let error = error {
+            if let error = error as? CTError {
                 Log.error("Could not obtain auth token "
-                        + (error.userInfo[NSLocalizedFailureReasonErrorKey] as? String ?? ""))
+                        + (error.errorDescription ?? ""))
             }
         }
     }
@@ -42,7 +42,7 @@ public var authState: AuthManager.TokenState {
     - parameter password:           The user's password.
     - parameter completionHandler:  The code to be executed once the token fetching completes.
 */
-public func loginUser(_ username: String, password: String, completionHandler: @escaping (NSError?) -> Void) {
+public func loginUser(_ username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
     AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: completionHandler)
 }
 
@@ -64,6 +64,6 @@ public func logoutUser() {
     - parameter anonymousId:        Optional argument to assign custom value for `anonymous_id`.
     - parameter completionHandler:  The code to be executed once the token fetching completes.
 */
-public func obtainAnonymousToken(usingSession: Bool, anonymousId: String? = nil, completionHandler: @escaping (NSError?) -> Void) {
+public func obtainAnonymousToken(usingSession: Bool, anonymousId: String? = nil, completionHandler: @escaping (Error?) -> Void) {
     AuthManager.sharedInstance.obtainAnonymousToken(usingSession: usingSession, anonymousId: anonymousId, completionHandler: completionHandler)
 }

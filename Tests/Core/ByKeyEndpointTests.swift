@@ -41,12 +41,10 @@ class ByKeyEndpointTests: XCTestCase {
         let byKeyExpectation = expectation(description: "byKey expectation")
 
         TestProductType.byKey("second", result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    errorReason == "The Resource with key 'second' was not found." &&
-                    error.code == CTError.Code.resourceNotFoundError.rawValue && result.statusCode == 404 {
+            if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
+                    reason.message == "The Resource with key 'second' was not found." {
                 byKeyExpectation.fulfill()
             }
-
         })
 
         waitForExpectations(timeout: 10, handler: nil)
