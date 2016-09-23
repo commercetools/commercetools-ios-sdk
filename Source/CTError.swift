@@ -69,8 +69,7 @@ extension CTError: LocalizedError {
                     "Make sure you have proper project client ID and secret set in your config file."
         case .invalidJsonInputError(let reason):
             return "Invalid json input occurred\n\(reason.localizedDescription)\n" +
-                    "It's very likely due to invalid 'create' or 'update' dictionary. Also, please check all other " +
-                    "parameters used (i.e sort, predicates, expansions), and consult with API docs."
+                    "It's very likely due to invalid 'create' or 'update' dictionary. Have a look at the API documentation."
         case .resourceNotFoundError(let reason):
             return "The requested resource could not be found\n\(reason.localizedDescription)"
         case .concurrentModificationError(let reason, let currentVersion):
