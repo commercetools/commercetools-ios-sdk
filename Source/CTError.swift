@@ -8,10 +8,10 @@ import Foundation
 /// descriptive failure reason.
 ///
 /// - configurationValidationFailed:    Returned if the Commercetools SDK configuration hasn't been properly set.
-/// - accessTokenRetrievalFailed:       Returned when there is an issue obtaining access token.
+/// - accessTokenRetrievalFailed:       Returned when there is an issue obtaining the access token.
 /// - invalidJsonInputError:            Returned in case of badly formed request.
 /// - resourceNotFoundError:            Returned when a requested object was not found.
-/// - concurrentModificationError:      Returned in a case when the incorrect version is passed to either `create` or `update` method.
+/// - concurrentModificationError:      Returned in case when the incorrect version is passed to either `create`, `update`, or `delete` method.
 /// - insufficientTokenGrantTypeError:  Returned when an operation for which your project credentials do not have permission is performed.
 /// - generalError:                     The default error case, containing optional failure reason.
 public enum CTError: Error {
@@ -30,13 +30,13 @@ public enum CTError: Error {
     case accessTokenRetrievalFailed(reason: FailureReason)
     case invalidJsonInputError(reason: FailureReason)
     case resourceNotFoundError(reason: FailureReason)
-    case concurrentModificationError(reason: FailureReason)
+    case concurrentModificationError(reason: FailureReason, currentVersion: UInt?)
     case insufficientTokenGrantTypeError(reason: FailureReason)
     case generalError(reason: FailureReason?)
 
     // MARK: - Lifecycle
 
-    init(code: String, failureMessage: String?, failureDetails: String?) {
+    init(code: String, failureMessage: String?, failureDetails: String?, currentVersion: UInt?) {
         let reason = FailureReason(message: failureMessage, details: failureDetails)
 
         switch code {
@@ -49,7 +49,7 @@ public enum CTError: Error {
         case "ResourceNotFound":
             self = .resourceNotFoundError(reason: reason)
         case "ConcurrentModification":
-            self = .concurrentModificationError(reason: reason)
+            self = .concurrentModificationError(reason: reason, currentVersion: currentVersion)
         case "insufficient_token_grant_type":
             self = .insufficientTokenGrantTypeError(reason: reason)
         default:
@@ -63,7 +63,7 @@ extension CTError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .configurationValidationFailed:
-            return "There is an error in Commercetools SDK configuration - validation failed"
+            return "There is an error in the Commercetools SDK configuration - validation failed"
         case .accessTokenRetrievalFailed(let reason):
             return "Could not retrieve access token\n\(reason.localizedDescription)\n" +
                     "Make sure you have proper project client ID and secret set in your config file."
@@ -73,9 +73,10 @@ extension CTError: LocalizedError {
                     "parameters used (i.e sort, predicates, expansions), and consult with API docs."
         case .resourceNotFoundError(let reason):
             return "The requested resource could not be found\n\(reason.localizedDescription)"
-        case .concurrentModificationError(let reason):
+        case .concurrentModificationError(let reason, let currentVersion):
             return "Concurrent modification error\n\(reason.localizedDescription)\n" +
-                    "Make sure you're setting the most recent object version."
+                    "Make sure you're setting the most recent object version." +
+                    (currentVersion == nil ? "" : "\nThe current version seems to be \(currentVersion!)")
         case .insufficientTokenGrantTypeError(let reason):
             return "\(reason.localizedDescription)\nAccess token obtained using client ID and secret from your config " +
                     "file does not have sufficient privileges for the operation you tried to perform."

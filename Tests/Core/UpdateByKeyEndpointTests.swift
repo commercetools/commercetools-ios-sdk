@@ -63,8 +63,8 @@ class UpdateByKeyEndpointTests: XCTestCase {
                 let changeNameAction = ["action": "changeName", "name": "newName"]
 
                 TestProductType.updateByKey("main", version: version + 1, actions: [changeNameAction], result: { result in
-                    if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason) = error,
-                            (reason.message!.hasPrefix("Object \(id) has a different version than expected.")) {
+                    if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason, let currentVersion) = error,
+                            reason.message!.hasPrefix("Object \(id) has a different version than expected.") && version == currentVersion {
                         updateExpectation.fulfill()
                     }
                 })

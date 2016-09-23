@@ -87,7 +87,7 @@ public extension Endpoint {
                 var errors = [CTError]()
                 errorsResponse.forEach {
                     errors += [CTError(code: $0["code"] as? String ?? "", failureMessage: $0["message"] as? String,
-                               failureDetails: $0["detailedErrorMessage"] as? String)]
+                               failureDetails: $0["detailedErrorMessage"] as? String, currentVersion: $0["currentVersion"] as? UInt)]
                 }
                 result(Result.failure(response.statusCode, errors))
 

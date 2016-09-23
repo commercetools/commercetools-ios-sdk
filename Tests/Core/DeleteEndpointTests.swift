@@ -57,8 +57,8 @@ class DeleteEndpointTests: XCTestCase {
         TestCart.create(["currency": "EUR"], result: { result in
             if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
                 TestCart.delete(id, version: version + 1, result: { result in
-                    if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason) = error,
-                            reason.message == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." {
+                    if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason, let currentVersion) = error,
+                            reason.message == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." && version == currentVersion {
                         deleteExpectation.fulfill()
                     }
                 })
