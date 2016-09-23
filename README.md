@@ -412,8 +412,8 @@ private class Foobar: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoin
 
 [](definitions for the top badges)
 
-[travis]:https://travis-ci.org/sphereio/commercetools-ios-sdk
-[travis img]:https://travis-ci.org/sphereio/commercetools-ios-sdk.svg?branch=master
+[travis]:https://travis-ci.org/commercetools/commercetools-ios-sdk
+[travis img]:https://travis-ci.org/commercetools/commercetools-ios-sdk.svg?branch=master
 
 [cocoapods]:https://cocoapods.org/pods/Commercetools
 [cocoapods img]:https://img.shields.io/cocoapods/v/Commercetools.svg
