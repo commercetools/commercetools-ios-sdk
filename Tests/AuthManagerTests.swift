@@ -92,9 +92,8 @@ class AuthManagerTests: XCTestCase {
         authManager.token { token, error in oldToken = token }
 
         authManager.loginUser(username, password: password, completionHandler: { error in
-            if let error = error, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String, errorReason == "invalid_customer_account_credentials" &&
-                        errorDesc == "Customer account with the given credentials not found." {
+            if let error = error as? CTError, case .accessTokenRetrievalFailed(let reason) = error, reason.message == "invalid_customer_account_credentials" &&
+                    reason.details == "Customer account with the given credentials not found." {
                 loginExpectation.fulfill()
             }
         })
@@ -193,9 +192,8 @@ class AuthManagerTests: XCTestCase {
 
             // Try creating anonymous session with the same anonymousId again
             authManager.obtainAnonymousToken(usingSession: true, anonymousId: "test", completionHandler: { error in
-                if let error = error, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                        let errorDesc = error.userInfo[NSLocalizedDescriptionKey] as? String, errorReason == "invalid_request" &&
-                        errorDesc == "The anonymousId is already in use." {
+                if let error = error as? CTError, case .accessTokenRetrievalFailed(let reason) = error, reason.message == "invalid_request" &&
+                        reason.details == "The anonymousId is already in use." {
                     anonymousSessionExpectation.fulfill()
                 }
             })

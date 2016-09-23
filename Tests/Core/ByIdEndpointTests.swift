@@ -59,9 +59,8 @@ class ByIdEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    errorReason == "The Resource with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." &&
-                    error.code == CTError.Code.resourceNotFoundError.rawValue && result.statusCode == 404 {
+            if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
+                    reason.message == "The Resource with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." {
                 byIdExpectation.fulfill()
             }
         })

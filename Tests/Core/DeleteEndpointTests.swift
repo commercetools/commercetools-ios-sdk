@@ -57,9 +57,8 @@ class DeleteEndpointTests: XCTestCase {
         TestCart.create(["currency": "EUR"], result: { result in
             if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
                 TestCart.delete(id, version: version + 1, result: { result in
-                    if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                            errorReason == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." &&
-                            error.code == CTError.Code.concurrentModificationError.rawValue && result.statusCode == 409 {
+                    if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason) = error,
+                            reason.message == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." {
                         deleteExpectation.fulfill()
                     }
                 })
@@ -79,9 +78,8 @@ class DeleteEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.delete("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", version: 1, result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    errorReason == "The Cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." &&
-                    error.code == CTError.Code.resourceNotFoundError.rawValue && result.statusCode == 404 {
+            if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
+                    reason.message == "The Cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." {
                 deleteExpectation.fulfill()
             }
         })

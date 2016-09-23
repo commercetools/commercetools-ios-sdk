@@ -63,9 +63,8 @@ class UpdateByKeyEndpointTests: XCTestCase {
                 let changeNameAction = ["action": "changeName", "name": "newName"]
 
                 TestProductType.updateByKey("main", version: version + 1, actions: [changeNameAction], result: { result in
-                    if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                            errorReason.hasPrefix("Object \(id) has a different version than expected.") &&
-                            error.code == CTError.Code.concurrentModificationError.rawValue && result.statusCode == 409 {
+                    if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason) = error,
+                            (reason.message!.hasPrefix("Object \(id) has a different version than expected.")) {
                         updateExpectation.fulfill()
                     }
                 })
@@ -81,10 +80,9 @@ class UpdateByKeyEndpointTests: XCTestCase {
 
         let changeNameAction = ["action": "changeName", "name": "newName"]
 
-        TestProductType.updateByKey("incorrect_key", version: 1, actions: [changeNameAction], result: { result in
-            if let error = result.errors?.first as? NSError, let errorReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String,
-                    errorReason == "The product-type with key 'incorrect_key' was not found." &&
-                    error.code == CTError.Code.resourceNotFoundError.rawValue && result.statusCode == 404 {
+        TestProductType.updateByKey("incorrect_key", version: 1, actions: [changeNameAction], result: { result in            
+            if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
+                    reason.message == "The product-type with key 'incorrect_key' was not found." {
                 updateExpectation.fulfill()
             }
         })

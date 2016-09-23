@@ -75,9 +75,9 @@ open class Customer: Endpoint {
 
             if let response = changePasswordResult.response, let email = response["email"] as? String, changePasswordResult.isSuccess {
                 AuthManager.sharedInstance.loginUser(email, password: newPassword, completionHandler: { error in
-                    if let error = error {
+                    if let error = error as? CTError {
                         Log.error("Could not login automatically after password change "
-                                + (error.userInfo[NSLocalizedFailureReasonErrorKey] as? String ?? ""))
+                                + (error.errorDescription ?? ""))
                     }
                 })
             }
