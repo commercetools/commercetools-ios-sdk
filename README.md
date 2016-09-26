@@ -397,7 +397,7 @@ ProductType.byKey("main", result: { result in
 
 In order to check whether any action with Commercetools services was successfully executed, you should use `isSuccess` or `isFailure` property of the result in question. For all successful operations, `response` property contains values returned from the server.
 
-For all failed operations, `errors` property should be used from the result in question to present or handle specific issues. `NSError` instances with domain equal to `com.commercetools.error` usually contain descriptive information about the error, returned by the API. Those can be found by `NSLocalizedFailureReasonErrorKey` for general issue cause, and by `NSLocalizedDescriptionKey` for more detailed description, where applicable.
+For all failed operations, `errors` property should be used from the result in question to present or handle specific issues. `CTError` instances are enumerations, with seven main cases, where each of those cases contains `FailureReason`, and some additional associated values, depending on the specific case.
 
 ## Tests Setup
 
