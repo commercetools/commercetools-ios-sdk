@@ -151,7 +151,7 @@ open class AuthManager {
                 completionHandler(error)
                 semaphore.signal()
             })
-            semaphore.wait(timeout: DispatchTime.distantFuture)
+            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         })
     }
 
@@ -211,7 +211,7 @@ open class AuthManager {
                 completionHandler(token, error)
                 semaphore.signal()
             }
-            semaphore.wait(timeout: DispatchTime.distantFuture)
+            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         })
     }
 
