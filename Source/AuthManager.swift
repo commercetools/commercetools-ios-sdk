@@ -261,11 +261,6 @@ open class AuthManager {
 
     private func processLoginUser(_ username: String, password: String, completionHandler: @escaping (String?, Error?) -> Void) {
         if let loginUrl = loginUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
-//            _ url: URLConvertible,
-//            method: HTTPMethod = .get,
-//            parameters: Parameters? = nil,
-//            encoding: ParameterEncoding = URLEncoding.default,
-//            headers: HTTPHeaders? = nil)
             Alamofire.request(loginUrl, method: .post, parameters: ["grant_type": "password", "scope": scope, "username": username, "password": password], encoding: URLEncoding.queryString, headers: authHeaders)
             .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 self.state = .customerToken
