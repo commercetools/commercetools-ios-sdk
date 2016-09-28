@@ -8,10 +8,12 @@ import XCTest
 class ByIdEndpointTests: XCTestCase {
     
     private class TestCart: ByIdEndpoint, CreateEndpoint {
+        public typealias ResponseType = [String: Any]
         static let path = "me/carts"
     }
 
     private class TestProductProjections: ByIdEndpoint, QueryEndpoint {
+        public typealias ResponseType = [String: Any]
         static let path = "product-projections"
     }
     

@@ -2,13 +2,15 @@
 // Copyright (c) 2016 Commercetools. All rights reserved.
 //
 
-import Foundation
 import Alamofire
+import ObjectMapper
 
 /**
     Provides access to active cart endpoint.
 */
 class ActiveCart: Endpoint {
+    
+    public typealias ResponseType = Cart
 
     static let path = "me/active-cart"
 
@@ -18,7 +20,7 @@ class ActiveCart: Endpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func get(_ expansion: [String]? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
+    static func get(_ expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)

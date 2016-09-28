@@ -8,6 +8,7 @@ import XCTest
 class UpdateByKeyEndpointTests: XCTestCase {
 
     private class TestProductType: ByKeyEndpoint, UpdateByKeyEndpoint {
+        public typealias ResponseType = [String: Any]
         static let path = "product-types"
     }
 

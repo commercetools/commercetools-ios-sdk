@@ -9,6 +9,7 @@ import Alamofire
 class CustomerTests: XCTestCase {
 
     private class TestCustomer: QueryEndpoint {
+        public typealias ResponseType = [String: Any]
         static let path = "customers"
     }
 

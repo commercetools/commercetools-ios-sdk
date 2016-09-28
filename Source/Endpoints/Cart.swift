@@ -4,11 +4,14 @@
 
 import Foundation
 import Alamofire
+import ObjectMapper
 
 /**
     Provides complete set of interactions for querying, retrieving, creating and updating shopping cart.
 */
-open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, DeleteEndpoint {
+open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, DeleteEndpoint, Mappable {
+    
+    public typealias ResponseType = Cart
 
     open static let path = "me/carts"
 
@@ -18,8 +21,34 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func active(_ expansion: [String]? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
+    open static func active(_ expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         return ActiveCart.get(expansion, result: result)
+    }
+    
+    // MARK: - Properties
+    
+    var id: String?
+    var version: UInt?
+    var createdAt: Date?
+    var lastModifiedAt: Date?
+    var lineItems: [LineItem]?
+    var totalPrice: Money?
+    var taxedPrice: TaxedPrice?
+    var country: String?
+    
+    public required init?(map: Map) {}
+    
+    // MARK: - Mappable
+    
+    public func mapping(map: Map) {
+        id               <- map["id"]
+        version          <- map["version"]
+        createdAt        <- (map["createdAt"], ISO8601DateTransform())
+        lastModifiedAt   <- (map["lastModifiedAt"], ISO8601DateTransform())
+        lineItems        <- map["lineItems"]
+        totalPrice       <- map["totalPrice"]
+        taxedPrice       <- map["taxedPrice"]
+        country          <- map["country"]
     }
 
 }

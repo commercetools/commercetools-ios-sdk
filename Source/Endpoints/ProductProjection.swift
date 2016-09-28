@@ -2,17 +2,25 @@
 // Copyright (c) 2016 Commercetools. All rights reserved.
 //
 
-import Foundation
 import Alamofire
+import ObjectMapper
 
 /**
     Provides complete set of interactions for querying, retrieving and creating an order.
 */
-open class ProductProjection: QueryEndpoint, ByIdEndpoint {
+open class ProductProjection: QueryEndpoint, ByIdEndpoint, Mappable {
+    
+    public typealias ResponseType = ProductProjection
 
     // MARK: - Properties
 
-    open static let path = "product-projections"
+    open static let path = "product-projections"        
+    
+    public required init?(map: Map) {}
+    
+    // MARK: - Mappable
+    
+    public func mapping(map: Map) {}
 
     // MARK: - Product projection endpoint functionality
 

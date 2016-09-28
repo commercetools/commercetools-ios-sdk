@@ -8,6 +8,7 @@ import XCTest
 class ProductProjectionTests: XCTestCase {
 
     private class TestTaxCategory: QueryEndpoint {
+        public typealias ResponseType = [String: Any]
         static let path = "tax-categories"
     }
 

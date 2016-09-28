@@ -2,14 +2,16 @@
 // Copyright (c) 2016 Commercetools. All rights reserved.
 //
 
-import Foundation
 import Alamofire
+import ObjectMapper
 
 /**
     Provides complete set of interactions for retrieving current customer profile, signing up,
     updating and profile deletion.
 */
-open class Customer: Endpoint {
+open class Customer: Endpoint, Mappable {
+    
+    public typealias ResponseType = Customer
 
     // MARK: - Properties
 
@@ -112,7 +114,13 @@ open class Customer: Endpoint {
 
         customerProfileAction(method: .post, basePath: "email/confirm", parameters: ["tokenValue": token],
                               encoding: JSONEncoding.default, result: result)
-    }
+    }        
+    
+    public required init?(map: Map) {}
+    
+    // MARK: - Mappable
+    
+    public func mapping(map: Map) {}
 
     // MARK: - Helpers
 
