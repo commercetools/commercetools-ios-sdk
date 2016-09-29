@@ -43,6 +43,8 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
     var version: UInt?
     var createdAt: Date?
     var lastModifiedAt: Date?
+    var customerId: String?
+    
     var lineItems: [LineItem]?
     var totalPrice: Money?
     var taxedPrice: TaxedPrice?
