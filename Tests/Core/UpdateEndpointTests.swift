@@ -8,12 +8,12 @@ import XCTest
 class UpdateEndpointTests: XCTestCase {
 
     private class TestCart: UpdateEndpoint, CreateEndpoint {
-        public typealias ResponseType = [String: Any]
+        public typealias ResponseType = Cart
         static let path = "me/carts"
     }
 
     private class TestProductProjections: QueryEndpoint {
-        public typealias ResponseType = [String: Any]
+        public typealias ResponseType = ProductProjection
         static let path = "product-projections"
     }
 
@@ -43,7 +43,7 @@ class UpdateEndpointTests: XCTestCase {
 
                 let addLineItemAction: [String: Any] = ["action": "addLineItem", "productId": productId, "variantId": 1]
 
-                TestCart.create(["currency": "EUR"], result: { result in
+                TestCart.create(["currency": "EUR"], dictionaryResult: { result in
                     if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
                         TestCart.update(id, version: version, actions: [addLineItemAction], result: { result in
                             if let response = result.response, let updatedId = response["id"] as? String,
@@ -75,7 +75,7 @@ class UpdateEndpointTests: XCTestCase {
 
                 let addLineItemAction: [String: Any] = ["action": "addLineItem", "productId": productId, "variantId": 1]
 
-                TestCart.create(["currency": "EUR"], result: { result in
+                TestCart.create(["currency": "EUR"], dictionaryResult: { result in
                     if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
                         TestCart.update(id, version: version + 1, actions: [addLineItemAction], result: { result in
                             

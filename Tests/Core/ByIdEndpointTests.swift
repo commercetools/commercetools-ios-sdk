@@ -8,12 +8,12 @@ import XCTest
 class ByIdEndpointTests: XCTestCase {
     
     private class TestCart: ByIdEndpoint, CreateEndpoint {
-        public typealias ResponseType = [String: Any]
+        public typealias ResponseType = Cart
         static let path = "me/carts"
     }
 
     private class TestProductProjections: ByIdEndpoint, QueryEndpoint {
-        public typealias ResponseType = [String: Any]
+        public typealias ResponseType = ProductProjection
         static let path = "product-projections"
     }
     
@@ -37,7 +37,7 @@ class ByIdEndpointTests: XCTestCase {
         
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
         
-        TestCart.create(["currency": "EUR"], result: { result in
+        TestCart.create(["currency": "EUR"], dictionaryResult: { result in
             if let response = result.response, let id = response["id"] as? String, result.isSuccess {
                 TestCart.byId(id, result: { result in
                     if let response = result.response, let cartState = response["cartState"] as? String,

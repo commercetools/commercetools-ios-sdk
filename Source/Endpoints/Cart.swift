@@ -16,13 +16,25 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
     open static let path = "me/carts"
 
     /**
-        Retrieves the cart with state Active which has the most recent lastModifiedAt.
+     Retrieves the cart with state Active which has the most recent lastModifiedAt.
+     
+         - parameter expansion:                An optional array of expansion property names.
+         - parameter dictionaryResult:         The code to be executed after processing the response, containing result
+                                               in dictionary format in case of a success.
+     */
+    open static func active(expansion: [String]? = nil, dictionaryResult: @escaping (Result<[String: Any]>) -> Void) {
+        return ActiveCart.get(expansion: expansion, dictionaryResult: dictionaryResult)
+    }
 
-        - parameter expansion:                An optional array of expansion property names.
-        - parameter result:                   The code to be executed after processing the response.
-    */
-    open static func active(_ expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
-        return ActiveCart.get(expansion, result: result)
+    /**
+     Retrieves the cart with state Active which has the most recent lastModifiedAt.
+     
+         - parameter expansion:                An optional array of expansion property names.
+         - parameter result:                   The code to be executed after processing the response, providing model
+                                               instance in case of a successful result.
+     */
+    open static func active(expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        return ActiveCart.get(expansion: expansion, result: result)
     }
     
     // MARK: - Properties

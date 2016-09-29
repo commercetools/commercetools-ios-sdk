@@ -16,6 +16,12 @@ open class Customer: Endpoint, Mappable {
     // MARK: - Properties
 
     open static let path = "me"
+    
+    public required init?(map: Map) {}
+    
+    // MARK: - Mappable
+    
+    public func mapping(map: Map) {}
 
     // MARK: - Customer endpoint functionality
 
@@ -114,14 +120,8 @@ open class Customer: Endpoint, Mappable {
 
         customerProfileAction(method: .post, basePath: "email/confirm", parameters: ["tokenValue": token],
                               encoding: JSONEncoding.default, result: result)
-    }        
+    }
     
-    public required init?(map: Map) {}
-    
-    // MARK: - Mappable
-    
-    public func mapping(map: Map) {}
-
     // MARK: - Helpers
 
     private static func customerProfileAction(method: HTTPMethod, basePath: String? = nil,

@@ -8,7 +8,7 @@ import XCTest
 class CreateEndpointTests: XCTestCase {
 
     private class TestCart: CreateEndpoint {
-        public typealias ResponseType = [String: Any]
+        public typealias ResponseType = Cart
         static let path = "me/carts"
     }
     
@@ -32,7 +32,7 @@ class CreateEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestCart.create(["currency": "EUR"], result: { result in
+        TestCart.create(["currency": "EUR"], dictionaryResult: { result in
             if let response = result.response, let cartState = response["cartState"] as? String, let version = response["version"] as? Int,
                     result.isSuccess && cartState == "Active" && version == 1 {
                 createExpectation.fulfill()
@@ -51,7 +51,7 @@ class CreateEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestCart.create(["currency": "BAD"], result: { result in
+        TestCart.create(["currency": "BAD"], dictionaryResult: { result in
             if let error = result.errors?.first as? CTError, result.statusCode == 400, case .invalidJsonInputError(let reason) = error,
                     reason.message == "Request body does not contain valid JSON." &&
                     reason.details == "currency: ISO 4217 code JSON String expected" {

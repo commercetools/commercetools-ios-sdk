@@ -9,7 +9,7 @@ import Alamofire
 class CustomerTests: XCTestCase {
 
     private class TestCustomer: QueryEndpoint {
-        public typealias ResponseType = [String: Any]
+        public typealias ResponseType = Customer
         static let path = "customers"
     }
 
@@ -212,23 +212,25 @@ class CustomerTests: XCTestCase {
         // Obtain password reset token
         AuthManager.sharedInstance.token { token, error in
             guard let token = token, let path = TestCustomer.fullPath else { return }
+            
+            let customerResult: ((Commercetools.Result<[String: Any]>) -> Void) = { result in
+                if let response = result.response, let token = response["value"] as? String, result.isSuccess {
+                    
+                    // Now confirm reset password token with regular mobile client scope
+                    self.setupTestConfiguration()
+                    
+                    Customer.resetPassword(token: token, newPassword: "password", result: { result in
+                        if let response = result.response, let email = response["email"] as? String, result.isSuccess
+                            && email == username {
+                            resetPasswordExpectation.fulfill()
+                        }
+                    })
+                }
+            }
 
             Alamofire.request("\(path)password-token", method: .post, parameters: ["email": username], encoding: JSONEncoding.default, headers: TestCustomer.headers(token))
             .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                TestCustomer.handleResponse(response, result: { result in
-                    if let response = result.response, let token = response["value"] as? String, result.isSuccess {
-
-                        // Now confirm reset password token with regular mobile client scope
-                        self.setupTestConfiguration()
-
-                        Customer.resetPassword(token: token, newPassword: "password", result: { result in
-                            if let response = result.response, let email = response["email"] as? String, result.isSuccess
-                                    && email == username {
-                                resetPasswordExpectation.fulfill()
-                            }
-                        })
-                    }
-                })
+                TestCustomer.handleResponse(response, result: customerResult)
             })
         }
 
@@ -255,25 +257,27 @@ class CustomerTests: XCTestCase {
             TestCustomer.query(predicates: ["email=\"\(username)\""], result: { result in
                 if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
                         let id = results.first?["id"] as? String, result.isSuccess {
+                    
+                    let customerResult: ((Commercetools.Result<[String: Any]>) -> Void) = { result in
+                        if let response = result.response, let token = response["value"] as? String, result.isSuccess {
+                            
+                            // Confirm email verification token with regular mobile client scope
+                            self.setupTestConfiguration()
+                            AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+                            
+                            Customer.verifyEmail(token: token, result: { result in
+                                if let response = result.response, let email = response["email"] as? String, result.isSuccess
+                                    && email == username {
+                                    resetPasswordExpectation.fulfill()
+                                }
+                            })
+                        }
+                    }
 
                     // Now generate email activation token
                     Alamofire.request("\(path)email-token", method: .post, parameters: ["id": id, "ttlMinutes": 1], encoding: JSONEncoding.default, headers: TestCustomer.headers(token))
                     .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                        TestCustomer.handleResponse(response, result: { result in
-                            if let response = result.response, let token = response["value"] as? String, result.isSuccess {
-
-                                // Confirm email verification token with regular mobile client scope
-                                self.setupTestConfiguration()
-                                AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
-
-                                Customer.verifyEmail(token: token, result: { result in
-                                    if let response = result.response, let email = response["email"] as? String, result.isSuccess
-                                            && email == username {
-                                        resetPasswordExpectation.fulfill()
-                                    }
-                                })
-                            }
-                        })
+                        TestCustomer.handleResponse(response, result: customerResult)
                     })
                 }
             })

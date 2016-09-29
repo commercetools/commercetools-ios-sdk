@@ -168,7 +168,7 @@ class AuthManagerTests: XCTestCase {
 
         authManager.obtainAnonymousToken(usingSession: true, anonymousId: anonymousId, completionHandler: { error in
             if error == nil && authManager.state == .anonymousToken {
-                Cart.create(["currency": "EUR"], result: { result in
+                Cart.create(["currency": "EUR"], dictionaryResult: { result in
                     if let response = result.response, let cartAnonymousId = response["anonymousId"] as? String,
                             result.isSuccess && cartAnonymousId == anonymousId {
                         anonymousIdExpectation.fulfill()

@@ -8,7 +8,7 @@ import XCTest
 class DeleteEndpointTests: XCTestCase {
 
     private class TestCart: DeleteEndpoint, CreateEndpoint {
-        public typealias ResponseType = [String: Any]
+        public typealias ResponseType = Cart
         static let path = "me/carts"
     }
 
@@ -32,7 +32,7 @@ class DeleteEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestCart.create(["currency": "EUR"], result: { result in
+        TestCart.create(["currency": "EUR"], dictionaryResult: { result in
             if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
                 TestCart.delete(id, version: version, result: { result in
                     if let response = result.response, let deletedId = response["id"] as? String, result.isSuccess
@@ -55,7 +55,7 @@ class DeleteEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestCart.create(["currency": "EUR"], result: { result in
+        TestCart.create(["currency": "EUR"], dictionaryResult: { result in
             if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
                 TestCart.delete(id, version: version + 1, result: { result in
                     if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason, let currentVersion) = error,
