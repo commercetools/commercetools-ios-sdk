@@ -97,8 +97,8 @@ public extension Endpoint {
         - parameter result:                   The code to be executed after processing the response, providing model
                                               instance in case of a successful result.
     */
-    static func handleResponse(_ response: DataResponse<Any>, result: (Result<ResponseType>) -> Void) {
-        if let json = response.result.value as? [String: Any], let object = Mapper<ResponseType>().map(JSON: json), let response = response.response,
+    static func handleResponse<T: Mappable>(_ response: DataResponse<Any>, result: (Result<T>) -> Void) {
+        if let json = response.result.value as? [String: Any], let object = Mapper<T>().map(JSON: json), let response = response.response,
                 case 200 ... 299 = response.statusCode {
             result(Result.success(object))
         } else {

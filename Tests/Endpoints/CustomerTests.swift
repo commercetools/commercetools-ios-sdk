@@ -254,7 +254,7 @@ class CustomerTests: XCTestCase {
             }
 
             // First query for the UUID of the user we want to activate
-            TestCustomer.query(predicates: ["email=\"\(username)\""], result: { result in
+            TestCustomer.query(predicates: ["email=\"\(username)\""], dictionaryResult: { result in
                 if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
                         let id = results.first?["id"] as? String, result.isSuccess {
                     

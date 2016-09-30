@@ -29,7 +29,7 @@ class QueryEndpointTests: XCTestCase {
 
         let predicate = "slug(en=\"michael-kors-bag-30T3GTVT7L-lightbrown\")"
 
-        TestProductProjections.query(predicates: [predicate], result: { result in
+        TestProductProjections.query(predicates: [predicate], dictionaryResult: { result in
             if let response = result.response, let count = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
                     let slug = results.first?["slug"] as? [String: String],
@@ -46,7 +46,7 @@ class QueryEndpointTests: XCTestCase {
 
         let queryExpectation = expectation(description: "query expectation")
 
-        TestProductProjections.query(sort: ["name.en asc"], limit: 8, result: { result in
+        TestProductProjections.query(sort: ["name.en asc"], limit: 8, dictionaryResult: { result in
             if let response = result.response, let count = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
                     let name = results.first?["name"] as? [String: String], let enName = name["en"],
@@ -62,7 +62,7 @@ class QueryEndpointTests: XCTestCase {
 
         let queryExpectation = expectation(description: "query expectation")
 
-        TestProductProjections.query(sort: ["name.en asc"], limit: 2, offset: 1, result: { result in
+        TestProductProjections.query(sort: ["name.en asc"], limit: 2, offset: 1, dictionaryResult: { result in
             if let response = result.response, let count = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
                     let name = results.first?["name"] as? [String: String], let enName = name["en"],
@@ -78,7 +78,7 @@ class QueryEndpointTests: XCTestCase {
 
         let queryExpectation = expectation(description: "query expectation")
 
-        TestProductProjections.query(sort: ["name.en asc", "slug.en asc"], limit: 1, result: { result in
+        TestProductProjections.query(sort: ["name.en asc", "slug.en asc"], limit: 1, dictionaryResult: { result in
             if let response = result.response, let count = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
                     let name = results.first?["name"] as? [String: String], let enName = name["en"],
@@ -96,7 +96,7 @@ class QueryEndpointTests: XCTestCase {
 
         let predicate = "name(en=\"Bag “Jet Set Travel” Michael Kors light brown\")"
 
-        TestProductProjections.query(predicates: [predicate], expansion: ["productType"], result: { result in
+        TestProductProjections.query(predicates: [predicate], expansion: ["productType"], dictionaryResult: { result in
             if let response = result.response, let _ = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
                     let productType = results.first?["productType"] as? [String: AnyObject],

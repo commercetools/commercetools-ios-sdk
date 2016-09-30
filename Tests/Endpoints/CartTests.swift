@@ -18,6 +18,27 @@ class CartTests: XCTestCase {
         super.tearDown()
     }
     
+    func testRetrieveActiveCart2() {
+        let activeCartExpectation = expectation(description: "active cart expectation")
+        
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+        
+        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        
+        Cart.create(["currency": "EUR"], dictionaryResult: { result in
+            if let response = result.response, let cartState = response["cartState"] as? String, let _ = response["id"] as? String,
+                result.isSuccess && cartState == "Active" {
+                Cart.active(dictionaryResult: { result in
+                    print(result)
+                    activeCartExpectation.fulfill()
+                })
+            }
+        })
+        
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+    
     func testRetrieveActiveCart() {
         let activeCartExpectation = expectation(description: "active cart expectation")
 

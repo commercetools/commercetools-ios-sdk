@@ -27,7 +27,7 @@ class ByKeyEndpointTests: XCTestCase {
 
         let byKeyExpectation = expectation(description: "byKey expectation")
 
-        TestProductType.byKey("main", result: { result in
+        TestProductType.byKey("main", dictionaryResult: { result in
             if let response = result.response, let description = response["description"] as? String,
                     result.isSuccess && description == "all products of max" {
                 byKeyExpectation.fulfill()
@@ -41,7 +41,7 @@ class ByKeyEndpointTests: XCTestCase {
 
         let byKeyExpectation = expectation(description: "byKey expectation")
 
-        TestProductType.byKey("second", result: { result in
+        TestProductType.byKey("second", dictionaryResult: { result in
             if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
                     reason.message == "The Resource with key 'second' was not found." {
                 byKeyExpectation.fulfill()

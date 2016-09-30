@@ -70,7 +70,7 @@ class ProductProjectionTests: XCTestCase {
 
         let searchExpectation = expectation(description: "search expectation")
 
-        TestTaxCategory.query(limit: 1, result: { result in
+        TestTaxCategory.query(limit: 1, dictionaryResult: { result in
             if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
                     let taxCategoryId = results.first?["id"] as? String, result.isSuccess {
 
@@ -129,7 +129,7 @@ class ProductProjectionTests: XCTestCase {
                     let results = response["results"] as? [[String: AnyObject]],
                     let id = results.first?["id"] as? String, result.isSuccess && count == 1 {
 
-                ProductProjection.byId(id, result: { result in
+                ProductProjection.byId(id, dictionaryResult: { result in
                     if let response = result.response, let retrievedId = response["id"] as? String, result.isSuccess
                             && retrievedId == id {
                         byIdExpectation.fulfill()
