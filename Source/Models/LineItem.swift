@@ -4,20 +4,28 @@
 
 import ObjectMapper
 
+public typealias LocalizedString = [String: String]
+
 struct LineItem: Mappable {
     
     // MARK: - Properties
     
     var id: String?
     var productId: String?
-    var name: [String: String]?
-    var productSlug: [String: String]?
+    var name: LocalizedString?
+    var productSlug: LocalizedString?
     var variant: ProductVariant?
     var price: Price?
+    var taxedPrice: TaxedItemPrice?
     var totalPrice: Money?
-    var discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]?
     var quantity: Int?
-    var distributionChannel: Channel?
+    var state: [ItemState]?
+    var taxRate: TaxRate?
+    var supplyChannel: Reference<Channel>?
+    var distributionChannel: Reference<Channel>?
+    var discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]?
+    var priceMode: LineItemPriceMode?
+    var custom: [String: Any]?
     
     init?(map: Map) {}
     

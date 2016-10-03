@@ -13,12 +13,12 @@ struct Address: Mappable {
     var salutation: String?
     var firstName: String?
     var lastName: String?
+    var streetName: String?
+    var streetNumber: String?
     var city: String?
     var region: String?
     var postalCode: String?
-    var streetName: String?
     var additionalStreetInfo: String?
-    var streetNumber: String?
     var state: String?
     var country: String?
     var company: String?
@@ -33,8 +33,6 @@ struct Address: Mappable {
     var additionalAddressInfo: String?
 
     init?(map: Map) {}
-
-    init() {}
 
     // MARK: - Mappable
 

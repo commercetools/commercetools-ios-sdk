@@ -4,19 +4,20 @@
 
 import ObjectMapper
 
-struct Money: Mappable {
+struct Location: Mappable {
 
     // MARK: - Properties
 
-    var currencyCode: String?
-    var centAmount: Int?
+    var country: String?
+    var state: String?
 
     init?(map: Map) {}
 
     // MARK: - Mappable
 
     mutating func mapping(map: Map) {
-        currencyCode       <- map["currencyCode"]
-        centAmount         <- map["centAmount"]
+        country           <- map["country"]
+        state             <- map["state"]
     }
+
 }

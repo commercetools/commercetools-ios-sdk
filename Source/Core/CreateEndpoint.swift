@@ -4,7 +4,6 @@
 
 import Foundation
 import Alamofire
-import ObjectMapper
 
 /**
     All endpoints capable of creating new objects should conform to this protocol.

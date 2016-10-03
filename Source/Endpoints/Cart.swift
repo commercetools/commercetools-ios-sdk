@@ -2,7 +2,6 @@
 // Copyright (c) 2016 Commercetools. All rights reserved.
 //
 
-import Foundation
 import Alamofire
 import ObjectMapper
 
@@ -44,11 +43,24 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
     var createdAt: Date?
     var lastModifiedAt: Date?
     var customerId: String?
-    
+    var customerEmail: String?
+    var anonymousId: String?
     var lineItems: [LineItem]?
+    var customLineItems: [CustomLineItem]?
     var totalPrice: Money?
     var taxedPrice: TaxedPrice?
+    var cartState: CartState?
+    var shippingAddress: Address?
+    var billingAddress: Address?
+    var inventoryMode: InventoryMode?
+    var taxMode: TaxMode?
+    var customerGroup: Reference<CustomerGroup>?
     var country: String?
+    var shippingInfo: ShippingInfo?
+    var discountCodes: [DiscountCodeInfo]?
+    var custom: [String: Any]?
+    var paymentInfo: PaymentInfo?
+    var locale: String?
     
     public required init?(map: Map) {}
     
@@ -59,10 +71,24 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
         version          <- map["version"]
         createdAt        <- (map["createdAt"], ISO8601DateTransform())
         lastModifiedAt   <- (map["lastModifiedAt"], ISO8601DateTransform())
+        customerId       <- map["customerId"]
+        customerEmail    <- map["customerEmail"]
+        anonymousId      <- map["anonymousId"]
         lineItems        <- map["lineItems"]
+        customLineItems  <- map["customLineItems"]
         totalPrice       <- map["totalPrice"]
         taxedPrice       <- map["taxedPrice"]
+        cartState        <- map["cartState"]
+        shippingAddress  <- map["shippingAddress"]
+        billingAddress   <- map["billingAddress"]
+        inventoryMode    <- map["inventoryMode"]
+        taxMode          <- map["taxMode"]
+        customerGroup    <- map["customerGroup"]
         country          <- map["country"]
+        shippingInfo     <- map["shippingInfo"]
+        custom           <- map["custom"]
+        paymentInfo      <- map["paymentInfo"]
+        locale           <- map["locale"]
     }
 
 }
