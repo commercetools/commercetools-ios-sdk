@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum TransactionType: String {
+public enum TransactionType: String {
 
     case authorization = "Authorization"
     case cancelAuthorization = "CancelAuthorization"

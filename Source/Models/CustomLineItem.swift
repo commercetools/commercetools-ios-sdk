@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct CustomLineItem: Mappable {
+public struct CustomLineItem: Mappable {
     
     // MARK: - Properties
     
@@ -21,11 +21,11 @@ struct CustomLineItem: Mappable {
     var discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]?
     var custom: [String: Any]?    
     
-    init?(map: Map) {}
+    public init?(map: Map) {}
     
     // MARK: - Mappable
     
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id                          <- map["id"]
         name                        <- map["name"]
         money                       <- map["money"]

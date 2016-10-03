@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct DiscountCode: Mappable {
+public struct DiscountCode: Mappable {
     
     // MARK: - Properties
     
@@ -22,11 +22,11 @@ struct DiscountCode: Mappable {
     var maxApplications: Int?
     var maxApplicationsPerCustomer: Int?
     
-    init?(map: Map) {}
+    public init?(map: Map) {}
     
     // MARK: - Mappable
     
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id                           <- map["id"]
         version                      <- map["version"]
         createdAt                    <- (map["createdAt"], ISO8601DateTransform())

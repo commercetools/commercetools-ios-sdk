@@ -4,18 +4,18 @@
 
 import ObjectMapper
 
-struct ZoneRate: Mappable {
+public struct ZoneRate: Mappable {
 
     // MARK: - Properties
 
     var zone: Reference<Zone>?
     var shippingRates: [ShippingRate]?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         zone              <- map["zone"]
         shippingRates     <- map["shippingRates"]
     }

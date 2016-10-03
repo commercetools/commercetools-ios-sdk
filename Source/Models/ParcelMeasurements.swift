@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct ParcelMeasurements: Mappable {
+public struct ParcelMeasurements: Mappable {
 
     // MARK: - Properties
 
@@ -13,11 +13,11 @@ struct ParcelMeasurements: Mappable {
     var widthInMillimeter: Double?
     var weightInGram: Double?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         heightInMillimeter   <- map["heightInMillimeter"]
         lengthInMillimeter   <- map["lengthInMillimeter"]
         widthInMillimeter    <- map["widthInMillimeter"]

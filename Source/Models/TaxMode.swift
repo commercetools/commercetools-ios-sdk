@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum TaxMode: String {
+public enum TaxMode: String {
     
     case platform = "Platform"
     case external = "External"

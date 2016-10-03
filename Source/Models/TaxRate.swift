@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct TaxRate: Mappable {
+public struct TaxRate: Mappable {
 
     // MARK: - Properties
 
@@ -15,11 +15,11 @@ struct TaxRate: Mappable {
     var state: String?
     var subRates: [SubRate]?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id                <- map["id"]
         name              <- map["name"]
         includedInPrice   <- map["includedInPrice"]

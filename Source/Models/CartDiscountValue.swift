@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct CartDiscountValue: Mappable {
+public struct CartDiscountValue: Mappable {
 
     // MARK: - Properties
 
@@ -12,11 +12,11 @@ struct CartDiscountValue: Mappable {
     var permyriad: Int?
     var money: Money?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         type          <- map["type"]
         permyriad     <- map["permyriad"]
         money         <- map["money"]

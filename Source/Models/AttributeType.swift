@@ -11,7 +11,7 @@ class AttributeType: Mappable {
     var name: String?
     var elementType: AttributeType?
 
-    required init?(map: Map) {}
+    required public init?(map: Map) {}
 
     // MARK: - Mappable
 

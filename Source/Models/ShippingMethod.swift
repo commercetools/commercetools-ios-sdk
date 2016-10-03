@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct ShippingMethod: Mappable {
+public struct ShippingMethod: Mappable {
 
     // MARK: - Properties
 
@@ -18,11 +18,11 @@ struct ShippingMethod: Mappable {
     var zoneRates: [ZoneRate]?
     var isDefault: Bool?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id               <- map["id"]
         version          <- map["version"]
         createdAt        <- (map["createdAt"], ISO8601DateTransform())

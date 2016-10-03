@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct Image: Mappable {
+public struct Image: Mappable {
 
     // MARK: - Properties
 
@@ -12,11 +12,11 @@ struct Image: Mappable {
     var dimensions: [String: Int]?
     var label: String?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         url                <- map["url"]
         dimensions         <- map["dimensions"]
         label              <- map["label"]

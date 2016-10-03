@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct ReviewRatingStatistics: Mappable {
+public struct ReviewRatingStatistics: Mappable {
 
     // MARK: - Properties
 
@@ -14,11 +14,11 @@ struct ReviewRatingStatistics: Mappable {
     var count: UInt?
     var ratingsDistribution: [String: Any]?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         averageRating        <- map["averageRating"]
         highestRating        <- map["highestRating"]
         lowestRating         <- map["lowestRating"]

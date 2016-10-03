@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct Payment: Mappable {
+public struct Payment: Mappable {
 
     // MARK: - Properties
 
@@ -26,11 +26,11 @@ struct Payment: Mappable {
     var createdAt: Date?
     var lastModifiedAt: Date?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id                    <- map["id"]
         version               <- map["version"]
         customer              <- map["customer"]

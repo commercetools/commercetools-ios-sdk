@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct Transaction: Mappable {
+public struct Transaction: Mappable {
 
     // MARK: - Properties
 
@@ -15,11 +15,11 @@ struct Transaction: Mappable {
     var interactionId: String?
     var state: TransactionState?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id                    <- map["id"]
         timestamp             <- map["timestamp"]
         type                  <- map["type"]

@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum TransactionState: String {
+public enum TransactionState: String {
 
     case pending = "Pending"
     case success = "Success"

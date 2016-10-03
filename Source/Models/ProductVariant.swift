@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct ProductVariant: Mappable {
+public struct ProductVariant: Mappable {
 
     // MARK: - Properties
 
@@ -16,11 +16,11 @@ struct ProductVariant: Mappable {
     var availability: ProductVariantAvailability?
     var isMatchingVariant: Bool?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id                 <- map["id"]
         sku                <- map["sku"]
         prices             <- map["prices"]

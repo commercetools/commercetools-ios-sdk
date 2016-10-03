@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct Address: Mappable {
+public struct Address: Mappable {
 
     // MARK: - Properties
 
@@ -32,11 +32,11 @@ struct Address: Mappable {
     var fax: String?
     var additionalAddressInfo: String?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id                      <- map["id"]
         title                   <- map["title"]
         salutation              <- map["salutation"]

@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum StateRole: String {
+public enum StateRole: String {
 
     case reviewIncludedInStatistics = "ReviewIncludedInStatistics"
 

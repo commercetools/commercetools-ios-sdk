@@ -6,7 +6,7 @@ import ObjectMapper
 
 public typealias LocalizedString = [String: String]
 
-struct LineItem: Mappable {
+public struct LineItem: Mappable {
     
     // MARK: - Properties
     
@@ -27,11 +27,11 @@ struct LineItem: Mappable {
     var priceMode: LineItemPriceMode?
     var custom: [String: Any]?
     
-    init?(map: Map) {}
+    public init?(map: Map) {}
     
     // MARK: - Mappable
     
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id                         <- map["id"]
         productId                  <- map["productId"]
         name                       <- map["name"]

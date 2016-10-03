@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct Delivery: Mappable {
+public struct Delivery: Mappable {
 
     // MARK: - Properties
 
@@ -13,11 +13,11 @@ struct Delivery: Mappable {
     var items: [DeliveryItem]?
     var parcels: [Parcel]?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id                <- map["id"]
         createdAt         <- (map["createdAt"], ISO8601DateTransform())
         items             <- map["items"]

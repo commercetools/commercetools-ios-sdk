@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct AttributeDefinition: Mappable {
+public struct AttributeDefinition: Mappable {
     
     // MARK: - Properties
 
@@ -15,11 +15,11 @@ struct AttributeDefinition: Mappable {
     var isRequired: Bool?
     var isSearchable: Bool?
     
-    init?(map: Map) {}
+    public init?(map: Map) {}
     
     // MARK: - Mappable
     
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         type               <- map["type"]
         name               <- map["name"]
         label              <- map["label"]

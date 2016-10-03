@@ -4,18 +4,18 @@
 
 import ObjectMapper
 
-struct CartDiscountTarget: Mappable {
+public struct CartDiscountTarget: Mappable {
 
     // MARK: - Properties
 
     var type: String?
     var predicate: String?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         type          <- map["type"]
         predicate     <- map["predicate"]
     }

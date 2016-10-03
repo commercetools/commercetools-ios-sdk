@@ -4,18 +4,18 @@
 
 import ObjectMapper
 
-struct Attribute: Mappable {
+public struct Attribute: Mappable {
 
     // MARK: - Properties
 
     var name: String?
     var value: AnyObject?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         name               <- map["name"]
         value              <- map["value"]
     }

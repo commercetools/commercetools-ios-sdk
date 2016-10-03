@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum LineItemPriceMode: String {
+public enum LineItemPriceMode: String {
 
     case platform = "Platform"
     case externalTotal = "ExternalTotal"

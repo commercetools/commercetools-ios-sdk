@@ -4,17 +4,17 @@
 
 import ObjectMapper
 
-struct PaymentInfo: Mappable {
+public struct PaymentInfo: Mappable {
 
     // MARK: - Properties
 
     var payments: [Reference<Payment>]?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         payments           <- map["payments"]
     }
 

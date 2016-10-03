@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct State: Mappable {
+public struct State: Mappable {
 
     // MARK: - Properties
 
@@ -21,11 +21,11 @@ struct State: Mappable {
     var roles: [StateRole]?
     var transitions: [Reference<State>]?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id                <- map["id"]
         version           <- map["version"]
         createdAt         <- (map["createdAt"], ISO8601DateTransform())

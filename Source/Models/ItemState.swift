@@ -4,18 +4,18 @@
 
 import ObjectMapper
 
-struct ItemState: Mappable {
+public struct ItemState: Mappable {
 
     // MARK: - Properties
 
     var quantity: Int?
     var state: Reference<State>?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         quantity                <- map["quantity"]
         state                   <- map["state"]
     }

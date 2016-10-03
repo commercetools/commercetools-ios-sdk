@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum DiscountCodeState: String {
+public enum DiscountCodeState: String {
     
     case notActive = "NotActive"
     case doesNotMatchCart = "DoesNotMatchCart"

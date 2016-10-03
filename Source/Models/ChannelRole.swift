@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum ChannelRole: String {
+public enum ChannelRole: String {
 
     case inventorySupply = "InventorySupply"
     case productDistribution = "ProductDistribution"

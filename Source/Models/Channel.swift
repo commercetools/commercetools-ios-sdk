@@ -20,7 +20,7 @@ class Channel: Mappable {
     var reviewRatingStatistics: ReviewRatingStatistics?
     var custom: [String: Any]?
 
-    required init?(map: Map) {}
+    required public init?(map: Map) {}
 
     // MARK: - Mappable
 

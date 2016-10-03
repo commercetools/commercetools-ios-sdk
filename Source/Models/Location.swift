@@ -4,18 +4,18 @@
 
 import ObjectMapper
 
-struct Location: Mappable {
+public struct Location: Mappable {
 
     // MARK: - Properties
 
     var country: String?
     var state: String?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         country           <- map["country"]
         state             <- map["state"]
     }

@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum InventoryMode: String {
+public enum InventoryMode: String {
     
     case trackOnly = "TrackOnly"
     case reserveOnOrder = "ReserveOnOrder"

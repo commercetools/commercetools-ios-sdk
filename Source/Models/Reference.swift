@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct Reference<T: Mappable>: Mappable {
+public struct Reference<T: Mappable>: Mappable {
 
     // MARK: - Properties
 
@@ -12,11 +12,11 @@ struct Reference<T: Mappable>: Mappable {
     var typeId: String?
     var obj: T?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id              <- map["id"]
         typeId          <- map["typeId"]
         obj             <- map["obj"]
@@ -24,18 +24,18 @@ struct Reference<T: Mappable>: Mappable {
 
 }
 
-struct GenericReference: Mappable {
+public struct GenericReference: Mappable {
     
     // MARK: - Properties
     
     var id: String?
     var typeId: String?
     
-    init?(map: Map) {}
+    public init?(map: Map) {}
     
     // MARK: - Mappable
     
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id              <- map["id"]
         typeId          <- map["typeId"]
     }

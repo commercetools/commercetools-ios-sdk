@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum StateType: String {
+public enum StateType: String {
 
     case orderState = "OrderState"
     case lineItemState = "LineItemState"

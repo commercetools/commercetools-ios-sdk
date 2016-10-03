@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct PaymentMethodInfo: Mappable {
+public struct PaymentMethodInfo: Mappable {
 
     // MARK: - Properties
 
@@ -12,11 +12,11 @@ struct PaymentMethodInfo: Mappable {
     var method: String?
     var name: LocalizedString?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         paymentInterface      <- map["paymentInterface"]
         method                <- map["method"]
         name                  <- map["name"]

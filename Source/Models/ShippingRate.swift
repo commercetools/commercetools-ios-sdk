@@ -4,18 +4,18 @@
 
 import ObjectMapper
 
-struct ShippingRate: Mappable {
+public struct ShippingRate: Mappable {
 
     // MARK: - Properties
 
     var price: Money?
     var freeAbove: Money?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         price             <- map["price"]
         freeAbove         <- map["freeAbove"]
     }

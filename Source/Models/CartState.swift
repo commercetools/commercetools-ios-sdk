@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum CartState: String {
+public enum CartState: String {
     
     case active = "Active"
     case merged = "Merged"

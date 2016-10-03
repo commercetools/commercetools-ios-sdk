@@ -3,7 +3,7 @@
 //
 
 import ObjectMapper
-struct ShippingInfo: Mappable {
+public struct ShippingInfo: Mappable {
     
     // MARK: - Properties
     
@@ -17,11 +17,11 @@ struct ShippingInfo: Mappable {
     var deliveries: [Delivery]?
     var discountedPrice: DiscountedLineItemPrice?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
     
     // MARK: - Mappable
     
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         shippingMethodName         <- map["shippingMethodName"]
         price                      <- map["price"]
         shippingRate               <- map["shippingRate"]

@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct TrackingData: Mappable {
+public struct TrackingData: Mappable {
 
     // MARK: - Properties
 
@@ -14,11 +14,11 @@ struct TrackingData: Mappable {
     var providerTransaction: String?
     var isReturn: Bool?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         trackingId           <- map["trackingId"]
         carrier              <- map["carrier"]
         provider             <- map["provider"]

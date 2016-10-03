@@ -4,7 +4,7 @@
 
 import ObjectMapper
 
-struct PaymentStatus: Mappable {
+public struct PaymentStatus: Mappable {
 
     // MARK: - Properties
 
@@ -12,11 +12,11 @@ struct PaymentStatus: Mappable {
     var interfaceText: String?
     var state: Reference<State>?
 
-    init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         interfaceCode      <- map["interfaceCode"]
         interfaceText      <- map["interfaceText"]
         state              <- map["state"]
