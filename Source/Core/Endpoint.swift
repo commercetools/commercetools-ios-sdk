@@ -30,6 +30,15 @@ public protocol Endpoint {
 
 }
 
+/**
+    Type used for endpoints which do not have any model specified yet.
+*/
+public struct NoMapping: Mappable {
+    
+    public init?(map: Map) {}
+    mutating public func mapping(map: Map) {}
+}
+
 public extension Endpoint {
 
     /// The full path used to form requests for endpoints.

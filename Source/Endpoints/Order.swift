@@ -7,18 +7,9 @@ import ObjectMapper
 /**
     Provides complete set of interactions for querying, retrieving and creating an order.
 */
-open class Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Mappable {
+open class Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint {
     
-    public typealias ResponseType = Order
+    public typealias ResponseType = NoMapping
 
     open static let path = "me/orders"
-    
-    // MARK: - Properties
-    
-    public required init?(map: Map) {}
-    
-    // MARK: - Mappable
-    
-    public func mapping(map: Map) {}
-
 }

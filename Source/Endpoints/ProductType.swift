@@ -7,18 +7,9 @@ import ObjectMapper
 /**
     Provides set of interactions for querying, retrieving by UUID and by key for product types.
 */
-open class ProductType: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Mappable {
+open class ProductType: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint {
     
-    public typealias ResponseType = ProductType
+    public typealias ResponseType = NoMapping
 
     open static let path = "product-types"
-    
-    // MARK: - Properties
-    
-    public required init?(map: Map) {}
-    
-    // MARK: - Mappable
-    
-    public func mapping(map: Map) {}
-
 }

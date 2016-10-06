@@ -16,11 +16,11 @@ open class Customer: Endpoint, Mappable {
     // MARK: - Properties
 
     open static let path = "me"
-    
+
     public required init?(map: Map) {}
-    
+
     // MARK: - Mappable
-    
+
     public func mapping(map: Map) {}
 
     // MARK: - Customer endpoint functionality

@@ -7,18 +7,9 @@ import ObjectMapper
 /**
     Provides set of interactions for querying and retrieving by UUID for categories.
 */
-open class Category: ByIdEndpoint, QueryEndpoint, Mappable {
+open class Category: ByIdEndpoint, QueryEndpoint {
     
-    public typealias ResponseType = Category
+    public typealias ResponseType = NoMapping
 
     open static let path = "categories"
-    
-    // MARK: - Properties
-    
-    public required init?(map: Map) {}
-    
-    // MARK: - Mappable
-    
-    public func mapping(map: Map) {}
-
 }

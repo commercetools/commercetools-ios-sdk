@@ -8,19 +8,13 @@ import ObjectMapper
 /**
     Provides complete set of interactions for querying, retrieving and creating an order.
 */
-open class ProductProjection: QueryEndpoint, ByIdEndpoint, Mappable {
+open class ProductProjection: QueryEndpoint, ByIdEndpoint {
     
-    public typealias ResponseType = ProductProjection
+    public typealias ResponseType = NoMapping
 
     // MARK: - Properties
 
-    open static let path = "product-projections"        
-    
-    public required init?(map: Map) {}
-    
-    // MARK: - Mappable
-    
-    public func mapping(map: Map) {}
+    open static let path = "product-projections"
 
     // MARK: - Product projection endpoint functionality
 

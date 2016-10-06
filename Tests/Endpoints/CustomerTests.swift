@@ -213,7 +213,7 @@ class CustomerTests: XCTestCase {
         AuthManager.sharedInstance.token { token, error in
             guard let token = token, let path = TestCustomer.fullPath else { return }
             
-            let customerResult: ((Commercetools.Result<Customer>) -> Void) = { result in
+            let customerResult: ((Commercetools.Result<NoMapping>) -> Void) = { result in
                 if let response = result.json, let token = response["value"] as? String, result.isSuccess {
                     
                     // Now confirm reset password token with regular mobile client scope
@@ -258,7 +258,7 @@ class CustomerTests: XCTestCase {
                 if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
                         let id = results.first?["id"] as? String, result.isSuccess {
                     
-                    let customerResult: ((Commercetools.Result<Customer>) -> Void) = { result in
+                    let customerResult: ((Commercetools.Result<NoMapping>) -> Void) = { result in
                         if let response = result.json, let token = response["value"] as? String, result.isSuccess {
                             
                             // Confirm email verification token with regular mobile client scope

@@ -13,7 +13,7 @@ class ByIdEndpointTests: XCTestCase {
     }
 
     private class TestProductProjections: ByIdEndpoint, QueryEndpoint {
-        public typealias ResponseType = ProductProjection
+        public typealias ResponseType = NoMapping
         static let path = "product-projections"
     }
     
