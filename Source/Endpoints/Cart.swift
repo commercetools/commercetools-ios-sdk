@@ -18,17 +18,6 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
      Retrieves the cart with state Active which has the most recent lastModifiedAt.
      
          - parameter expansion:                An optional array of expansion property names.
-         - parameter dictionaryResult:         The code to be executed after processing the response, containing result
-                                               in dictionary format in case of a success.
-     */
-    open static func active(expansion: [String]? = nil, dictionaryResult: @escaping (Result<[String: Any]>) -> Void) {
-        return ActiveCart.get(expansion: expansion, dictionaryResult: dictionaryResult)
-    }
-
-    /**
-     Retrieves the cart with state Active which has the most recent lastModifiedAt.
-     
-         - parameter expansion:                An optional array of expansion property names.
          - parameter result:                   The code to be executed after processing the response, providing model
                                                instance in case of a successful result.
      */

@@ -32,7 +32,7 @@ class ProductProjectionTests: XCTestCase {
 
         ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: Locale(identifier: "en"),
                                  text: "Michael Kors", result: { result in
-            if let response = result.response, let total = response["total"] as? Int,
+            if let response = result.json, let total = response["total"] as? Int,
                     let _ = response["results"] as? [[String: AnyObject]], result.isSuccess && total == 103 {
                 searchExpectation.fulfill()
             }
@@ -47,7 +47,7 @@ class ProductProjectionTests: XCTestCase {
 
         ProductProjection.search(staged: true, filterFacets: "variants.attributes.color.key:\"red\"",
                 facets: ["variants.attributes.color.key", "variants.attributes.commonSize.key"], result: { result in
-            if let response = result.response, let facets = response["facets"] as? [String: AnyObject],
+            if let response = result.json, let facets = response["facets"] as? [String: AnyObject],
                     let colorFacets = facets["variants.attributes.color.key"] as? [String: AnyObject],
                     let colorFacetsTotal = colorFacets["total"] as? UInt, let colorTerms = colorFacets["terms"] as? [[String: AnyObject]],
                     let blueTerm = colorTerms.first!["term"] as? String, let blueCount = colorTerms.first!["count"] as? UInt,
@@ -70,14 +70,14 @@ class ProductProjectionTests: XCTestCase {
 
         let searchExpectation = expectation(description: "search expectation")
 
-        TestTaxCategory.query(limit: 1, dictionaryResult: { result in
-            if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
+        TestTaxCategory.query(limit: 1, result: { result in
+            if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
                     let taxCategoryId = results.first?["id"] as? String, result.isSuccess {
 
                 ProductProjection.search(staged: true, limit: 1, filterQuery: "taxCategory.id:\"\(taxCategoryId)\"",
                         result: { result in
 
-                    if let response = result.response, let total = response["total"] as? Int,
+                    if let response = result.json, let total = response["total"] as? Int,
                             let _ = response["results"] as? [[String: AnyObject]], result.isSuccess && total == 999 {
                         searchExpectation.fulfill()
                     }
@@ -94,7 +94,7 @@ class ProductProjectionTests: XCTestCase {
 
         ProductProjection.search(expansion: ["productType"], limit: 10, lang: Locale(identifier: "en"), text: "Michael Kors",
                 result: { result in
-                    if let response = result.response, let _ = response["count"] as? Int,
+                    if let response = result.json, let _ = response["count"] as? Int,
                             let results = response["results"] as? [[String: AnyObject]],
                             let productType = results.first?["productType"] as? [String: AnyObject],
                             let productTypeObject = productType["obj"] as? [String: AnyObject], result.isSuccess
@@ -111,7 +111,7 @@ class ProductProjectionTests: XCTestCase {
         let suggestExpectation = expectation(description: "suggest expectation")
 
         ProductProjection.suggest(lang: Locale(identifier: "en"), searchKeywords: "michael", result: { result in
-            if let response = result.response, let keywords = response["searchKeywords.en"] as? [[String: AnyObject]],
+            if let response = result.json, let keywords = response["searchKeywords.en"] as? [[String: AnyObject]],
             let _ = keywords.first?["text"] as? String, result.isSuccess {
                 suggestExpectation.fulfill()
             }
@@ -125,12 +125,12 @@ class ProductProjectionTests: XCTestCase {
         let byIdExpectation = expectation(description: "byId expectation")
 
         ProductProjection.query(limit: 1, result: { result in
-            if let response = result.response, let count = response["count"] as? Int,
+            if let response = result.json, let count = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
                     let id = results.first?["id"] as? String, result.isSuccess && count == 1 {
 
-                ProductProjection.byId(id, dictionaryResult: { result in
-                    if let response = result.response, let retrievedId = response["id"] as? String, result.isSuccess
+                ProductProjection.byId(id, result: { result in
+                    if let response = result.json, let retrievedId = response["id"] as? String, result.isSuccess
                             && retrievedId == id {
                         byIdExpectation.fulfill()
                     }
@@ -162,7 +162,7 @@ class ProductProjectionTests: XCTestCase {
         let predicate = "slug(en=\"michael-kors-bag-30T3GTVT7L-lightbrown\")"
 
         ProductProjection.query(predicates: [predicate], result: { result in
-            if let response = result.response, let count = response["count"] as? Int,
+            if let response = result.json, let count = response["count"] as? Int,
             let results = response["results"] as? [[String: AnyObject]],
             let slug = results.first?["slug"] as? [String: String],
             let enSlug = slug["en"], result.isSuccess && count == 1
@@ -179,7 +179,7 @@ class ProductProjectionTests: XCTestCase {
         let queryExpectation = expectation(description: "query expectation")
 
         ProductProjection.query(sort: ["name.en asc"], limit: 8, result: { result in
-            if let response = result.response, let count = response["count"] as? Int,
+            if let response = result.json, let count = response["count"] as? Int,
             let results = response["results"] as? [[String: AnyObject]],
             let name = results.first?["name"] as? [String: String], let enName = name["en"],
                     result.isSuccess && count == 8 && enName == "Alberto Guardiani – Slip on “Cherie”" {
@@ -195,7 +195,7 @@ class ProductProjectionTests: XCTestCase {
         let queryExpectation = expectation(description: "query expectation")
 
         ProductProjection.query(sort: ["name.en asc"], limit: 2, offset: 1, result: { result in
-            if let response = result.response, let count = response["count"] as? Int,
+            if let response = result.json, let count = response["count"] as? Int,
             let results = response["results"] as? [[String: AnyObject]],
             let name = results.first?["name"] as? [String: String], let enName = name["en"],
                     result.isSuccess && count == 2 && enName == "Bag DKNY beige" {
@@ -211,7 +211,7 @@ class ProductProjectionTests: XCTestCase {
         let queryExpectation = expectation(description: "query expectation")
 
         ProductProjection.query(sort: ["name.en asc", "slug.en asc"], limit: 1, result: { result in
-            if let response = result.response, let count = response["count"] as? Int,
+            if let response = result.json, let count = response["count"] as? Int,
             let results = response["results"] as? [[String: AnyObject]],
             let name = results.first?["name"] as? [String: String], let enName = name["en"],
                     result.isSuccess && count == 1 && enName == "Alberto Guardiani – Slip on “Cherie”" {
@@ -229,7 +229,7 @@ class ProductProjectionTests: XCTestCase {
         let predicate = "name(en=\"Bag “Jet Set Travel” Michael Kors light brown\")"
 
         ProductProjection.query(predicates: [predicate], expansion: ["productType"], result: { result in
-            if let response = result.response, let _ = response["count"] as? Int,
+            if let response = result.json, let _ = response["count"] as? Int,
                     let results = response["results"] as? [[String: AnyObject]],
                     let productType = results.first?["productType"] as? [String: AnyObject],
                     let productTypeObject = productType["obj"] as? [String: AnyObject], result.isSuccess

@@ -33,7 +33,7 @@ class CustomerTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         Customer.profile { result in
-            if let response = result.response, let _ = response["firstName"] as? String,
+            if let response = result.json, let _ = response["firstName"] as? String,
                     let _ = response["lastName"] as? String, result.isSuccess {
                 retrieveProfileExpectation.fulfill()
             }
@@ -68,14 +68,14 @@ class CustomerTests: XCTestCase {
         let signupDraft = ["email": username, "password": "password"]
 
         Customer.signup(signupDraft, result: { result in
-            if let response = result.response, let customer = response["customer"] as? [String: Any],
+            if let response = result.json, let customer = response["customer"] as? [String: Any],
                     let email = customer["email"] as? String, let version = customer["version"] as? UInt, result.isSuccess
                     && email == username {
                 createProfileExpectation.fulfill()
 
                 AuthManager.sharedInstance.loginUser(username, password: "password", completionHandler: {_ in})
                 Customer.delete(version: version, result: { result in
-                    if let response = result.response, let email = response["email"] as? String, result.isSuccess
+                    if let response = result.json, let email = response["email"] as? String, result.isSuccess
                             && email == username {
                         deleteProfileExpectation.fulfill()
                     }
@@ -131,9 +131,9 @@ class CustomerTests: XCTestCase {
         var setFirstNameAction: [String: Any] = ["action": "setFirstName", "firstName": "newName"]
 
         Customer.profile { result in
-            if let response = result.response, let version = response["version"] as? UInt, result.isSuccess {
+            if let response = result.json, let version = response["version"] as? UInt, result.isSuccess {
                 Customer.update(version: version, actions: [setFirstNameAction], result: { result in
-                    if let response = result.response, let version = response["version"] as? UInt,
+                    if let response = result.json, let version = response["version"] as? UInt,
                             let firstName = response["firstName"] as? String, result.isSuccess
                             && firstName == "newName" {
 
@@ -141,7 +141,7 @@ class CustomerTests: XCTestCase {
                         setFirstNameAction["firstName"] = "Test"
 
                         Customer.update(version: version, actions: [setFirstNameAction], result: { result in
-                            if let response = result.response, let firstName = response["firstName"] as? String, result.isSuccess && firstName == "Test" {
+                            if let response = result.json, let firstName = response["firstName"] as? String, result.isSuccess && firstName == "Test" {
                                 updateProfileExpectation.fulfill()
                             }
                         })
@@ -181,10 +181,10 @@ class CustomerTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         Customer.profile { result in
-            if let response = result.response, let version = response["version"] as? UInt, result.isSuccess {
+            if let response = result.json, let version = response["version"] as? UInt, result.isSuccess {
 
                 Customer.changePassword(currentPassword: password, newPassword: "newPassword", version: version, result: { result in
-                    if let response = result.response, let version = response["version"] as? UInt, result.isSuccess {
+                    if let response = result.json, let version = response["version"] as? UInt, result.isSuccess {
 
                         // Now revert the password change
                         Customer.changePassword(currentPassword: "newPassword", newPassword: password, version: version, result: { result in
@@ -213,14 +213,14 @@ class CustomerTests: XCTestCase {
         AuthManager.sharedInstance.token { token, error in
             guard let token = token, let path = TestCustomer.fullPath else { return }
             
-            let customerResult: ((Commercetools.Result<[String: Any]>) -> Void) = { result in
-                if let response = result.response, let token = response["value"] as? String, result.isSuccess {
+            let customerResult: ((Commercetools.Result<Customer>) -> Void) = { result in
+                if let response = result.json, let token = response["value"] as? String, result.isSuccess {
                     
                     // Now confirm reset password token with regular mobile client scope
                     self.setupTestConfiguration()
                     
                     Customer.resetPassword(token: token, newPassword: "password", result: { result in
-                        if let response = result.response, let email = response["email"] as? String, result.isSuccess
+                        if let response = result.json, let email = response["email"] as? String, result.isSuccess
                             && email == username {
                             resetPasswordExpectation.fulfill()
                         }
@@ -254,19 +254,19 @@ class CustomerTests: XCTestCase {
             }
 
             // First query for the UUID of the user we want to activate
-            TestCustomer.query(predicates: ["email=\"\(username)\""], dictionaryResult: { result in
-                if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
+            TestCustomer.query(predicates: ["email=\"\(username)\""], result: { result in
+                if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
                         let id = results.first?["id"] as? String, result.isSuccess {
                     
-                    let customerResult: ((Commercetools.Result<[String: Any]>) -> Void) = { result in
-                        if let response = result.response, let token = response["value"] as? String, result.isSuccess {
+                    let customerResult: ((Commercetools.Result<Customer>) -> Void) = { result in
+                        if let response = result.json, let token = response["value"] as? String, result.isSuccess {
                             
                             // Confirm email verification token with regular mobile client scope
                             self.setupTestConfiguration()
                             AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
                             
                             Customer.verifyEmail(token: token, result: { result in
-                                if let response = result.response, let email = response["email"] as? String, result.isSuccess
+                                if let response = result.json, let email = response["email"] as? String, result.isSuccess
                                     && email == username {
                                     resetPasswordExpectation.fulfill()
                                 }

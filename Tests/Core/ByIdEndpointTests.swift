@@ -37,10 +37,10 @@ class ByIdEndpointTests: XCTestCase {
         
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
         
-        TestCart.create(["currency": "EUR"], dictionaryResult: { result in
-            if let response = result.response, let id = response["id"] as? String, result.isSuccess {
-                TestCart.byId(id, dictionaryResult: { result in
-                    if let response = result.response, let cartState = response["cartState"] as? String,
+        TestCart.create(["currency": "EUR"], result: { result in
+            if let response = result.json, let id = response["id"] as? String, result.isSuccess {
+                TestCart.byId(id, result: { result in
+                    if let response = result.json, let cartState = response["cartState"] as? String,
                             let version = response["version"] as? Int, let obtainedId = response["id"] as? String, result.isSuccess && cartState == "Active" && version == 1 && obtainedId == id {
                         byIdExpectation.fulfill()
                     }
@@ -60,7 +60,7 @@ class ByIdEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestCart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", dictionaryResult: { result in
+        TestCart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
             if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
                     reason.message == "The Resource with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." {
                 byIdExpectation.fulfill()
@@ -74,11 +74,11 @@ class ByIdEndpointTests: XCTestCase {
 
         let byIdExpectation = expectation(description: "byId expectation")
 
-        TestProductProjections.query(limit: 1, dictionaryResult: { result in
-            if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
+        TestProductProjections.query(limit: 1, result: { result in
+            if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
                     let id = results.first?["id"] as? String, result.isSuccess {
-                TestProductProjections.byId(id, expansion: ["productType"], dictionaryResult: { result in
-                    if let response = result.response, let productType = response["productType"] as? [String: AnyObject],
+                TestProductProjections.byId(id, expansion: ["productType"], result: { result in
+                    if let response = result.json, let productType = response["productType"] as? [String: AnyObject],
                     let productTypeObject = productType["obj"] as? [String: AnyObject], result.isSuccess && productTypeObject.count > 0 {
                         byIdExpectation.fulfill()
                     }

@@ -32,10 +32,10 @@ class DeleteEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestCart.create(["currency": "EUR"], dictionaryResult: { result in
-            if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
-                TestCart.delete(id, version: version, dictionaryResult: { result in
-                    if let response = result.response, let deletedId = response["id"] as? String, result.isSuccess
+        TestCart.create(["currency": "EUR"], result: { result in
+            if let response = result.json, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
+                TestCart.delete(id, version: version, result: { result in
+                    if let response = result.json, let deletedId = response["id"] as? String, result.isSuccess
                             && deletedId == id {
                         deleteExpectation.fulfill()
                     }
@@ -55,9 +55,9 @@ class DeleteEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestCart.create(["currency": "EUR"], dictionaryResult: { result in
-            if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
-                TestCart.delete(id, version: version + 1, dictionaryResult: { result in
+        TestCart.create(["currency": "EUR"], result: { result in
+            if let response = result.json, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
+                TestCart.delete(id, version: version + 1, result: { result in
                     if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason, let currentVersion) = error,
                             reason.message == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." && version == currentVersion {
                         deleteExpectation.fulfill()
@@ -78,7 +78,7 @@ class DeleteEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestCart.delete("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", version: 1, dictionaryResult: { result in
+        TestCart.delete("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", version: 1, result: { result in
             if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
                     reason.message == "The Cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." {
                 deleteExpectation.fulfill()

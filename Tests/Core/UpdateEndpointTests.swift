@@ -37,16 +37,16 @@ class UpdateEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestProductProjections.query(limit: 1, dictionaryResult: { result in
-            if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
+        TestProductProjections.query(limit: 1, result: { result in
+            if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
             let productId = results.first?["id"] as? String, result.isSuccess {
 
                 let addLineItemAction: [String: Any] = ["action": "addLineItem", "productId": productId, "variantId": 1]
 
-                TestCart.create(["currency": "EUR"], dictionaryResult: { result in
-                    if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
-                        TestCart.update(id, version: version, actions: [addLineItemAction], dictionaryResult: { result in
-                            if let response = result.response, let updatedId = response["id"] as? String,
+                TestCart.create(["currency": "EUR"], result: { result in
+                    if let response = result.json, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
+                        TestCart.update(id, version: version, actions: [addLineItemAction], result: { result in
+                            if let response = result.json, let updatedId = response["id"] as? String,
                                     let newVersion = response["version"] as? UInt, result.isSuccess  && updatedId == id
                                     && newVersion > version {
                                 updateExpectation.fulfill()
@@ -69,15 +69,15 @@ class UpdateEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestProductProjections.query(limit: 1, dictionaryResult: { result in
-            if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
+        TestProductProjections.query(limit: 1, result: { result in
+            if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
                     let productId = results.first?["id"] as? String, result.isSuccess {
 
                 let addLineItemAction: [String: Any] = ["action": "addLineItem", "productId": productId, "variantId": 1]
 
-                TestCart.create(["currency": "EUR"], dictionaryResult: { result in
-                    if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
-                        TestCart.update(id, version: version + 1, actions: [addLineItemAction], dictionaryResult: { result in
+                TestCart.create(["currency": "EUR"], result: { result in
+                    if let response = result.json, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
+                        TestCart.update(id, version: version + 1, actions: [addLineItemAction], result: { result in
                             
                             if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason, let currentVersion) = error,
                                     reason.message == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." && version == currentVersion {
@@ -101,7 +101,7 @@ class UpdateEndpointTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        TestCart.update("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", version: 1, actions: [], dictionaryResult: { result in
+        TestCart.update("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", version: 1, actions: [], result: { result in
             if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
                     reason.message == "The Cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." {
                 updateExpectation.fulfill()

@@ -22,41 +22,19 @@ public protocol DeleteEndpoint: Endpoint {
                                               instance in case of a successful result.
     */
     static func delete(_ id: String, version: UInt, expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void)
-    
-    /**
-         Deletes an object by UUID at the endpoint specified with `path` value.
-         
-         - parameter id:                       Unique ID of the object to be deleted.
-         - parameter version:                  Version of the object (for optimistic concurrency control).
-         - parameter expansion:                An optional array of expansion property names.
-         - parameter dictionaryResult:         The code to be executed after processing the response, containing result
-                                               in dictionary format in case of a success.
-     */
-    static func delete(_ id: String, version: UInt, expansion: [String]?, dictionaryResult: @escaping (Result<[String: Any]>) -> Void)
-
 }
 
 public extension DeleteEndpoint {
     
     static func delete(_ id: String, version: UInt, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
-        delete(id, version: version, expansion: expansion, result: result, completionHandler: { response in
-            handleResponse(response, result: result)
-        })
-    }
-    
-    static func delete(_ id: String, version: UInt, expansion: [String]? = nil, dictionaryResult: @escaping (Result<[String: Any]>) -> Void) {
-        delete(id, version: version, expansion: expansion, result: dictionaryResult, completionHandler: { response in
-            handleResponse(response, result: dictionaryResult)
-        })
-    }
-    
-    private static func delete<T>(_ id: String, version: UInt, expansion: [String]? = nil, result: @escaping (Result<T>) -> Void, completionHandler: @escaping (DataResponse<Any>) -> Void) {
+        
         requestWithTokenAndPath(result, { token, path in
-            
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
             
             Alamofire.request(fullPath, method: .delete, parameters: ["version": version], encoding: URLEncoding.queryString, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: completionHandler)
+                .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                    handleResponse(response, result: result)
+                })
         })
     }
 }
