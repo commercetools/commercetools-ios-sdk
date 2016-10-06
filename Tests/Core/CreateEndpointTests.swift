@@ -8,6 +8,7 @@ import XCTest
 class CreateEndpointTests: XCTestCase {
 
     private class TestCart: CreateEndpoint {
+        public typealias ResponseType = Cart
         static let path = "me/carts"
     }
     
@@ -32,7 +33,7 @@ class CreateEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestCart.create(["currency": "EUR"], result: { result in
-            if let response = result.response, let cartState = response["cartState"] as? String, let version = response["version"] as? Int,
+            if let response = result.json, let cartState = response["cartState"] as? String, let version = response["version"] as? Int,
                     result.isSuccess && cartState == "Active" && version == 1 {
                 createExpectation.fulfill()
             }

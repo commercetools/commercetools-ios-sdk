@@ -8,6 +8,7 @@ import XCTest
 class UpdateByKeyEndpointTests: XCTestCase {
 
     private class TestProductType: ByKeyEndpoint, UpdateByKeyEndpoint {
+        public typealias ResponseType = NoMapping
         static let path = "product-types"
     }
 
@@ -27,20 +28,20 @@ class UpdateByKeyEndpointTests: XCTestCase {
         let updateExpectation = expectation(description: "update expectation")
 
         TestProductType.byKey("main", result: { result in
-            if let response = result.response, let originalName = response["name"] as? String,
+            if let response = result.json, let originalName = response["name"] as? String,
                     let version = response["version"] as? UInt, result.isSuccess && originalName == "main" {
 
                 var changeNameAction = ["action": "changeName", "name": "newName"]
 
                 TestProductType.updateByKey("main", version: version, actions: [changeNameAction], result: { result in
-                    if let response = result.response, let newName = response["name"] as? String,
+                    if let response = result.json, let newName = response["name"] as? String,
                             let version = response["version"] as? UInt, result.isSuccess && newName == "newName" {
 
                         // Now revert back to the original name for the test data consistency reasons
                         changeNameAction["name"] = originalName
 
                         TestProductType.updateByKey("main", version: version, actions: [changeNameAction], result: { result in
-                            if let response = result.response, let name = response["name"] as? String, result.isSuccess && name == originalName {
+                            if let response = result.json, let name = response["name"] as? String, result.isSuccess && name == originalName {
                                 updateExpectation.fulfill()
                             }
                         })
@@ -57,7 +58,7 @@ class UpdateByKeyEndpointTests: XCTestCase {
         let updateExpectation = expectation(description: "update expectation")
 
         TestProductType.byKey("main", result: { result in
-            if let response = result.response, let version = response["version"] as? UInt,
+            if let response = result.json, let version = response["version"] as? UInt,
                     let id = response["id"] as? String, result.isSuccess {
 
                 let changeNameAction = ["action": "changeName", "name": "newName"]

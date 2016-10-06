@@ -8,10 +8,12 @@ import XCTest
 class ByIdEndpointTests: XCTestCase {
     
     private class TestCart: ByIdEndpoint, CreateEndpoint {
+        public typealias ResponseType = Cart
         static let path = "me/carts"
     }
 
     private class TestProductProjections: ByIdEndpoint, QueryEndpoint {
+        public typealias ResponseType = NoMapping
         static let path = "product-projections"
     }
     
@@ -36,9 +38,9 @@ class ByIdEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
         
         TestCart.create(["currency": "EUR"], result: { result in
-            if let response = result.response, let id = response["id"] as? String, result.isSuccess {
+            if let response = result.json, let id = response["id"] as? String, result.isSuccess {
                 TestCart.byId(id, result: { result in
-                    if let response = result.response, let cartState = response["cartState"] as? String,
+                    if let response = result.json, let cartState = response["cartState"] as? String,
                             let version = response["version"] as? Int, let obtainedId = response["id"] as? String, result.isSuccess && cartState == "Active" && version == 1 && obtainedId == id {
                         byIdExpectation.fulfill()
                     }
@@ -73,10 +75,10 @@ class ByIdEndpointTests: XCTestCase {
         let byIdExpectation = expectation(description: "byId expectation")
 
         TestProductProjections.query(limit: 1, result: { result in
-            if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
+            if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
                     let id = results.first?["id"] as? String, result.isSuccess {
                 TestProductProjections.byId(id, expansion: ["productType"], result: { result in
-                    if let response = result.response, let productType = response["productType"] as? [String: AnyObject],
+                    if let response = result.json, let productType = response["productType"] as? [String: AnyObject],
                     let productTypeObject = productType["obj"] as? [String: AnyObject], result.isSuccess && productTypeObject.count > 0 {
                         byIdExpectation.fulfill()
                     }

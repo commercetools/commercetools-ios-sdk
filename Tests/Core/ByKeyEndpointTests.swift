@@ -8,6 +8,7 @@ import XCTest
 class ByKeyEndpointTests: XCTestCase {
 
     private class TestProductType: ByKeyEndpoint {
+        public typealias ResponseType = NoMapping
         static let path = "product-types"
     }
 
@@ -27,7 +28,7 @@ class ByKeyEndpointTests: XCTestCase {
         let byKeyExpectation = expectation(description: "byKey expectation")
 
         TestProductType.byKey("main", result: { result in
-            if let response = result.response, let description = response["description"] as? String,
+            if let response = result.json, let description = response["description"] as? String,
                     result.isSuccess && description == "all products of max" {
                 byKeyExpectation.fulfill()
             }

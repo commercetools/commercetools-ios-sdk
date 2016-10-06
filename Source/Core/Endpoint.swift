@@ -4,6 +4,7 @@
 
 import Foundation
 import Alamofire
+import ObjectMapper
 
 /**
     Base type which all endpoints must conform to.
@@ -22,9 +23,20 @@ import Alamofire
     `static func handleResponse`.
 */
 public protocol Endpoint {
+    
+    associatedtype ResponseType: Mappable
 
     static var path: String { get }
 
+}
+
+/**
+    Type used for endpoints which do not have any model specified yet.
+*/
+public struct NoMapping: Mappable {
+    
+    public init?(map: Map) {}
+    mutating public func mapping(map: Map) {}
 }
 
 public extension Endpoint {
@@ -73,24 +85,30 @@ public extension Endpoint {
     }
 
     /**
-        This method provides default response handling from all endpoints.
+        This method provides default response handling from all endpoints, providing successful result in dictionary format.
 
         - parameter token:                    Auth token to be included in the headers.
-        - parameter result:                   The code to be executed after processing the response.
+        - parameter result:                   The code to be executed after processing the response, providing response
+                                              in dictionary format in case of a successful result.
     */
-    static func handleResponse(_ response: DataResponse<Any>, result: (Result<[String: Any]>) -> Void) {
+    static func handleResponse<T>(_ response: DataResponse<Any>, result: (Result<T>) -> Void) {
+        if let responseDict = response.result.value as? [String: Any], let response = response.response, case 200 ... 299 = response.statusCode {
+            result(Result.success(responseDict))
+        } else {
+            checkResponseForErrors(response: response, result: result)
+        }
+    }
+    
+    static func checkResponseForErrors<T>(response: DataResponse<Any>, result: (Result<T>) -> Void) {
         if let responseDict = response.result.value as? [String: AnyObject], let response = response.response {
-            if case 200 ... 299 = response.statusCode {
-                result(Result.success(responseDict))
-
-            } else if let errorsResponse = responseDict["errors"] as? [[String: AnyObject]] {
+            if let errorsResponse = responseDict["errors"] as? [[String: AnyObject]] {
                 var errors = [CTError]()
                 errorsResponse.forEach {
                     errors += [CTError(code: $0["code"] as? String ?? "", failureMessage: $0["message"] as? String,
-                               failureDetails: $0["detailedErrorMessage"] as? String, currentVersion: $0["currentVersion"] as? UInt)]
+                                       failureDetails: $0["detailedErrorMessage"] as? String, currentVersion: $0["currentVersion"] as? UInt)]
                 }
                 result(Result.failure(response.statusCode, errors))
-
+                
             } else {
                 result(Result.failure(response.statusCode, [CTError.generalError(reason: CTError.FailureReason(message: responseDict["error"] as? String, details: nil))]))
             }
@@ -105,7 +123,7 @@ public extension Endpoint {
         - parameter result:                   The code to be executed in case an error occurs.
         - parameter requestHandler:           The code to be executed if no error occurs, providing token and path.
     */
-    static func requestWithTokenAndPath(_ result: @escaping (Result<[String: Any]>) -> Void, _ requestHandler: @escaping (String, String) -> Void) {
+    static func requestWithTokenAndPath<T>(_ result: @escaping (Result<T>) -> Void, _ requestHandler: @escaping (String, String) -> Void) {
         guard let config = Config.currentConfig, let path = fullPath, config.validate() else {
             Log.error("Cannot execute command - check if the configuration is valid.")
             result(Result.failure(nil, [CTError.generalError(reason: nil)]))

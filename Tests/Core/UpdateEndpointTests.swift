@@ -8,10 +8,12 @@ import XCTest
 class UpdateEndpointTests: XCTestCase {
 
     private class TestCart: UpdateEndpoint, CreateEndpoint {
+        public typealias ResponseType = Cart
         static let path = "me/carts"
     }
 
     private class TestProductProjections: QueryEndpoint {
+        public typealias ResponseType = NoMapping
         static let path = "product-projections"
     }
 
@@ -36,15 +38,15 @@ class UpdateEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestProductProjections.query(limit: 1, result: { result in
-            if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
+            if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
             let productId = results.first?["id"] as? String, result.isSuccess {
 
                 let addLineItemAction: [String: Any] = ["action": "addLineItem", "productId": productId, "variantId": 1]
 
                 TestCart.create(["currency": "EUR"], result: { result in
-                    if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
+                    if let response = result.json, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
                         TestCart.update(id, version: version, actions: [addLineItemAction], result: { result in
-                            if let response = result.response, let updatedId = response["id"] as? String,
+                            if let response = result.json, let updatedId = response["id"] as? String,
                                     let newVersion = response["version"] as? UInt, result.isSuccess  && updatedId == id
                                     && newVersion > version {
                                 updateExpectation.fulfill()
@@ -68,13 +70,13 @@ class UpdateEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         TestProductProjections.query(limit: 1, result: { result in
-            if let response = result.response, let results = response["results"] as? [[String: AnyObject]],
+            if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
                     let productId = results.first?["id"] as? String, result.isSuccess {
 
                 let addLineItemAction: [String: Any] = ["action": "addLineItem", "productId": productId, "variantId": 1]
 
                 TestCart.create(["currency": "EUR"], result: { result in
-                    if let response = result.response, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
+                    if let response = result.json, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
                         TestCart.update(id, version: version + 1, actions: [addLineItemAction], result: { result in
                             
                             if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason, let currentVersion) = error,

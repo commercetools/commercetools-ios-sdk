@@ -17,7 +17,7 @@ class CartTests: XCTestCase {
         cleanPersistedTokens()
         super.tearDown()
     }
-    
+
     func testRetrieveActiveCart() {
         let activeCartExpectation = expectation(description: "active cart expectation")
 
@@ -27,10 +27,10 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
         Cart.create(["currency": "EUR"], result: { result in
-            if let response = result.response, let cartState = response["cartState"] as? String, let id = response["id"] as? String,
+            if let response = result.json, let cartState = response["cartState"] as? String, let id = response["id"] as? String,
                     result.isSuccess && cartState == "Active" {
                 Cart.active(result: { result in
-                    if let response = result.response, let activeCartId = response["id"] as? String, activeCartId == id {
+                    if let response = result.json, let activeCartId = response["id"] as? String, activeCartId == id {
                         activeCartExpectation.fulfill()
                     }
                 })
@@ -39,5 +39,5 @@ class CartTests: XCTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-    
+
 }

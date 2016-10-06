@@ -19,23 +19,23 @@ public protocol UpdateByKeyEndpoint: Endpoint {
         - parameter version:                  Version of the object (for optimistic concurrency control).
         - parameter actions:                  An array of actions to be executed, in dictionary representation.
         - parameter expansion:                An optional array of expansion property names.
-        - parameter result:                   The code to be executed after processing the response.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
     */
-    static func updateByKey(_ key: String, version: UInt, actions: [[String: Any]], expansion: [String]?, result: @escaping (Result<[String: Any]>) -> Void)
-
+    static func updateByKey(_ key: String, version: UInt, actions: [[String: Any]], expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void)
 }
 
 public extension UpdateByKeyEndpoint {
-
-    static func updateByKey(_ key: String, version: UInt, actions: [[String: Any]], expansion: [String]? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
-
+    
+    static func updateByKey(_ key: String, version: UInt, actions: [[String: Any]], expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)key=\(key)", expansion: expansion)
-
+            
             Alamofire.request(fullPath, method: .post, parameters: ["version": version, "actions": actions], encoding: JSONEncoding.default, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                handleResponse(response, result: result)
-            })
+                .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                    handleResponse(response, result: result)
+                })
         })
     }
 }

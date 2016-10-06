@@ -17,23 +17,23 @@ public protocol ByIdEndpoint: Endpoint {
 
         - parameter id:                       Unique ID of the object to be retrieved.
         - parameter expansion:                An optional array of expansion property names.
-        - parameter result:                   The code to be executed after processing the response.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
     */
-    static func byId(_ id: String, expansion: [String]?, result: @escaping (Result<[String: Any]>) -> Void)
-
+    static func byId(_ id: String, expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void)
 }
 
 public extension ByIdEndpoint {
-
-    static func byId(_ id: String, expansion: [String]? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
-
+    
+    static func byId(_ id: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
-
+            
             Alamofire.request(fullPath, parameters: nil, encoding: JSONEncoding.default, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                handleResponse(response, result: result)
-            })
+                .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                    handleResponse(response, result: result)
+                })
         })
     }
 }

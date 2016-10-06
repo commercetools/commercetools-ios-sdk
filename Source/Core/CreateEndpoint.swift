@@ -20,21 +20,20 @@ public protocol CreateEndpoint: Endpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func create(_ object: [String: Any], expansion: [String]?, result: @escaping (Result<[String: Any]>) -> Void)
-
+    static func create(_ object: [String: Any], expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void)
 }
 
 public extension CreateEndpoint {
 
-    static func create(_ object: [String: Any], expansion: [String]? = nil, result: @escaping (Result<[String: Any]>) -> Void) {
+    static func create(_ object: [String: Any], expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
 
             Alamofire.request(fullPath, method: .post, parameters: object, encoding: JSONEncoding.default, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                handleResponse(response, result: result)
-            })
+                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                        handleResponse(response, result: result)
+                    })
         })
     }
 }
