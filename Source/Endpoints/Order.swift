@@ -10,6 +10,7 @@ import ObjectMapper
 open class Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint {
     
     public typealias ResponseType = NoMapping
+    public typealias RequestDraft = NoMapping
 
     open static let path = "me/orders"
 }

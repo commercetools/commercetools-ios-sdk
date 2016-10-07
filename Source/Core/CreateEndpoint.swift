@@ -2,8 +2,8 @@
 // Copyright (c) 2016 Commercetools. All rights reserved.
 //
 
-import Foundation
 import Alamofire
+import ObjectMapper
 
 /**
     All endpoints capable of creating new objects should conform to this protocol.
@@ -13,6 +13,8 @@ import Alamofire
 */
 public protocol CreateEndpoint: Endpoint {
 
+    associatedtype RequestDraft: Mappable
+
     /**
         Creates new object at the endpoint specified with `path` value.
 
@@ -20,12 +22,21 @@ public protocol CreateEndpoint: Endpoint {
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func create(_ object: [String: Any], expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void)
+    static func create(_ object: [String: Any]?, expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void)
+
+    /**
+        Creates new object at the endpoint specified with `path` value.
+
+        - parameter object:                   RequestDraft object to be created.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    static func create(_ object: RequestDraft, expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void)
 }
 
 public extension CreateEndpoint {
 
-    static func create(_ object: [String: Any], expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    static func create(_ object: [String: Any]?, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
@@ -35,5 +46,9 @@ public extension CreateEndpoint {
                         handleResponse(response, result: result)
                     })
         })
+    }
+
+    static func create(_ object: RequestDraft, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        create(Mapper<RequestDraft>().toJSON(object), expansion: expansion, result: result)
     }
 }

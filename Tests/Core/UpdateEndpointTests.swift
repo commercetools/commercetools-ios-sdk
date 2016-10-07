@@ -8,12 +8,13 @@ import XCTest
 class UpdateEndpointTests: XCTestCase {
 
     private class TestCart: UpdateEndpoint, CreateEndpoint {
-        public typealias ResponseType = Cart
+        typealias ResponseType = Cart
+        typealias RequestDraft = CartDraft
         static let path = "me/carts"
     }
 
     private class TestProductProjections: QueryEndpoint {
-        public typealias ResponseType = NoMapping
+        typealias ResponseType = NoMapping
         static let path = "product-projections"
     }
 
