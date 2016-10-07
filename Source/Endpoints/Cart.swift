@@ -11,6 +11,7 @@ import ObjectMapper
 open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, DeleteEndpoint, Mappable {
     
     public typealias ResponseType = Cart
+    public typealias RequestDraft = CartDraft
 
     open static let path = "me/carts"
 
@@ -79,5 +80,4 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
         paymentInfo      <- map["paymentInfo"]
         locale           <- map["locale"]
     }
-
 }

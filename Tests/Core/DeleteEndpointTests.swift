@@ -8,7 +8,8 @@ import XCTest
 class DeleteEndpointTests: XCTestCase {
 
     private class TestCart: DeleteEndpoint, CreateEndpoint {
-        public typealias ResponseType = Cart
+        typealias ResponseType = Cart
+        typealias RequestDraft = CartDraft
         static let path = "me/carts"
     }
 

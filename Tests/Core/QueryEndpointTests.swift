@@ -8,7 +8,7 @@ import XCTest
 class QueryEndpointTests: XCTestCase {
 
     private class TestProductProjections: QueryEndpoint {
-        public typealias ResponseType = NoMapping
+        typealias ResponseType = NoMapping
         static let path = "product-projections"
     }
     
