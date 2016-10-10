@@ -9,7 +9,7 @@ public struct DiscountedPrice: Mappable {
     // MARK: - Properties
 
     var value: Money?
-    var discount: [String: AnyObject]?
+    var discount: Reference<ProductDiscount>?
 
     public init?(map: Map) {}
 
@@ -19,5 +19,4 @@ public struct DiscountedPrice: Mappable {
         value              <- map["value"]
         discount           <- map["discount"]
     }
-
 }

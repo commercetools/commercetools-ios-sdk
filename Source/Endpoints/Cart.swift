@@ -25,9 +25,9 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
     open static func active(expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         return ActiveCart.get(expansion: expansion, result: result)
     }
-    
+
     // MARK: - Properties
-    
+
     var id: String?
     var version: UInt?
     var createdAt: Date?
@@ -51,11 +51,11 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
     var custom: [String: Any]?
     var paymentInfo: PaymentInfo?
     var locale: String?
-    
+
     public required init?(map: Map) {}
-    
+
     // MARK: - Mappable
-    
+
     public func mapping(map: Map) {
         id               <- map["id"]
         version          <- map["version"]
