@@ -86,6 +86,34 @@ class CustomerTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    func testCreateAndDeleteProfileWithModel() {
+        setupTestConfiguration()
+
+        let username = "new.swift.sdk.test.user@commercetools.com"
+
+        let createProfileExpectation = expectation(description: "create profile expectation")
+        let deleteProfileExpectation = expectation(description: "delete profile expectation")
+
+        var customerDraft = CustomerDraft()
+        customerDraft.email = username
+        customerDraft.password = "password"
+
+        Customer.signup(customerDraft, result: { result in
+            if let customer = result.model?.customer, let version = customer.version, customer.email == username, result.isSuccess {
+                createProfileExpectation.fulfill()
+
+                AuthManager.sharedInstance.loginUser(username, password: "password", completionHandler: {_ in})
+                Customer.delete(version: version, result: { result in
+                    if let deletedCustomer = result.model, deletedCustomer.email == username, result.isSuccess {
+                        deleteProfileExpectation.fulfill()
+                    }
+                })
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
     func testCreateError() {
         setupTestConfiguration()
 

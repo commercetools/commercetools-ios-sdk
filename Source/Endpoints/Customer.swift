@@ -29,11 +29,26 @@ open class Customer: Endpoint, Mappable {
     /**
         Creates new customer with specified profile.
 
+        - parameter profile:                  Draft of the customer profile to be created.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    open static func signup(_ profile: CustomerDraft, result: @escaping (Result<CustomerSignInResult>) -> Void) {
+        signup(Mapper<CustomerDraft>().toJSON(profile), result: result)
+    }
+
+    /**
+        Creates new customer with specified profile.
+
         - parameter profile:                  Dictionary representation of the draft customer profile to be created.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func signup(_ profile: [String: Any], result: @escaping (Result<ResponseType>) -> Void) {
-        customerProfileAction(method: .post, basePath: "signup", parameters: profile, encoding: JSONEncoding.default, result: result)
+    open static func signup(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
+        requestWithTokenAndPath(result, { token, path in
+            Alamofire.request("\(path)signup", method: .post, parameters: profile, encoding: JSONEncoding.default, headers: self.headers(token))
+                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                        handleResponse(response, result: result)
+                    })
+        })
     }
 
     /**
