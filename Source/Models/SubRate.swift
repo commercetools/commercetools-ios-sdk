@@ -11,6 +11,7 @@ public struct SubRate: Mappable {
     var name: String?
     var amount: Double?
 
+    public init() {}
     public init?(map: Map) {}
 
     // MARK: - Mappable
