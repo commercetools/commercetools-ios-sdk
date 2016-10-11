@@ -9,7 +9,7 @@ import ObjectMapper
 */
 open class ProductType: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Mappable {
     
-    public typealias ResponseType = NoMapping
+    public typealias ResponseType = ProductType
 
     open static let path = "product-types"
 
