@@ -25,7 +25,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '9.0'
 use_frameworks!
 
-pod 'Commercetools', '~> 0.3'
+pod 'Commercetools', '~> 0.4'
 ```
 
 Then, run the following command:
@@ -71,7 +71,7 @@ import Commercetools
 if let configuration = Config() {
     
     // You can also specify custom logging level
-    // configuration.logLevel = .Error
+    // configuration.logLevel = .error
     
     // Or completely disable all log messages from Commercetools SDK
     // configuration.loggingEnabled = false
@@ -110,7 +110,7 @@ Commercetools.logoutUser()
 Access and refresh tokens are being preserved across app launches. In order to inspect whether it's currently handling authenticated or anonymous user, `authState` property should be used:
 
 ```swift
-if Commercetools.authState == .PlainToken {
+if Commercetools.authState == .plainToken {
     // Present login form or other logic
 }
 ```
@@ -132,12 +132,13 @@ Depending on the capabilities of the resource, you can retrieve by specific UUID
 
 All of these functionalities are provided by static methods for any specific supported endpoint. For an example, you can creating shopping cart using provided `Cart` class:
 ```swift
-let createDraft = ["currency": "EUR"]
+var cartDraft = CartDraft()
+cartDraft.currency = "EUR"
 
-Cart.create(createDraft, result: { result in
-	if let response = result.response where result.isSuccess {
-		// Do any work with response dictionary containing created `Cart` resource, i.e:
-		if let cartState = response["cartState"] as? String where cartState == "Active" {
+Cart.create(cartDraft, result: { result in
+	if let cart = result.model, result.isSuccess {
+		// Do any work with created `Cart` instance, i.e:
+		if cart.cartState == .active {
 			// Our cart is active!
 		}
 	}
@@ -148,13 +149,13 @@ In case you need resources from an endpoint which hasn't been implemented in our
 
 The following list represents currently supported abstract endpoints. For each protocol, there is a default extension provided, which will almost always cover your needs:
 
-* Create endpoint - `create(object: [String: AnyObject], expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
-* Update endpoint - `update(id: String, version: UInt, actions: [[String: AnyObject]], expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
-* Update by key endpoint - `updateByKey(key: String, version: UInt, actions: [[String: AnyObject]], expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
-* Query endpoint - `query(predicates predicates: [String]?, sort: [String]?, expansion: [String]?, limit: UInt?, offset: UInt?, result: (Result<[String: AnyObject], NSError>) -> Void)`
-* Retrieve resource by ID endpoint - `byId(id: String, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
-* Retrieve resource by key endpoint - `byKey(key: String, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
-* Delete endpoint - `delete(id: String, version: UInt, expansion: [String]?, result: (Result<[String: AnyObject], NSError>) -> Void)`
+* Create endpoint - `create(object: [String: AnyObject], expansion: [String]?, result: (Result<ResponseType>) -> Void)`
+* Update endpoint - `update(id: String, version: UInt, actions: [[String: AnyObject]], expansion: [String]?, result: (Result<ResponseType>) -> Void)`
+* Update by key endpoint - `updateByKey(key: String, version: UInt, actions: [[String: AnyObject]], expansion: [String]?, result: (Result<ResponseType>) -> Void)`
+* Query endpoint - `query(predicates predicates: [String]?, sort: [String]?, expansion: [String]?, limit: UInt?, offset: UInt?, result: (Result<QueryResponse<ResponseType>>) -> Void)`
+* Retrieve resource by ID endpoint - `byId(id: String, expansion: [String]?, result: (Result<ResponseType>) -> Void)`
+* Retrieve resource by key endpoint - `byKey(key: String, expansion: [String]?, result: (Result<ResponseType>) -> Void)`
+* Delete endpoint - `delete(id: String, version: UInt, expansion: [String]?, result: (Result<ResponseType>) -> Void)`
 
 ### Currently Supported Endpoints
 
@@ -164,8 +165,8 @@ Cart endpoint supports all common operations:
 - Retrieve active cart (user must be logged in)
 ```swift
 Cart.active(result: { result in
-    if let response = result.response where result.isSuccess {
-        // Cart successfully retrieved, response contains currently active cart in dictionary representation
+    if let cart = result.model, result.isSuccess {
+        // Cart successfully retrieved, response contains currently active cart
     } else {
         // Your user might not have an active cart at the moment
     }
@@ -174,19 +175,20 @@ Cart.active(result: { result in
 - Query for carts (user must be logged in)
 ```swift
 Cart.query(limit: 2, offset: 1, result: { result in
-    if let response = result.response, count = response["count"] as? Int,
-            results = response["results"] as? [[String: AnyObject]] where result.isSuccess {
-        // response contains an array of cart dictionary responses
+    if let response = result.model, let count = response.count,
+            let results = response.results, result.isSuccess {
+        // response contains an array of cart instances
     }
 })
 ```
 - Create new cart (user must be logged in)
 ```swift
-let cartDraft = ["currency": "EUR"]
+var cartDraft = CartDraft()
+cartDraft.currency = "EUR"
 
 Cart.create(cartDraft, result: { result in
-    if let response = result.response, cartState = response["cartState"] as? String where result.isSuccess {
-        // Cart successfully created, response contains created cart in dictionary representation
+    if let cart = result.model, let cartState = cart.cartState, result.isSuccess {
+        // Cart successfully created, and cart contains 
     }
 })
 ```
@@ -196,8 +198,8 @@ let version = 1 // Set the appropriate current version
 let addLineItemAction: [String: AnyObject] = ["action": "addLineItem", "productId": productId, "variantId": 1]
 
 Cart.update(cartId, version: version, actions: [addLineItemAction], result: { result in
-    if let response = result.response where result.isSuccess {
-        // Cart successfully updated, response contains updated cart in dictionary representation
+    if let cart = result.model, result.isSuccess {
+        // Cart successfully updated, response contains updated cart
     }
 })
 ```
@@ -206,7 +208,7 @@ Cart.update(cartId, version: version, actions: [addLineItemAction], result: { re
 let version = 1 // Set the appropriate current version
 
 Cart.delete(cartId, version: version, result: { result in
-    if let response = result.response where result.isSuccess {
+    if let cart = result.model, result.isSuccess {
         // Cart successfully deleted
     }
 })
@@ -214,8 +216,7 @@ Cart.delete(cartId, version: version, result: { result in
 - Retrieve cart by UUID (user must be logged in)
 ```swift
 Cart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
-    if let response = result.response, cartState = response["cartState"] as? String where result.isSuccess
-    		&& cartState == "Active" {
+    if let cart = result.model, cart.cartState == .active && result.isSuccess {
         // response contains cart dictionary
     }
 })
@@ -227,17 +228,17 @@ Using regular mobile scope, it is possible to retrieve by UUID and query for cat
 - Query for categories
 ```swift
 Category.query(limit: 10, offset: 1, result: { result in
-    if let response = result.response, count = response["count"] as? Int,
-            categories = response["results"] as? [[String: AnyObject]] where result.isSuccess {
-        // categories contains an array of category dictionary responses
+    if let response = result.model, let count = response.count,
+            let categories = response.results, result.isSuccess {
+        // categories contains an array of category objects
     }
 })
 ```
 - Retrieve category by UUID
 ```swift
-Cart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
-    if let response = result.response where result.isSuccess {
-        // response contains category dictionary representation
+Category.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
+    if let category = result.model, result.isSuccess {
+        // response contains category objects
     }
 })
 ```
@@ -248,20 +249,20 @@ Customer endpoint offers you several possible actions to use from your iOS app:
 - Retrieve user profile (user must be logged in)
 ```swift
 Customer.profile { result in
-    if let response = result.response, firstName = response["firstName"] as? String,
-            lastName = response["lastName"] as? String where result.isSuccess {
+    if let profile = result.model, let firstName = profile.firstName,
+            let lastName = profile.lastName, result.isSuccess {
         // E.g present user profile details
     }
 }
 ```
 - Sign up for a new account (anonymous user is being handled by `AuthManager`)
 ```swift
-let username = "new.swift.sdk.test.user@commercetools.com"
-let signupDraft = ["email": username, "password": "password"]
+var customerDraft = CustomerDraft()
+customerDraft.email = "new.swift.sdk.test.user@commercetools.com"
+customerDraft.password = "password"
 
-Customer.signup(signupDraft, result: { result in
-    if let response = result.response, customer = response["customer"] as? [String: AnyObject],
-    		version = customer["version"] as? UInt where result.isSuccess {
+Customer.signup(customerDraft, result: { result in
+    if let customer = result.model?.customer, let version = customer.version, result.isSuccess {
         // User has been successfully signed up.
         // Now, you'd probably want to present the login form, or simply
         // use AuthManager to login user automatically
@@ -273,17 +274,15 @@ Customer.signup(signupDraft, result: { result in
 var setFirstNameAction: [String: AnyObject] = ["action": "setFirstName", "firstName": "newName"]
 
 Customer.update(version: version, actions: [setFirstNameAction], result: { result in
-    if let response = result.response, version = response["version"] as? UInt where result.isSuccess {
+    if let customer = result.model, let version = customer.version, result.isSuccess {
     	// User profile successfully updated
     }
 })
 ```
 - Delete customer account (user must be logged in)
 ```swift
-var setFirstNameAction: [String: AnyObject] = ["action": "setFirstName", "firstName": "newName"]
-
 Customer.delete(version: version, result: { result in
-    if let response = result.response where result.isSuccess {
+    if let customer = result.model, result.isSuccess {
         // Customer was successfully deleted
     }
 })
@@ -293,7 +292,7 @@ Customer.delete(version: version, result: { result in
 let  version = 1 // Set the appropriate current version
 
 Customer.changePassword(currentPassword: "password", newPassword: "newPassword", version: version, result: { result in
-    if let response = result.response where result.isSuccess {
+    if let customer = result.model, result.isSuccess {
     	// Password has been changed, and now AuthManager has automatically obtained new access token
     }
 })
@@ -303,7 +302,7 @@ Customer.changePassword(currentPassword: "password", newPassword: "newPassword",
 let token = "" // Usually this token is retrieved from the password reset link, in case your app does support universal links
 
 Customer.resetPassword(token: token, newPassword: "password", result: { result in
-    if let response = result.response, email = response["email"] as? String where result.isSuccess {
+    if let customer = result.model, let email = customer.email, result.isSuccess {
         // Password has been successfully reset, now would be a good time to present the login screen
     }
 })
@@ -313,7 +312,7 @@ Customer.resetPassword(token: token, newPassword: "password", result: { result i
 let token = "" // Usually this token is retrieved from the activation link, in case your app does support universal links
 
 Customer.verifyEmail(token: token, result: { result in
-    if let response = result.response, email = response["email"] as? String where result.isSuccess {
+    if let customer = result.model, let email = customer.email, result.isSuccess {
         // Email has been successfully verified, probably show UIAlertController with this info
     }
 })
@@ -329,17 +328,17 @@ Most common way for your iOS app to retrieve the product data is by consuming th
 - Search for product projections
 ```swift
 ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: NSLocale(localeIdentifier: "en"), text: "Michael Kors", result: { result in
-    if let response = result.response, total = response["total"] as? Int,
-    		results = response["results"] as? [[String: AnyObject]] where result.isSuccess {
-        // results contains an array of product projections dictionary responses
+    if let response = result.model, let total = response.total,
+    		let results = response.results, result.isSuccess {
+        // results contains an array of product projection objects
     }
 })
 ```
 - Product projection keyword suggestions
 ```swift
 ProductProjection.suggest(lang: NSLocale(localeIdentifier: "en"), searchKeywords: "michael", result: { result in
-    if let response = result.response, keywords = response["searchKeywords.en"] as? [[String: AnyObject]],
-    		firstKeyword = keywords.first?["text"] as? String where result.isSuccess {
+    if let response = result.json, let keywords = response["searchKeywords.en"] as? [[String: AnyObject]],
+    		let firstKeyword = keywords.first?["text"] as? String, result.isSuccess {
         // keywords contains an array of suggestions in dictionary representation
     }
 })
@@ -349,17 +348,17 @@ ProductProjection.suggest(lang: NSLocale(localeIdentifier: "en"), searchKeywords
 let predicate = "slug(en=\"michael-kors-bag-30T3GTVT7L-lightbrown\")"
 
 ProductProjection.query(predicates: [predicate], sort: ["name.en asc"], limit: 10, offset: 10, result: { result in
-    if let response = result.response, count = response["count"] as? Int,
-			results = response["results"] as? [[String: AnyObject]] where result.isSuccess {
-        // results contains an array of product projections dictionary responses
+    if let response = result.model, let count = response.count,
+			let results = response.results, result.isSuccess {
+        // results contains an array of product projection objects
     }
 })
 ```
 - Retrieve product projection by UUID
 ```swift
 ProductProjection.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
-    if let response = result.response where result.isSuccess {
-        // response contains product projection dictionary
+    if let product = result.model, result.isSuccess {
+        // response contains product projection object
     }
 })
 ```
@@ -370,32 +369,32 @@ Using regular mobile scope, it is possible to retrieve by UUID, key and query fo
 - Query for product types
 ```swift
 ProductType.query(limit: 10, offset: 1, result: { result in
-    if let response = result.response, count = response["count"] as? Int,
-            productTypes = response["results"] as? [[String: AnyObject]] where result.isSuccess {
-        // productTypes contains an array of product type dictionary responses
+    if let response = result.model, let count = response.count,
+            let productTypes = response.results, result.isSuccess {
+        // productTypes contains an array of product type objects
     }
 })
 ```
 - Retrieve product type by UUID
 ```swift
 ProductType.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
-    if let response = result.response where result.isSuccess {
-        // response contains product type dictionary representation
+    if let productType = result.model, result.isSuccess {
+        // response contains product type object
     }
 })
 ```
 - Retrieve product type by key
 ```swift
 ProductType.byKey("main", result: { result in
-    if let response = result.response where result.isSuccess {
-        // response contains product type dictionary representation
+    if let productType = result.model, result.isSuccess {
+        // response contains product type object
     }
 })
 ```
 
 ## Handling Results
 
-In order to check whether any action with Commercetools services was successfully executed, you should use `isSuccess` or `isFailure` property of the result in question. For all successful operations, `response` property contains values returned from the server.
+In order to check whether any action with Commercetools services was successfully executed, you should use `isSuccess` or `isFailure` property of the result in question. For all successful operations, there're two properties, which can be used to consume actual responses. Recommended one for all endpoints which have incorporated models is `model`. This property has been used in all of the examples above. Alternatively, in case you are writing a custom endpoint, and do not wish to add model properties and mappings, `json` property will give you access to `[String: Any]` (dictionary representation of the JSON received from the Commercetools platform).
 
 For all failed operations, `errors` property should be used from the result in question to present or handle specific issues. `CTError` instances are enumerations, with seven main cases, where each of those cases contains `FailureReason`, and some additional associated values, depending on the specific case.
 
