@@ -4,12 +4,12 @@
 
 import ObjectMapper
 
-public struct SubRate: Mappable {
+public struct OrderDraft: Mappable {
 
     // MARK: - Properties
 
-    var name: String?
-    var amount: Double?
+    var id: String?
+    var version: UInt?
 
     public init() {}
     public init?(map: Map) {}
@@ -17,8 +17,7 @@ public struct SubRate: Mappable {
     // MARK: - Mappable
 
     mutating public func mapping(map: Map) {
-        name       <- map["name"]
-        amount     <- map["amount"]
+        id                          <- map["id"]
+        version                     <- map["version"]
     }
-
 }

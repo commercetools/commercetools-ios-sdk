@@ -48,29 +48,65 @@ class CartTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-        ProductProjection.query(limit: 1, result: { result in
-            if let response = result.json,
-                    let results = response["results"] as? [[String: AnyObject]],
-                    let productId = results.first?["id"] as? String, let masterVariant = results.first?["masterVariant"] as? [String: Any], let variantId = masterVariant["id"] as? Int,
-                    result.isSuccess {
-                var cartDraft = CartDraft()
-                cartDraft.currency = "EUR"
+        retrieveSampleProduct { lineItemDraft in
+            var cartDraft = CartDraft()
+            cartDraft.currency = "EUR"
+            cartDraft.lineItems = [lineItemDraft]
 
-                var lineItemDraft = LineItemDraft()
-                lineItemDraft.productId = productId
-                lineItemDraft.variantId = variantId
-                lineItemDraft.quantity = 3
-                cartDraft.lineItems = [lineItemDraft]
-
-                Cart.create(cartDraft, result: { result in
-                    if let cart = result.model, cart.cartState == .active && result.isSuccess {
-                        cartCreationExpectation.fulfill()
-                    }
-                })
-            }
-        })
+            Cart.create(cartDraft, result: { result in
+                if let cart = result.model, cart.cartState == .active && result.isSuccess {
+                    cartCreationExpectation.fulfill()
+                }
+            })
+        }
 
         waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testOrderCreation() {
+        let orderCreationExpectation = expectation(description: "draft creation expectation")
+
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+
+        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+
+        retrieveSampleProduct { lineItemDraft in
+            var cartDraft = CartDraft()
+
+            var address = Address()
+            address.country = "DE"
+            cartDraft.shippingAddress = address
+            cartDraft.currency = "EUR"
+            cartDraft.lineItems = [lineItemDraft]
+
+            Cart.create(cartDraft, result: { result in
+                if let cart = result.model, result.isSuccess {
+                    var orderDraft = OrderDraft()
+                    orderDraft.id = cart.id
+                    orderDraft.version = cart.version
+                    Order.create(orderDraft, result: { result in
+                        if let order = result.model, result.isSuccess, order.cart?.id == cart.id {
+                            orderCreationExpectation.fulfill()
+                        }
+                    })
+                }
+            })
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    private func retrieveSampleProduct(_ completion: @escaping (LineItemDraft) -> Void) {
+        ProductProjection.query(limit:1, result: { result in
+            if let product = result.model?.results?.first, result.isSuccess {
+                var lineItemDraft = LineItemDraft()
+                lineItemDraft.productId = product.id
+                lineItemDraft.variantId = product.masterVariant?.id
+                lineItemDraft.quantity = 3
+                completion(lineItemDraft)
+            }
+        })
     }
 
 }

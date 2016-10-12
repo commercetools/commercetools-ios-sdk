@@ -23,7 +23,4 @@ public struct ProductVariantAvailability: Mappable {
         availableQuantity        <- map["availableQuantity"]
         channels                 <- map["channels"]
     }
-
-
-
 }

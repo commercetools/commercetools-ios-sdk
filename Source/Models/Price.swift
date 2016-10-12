@@ -10,11 +10,12 @@ public struct Price: Mappable {
 
     var value: Money?
     var country: String?
-    var customerGroup: [String: AnyObject]?
-    var channel: Channel?
+    var customerGroup: Reference<CustomerGroup>?
+    var channel: Reference<Channel>?
     var validFrom: Date?
     var validUntil: Date?
     var discounted: DiscountedPrice?
+    var custom: [String: Any]?
 
     public init?(map: Map) {}
 
@@ -28,6 +29,6 @@ public struct Price: Mappable {
         validFrom          <- (map["validFrom"], ISO8601DateTransform())
         validUntil         <- (map["validUntil"], ISO8601DateTransform())
         discounted         <- map["discounted"]
+        custom             <- map["custom"]
     }
-
 }

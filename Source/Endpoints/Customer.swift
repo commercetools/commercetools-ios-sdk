@@ -13,15 +13,7 @@ open class Customer: Endpoint, Mappable {
     
     public typealias ResponseType = Customer
 
-    // MARK: - Properties
-
     open static let path = "me"
-
-    public required init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    public func mapping(map: Map) {}
 
     // MARK: - Customer endpoint functionality
 
@@ -37,11 +29,26 @@ open class Customer: Endpoint, Mappable {
     /**
         Creates new customer with specified profile.
 
+        - parameter profile:                  Draft of the customer profile to be created.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    open static func signup(_ profile: CustomerDraft, result: @escaping (Result<CustomerSignInResult>) -> Void) {
+        signup(Mapper<CustomerDraft>().toJSON(profile), result: result)
+    }
+
+    /**
+        Creates new customer with specified profile.
+
         - parameter profile:                  Dictionary representation of the draft customer profile to be created.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func signup(_ profile: [String: Any], result: @escaping (Result<ResponseType>) -> Void) {
-        customerProfileAction(method: .post, basePath: "signup", parameters: profile, encoding: JSONEncoding.default, result: result)
+    open static func signup(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
+        requestWithTokenAndPath(result, { token, path in
+            Alamofire.request("\(path)signup", method: .post, parameters: profile, encoding: JSONEncoding.default, headers: self.headers(token))
+                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                        handleResponse(response, result: result)
+                    })
+        })
     }
 
     /**
@@ -121,6 +128,60 @@ open class Customer: Endpoint, Mappable {
         customerProfileAction(method: .post, basePath: "email/confirm", parameters: ["tokenValue": token],
                               encoding: JSONEncoding.default, result: result)
     }
+
+    // MARK: - Properties
+
+    var id: String?
+    var version: UInt?
+    var customerNumber: String?
+    var createdAt: Date?
+    var lastModifiedAt: Date?
+    var email: String?
+    var password: String?
+    var firstName: String?
+    var lastName: String?
+    var middleName: String?
+    var title: String?
+    var dateOfBirth: Date?
+    var companyName: String?
+    var vatId: String?
+    var addresses: [Address]?
+    var defaultShippingAddressId: String?
+    var defaultBillingAddressId: String?
+    var isEmailVerified: Bool?
+    var externalId: String?
+    var customerGroup: Reference<CustomerGroup>?
+    var custom: [String: Any]?
+    var locale: String?
+
+    public required init?(map: Map) {}
+
+    // MARK: - Mappable
+
+    public func mapping(map: Map) {
+        id                        <- map["id"]
+        version                   <- map["version"]
+        customerNumber            <- map["customerNumber"]
+        createdAt                 <- (map["createdAt"], ISO8601DateTransform())
+        lastModifiedAt            <- (map["lastModifiedAt"], ISO8601DateTransform())
+        email                     <- map["email"]
+        password                  <- map["password"]
+        firstName                 <- map["firstName"]
+        lastName                  <- map["lastName"]
+        middleName                <- map["middleName"]
+        title                     <- map["title"]
+        dateOfBirth               <- (map["dateOfBirth"], ISO8601DateTransform())
+        companyName               <- map["companyName"]
+        vatId                     <- map["vatId"]
+        addresses                 <- map["addresses"]
+        defaultShippingAddressId  <- map["defaultShippingAddressId"]
+        defaultBillingAddressId   <- map["defaultBillingAddressId"]
+        isEmailVerified           <- map["isEmailVerified"]
+        externalId                <- map["externalId"]
+        customerGroup             <- map["customerGroup"]
+        custom                    <- map["custom"]
+        locale                    <- map["locale"]
+    }
     
     // MARK: - Helpers
 
@@ -135,5 +196,4 @@ open class Customer: Endpoint, Mappable {
             })
         })
     }
-
 }

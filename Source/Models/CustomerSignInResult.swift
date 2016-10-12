@@ -4,21 +4,19 @@
 
 import ObjectMapper
 
-public struct SubRate: Mappable {
+public struct CustomerSignInResult: Mappable {
 
     // MARK: - Properties
 
-    var name: String?
-    var amount: Double?
+    var customer: Customer?
+    var cart: Cart?
 
-    public init() {}
     public init?(map: Map) {}
 
     // MARK: - Mappable
 
     mutating public func mapping(map: Map) {
-        name       <- map["name"]
-        amount     <- map["amount"]
+        customer         <- map["customer"]
+        cart             <- map["cart"]
     }
-
 }

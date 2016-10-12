@@ -21,7 +21,6 @@ public struct Reference<T: Mappable>: Mappable {
         typeId          <- map["typeId"]
         obj             <- map["obj"]
     }
-
 }
 
 public struct GenericReference: Mappable {
@@ -39,5 +38,4 @@ public struct GenericReference: Mappable {
         id              <- map["id"]
         typeId          <- map["typeId"]
     }
-    
 }

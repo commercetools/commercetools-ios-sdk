@@ -11,6 +11,7 @@ public struct Money: Mappable {
     var currencyCode: String?
     var centAmount: Int?
 
+    public init() {}
     public init?(map: Map) {}
 
     // MARK: - Mappable

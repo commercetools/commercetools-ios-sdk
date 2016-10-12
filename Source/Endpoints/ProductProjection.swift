@@ -8,9 +8,9 @@ import ObjectMapper
 /**
     Provides complete set of interactions for querying, retrieving and creating an order.
 */
-open class ProductProjection: QueryEndpoint, ByIdEndpoint {
+open class ProductProjection: QueryEndpoint, ByIdEndpoint, Mappable {
     
-    public typealias ResponseType = NoMapping
+    public typealias ResponseType = ProductProjection
 
     // MARK: - Properties
 
@@ -46,11 +46,11 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter result:                   The code to be executed after processing the response.
     */
     open static func search(staged: Bool? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil,
-                              offset: UInt? = nil, lang: Locale = Locale.current, text: String? = nil,
-                              fuzzy: Bool? = nil, filter: String? = nil, filterQuery: String? = nil, filterFacets: String? = nil,
-                              facets: [String]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
-                              priceCustomerGroup: String? = nil, priceChannel: String? = nil,
-                              result: @escaping (Result<ResponseType>) -> Void) {
+                            offset: UInt? = nil, lang: Locale = Locale.current, text: String? = nil,
+                            fuzzy: Bool? = nil, filter: String? = nil, filterQuery: String? = nil, filterFacets: String? = nil,
+                            facets: [String]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
+                            priceCustomerGroup: String? = nil, priceChannel: String? = nil,
+                            result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)search", expansion: expansion)
@@ -63,9 +63,9 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
                     priceChannel: priceChannel, params: parameters)
 
             Alamofire.request(fullPath, parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                handleResponse(response, result: result)
-            })
+                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                        handleResponse(response, result: result)
+                    })
         })
     }
 
@@ -83,7 +83,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter result:                   The code to be executed after processing the response.
     */
     open static func suggest(staged: Bool? = nil, limit: UInt? = nil, lang: Locale = Locale.current,
-                               searchKeywords: String, fuzzy: Bool? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+                             searchKeywords: String, fuzzy: Bool? = nil, result: @escaping (Result<NoMapping>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             var parameters = paramsWithStaged(staged, params: queryParameters(limit: limit))
@@ -91,9 +91,9 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
             parameters["searchKeywords." + lang.identifier.replacingOccurrences(of: "_", with: "-")] = searchKeywords as NSString
 
             Alamofire.request("\(path)suggest", parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                handleResponse(response, result: result)
-            })
+                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                        handleResponse(response, result: result)
+                    })
         })
     }
 
@@ -110,7 +110,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
         - parameter result:                   The code to be executed after processing the response.
     */
     open static func query(staged: Bool? = nil, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
-                      limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+                           limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
@@ -118,9 +118,9 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
                     limit: limit, offset: offset))
 
             Alamofire.request(fullPath, parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                handleResponse(response, result: result)
-            })
+                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                        handleResponse(response, result: result)
+                    })
         })
     }
 
@@ -139,10 +139,64 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
 
             Alamofire.request(fullPath, parameters: paramsWithStaged(staged), encoding: URLEncoding.queryString, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                handleResponse(response, result: result)
-            })
+                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                        handleResponse(response, result: result)
+                    })
         })
+    }
+
+    // MARK: - Properties
+
+    var id: String?
+    var key: String?
+    var version: UInt?
+    var createdAt: Date?
+    var lastModifiedAt: Date?
+    var productType: Reference<ProductType>?
+    var name: LocalizedString?
+    var description: LocalizedString?
+    var slug: LocalizedString?
+    var categories: [Reference<Category>]?
+    var categoryOrderHints: [String: String]?
+    var metaTitle: LocalizedString?
+    var metaDescription: LocalizedString?
+    var metaKeywords: LocalizedString?
+    var searchKeywords: [String: [SearchKeyword]]?
+    var hasStagedChanges: Bool?
+    var published: Bool?
+    var masterVariant: ProductVariant?
+    var variants: [ProductVariant]?
+    var taxCategory: Reference<TaxCategory>?
+    var state: Reference<State>?
+    var reviewRatingStatistics: ReviewRatingStatistics?
+
+    public required init?(map: Map) {}
+
+    // MARK: - Mappable
+
+    public func mapping(map: Map) {
+        id                      <- map["id"]
+        key                     <- map["key"]
+        version                 <- map["version"]
+        createdAt               <- (map["createdAt"], ISO8601DateTransform())
+        lastModifiedAt          <- (map["lastModifiedAt"], ISO8601DateTransform())
+        productType             <- map["productType"]
+        name                    <- map["name"]
+        description             <- map["description"]
+        slug                    <- map["slug"]
+        categories              <- map["categories"]
+        categoryOrderHints      <- map["categoryOrderHints"]
+        metaTitle               <- map["metaTitle"]
+        metaDescription         <- map["metaDescription"]
+        metaKeywords            <- map["metaKeywords"]
+        searchKeywords          <- map["searchKeywords"]
+        hasStagedChanges        <- map["hasStagedChanges"]
+        published               <- map["published"]
+        masterVariant           <- map["masterVariant"]
+        variants                <- map["variants"]
+        taxCategory             <- map["taxCategory"]
+        state                   <- map["state"]
+        reviewRatingStatistics  <- map["reviewRatingStatistics"]
     }
 
     // MARK: - Helpers
@@ -206,5 +260,4 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint {
 
         return params
     }
-
 }

@@ -19,5 +19,4 @@ public struct Attribute: Mappable {
         name               <- map["name"]
         value              <- map["value"]
     }
-
 }
