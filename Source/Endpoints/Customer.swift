@@ -55,6 +55,17 @@ open class Customer: Endpoint, Mappable {
         Updates current customer profile.
 
         - parameter version:                  Customer profile version (for optimistic concurrency control).
+        - parameter actions:                  `UpdateActions<CustomerUpdateAction>`instance, containing correct version and update actions.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    open static func update(actions: UpdateActions<CustomerUpdateAction>, result: @escaping (Result<ResponseType>) -> Void) {
+        customerProfileAction(method: .post, parameters: actions.toJSON, encoding: JSONEncoding.default, result: result)
+    }
+
+    /**
+        Updates current customer profile.
+
+        - parameter version:                  Customer profile version (for optimistic concurrency control).
         - parameter actions:                  An array of actions to be executed, in dictionary representation.
         - parameter result:                   The code to be executed after processing the response.
     */
