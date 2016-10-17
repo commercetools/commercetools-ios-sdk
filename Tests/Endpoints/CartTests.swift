@@ -97,6 +97,39 @@ class CartTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    func testUpdateEndpointWithModelAction() {
+        let updateExpectation = expectation(description: "update expectation")
+
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+
+        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+
+        var cartDraft = CartDraft()
+        cartDraft.currency = "EUR"
+
+        Cart.create(cartDraft, result: { result in
+            if let cart = result.model, let id = cart.id, let version = cart.version, result.isSuccess {
+                ProductProjection.query(limit:1, result: { result in
+                    if let product = result.model?.results?.first, result.isSuccess {
+                        var options = AddLineItemOptions()
+                        options.productId = product.id
+                        options.variantId = product.masterVariant?.id
+
+                        let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.addLineItem(options: options)])
+                        Cart.update(id, actions: updateActions, result: { result in
+                            if let cart = result.model, cart.lineItems?.count == 1 {
+                                updateExpectation.fulfill()
+                            }
+                        })
+                    }
+                })
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
     private func retrieveSampleProduct(_ completion: @escaping (LineItemDraft) -> Void) {
         ProductProjection.query(limit:1, result: { result in
             if let product = result.model?.results?.first, result.isSuccess {
