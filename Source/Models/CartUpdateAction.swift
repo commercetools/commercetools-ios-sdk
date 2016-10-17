@@ -204,7 +204,6 @@ public struct RemoveLineItemOptions: Mappable {
 
     // MARK: - Properties
 
-    //action - String - "removeLineItem"
     var lineItemId: String?
     var quantity: UInt?
 
