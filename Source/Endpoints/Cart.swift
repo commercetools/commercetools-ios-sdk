@@ -12,6 +12,7 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
     
     public typealias ResponseType = Cart
     public typealias RequestDraft = CartDraft
+    public typealias UpdateAction = CartUpdateAction
 
     open static let path = "me/carts"
 
