@@ -91,10 +91,6 @@ public enum CustomerUpdateAction: JSONRepresentable {
             return optionsJSON
         }
     }
-
-    func toJSON<T: Mappable>(_ options: T) -> [String: Any] {
-        return Mapper<T>().toJSON(options)
-    }
 }
 
 public struct ChangeEmailOptions: Mappable {

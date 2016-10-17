@@ -166,10 +166,6 @@ public enum CartUpdateAction: JSONRepresentable {
             return optionsJSON
         }
     }
-
-    private func toJSON<T: Mappable>(_ options: T) -> [String: Any] {
-        return Mapper<T>().toJSON(options)
-    }
 }
 
 public struct AddLineItemOptions: Mappable {

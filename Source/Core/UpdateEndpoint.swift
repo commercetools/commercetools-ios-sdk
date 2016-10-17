@@ -88,3 +88,9 @@ public extension UpdateEndpoint {
         })
     }
 }
+
+public extension JSONRepresentable {
+    func toJSON<T: Mappable>(_ options: T) -> [String: Any] {
+        return Mapper<T>().toJSON(options)
+    }
+}
