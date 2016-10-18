@@ -124,10 +124,6 @@ class CustomerTests: XCTestCase {
 
         AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
 
-
-
-        var setFirstNameAction: [String: Any] = ["action": "setFirstName", "firstName": "newName"]
-
         Customer.profile { result in
             if let profile = result.model, let version = profile.version, result.isSuccess {
                 var options = SetFirstNameOptions()
