@@ -57,6 +57,8 @@ The Commercetools SDK uses a `.plist` configuration file named `CommercetoolsCon
 	<string>https://api.sphere.io</string>
 	<key>anonymousSession</key>
     <true/>
+    <key>emergencyContactInfo</key>
+    <string>you@yourdomain.com</string>
 </dict>
 </plist> 
 ```
