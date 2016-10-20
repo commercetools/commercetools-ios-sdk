@@ -10,22 +10,22 @@ public struct LineItem: Mappable {
     
     // MARK: - Properties
     
-    var id: String?
-    var productId: String?
-    var name: LocalizedString?
-    var productSlug: LocalizedString?
-    var variant: ProductVariant?
-    var price: Price?
-    var taxedPrice: TaxedItemPrice?
-    var totalPrice: Money?
-    var quantity: Int?
-    var state: [ItemState]?
-    var taxRate: TaxRate?
-    var supplyChannel: Reference<Channel>?
-    var distributionChannel: Reference<Channel>?
-    var discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]?
-    var priceMode: LineItemPriceMode?
-    var custom: [String: Any]?
+    public var id: String?
+    public var productId: String?
+    public var name: LocalizedString?
+    public var productSlug: LocalizedString?
+    public var variant: ProductVariant?
+    public var price: Price?
+    public var taxedPrice: TaxedItemPrice?
+    public var totalPrice: Money?
+    public var quantity: Int?
+    public var state: [ItemState]?
+    public var taxRate: TaxRate?
+    public var supplyChannel: Reference<Channel>?
+    public var distributionChannel: Reference<Channel>?
+    public var discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]?
+    public var priceMode: LineItemPriceMode?
+    public var custom: [String: Any]?
     
     public init?(map: Map) {}
     
@@ -41,7 +41,7 @@ public struct LineItem: Mappable {
         totalPrice                 <- map["totalPrice"]
         discountedPricePerQuantity <- map["discountedPricePerQuantity"]
         quantity                   <- map["quantity"]
-        distributionChannel        <- map["distributionChannel.obj"]
+        distributionChannel        <- map["distributionChannel"]
     }
     
 }

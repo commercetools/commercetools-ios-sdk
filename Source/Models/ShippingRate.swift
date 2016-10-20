@@ -8,8 +8,8 @@ public struct ShippingRate: Mappable {
 
     // MARK: - Properties
 
-    var price: Money?
-    var freeAbove: Money?
+    public var price: Money?
+    public var freeAbove: Money?
 
     public init?(map: Map) {}
 

@@ -7,15 +7,15 @@ public struct ShippingInfo: Mappable {
     
     // MARK: - Properties
     
-    var shippingMethodName: String?
-    var price: Money?
-    var shippingRate: ShippingRate?
-    var taxedPrice: TaxedItemPrice?
-    var taxRate: TaxRate?
-    var taxCategory: Reference<TaxCategory>?
-    var shippingMethod: Reference<ShippingMethod>?
-    var deliveries: [Delivery]?
-    var discountedPrice: DiscountedLineItemPrice?
+    public var shippingMethodName: String?
+    public var price: Money?
+    public var shippingRate: ShippingRate?
+    public var taxedPrice: TaxedItemPrice?
+    public var taxRate: TaxRate?
+    public var taxCategory: Reference<TaxCategory>?
+    public var shippingMethod: Reference<ShippingMethod>?
+    public var deliveries: [Delivery]?
+    public var discountedPrice: DiscountedLineItemPrice?
 
     public init?(map: Map) {}
     

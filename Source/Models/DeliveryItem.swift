@@ -8,8 +8,8 @@ public struct DeliveryItem: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var quantity: Int?
+    public var id: String?
+    public var quantity: Int?
 
     public init?(map: Map) {}
 

@@ -8,8 +8,8 @@ public struct ItemState: Mappable {
 
     // MARK: - Properties
 
-    var quantity: Int?
-    var state: Reference<State>?
+    public var quantity: Int?
+    public var state: Reference<State>?
 
     public init?(map: Map) {}
 

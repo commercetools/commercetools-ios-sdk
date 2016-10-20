@@ -172,13 +172,13 @@ public struct AddLineItemOptions: Mappable {
 
     // MARK: - Properties
 
-    var productId: String?
-    var variantId: Int?
-    var quantity: UInt?
-    var supplyChannel: Reference<Channel>?
-    var distributionChannel: Reference<Channel>?
-    var externalTaxRate: ExternalTaxRateDraft?
-    var custom: [String: Any]?
+    public var productId: String?
+    public var variantId: Int?
+    public var quantity: UInt?
+    public var supplyChannel: Reference<Channel>?
+    public var distributionChannel: Reference<Channel>?
+    public var externalTaxRate: ExternalTaxRateDraft?
+    public var custom: [String: Any]?
 
     public init() {}
     public init?(map: Map) {}
@@ -200,8 +200,8 @@ public struct RemoveLineItemOptions: Mappable {
 
     // MARK: - Properties
 
-    var lineItemId: String?
-    var quantity: UInt?
+    public var lineItemId: String?
+    public var quantity: UInt?
 
     public init() {}
     public init?(map: Map) {}
@@ -218,8 +218,8 @@ public struct ChangeLineItemQuantityOptions: Mappable {
 
     // MARK: - Properties
 
-    var lineItemId: String?
-    var quantity: UInt?
+    public var lineItemId: String?
+    public var quantity: UInt?
 
     public init() {}
     public init?(map: Map) {}
@@ -236,13 +236,13 @@ public struct AddCustomLineItemOptions: Mappable {
 
     // MARK: - Properties
 
-    var name: LocalizedString?
-    var quantity: UInt?
-    var money: Money?
-    var slug: String?
-    var taxCategory: Reference<TaxCategory>?
-    var externalTaxRate: ExternalTaxRateDraft?
-    var custom: [String: Any]?
+    public var name: LocalizedString?
+    public var quantity: UInt?
+    public var money: Money?
+    public var slug: String?
+    public var taxCategory: Reference<TaxCategory>?
+    public var externalTaxRate: ExternalTaxRateDraft?
+    public var custom: [String: Any]?
 
     public init() {}
     public init?(map: Map) {}
@@ -264,7 +264,7 @@ public struct RemoveCustomLineItemOptions: Mappable {
 
     // MARK: - Properties
 
-    var customLineItemId: String?
+    public var customLineItemId: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -280,8 +280,8 @@ public struct ChangeCustomLineItemQuantityOptions: Mappable {
 
     // MARK: - Properties
 
-    var customLineItemId: String?
-    var quantity: UInt?
+    public var customLineItemId: String?
+    public var quantity: UInt?
 
     public init() {}
     public init?(map: Map) {}
@@ -298,8 +298,8 @@ public struct ChangeCustomLineItemMoneyOptions: Mappable {
 
     // MARK: - Properties
 
-    var customLineItemId: String?
-    var money: Money?
+    public var customLineItemId: String?
+    public var money: Money?
 
     public init() {}
     public init?(map: Map) {}
@@ -316,7 +316,7 @@ public struct SetCustomerEmailOptions: Mappable {
 
     // MARK: - Properties
 
-    var email: String?
+    public var email: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -332,7 +332,7 @@ public struct SetShippingAddressOptions: Mappable {
 
     // MARK: - Properties
 
-    var address: Address?
+    public var address: Address?
 
     public init() {}
     public init?(map: Map) {}
@@ -348,7 +348,7 @@ public struct SetBillingAddressOptions: Mappable {
 
     // MARK: - Properties
 
-    var address: Address?
+    public var address: Address?
 
     public init() {}
     public init?(map: Map) {}
@@ -364,7 +364,7 @@ public struct SetCountryOptions: Mappable {
 
     // MARK: - Properties
 
-    var country: String?
+    public var country: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -380,8 +380,8 @@ public struct SetShippingMethodOptions: Mappable {
 
     // MARK: - Properties
 
-    var shippingMethod: Reference<ShippingMethod>?
-    var externalTaxRate: ExternalTaxRateDraft?
+    public var shippingMethod: Reference<ShippingMethod>?
+    public var externalTaxRate: ExternalTaxRateDraft?
 
     public init() {}
     public init?(map: Map) {}
@@ -398,10 +398,10 @@ public struct SetCustomShippingMethodOptions: Mappable {
 
     // MARK: - Properties
 
-    var shippingMethodName: String?
-    var shippingRate: ShippingRate?
-    var taxCategory: Reference<TaxCategory>?
-    var externalTaxRate: ExternalTaxRateDraft?
+    public var shippingMethodName: String?
+    public var shippingRate: ShippingRate?
+    public var taxCategory: Reference<TaxCategory>?
+    public var externalTaxRate: ExternalTaxRateDraft?
 
     public init() {}
     public init?(map: Map) {}
@@ -420,7 +420,7 @@ public struct SetCustomerIdOptions: Mappable {
 
     // MARK: - Properties
 
-    var customerId: String?
+    public var customerId: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -436,7 +436,7 @@ public struct AddDiscountCodeOptions: Mappable {
 
     // MARK: - Properties
 
-    var code: String?
+    public var code: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -452,7 +452,7 @@ public struct RemoveDiscountCodeOptions: Mappable {
 
     // MARK: - Properties
 
-    var discountCode: Reference<DiscountCode>?
+    public var discountCode: Reference<DiscountCode>?
 
     public init() {}
     public init?(map: Map) {}
@@ -468,7 +468,7 @@ public struct RecalculateOptions: Mappable {
 
     // MARK: - Properties
 
-    var updateProductData: Bool?
+    public var updateProductData: Bool?
 
     public init() {}
     public init?(map: Map) {}
@@ -484,8 +484,8 @@ public struct SetCustomTypeOptions: Mappable {
 
     // MARK: - Properties
 
-    var type: ResourceIdentifier?
-    var fields: [String: Any]?
+    public var type: ResourceIdentifier?
+    public var fields: [String: Any]?
 
     public init() {}
     public init?(map: Map) {}
@@ -502,8 +502,8 @@ public struct SetCustomFieldOptions: Mappable {
 
     // MARK: - Properties
 
-    var name: String?
-    var value: Any?
+    public var name: String?
+    public var value: Any?
 
     public init() {}
     public init?(map: Map) {}
@@ -520,9 +520,9 @@ public struct SetLineItemCustomTypeOptions: Mappable {
 
     // MARK: - Properties
 
-    var type: ResourceIdentifier?
-    var lineItemId: String?
-    var fields: [String: Any]?
+    public var type: ResourceIdentifier?
+    public var lineItemId: String?
+    public var fields: [String: Any]?
 
     public init() {}
     public init?(map: Map) {}
@@ -540,9 +540,9 @@ public struct SetLineItemCustomFieldOptions: Mappable {
 
     // MARK: - Properties
 
-    var lineItemId: String?
-    var name: String?
-    var value: Any?
+    public var lineItemId: String?
+    public var name: String?
+    public var value: Any?
 
     public init() {}
     public init?(map: Map) {}
@@ -560,9 +560,9 @@ public struct SetCustomLineItemCustomTypeOptions: Mappable {
 
     // MARK: - Properties
 
-    var type: ResourceIdentifier?
-    var customLineItemId: String?
-    var fields: [String: Any]?
+    public var type: ResourceIdentifier?
+    public var customLineItemId: String?
+    public var fields: [String: Any]?
 
     public init() {}
     public init?(map: Map) {}
@@ -580,9 +580,9 @@ public struct SetCustomLineItemCustomFieldOptions: Mappable {
 
     // MARK: - Properties
 
-    var customLineItemId: String?
-    var name: String?
-    var value: Any?
+    public var customLineItemId: String?
+    public var name: String?
+    public var value: Any?
 
     public init() {}
     public init?(map: Map) {}
@@ -600,7 +600,7 @@ public struct AddPaymentOptions: Mappable {
 
     // MARK: - Properties
 
-    var payment: Reference<Payment>?
+    public var payment: Reference<Payment>?
 
     public init() {}
     public init?(map: Map) {}
@@ -616,7 +616,7 @@ public struct RemovePaymentOptions: Mappable {
 
     // MARK: - Properties
 
-    var payment: Reference<Payment>?
+    public var payment: Reference<Payment>?
 
     public init() {}
     public init?(map: Map) {}
@@ -632,8 +632,8 @@ public struct SetLineItemTaxRateOptions: Mappable {
 
     // MARK: - Properties
 
-    var lineItemId: String?
-    var externalTaxRate: ExternalTaxRateDraft?
+    public var lineItemId: String?
+    public var externalTaxRate: ExternalTaxRateDraft?
 
     public init() {}
     public init?(map: Map) {}
@@ -650,8 +650,8 @@ public struct SetCustomLineItemTaxRateOptions: Mappable {
 
     // MARK: - Properties
 
-    var customLineItemId: String?
-    var externalTaxRate: ExternalTaxRateDraft?
+    public var customLineItemId: String?
+    public var externalTaxRate: ExternalTaxRateDraft?
 
     public init() {}
     public init?(map: Map) {}
@@ -668,7 +668,7 @@ public struct SetShippingMethodTaxRateOptions: Mappable {
 
     // MARK: - Properties
 
-    var externalTaxRate: ExternalTaxRateDraft?
+    public var externalTaxRate: ExternalTaxRateDraft?
 
     public init() {}
     public init?(map: Map) {}
@@ -684,7 +684,7 @@ public struct ChangeTaxModeOptions: Mappable {
 
     // MARK: - Properties
 
-    var taxMode: TaxMode?
+    public var taxMode: TaxMode?
 
     public init() {}
     public init?(map: Map) {}
@@ -700,8 +700,8 @@ public struct SetLineItemTotalPriceOptions: Mappable {
 
     // MARK: - Properties
 
-    var lineItemId: String?
-    var externalTotalPrice: ExternalLineItemTotalPrice?
+    public var lineItemId: String?
+    public var externalTotalPrice: ExternalLineItemTotalPrice?
 
     public init() {}
     public init?(map: Map) {}
@@ -718,7 +718,7 @@ public struct SetLocaleOptions: Mappable {
 
     // MARK: - Properties
 
-    var locale: String?
+    public var locale: String?
 
     public init() {}
     public init?(map: Map) {}

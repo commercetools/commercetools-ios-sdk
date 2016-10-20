@@ -29,29 +29,29 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
 
     // MARK: - Properties
 
-    var id: String?
-    var version: UInt?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var customerId: String?
-    var customerEmail: String?
-    var anonymousId: String?
-    var lineItems: [LineItem]?
-    var customLineItems: [CustomLineItem]?
-    var totalPrice: Money?
-    var taxedPrice: TaxedPrice?
-    var cartState: CartState?
-    var shippingAddress: Address?
-    var billingAddress: Address?
-    var inventoryMode: InventoryMode?
-    var taxMode: TaxMode?
-    var customerGroup: Reference<CustomerGroup>?
-    var country: String?
-    var shippingInfo: ShippingInfo?
-    var discountCodes: [DiscountCodeInfo]?
-    var custom: [String: Any]?
-    var paymentInfo: PaymentInfo?
-    var locale: String?
+    public var id: String?
+    public var version: UInt?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var customerId: String?
+    public var customerEmail: String?
+    public var anonymousId: String?
+    public var lineItems: [LineItem]?
+    public var customLineItems: [CustomLineItem]?
+    public var totalPrice: Money?
+    public var taxedPrice: TaxedPrice?
+    public var cartState: CartState?
+    public var shippingAddress: Address?
+    public var billingAddress: Address?
+    public var inventoryMode: InventoryMode?
+    public var taxMode: TaxMode?
+    public var customerGroup: Reference<CustomerGroup>?
+    public var country: String?
+    public var shippingInfo: ShippingInfo?
+    public var discountCodes: [DiscountCodeInfo]?
+    public var custom: [String: Any]?
+    public var paymentInfo: PaymentInfo?
+    public var locale: String?
 
     public required init?(map: Map) {}
 

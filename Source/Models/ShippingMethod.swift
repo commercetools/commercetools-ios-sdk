@@ -8,15 +8,15 @@ public struct ShippingMethod: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var version: UInt?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var name: String?
-    var description: String?
-    var taxCategory: Reference<TaxCategory>?
-    var zoneRates: [ZoneRate]?
-    var isDefault: Bool?
+    public var id: String?
+    public var version: UInt?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var name: String?
+    public var description: String?
+    public var taxCategory: Reference<TaxCategory>?
+    public var zoneRates: [ZoneRate]?
+    public var isDefault: Bool?
 
     public init?(map: Map) {}
 

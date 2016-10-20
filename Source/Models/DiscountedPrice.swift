@@ -8,8 +8,8 @@ public struct DiscountedPrice: Mappable {
 
     // MARK: - Properties
 
-    var value: Money?
-    var discount: Reference<ProductDiscount>?
+    public var value: Money?
+    public var discount: Reference<ProductDiscount>?
 
     public init?(map: Map) {}
 

@@ -8,18 +8,18 @@ public struct CustomLineItem: Mappable {
     
     // MARK: - Properties
     
-    var id: String?
-    var name: LocalizedString?
-    var money: Money?
-    var taxedPrice: TaxedItemPrice?
-    var totalPrice: Money?
-    var slug: String?
-    var quantity: Int?
-    var state: ItemState?
-    var taxCategory: Reference<TaxCategory>?
-    var taxRate: TaxRate?
-    var discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]?
-    var custom: [String: Any]?    
+    public var id: String?
+    public var name: LocalizedString?
+    public var money: Money?
+    public var taxedPrice: TaxedItemPrice?
+    public var totalPrice: Money?
+    public var slug: String?
+    public var quantity: Int?
+    public var state: ItemState?
+    public var taxCategory: Reference<TaxCategory>?
+    public var taxRate: TaxRate?
+    public var discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]?
+    public var custom: [String: Any]?    
     
     public init?(map: Map) {}
     

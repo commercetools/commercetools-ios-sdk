@@ -8,12 +8,12 @@ public struct Transaction: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var timestamp: Date?
-    var type: TransactionType?
-    var amount: Money?
-    var interactionId: String?
-    var state: TransactionState?
+    public var id: String?
+    public var timestamp: Date?
+    public var type: TransactionType?
+    public var amount: Money?
+    public var interactionId: String?
+    public var state: TransactionState?
 
     public init?(map: Map) {}
 

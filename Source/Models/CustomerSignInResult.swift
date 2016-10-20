@@ -8,8 +8,8 @@ public struct CustomerSignInResult: Mappable {
 
     // MARK: - Properties
 
-    var customer: Customer?
-    var cart: Cart?
+    public var customer: Customer?
+    public var cart: Cart?
 
     public init?(map: Map) {}
 

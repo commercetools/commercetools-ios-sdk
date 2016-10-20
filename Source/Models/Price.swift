@@ -8,14 +8,14 @@ public struct Price: Mappable {
 
     // MARK: - Properties
 
-    var value: Money?
-    var country: String?
-    var customerGroup: Reference<CustomerGroup>?
-    var channel: Reference<Channel>?
-    var validFrom: Date?
-    var validUntil: Date?
-    var discounted: DiscountedPrice?
-    var custom: [String: Any]?
+    public var value: Money?
+    public var country: String?
+    public var customerGroup: Reference<CustomerGroup>?
+    public var channel: Reference<Channel>?
+    public var validFrom: Date?
+    public var validUntil: Date?
+    public var discounted: DiscountedPrice?
+    public var custom: [String: Any]?
 
     public init?(map: Map) {}
 

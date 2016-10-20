@@ -8,9 +8,9 @@ public struct ResourceIdentifier: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var typeId: String?
-    var key: String?
+    public var id: String?
+    public var typeId: String?
+    public var key: String?
 
     public init() {}
     public init?(map: Map) {}

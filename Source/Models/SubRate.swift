@@ -8,8 +8,8 @@ public struct SubRate: Mappable {
 
     // MARK: - Properties
 
-    var name: String?
-    var amount: Double?
+    public var name: String?
+    public var amount: Double?
 
     public init() {}
     public init?(map: Map) {}

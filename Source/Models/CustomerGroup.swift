@@ -8,11 +8,11 @@ public struct CustomerGroup: Mappable {
     
     // MARK: - Properties
     
-    var id: String?
-    var version: UInt?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var name: String?
+    public var id: String?
+    public var version: UInt?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var name: String?
     
     public init?(map: Map) {}
     

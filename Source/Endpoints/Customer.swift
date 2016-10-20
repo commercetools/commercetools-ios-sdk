@@ -142,28 +142,28 @@ open class Customer: Endpoint, Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var version: UInt?
-    var customerNumber: String?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var email: String?
-    var password: String?
-    var firstName: String?
-    var lastName: String?
-    var middleName: String?
-    var title: String?
-    var dateOfBirth: Date?
-    var companyName: String?
-    var vatId: String?
-    var addresses: [Address]?
-    var defaultShippingAddressId: String?
-    var defaultBillingAddressId: String?
-    var isEmailVerified: Bool?
-    var externalId: String?
-    var customerGroup: Reference<CustomerGroup>?
-    var custom: [String: Any]?
-    var locale: String?
+    public var id: String?
+    public var version: UInt?
+    public var customerNumber: String?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var email: String?
+    public var password: String?
+    public var firstName: String?
+    public var lastName: String?
+    public var middleName: String?
+    public var title: String?
+    public var dateOfBirth: Date?
+    public var companyName: String?
+    public var vatId: String?
+    public var addresses: [Address]?
+    public var defaultShippingAddressId: String?
+    public var defaultBillingAddressId: String?
+    public var isEmailVerified: Bool?
+    public var externalId: String?
+    public var customerGroup: Reference<CustomerGroup>?
+    public var custom: [String: Any]?
+    public var locale: String?
 
     public required init?(map: Map) {}
 

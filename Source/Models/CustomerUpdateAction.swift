@@ -97,7 +97,7 @@ public struct ChangeEmailOptions: Mappable {
 
     // MARK: - Properties
 
-    var email: String?
+    public var email: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -113,7 +113,7 @@ public struct SetFirstNameOptions: Mappable {
 
     // MARK: - Properties
 
-    var firstName: String?
+    public var firstName: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -129,7 +129,7 @@ public struct SetLastNameOptions: Mappable {
 
     // MARK: - Properties
 
-    var lastName: String?
+    public var lastName: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -145,7 +145,7 @@ public struct SetMiddleNameOptions: Mappable {
 
     // MARK: - Properties
 
-    var middleName: String?
+    public var middleName: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -161,7 +161,7 @@ public struct SetTitleOptions: Mappable {
 
     // MARK: - Properties
 
-    var title: String?
+    public var title: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -177,7 +177,7 @@ public struct AddAddressOptions: Mappable {
 
     // MARK: - Properties
 
-    var address: Address?
+    public var address: Address?
 
     public init() {}
     public init?(map: Map) {}
@@ -193,8 +193,8 @@ public struct ChangeAddressOptions: Mappable {
 
     // MARK: - Properties
 
-    var addressId: String?
-    var address: Address?
+    public var addressId: String?
+    public var address: Address?
 
     public init() {}
     public init?(map: Map) {}
@@ -211,7 +211,7 @@ public struct RemoveAddressOptions: Mappable {
 
     // MARK: - Properties
 
-    var addressId: String?
+    public var addressId: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -227,7 +227,7 @@ public struct SetDefaultShippingAddressOptions: Mappable {
 
     // MARK: - Properties
 
-    var addressId: String?
+    public var addressId: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -243,7 +243,7 @@ public struct SetDefaultBillingAddressOptions: Mappable {
 
     // MARK: - Properties
 
-    var addressId: String?
+    public var addressId: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -259,7 +259,7 @@ public struct SetCompanyNameOptions: Mappable {
 
     // MARK: - Properties
 
-    var companyName: String?
+    public var companyName: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -275,7 +275,7 @@ public struct SetDateOfBirthOptions: Mappable {
 
     // MARK: - Properties
 
-    var dateOfBirth: Date?
+    public var dateOfBirth: Date?
 
     public init() {}
     public init?(map: Map) {}
@@ -291,7 +291,7 @@ public struct SetVatIdOptions: Mappable {
 
     // MARK: - Properties
 
-    var vatId: Date?
+    public var vatId: Date?
 
     public init() {}
     public init?(map: Map) {}

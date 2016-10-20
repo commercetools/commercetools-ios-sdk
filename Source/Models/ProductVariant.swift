@@ -8,18 +8,18 @@ public struct ProductVariant: Mappable {
 
     // MARK: - Properties
 
-    var id: Int?
-    var sku: String?
-    var key: String?
-    var prices: [Price]?
-    var attributes: [Attribute]?
-    var price: Price?
-    var images: [Image]?
-    var assets: [Asset]?
-    var availability: ProductVariantAvailability?
-    var isMatchingVariant: Bool?
-    var scopedPrice: ScopedPrice?
-    var scopedPriceDiscounted: Bool?
+    public var id: Int?
+    public var sku: String?
+    public var key: String?
+    public var prices: [Price]?
+    public var attributes: [Attribute]?
+    public var price: Price?
+    public var images: [Image]?
+    public var assets: [Asset]?
+    public var availability: ProductVariantAvailability?
+    public var isMatchingVariant: Bool?
+    public var scopedPrice: ScopedPrice?
+    public var scopedPriceDiscounted: Bool?
 
     public init?(map: Map) {}
 

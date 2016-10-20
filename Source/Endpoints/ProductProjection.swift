@@ -147,28 +147,28 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var key: String?
-    var version: UInt?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var productType: Reference<ProductType>?
-    var name: LocalizedString?
-    var description: LocalizedString?
-    var slug: LocalizedString?
-    var categories: [Reference<Category>]?
-    var categoryOrderHints: [String: String]?
-    var metaTitle: LocalizedString?
-    var metaDescription: LocalizedString?
-    var metaKeywords: LocalizedString?
-    var searchKeywords: [String: [SearchKeyword]]?
-    var hasStagedChanges: Bool?
-    var published: Bool?
-    var masterVariant: ProductVariant?
-    var variants: [ProductVariant]?
-    var taxCategory: Reference<TaxCategory>?
-    var state: Reference<State>?
-    var reviewRatingStatistics: ReviewRatingStatistics?
+    public var id: String?
+    public var key: String?
+    public var version: UInt?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var productType: Reference<ProductType>?
+    public var name: LocalizedString?
+    public var description: LocalizedString?
+    public var slug: LocalizedString?
+    public var categories: [Reference<Category>]?
+    public var categoryOrderHints: [String: String]?
+    public var metaTitle: LocalizedString?
+    public var metaDescription: LocalizedString?
+    public var metaKeywords: LocalizedString?
+    public var searchKeywords: [String: [SearchKeyword]]?
+    public var hasStagedChanges: Bool?
+    public var published: Bool?
+    public var masterVariant: ProductVariant?
+    public var variants: [ProductVariant]?
+    public var taxCategory: Reference<TaxCategory>?
+    public var state: Reference<State>?
+    public var reviewRatingStatistics: ReviewRatingStatistics?
 
     public required init?(map: Map) {}
 

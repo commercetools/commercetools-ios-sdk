@@ -8,8 +8,8 @@ public struct TaxedItemPrice: Mappable {
 
     // MARK: - Properties
 
-    var totalNet: Money?
-    var totalGross: Money?
+    public var totalNet: Money?
+    public var totalGross: Money?
 
     public init?(map: Map) {}
 

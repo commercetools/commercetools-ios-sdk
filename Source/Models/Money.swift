@@ -8,8 +8,8 @@ public struct Money: Mappable {
 
     // MARK: - Properties
 
-    var currencyCode: String?
-    var centAmount: Int?
+    public var currencyCode: String?
+    public var centAmount: Int?
 
     public init() {}
     public init?(map: Map) {}

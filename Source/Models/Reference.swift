@@ -8,10 +8,11 @@ public struct Reference<T: Mappable>: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var typeId: String?
-    var obj: T?
+    public var id: String?
+    public var typeId: String?
+    public var obj: T?
 
+    public init() {}
     public init?(map: Map) {}
 
     // MARK: - Mappable
@@ -27,8 +28,8 @@ public struct GenericReference: Mappable {
     
     // MARK: - Properties
     
-    var id: String?
-    var typeId: String?
+    public var id: String?
+    public var typeId: String?
     
     public init?(map: Map) {}
     

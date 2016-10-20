@@ -8,9 +8,9 @@ public struct SyncInfo: Mappable {
 
     // MARK: - Properties
 
-    var channel: Reference<Channel>?
-    var externalId: String?
-    var syncedAt: Date?
+    public var channel: Reference<Channel>?
+    public var externalId: String?
+    public var syncedAt: Date?
 
     public init?(map: Map) {}
 

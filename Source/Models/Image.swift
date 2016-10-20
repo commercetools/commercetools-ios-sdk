@@ -8,9 +8,9 @@ public struct Image: Mappable {
 
     // MARK: - Properties
 
-    var url: String?
-    var dimensions: [String: Int]?
-    var label: String?
+    public var url: String?
+    public var dimensions: [String: Int]?
+    public var label: String?
 
     public init?(map: Map) {}
 

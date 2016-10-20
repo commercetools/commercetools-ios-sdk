@@ -8,8 +8,8 @@ public struct Location: Mappable {
 
     // MARK: - Properties
 
-    var country: String?
-    var state: String?
+    public var country: String?
+    public var state: String?
 
     public init?(map: Map) {}
 

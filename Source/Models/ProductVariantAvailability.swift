@@ -8,10 +8,10 @@ public struct ProductVariantAvailability: Mappable {
 
     // MARK: - Properties
 
-    var isOnStock: Bool?
-    var restockableInDays: Int?
-    var availableQuantity: Int?
-    var channels: [String: ProductVariantAvailability]?
+    public var isOnStock: Bool?
+    public var restockableInDays: Int?
+    public var availableQuantity: Int?
+    public var channels: [String: ProductVariantAvailability]?
 
     public init?(map: Map) {}
 

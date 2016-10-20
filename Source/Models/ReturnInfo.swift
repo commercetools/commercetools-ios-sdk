@@ -8,9 +8,9 @@ public struct ReturnInfo: Mappable {
 
     // MARK: - Properties
 
-    var items: [ReturnItem]?
-    var returnTrackingId: String?
-    var returnDate: Date?
+    public var items: [ReturnItem]?
+    public var returnTrackingId: String?
+    public var returnDate: Date?
 
     public init?(map: Map) {}
 

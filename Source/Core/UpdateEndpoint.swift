@@ -52,10 +52,15 @@ public protocol JSONRepresentable {
 */
 public struct UpdateActions<T: JSONRepresentable>: JSONRepresentable {
 
+    public init(version: UInt, actions: [T]) {
+        self.version = version
+        self.actions = actions
+    }
+
     // MARK: - Properties
 
-    var version: UInt
-    var actions: [T]
+    public var version: UInt
+    public var actions: [T]
 
     public var toJSON: [String: Any] {
         return ["version": version, "actions": actions.map({ $0.toJSON })]

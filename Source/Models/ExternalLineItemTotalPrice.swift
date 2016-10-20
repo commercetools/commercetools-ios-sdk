@@ -8,8 +8,8 @@ public struct ExternalLineItemTotalPrice: Mappable {
 
     // MARK: - Properties
 
-    var price: Money?
-    var totalPrice: Money?
+    public var price: Money?
+    public var totalPrice: Money?
 
     public init?(map: Map) {}
 

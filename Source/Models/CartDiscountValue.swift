@@ -8,9 +8,9 @@ public struct CartDiscountValue: Mappable {
 
     // MARK: - Properties
 
-    var type: String?
-    var permyriad: Int?
-    var money: Money?
+    public var type: String?
+    public var permyriad: Int?
+    public var money: Money?
 
     public init?(map: Map) {}
 
