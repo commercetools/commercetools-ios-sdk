@@ -12,6 +12,7 @@ public struct ResourceIdentifier: Mappable {
     var typeId: String?
     var key: String?
 
+    public init() {}
     public init?(map: Map) {}
 
     // MARK: - Mappable
