@@ -9,17 +9,12 @@ public enum CartUpdateAction: JSONRepresentable {
     case addLineItem(options: AddLineItemOptions)
     case removeLineItem(options: RemoveLineItemOptions)
     case changeLineItemQuantity(options: ChangeLineItemQuantityOptions)
-    case addCustomLineItem(options: AddCustomLineItemOptions)
-    case removeCustomLineItem(options: RemoveCustomLineItemOptions)
-    case changeCustomLineItemQuantity(options: ChangeCustomLineItemQuantityOptions)
-    case changeCustomLineItemMoney(options: ChangeCustomLineItemMoneyOptions)
     case setCustomerEmail(options: SetCustomerEmailOptions)
     case setShippingAddress(options: SetShippingAddressOptions)
     case setBillingAddress(options: SetBillingAddressOptions)
     case setCountry(options: SetCountryOptions)
     case setShippingMethod(options: SetShippingMethodOptions)
     case setCustomShippingMethod(options: SetCustomShippingMethodOptions)
-    case setCustomerId(options: SetCustomerIdOptions)
     case addDiscountCode(options: AddDiscountCodeOptions)
     case removeDiscountCode(options: RemoveDiscountCodeOptions)
     case recalculate(options: RecalculateOptions)
@@ -27,15 +22,8 @@ public enum CartUpdateAction: JSONRepresentable {
     case setCustomField(options: SetCustomFieldOptions)
     case setLineItemCustomType(options: SetLineItemCustomTypeOptions)
     case setLineItemCustomField(options: SetLineItemCustomFieldOptions)
-    case setCustomLineItemCustomType(options: SetCustomLineItemCustomTypeOptions)
-    case setCustomLineItemCustomField(options: SetCustomLineItemCustomFieldOptions)
     case addPayment(options: AddPaymentOptions)
     case removePayment(options: RemovePaymentOptions)
-    case setLineItemTaxRate(options: SetLineItemTaxRateOptions)
-    case setCustomLineItemTaxRate(options: SetCustomLineItemTaxRateOptions)
-    case setShippingMethodTaxRate(options: SetShippingMethodTaxRateOptions)
-    case changeTaxMode(options: ChangeTaxModeOptions)
-    case setLineItemTotalPrice(options: SetLineItemTotalPriceOptions)
     case setLocale(options: SetLocaleOptions)
 
     public var toJSON: [String: Any] {
@@ -51,22 +39,6 @@ public enum CartUpdateAction: JSONRepresentable {
         case .changeLineItemQuantity(let options):
             var optionsJSON = toJSON(options)
             optionsJSON["action"] = "changeLineItemQuantity"
-            return optionsJSON
-        case .addCustomLineItem(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "addCustomLineItem"
-            return optionsJSON
-        case .removeCustomLineItem(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "removeCustomLineItem"
-            return optionsJSON
-        case .changeCustomLineItemQuantity(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "changeCustomLineItemQuantity"
-            return optionsJSON
-        case .changeCustomLineItemMoney(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "changeCustomLineItemMoney"
             return optionsJSON
         case .setCustomerEmail(let options):
             var optionsJSON = toJSON(options)
@@ -91,10 +63,6 @@ public enum CartUpdateAction: JSONRepresentable {
         case .setCustomShippingMethod(let options):
             var optionsJSON = toJSON(options)
             optionsJSON["action"] = "setCustomShippingMethod"
-            return optionsJSON
-        case .setCustomerId(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "setCustomerId"
             return optionsJSON
         case .addDiscountCode(let options):
             var optionsJSON = toJSON(options)
@@ -124,14 +92,6 @@ public enum CartUpdateAction: JSONRepresentable {
             var optionsJSON = toJSON(options)
             optionsJSON["action"] = "setLineItemCustomField"
             return optionsJSON
-        case .setCustomLineItemCustomType(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "setCustomLineItemCustomType"
-            return optionsJSON
-        case .setCustomLineItemCustomField(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "setCustomLineItemCustomField"
-            return optionsJSON
         case .addPayment(let options):
             var optionsJSON = toJSON(options)
             optionsJSON["action"] = "addPayment"
@@ -139,26 +99,6 @@ public enum CartUpdateAction: JSONRepresentable {
         case .removePayment(let options):
             var optionsJSON = toJSON(options)
             optionsJSON["action"] = "removePayment"
-            return optionsJSON
-        case .setLineItemTaxRate(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "setLineItemTaxRate"
-            return optionsJSON
-        case .setCustomLineItemTaxRate(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "setCustomLineItemTaxRate"
-            return optionsJSON
-        case .setShippingMethodTaxRate(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "setShippingMethodTaxRate"
-            return optionsJSON
-        case .changeTaxMode(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "changeTaxMode"
-            return optionsJSON
-        case .setLineItemTotalPrice(let options):
-            var optionsJSON = toJSON(options)
-            optionsJSON["action"] = "setLineItemTotalPrice"
             return optionsJSON
         case .setLocale(let options):
             var optionsJSON = toJSON(options)
@@ -177,7 +117,6 @@ public struct AddLineItemOptions: Mappable {
     public var quantity: UInt?
     public var supplyChannel: Reference<Channel>?
     public var distributionChannel: Reference<Channel>?
-    public var externalTaxRate: ExternalTaxRateDraft?
     public var custom: [String: Any]?
 
     public init() {}
@@ -191,7 +130,6 @@ public struct AddLineItemOptions: Mappable {
         quantity                     <- map["quantity"]
         supplyChannel                <- map["supplyChannel"]
         distributionChannel          <- map["distributionChannel"]
-        externalTaxRate              <- map["externalTaxRate"]
         custom                       <- map["custom"]
     }
 }
@@ -229,86 +167,6 @@ public struct ChangeLineItemQuantityOptions: Mappable {
     mutating public func mapping(map: Map) {
         lineItemId                  <- map["lineItemId"]
         quantity                    <- map["quantity"]
-    }
-}
-
-public struct AddCustomLineItemOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var name: LocalizedString?
-    public var quantity: UInt?
-    public var money: Money?
-    public var slug: String?
-    public var taxCategory: Reference<TaxCategory>?
-    public var externalTaxRate: ExternalTaxRateDraft?
-    public var custom: [String: Any]?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        name                    <- map["name"]
-        quantity                <- map["quantity"]
-        money                   <- map["money"]
-        slug                    <- map["slug"]
-        taxCategory             <- map["taxCategory"]
-        externalTaxRate         <- map["externalTaxRate"]
-        custom                  <- map["custom"]
-    }
-}
-
-public struct RemoveCustomLineItemOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var customLineItemId: String?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        customLineItemId            <- map["customLineItemId"]
-    }
-}
-
-public struct ChangeCustomLineItemQuantityOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var customLineItemId: String?
-    public var quantity: UInt?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        customLineItemId            <- map["customLineItemId"]
-        quantity                    <- map["quantity"]
-    }
-}
-
-public struct ChangeCustomLineItemMoneyOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var customLineItemId: String?
-    public var money: Money?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        customLineItemId             <- map["customLineItemId"]
-        money                        <- map["money"]
     }
 }
 
@@ -413,22 +271,6 @@ public struct SetCustomShippingMethodOptions: Mappable {
         shippingRate                <- map["shippingRate"]
         taxCategory                 <- map["taxCategory"]
         externalTaxRate             <- map["externalTaxRate"]
-    }
-}
-
-public struct SetCustomerIdOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var customerId: String?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        customerId                  <- map["customerId"]
     }
 }
 
@@ -556,46 +398,6 @@ public struct SetLineItemCustomFieldOptions: Mappable {
     }
 }
 
-public struct SetCustomLineItemCustomTypeOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var type: ResourceIdentifier?
-    public var customLineItemId: String?
-    public var fields: [String: Any]?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        type                        <- map["type"]
-        customLineItemId            <- map["customLineItemId"]
-        fields                      <- map["fields"]
-    }
-}
-
-public struct SetCustomLineItemCustomFieldOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var customLineItemId: String?
-    public var name: String?
-    public var value: Any?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        customLineItemId            <- map["customLineItemId"]
-        name                        <- map["name"]
-        value                       <- map["value"]
-    }
-}
-
 public struct AddPaymentOptions: Mappable {
 
     // MARK: - Properties
@@ -625,92 +427,6 @@ public struct RemovePaymentOptions: Mappable {
 
     mutating public func mapping(map: Map) {
         payment                     <- map["payment"]
-    }
-}
-
-public struct SetLineItemTaxRateOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var lineItemId: String?
-    public var externalTaxRate: ExternalTaxRateDraft?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        lineItemId                   <- map["lineItemId"]
-        externalTaxRate              <- map["externalTaxRate"]
-    }
-}
-
-public struct SetCustomLineItemTaxRateOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var customLineItemId: String?
-    public var externalTaxRate: ExternalTaxRateDraft?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        customLineItemId              <- map["customLineItemId"]
-        externalTaxRate               <- map["externalTaxRate"]
-    }
-}
-
-public struct SetShippingMethodTaxRateOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var externalTaxRate: ExternalTaxRateDraft?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        externalTaxRate               <- map["externalTaxRate"]
-    }
-}
-
-public struct ChangeTaxModeOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var taxMode: TaxMode?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        taxMode                      <- map["taxMode"]
-    }
-}
-
-public struct SetLineItemTotalPriceOptions: Mappable {
-
-    // MARK: - Properties
-
-    public var lineItemId: String?
-    public var externalTotalPrice: ExternalLineItemTotalPrice?
-
-    public init() {}
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        lineItemId                   <- map["lineItemId"]
-        externalTotalPrice           <- map["externalTotalPrice"]
     }
 }
 
