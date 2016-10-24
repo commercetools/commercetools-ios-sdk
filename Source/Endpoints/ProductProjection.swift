@@ -166,6 +166,17 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, Mappable {
     public var published: Bool?
     public var masterVariant: ProductVariant?
     public var variants: [ProductVariant]?
+    /// The union of `masterVariant` and other`variants`.
+    public var allVariants: [ProductVariant] {
+        var allVariants = [ProductVariant]()
+        if let masterVariant = masterVariant {
+            allVariants.append(masterVariant)
+        }
+        if let otherVariants = variants {
+            allVariants += otherVariants
+        }
+        return allVariants
+    }
     public var taxCategory: Reference<TaxCategory>?
     public var state: Reference<State>?
     public var reviewRatingStatistics: ReviewRatingStatistics?
