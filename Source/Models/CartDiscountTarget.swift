@@ -8,8 +8,8 @@ public struct CartDiscountTarget: Mappable {
 
     // MARK: - Properties
 
-    var type: String?
-    var predicate: String?
+    public var type: String?
+    public var predicate: String?
 
     public init?(map: Map) {}
 

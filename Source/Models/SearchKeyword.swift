@@ -8,8 +8,8 @@ public struct SearchKeyword: Mappable {
 
     // MARK: - Properties
 
-    var text: String?
-    var suggestTokenizer: SuggestTokenizer?
+    public var text: String?
+    public var suggestTokenizer: SuggestTokenizer?
 
     public init?(map: Map) {}
 
@@ -25,8 +25,8 @@ public struct SuggestTokenizer: Mappable {
 
     // MARK: - Properties
 
-    var type: String?
-    var inputs: [String]?
+    public var type: String?
+    public var inputs: [String]?
 
     public init?(map: Map) {}
 

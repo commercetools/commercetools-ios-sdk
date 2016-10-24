@@ -8,11 +8,11 @@ public struct ExternalTaxRateDraft: Mappable {
 
     // MARK: - Properties
 
-    var name: String?
-    var amount: Double?
-    var country: String?
-    var state: String?
-    var subRates: [SubRate]?
+    public var name: String?
+    public var amount: Double?
+    public var country: String?
+    public var state: String?
+    public var subRates: [SubRate]?
 
     public init() {}
     public init?(map: Map) {}

@@ -8,19 +8,19 @@ public struct DiscountCode: Mappable {
     
     // MARK: - Properties
     
-    var id: String?
-    var version: UInt?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var name: LocalizedString?
-    var description: LocalizedString?
-    var code: String?
-    var cartDiscounts: [CartDiscount]?
-    var cartPredicate: String?
-    var isActive: Bool?
-    var references: [GenericReference]?
-    var maxApplications: Int?
-    var maxApplicationsPerCustomer: Int?
+    public var id: String?
+    public var version: UInt?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var name: LocalizedString?
+    public var description: LocalizedString?
+    public var code: String?
+    public var cartDiscounts: [CartDiscount]?
+    public var cartPredicate: String?
+    public var isActive: Bool?
+    public var references: [GenericReference]?
+    public var maxApplications: Int?
+    public var maxApplicationsPerCustomer: Int?
     
     public init?(map: Map) {}
     

@@ -8,13 +8,13 @@ public struct Zone: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var version: UInt?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var name: String?
-    var description: String?
-    var locations: [Location]?
+    public var id: String?
+    public var version: UInt?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var name: String?
+    public var description: String?
+    public var locations: [Location]?
 
     public init?(map: Map) {}
 

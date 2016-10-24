@@ -8,23 +8,23 @@ public struct Payment: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var version: UInt?
-    var customer: Reference<Customer>?
-    var externalId: String?
-    var interfaceId: String?
-    var amountPlanned: Money?
-    var amountAuthorized: Money?
-    var authorizedUntil: String?
-    var amountPaid: Money?
-    var amountRefunded: Money?
-    var paymentMethodInfo: PaymentMethodInfo?
-    var paymentStatus: PaymentStatus?
-    var transactions: [Transaction]?
-    var interfaceInteractions: [[String: Any]]?
-    var custom: [String: Any]?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
+    public var id: String?
+    public var version: UInt?
+    public var customer: Reference<Customer>?
+    public var externalId: String?
+    public var interfaceId: String?
+    public var amountPlanned: Money?
+    public var amountAuthorized: Money?
+    public var authorizedUntil: String?
+    public var amountPaid: Money?
+    public var amountRefunded: Money?
+    public var paymentMethodInfo: PaymentMethodInfo?
+    public var paymentStatus: PaymentStatus?
+    public var transactions: [Transaction]?
+    public var interfaceInteractions: [[String: Any]]?
+    public var custom: [String: Any]?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
 
     public init?(map: Map) {}
 

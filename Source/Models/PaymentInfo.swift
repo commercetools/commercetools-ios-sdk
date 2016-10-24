@@ -8,7 +8,7 @@ public struct PaymentInfo: Mappable {
 
     // MARK: - Properties
 
-    var payments: [Reference<Payment>]?
+    public var payments: [Reference<Payment>]?
 
     public init?(map: Map) {}
 

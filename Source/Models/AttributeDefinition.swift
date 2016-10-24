@@ -8,12 +8,12 @@ public struct AttributeDefinition: Mappable {
     
     // MARK: - Properties
 
-    var type: AttributeType?
-    var name: String?
-    var label: [String: String]?
-    var inputTip: [String: String]?
-    var isRequired: Bool?
-    var isSearchable: Bool?
+    public var type: AttributeType?
+    public var name: String?
+    public var label: [String: String]?
+    public var inputTip: [String: String]?
+    public var isRequired: Bool?
+    public var isSearchable: Bool?
     
     public init?(map: Map) {}
     

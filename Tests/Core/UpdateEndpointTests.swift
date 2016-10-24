@@ -10,6 +10,7 @@ class UpdateEndpointTests: XCTestCase {
     private class TestCart: UpdateEndpoint, CreateEndpoint {
         typealias ResponseType = Cart
         typealias RequestDraft = CartDraft
+        typealias UpdateAction = CartUpdateAction
         static let path = "me/carts"
     }
 

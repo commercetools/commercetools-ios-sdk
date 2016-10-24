@@ -8,8 +8,8 @@ public struct DiscountedLineItemPriceForQuantity: Mappable {
 
     // MARK: - Properties
 
-    var quantity: Int?
-    var discountedPrice: DiscountedLineItemPrice?
+    public var quantity: Int?
+    public var discountedPrice: DiscountedLineItemPrice?
 
     public init?(map: Map) {}
 

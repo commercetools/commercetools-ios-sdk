@@ -8,8 +8,8 @@ public struct ZoneRate: Mappable {
 
     // MARK: - Properties
 
-    var zone: Reference<Zone>?
-    var shippingRates: [ShippingRate]?
+    public var zone: Reference<Zone>?
+    public var shippingRates: [ShippingRate]?
 
     public init?(map: Map) {}
 

@@ -8,11 +8,11 @@ public struct ReviewRatingStatistics: Mappable {
 
     // MARK: - Properties
 
-    var averageRating: Double?
-    var highestRating: Double?
-    var lowestRating: Double?
-    var count: UInt?
-    var ratingsDistribution: [String: Any]?
+    public var averageRating: Double?
+    public var highestRating: Double?
+    public var lowestRating: Double?
+    public var count: UInt?
+    public var ratingsDistribution: [String: Any]?
 
     public init?(map: Map) {}
 

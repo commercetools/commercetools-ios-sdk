@@ -8,21 +8,21 @@ public struct CartDraft: Mappable {
 
     // MARK: - Properties
 
-    var currency: String?
-    var customerId: String?
-    var customerEmail: String?
-    var anonymousId: String?
-    var country: String?
-    var inventoryMode: InventoryMode?
-    var taxMode: TaxMode?
-    var lineItems: [LineItemDraft]?
-    var customLineItems: [CustomLineItemDraft]?
-    var shippingAddress: Address?
-    var billingAddress: Address?
-    var shippingMethod: Reference<ShippingMethod>?
-    var externalTaxRateForShippingMethod: ExternalTaxRateDraft?
-    var custom: [String: Any]?
-    var locale: String?
+    public var currency: String?
+    public var customerId: String?
+    public var customerEmail: String?
+    public var anonymousId: String?
+    public var country: String?
+    public var inventoryMode: InventoryMode?
+    public var taxMode: TaxMode?
+    public var lineItems: [LineItemDraft]?
+    public var customLineItems: [CustomLineItemDraft]?
+    public var shippingAddress: Address?
+    public var billingAddress: Address?
+    public var shippingMethod: Reference<ShippingMethod>?
+    public var externalTaxRateForShippingMethod: ExternalTaxRateDraft?
+    public var custom: [String: Any]?
+    public var locale: String?
 
     public init() {}
     public init?(map: Map) {}

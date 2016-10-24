@@ -4,20 +4,22 @@
 
 import ObjectMapper
 
-public struct DeliveryItem: Mappable {
+public struct ResourceIdentifier: Mappable {
 
     // MARK: - Properties
 
     public var id: String?
-    public var quantity: Int?
+    public var typeId: String?
+    public var key: String?
 
+    public init() {}
     public init?(map: Map) {}
 
     // MARK: - Mappable
 
     mutating public func mapping(map: Map) {
-        id                <- map["id"]
-        quantity          <- map["quantity"]
+        id                 <- map["id"]
+        typeId             <- map["typeId"]
+        key                <- map["key"]
     }
-
 }

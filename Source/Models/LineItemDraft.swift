@@ -8,13 +8,13 @@ public struct LineItemDraft: Mappable {
 
     // MARK: - Properties
 
-    var productId: String?
-    var variantId: Int?
-    var quantity: UInt?
-    var supplyChannel: Reference<Channel>?
-    var distributionChannel: Reference<Channel>?
-    var externalTaxRate: ExternalTaxRateDraft?
-    var custom: [String: Any]?
+    public var productId: String?
+    public var variantId: Int?
+    public var quantity: UInt?
+    public var supplyChannel: Reference<Channel>?
+    public var distributionChannel: Reference<Channel>?
+    public var externalTaxRate: ExternalTaxRateDraft?
+    public var custom: [String: Any]?
 
     public init() {}
     public init?(map: Map) {}

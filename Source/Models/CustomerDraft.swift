@@ -8,20 +8,20 @@ public struct CustomerDraft: Mappable {
 
     // MARK: - Properties
 
-    var email: String?
-    var password: String?
-    var firstName: String?
-    var lastName: String?
-    var middleName: String?
-    var title: String?
-    var dateOfBirth: Date?
-    var companyName: String?
-    var vatId: String?
-    var addresses: [Address]?
-    var defaultBillingAddress: Int?
-    var defaultShippingAddress: Int?
-    var custom: [String: Any]?
-    var locale: String?
+    public var email: String?
+    public var password: String?
+    public var firstName: String?
+    public var lastName: String?
+    public var middleName: String?
+    public var title: String?
+    public var dateOfBirth: Date?
+    public var companyName: String?
+    public var vatId: String?
+    public var addresses: [Address]?
+    public var defaultBillingAddress: Int?
+    public var defaultShippingAddress: Int?
+    public var custom: [String: Any]?
+    public var locale: String?
 
     public init() {}
     public init?(map: Map) {}

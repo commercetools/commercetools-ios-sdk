@@ -8,10 +8,10 @@ public struct Parcel: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var createdAt: Date?
-    var measurements: ParcelMeasurements?
-    var trackingData: TrackingData?
+    public var id: String?
+    public var createdAt: Date?
+    public var measurements: ParcelMeasurements?
+    public var trackingData: TrackingData?
 
     public init?(map: Map) {}
 

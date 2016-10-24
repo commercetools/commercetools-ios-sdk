@@ -8,11 +8,11 @@ public struct TrackingData: Mappable {
 
     // MARK: - Properties
 
-    var trackingId: String?
-    var carrier: String?
-    var provider: String?
-    var providerTransaction: String?
-    var isReturn: Bool?
+    public var trackingId: String?
+    public var carrier: String?
+    public var provider: String?
+    public var providerTransaction: String?
+    public var isReturn: Bool?
 
     public init?(map: Map) {}
 

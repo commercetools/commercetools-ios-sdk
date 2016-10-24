@@ -8,8 +8,8 @@ public struct OrderDraft: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var version: UInt?
+    public var id: String?
+    public var version: UInt?
 
     public init() {}
     public init?(map: Map) {}

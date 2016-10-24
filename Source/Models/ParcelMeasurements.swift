@@ -8,10 +8,10 @@ public struct ParcelMeasurements: Mappable {
 
     // MARK: - Properties
 
-    var heightInMillimeter: Double?
-    var lengthInMillimeter: Double?
-    var widthInMillimeter: Double?
-    var weightInGram: Double?
+    public var heightInMillimeter: Double?
+    public var lengthInMillimeter: Double?
+    public var widthInMillimeter: Double?
+    public var weightInGram: Double?
 
     public init?(map: Map) {}
 

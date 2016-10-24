@@ -114,6 +114,41 @@ class CustomerTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    func testUpdateProfileWithModel() {
+        setupTestConfiguration()
+
+        let updateProfileExpectation = expectation(description: "update profile expectation")
+
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+
+        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+
+        Customer.profile { result in
+            if let profile = result.model, let version = profile.version, result.isSuccess {
+                var options = SetFirstNameOptions()
+                options.firstName = "newName"
+                let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: options)])
+                Customer.update(actions: updateActions, result: { result in
+                    if let profile = result.model, let version = profile.version, result.isSuccess && profile.firstName == "newName" {
+
+                        // Now revert back to the old name
+                        options.firstName = "Test"
+                        let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: options)])
+
+                        Customer.update(actions: updateActions, result: { result in
+                            if let profile = result.model, result.isSuccess && profile.firstName == "Test" {
+                                updateProfileExpectation.fulfill()
+                            }
+                        })
+                    }
+                })
+            }
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
     func testCreateError() {
         setupTestConfiguration()
 

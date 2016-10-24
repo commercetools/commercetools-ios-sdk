@@ -8,9 +8,9 @@ public struct PaymentStatus: Mappable {
 
     // MARK: - Properties
 
-    var interfaceCode: String?
-    var interfaceText: String?
-    var state: Reference<State>?
+    public var interfaceCode: String?
+    public var interfaceText: String?
+    public var state: Reference<State>?
 
     public init?(map: Map) {}
 

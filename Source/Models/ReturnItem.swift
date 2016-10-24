@@ -8,14 +8,14 @@ public struct ReturnItem: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var quantity: UInt?
-    var lineItemId: String?
-    var comment: String?
-    var shipmentState: ReturnShipmentState?
-    var paymentState: ReturnPaymentState?
-    var lastModifiedAt: Date?
-    var createdAt: Date?
+    public var id: String?
+    public var quantity: UInt?
+    public var lineItemId: String?
+    public var comment: String?
+    public var shipmentState: ReturnShipmentState?
+    public var paymentState: ReturnPaymentState?
+    public var lastModifiedAt: Date?
+    public var createdAt: Date?
 
     public init?(map: Map) {}
 

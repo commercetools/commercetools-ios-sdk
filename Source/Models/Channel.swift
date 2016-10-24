@@ -4,27 +4,27 @@
 
 import ObjectMapper
 
-class Channel: Mappable {
+public struct Channel: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var version: UInt?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var key: String?
-    var roles: [ChannelRole]?
-    var name: LocalizedString?
-    var description: LocalizedString?
-    var address: Address?
-    var reviewRatingStatistics: ReviewRatingStatistics?
-    var custom: [String: Any]?
+    public var id: String?
+    public var version: UInt?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var key: String?
+    public var roles: [ChannelRole]?
+    public var name: LocalizedString?
+    public var description: LocalizedString?
+    public var address: Address?
+    public var reviewRatingStatistics: ReviewRatingStatistics?
+    public var custom: [String: Any]?
 
-    required public init?(map: Map) {}
+    public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         id                      <- map["id"]
         version                 <- map["version"]
         createdAt               <- (map["createdAt"], ISO8601DateTransform())

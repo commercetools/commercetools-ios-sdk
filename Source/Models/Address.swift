@@ -8,29 +8,29 @@ public struct Address: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var title: String?
-    var salutation: String?
-    var firstName: String?
-    var lastName: String?
-    var streetName: String?
-    var streetNumber: String?
-    var city: String?
-    var region: String?
-    var postalCode: String?
-    var additionalStreetInfo: String?
-    var state: String?
-    var country: String?
-    var company: String?
-    var department: String?
-    var building: String?
-    var apartment: String?
-    var pOBox: String?
-    var phone: String?
-    var mobile: String?
-    var email: String?
-    var fax: String?
-    var additionalAddressInfo: String?
+    public var id: String?
+    public var title: String?
+    public var salutation: String?
+    public var firstName: String?
+    public var lastName: String?
+    public var streetName: String?
+    public var streetNumber: String?
+    public var city: String?
+    public var region: String?
+    public var postalCode: String?
+    public var additionalStreetInfo: String?
+    public var state: String?
+    public var country: String?
+    public var company: String?
+    public var department: String?
+    public var building: String?
+    public var apartment: String?
+    public var pOBox: String?
+    public var phone: String?
+    public var mobile: String?
+    public var email: String?
+    public var fax: String?
+    public var additionalAddressInfo: String?
 
     public init() {}
     public init?(map: Map) {}

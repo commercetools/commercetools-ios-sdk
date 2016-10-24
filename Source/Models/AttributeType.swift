@@ -4,18 +4,18 @@
 
 import ObjectMapper
 
-class AttributeType: Mappable {
+public class AttributeType: Mappable {
 
     // MARK: - Properties
 
-    var name: String?
-    var elementType: AttributeType?
+    public var name: String?
+    public var elementType: AttributeType?
 
     required public init?(map: Map) {}
 
     // MARK: - Mappable
 
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         name               <- map["name"]
         elementType        <- map["elementType"]
     }

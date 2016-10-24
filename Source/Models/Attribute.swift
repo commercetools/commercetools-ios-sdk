@@ -8,8 +8,8 @@ public struct Attribute: Mappable {
 
     // MARK: - Properties
 
-    var name: String?
-    var value: AnyObject?
+    public var name: String?
+    public var value: AnyObject?
 
     public init?(map: Map) {}
 

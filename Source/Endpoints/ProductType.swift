@@ -15,14 +15,14 @@ open class ProductType: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var version: UInt?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var key: String?
-    var name: String?
-    var description: String?
-    var attributes: [AttributeDefinition]?
+    public var id: String?
+    public var version: UInt?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var key: String?
+    public var name: String?
+    public var description: String?
+    public var attributes: [AttributeDefinition]?
 
     public required init?(map: Map) {}
 

@@ -15,21 +15,21 @@ open class Category: ByIdEndpoint, QueryEndpoint, Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var version: UInt?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var name: LocalizedString?
-    var slug: LocalizedString?
-    var description: LocalizedString?
-    var ancestors: [Reference<Category>]?
-    var parent: Reference<Category>?
-    var orderHint: String?
-    var externalId: String?
-    var metaTitle: LocalizedString?
-    var metaDescription: LocalizedString?
-    var metaKeywords: LocalizedString?
-    var custom: [String: Any]?
+    public var id: String?
+    public var version: UInt?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var name: LocalizedString?
+    public var slug: LocalizedString?
+    public var description: LocalizedString?
+    public var ancestors: [Reference<Category>]?
+    public var parent: Reference<Category>?
+    public var orderHint: String?
+    public var externalId: String?
+    public var metaTitle: LocalizedString?
+    public var metaDescription: LocalizedString?
+    public var metaKeywords: LocalizedString?
+    public var custom: [String: Any]?
 
     public required init?(map: Map) {}
 

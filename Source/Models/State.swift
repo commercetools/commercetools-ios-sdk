@@ -8,18 +8,18 @@ public struct State: Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var version: UInt?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var key: String?
-    var type: StateType?
-    var name: LocalizedString?
-    var description: LocalizedString?
-    var initial: Bool?
-    var builtIn: Bool?
-    var roles: [StateRole]?
-    var transitions: [Reference<State>]?
+    public var id: String?
+    public var version: UInt?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var key: String?
+    public var type: StateType?
+    public var name: LocalizedString?
+    public var description: LocalizedString?
+    public var initial: Bool?
+    public var builtIn: Bool?
+    public var roles: [StateRole]?
+    public var transitions: [Reference<State>]?
 
     public init?(map: Map) {}
 

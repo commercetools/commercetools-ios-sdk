@@ -4,19 +4,19 @@
 
 import ObjectMapper
 
-public struct DiscountedPrice: Mappable {
+public struct ExternalLineItemTotalPrice: Mappable {
 
     // MARK: - Properties
 
-    public var value: Money?
-    public var discount: Reference<ProductDiscount>?
+    public var price: Money?
+    public var totalPrice: Money?
 
     public init?(map: Map) {}
 
     // MARK: - Mappable
 
     mutating public func mapping(map: Map) {
-        value              <- map["value"]
-        discount           <- map["discount"]
+        price              <- map["price"]
+        totalPrice         <- map["totalPrice"]
     }
 }

@@ -8,9 +8,9 @@ public struct PaymentMethodInfo: Mappable {
 
     // MARK: - Properties
 
-    var paymentInterface: String?
-    var method: String?
-    var name: LocalizedString?
+    public var paymentInterface: String?
+    public var method: String?
+    public var name: LocalizedString?
 
     public init?(map: Map) {}
 

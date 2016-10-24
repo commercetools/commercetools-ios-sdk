@@ -8,13 +8,13 @@ public struct CustomLineItemDraft: Mappable {
 
     // MARK: - Properties
 
-    var name: LocalizedString?
-    var quantity: UInt?
-    var money: Money?
-    var slug: String?
-    var taxCategory: Reference<TaxCategory>?
-    var externalTaxRate: ExternalTaxRateDraft?
-    var custom: [String: Any]?
+    public var name: LocalizedString?
+    public var quantity: UInt?
+    public var money: Money?
+    public var slug: String?
+    public var taxCategory: Reference<TaxCategory>?
+    public var externalTaxRate: ExternalTaxRateDraft?
+    public var custom: [String: Any]?
 
     public init() {}
     public init?(map: Map) {}

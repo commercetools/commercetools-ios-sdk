@@ -34,10 +34,10 @@ public class QueryResponse<ResponseType: Mappable>: Mappable {
     
     // MARK: - Properties
     
-    var offset: UInt?
-    var count: UInt?
-    var total: UInt?
-    var results: [ResponseType]?
+    public var offset: UInt?
+    public var count: UInt?
+    public var total: UInt?
+    public var results: [ResponseType]?
     
     // MARK: - Mappable
     

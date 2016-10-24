@@ -55,6 +55,17 @@ open class Customer: Endpoint, Mappable {
         Updates current customer profile.
 
         - parameter version:                  Customer profile version (for optimistic concurrency control).
+        - parameter actions:                  `UpdateActions<CustomerUpdateAction>`instance, containing correct version and update actions.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    open static func update(actions: UpdateActions<CustomerUpdateAction>, result: @escaping (Result<ResponseType>) -> Void) {
+        customerProfileAction(method: .post, parameters: actions.toJSON, encoding: JSONEncoding.default, result: result)
+    }
+
+    /**
+        Updates current customer profile.
+
+        - parameter version:                  Customer profile version (for optimistic concurrency control).
         - parameter actions:                  An array of actions to be executed, in dictionary representation.
         - parameter result:                   The code to be executed after processing the response.
     */
@@ -131,28 +142,28 @@ open class Customer: Endpoint, Mappable {
 
     // MARK: - Properties
 
-    var id: String?
-    var version: UInt?
-    var customerNumber: String?
-    var createdAt: Date?
-    var lastModifiedAt: Date?
-    var email: String?
-    var password: String?
-    var firstName: String?
-    var lastName: String?
-    var middleName: String?
-    var title: String?
-    var dateOfBirth: Date?
-    var companyName: String?
-    var vatId: String?
-    var addresses: [Address]?
-    var defaultShippingAddressId: String?
-    var defaultBillingAddressId: String?
-    var isEmailVerified: Bool?
-    var externalId: String?
-    var customerGroup: Reference<CustomerGroup>?
-    var custom: [String: Any]?
-    var locale: String?
+    public var id: String?
+    public var version: UInt?
+    public var customerNumber: String?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
+    public var email: String?
+    public var password: String?
+    public var firstName: String?
+    public var lastName: String?
+    public var middleName: String?
+    public var title: String?
+    public var dateOfBirth: Date?
+    public var companyName: String?
+    public var vatId: String?
+    public var addresses: [Address]?
+    public var defaultShippingAddressId: String?
+    public var defaultBillingAddressId: String?
+    public var isEmailVerified: Bool?
+    public var externalId: String?
+    public var customerGroup: Reference<CustomerGroup>?
+    public var custom: [String: Any]?
+    public var locale: String?
 
     public required init?(map: Map) {}
 
