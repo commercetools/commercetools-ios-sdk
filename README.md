@@ -196,10 +196,12 @@ Cart.create(cartDraft, result: { result in
 ```
 - Update existing cart (user must be logged in)
 ```swift
-let version = 1 // Set the appropriate current version
-let addLineItemAction: [String: AnyObject] = ["action": "addLineItem", "productId": productId, "variantId": 1]
+var options = AddLineItemOptions()
+options.productId = productId
+options.variantId = 1 // Set the appropriate current version
 
-Cart.update(cartId, version: version, actions: [addLineItemAction], result: { result in
+let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.addLineItem(options: options)])
+Cart.update(cartId, actions: updateActions, result: { result in
     if let cart = result.model, result.isSuccess {
         // Cart successfully updated, response contains updated cart
     }
@@ -273,9 +275,11 @@ Customer.signup(customerDraft, result: { result in
 ```
 - Update customer account (user must be logged in)
 ```swift
-var setFirstNameAction: [String: AnyObject] = ["action": "setFirstName", "firstName": "newName"]
+var options = SetFirstNameOptions()
+options.firstName = "newName"
 
-Customer.update(version: version, actions: [setFirstNameAction], result: { result in
+let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: options)])
+Customer.update(actions: updateActions, result: { result in
     if let customer = result.model, let version = customer.version, result.isSuccess {
     	// User profile successfully updated
     }

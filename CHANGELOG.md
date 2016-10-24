@@ -2,12 +2,27 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
+- `0.4.x` Releases - [0.4.0](#040)
 - `0.3.x` Releases - [0.3.0](#030)
 - `0.2.x` Releases - [0.2.0](#020)
 - `0.1.x` Releases - [0.1.0](#010)
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.4.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.4.0)
+Released on 2016-10-25.
+
+#### Added
+- Updated `Endpoint` protocol and `Result` enum to support model objects.
+- Updated `Create`, `Delete`, `ById`, `ByKey`, and `UpdateByKey` endpoints to support models.
+- Support for obtaining model and JSON dictionary results
+- Added `NoMapping` type for easy endpoint creation where no domain model exists.
+- `Cart`, `Category`, `Customer`, `Order`, `ProductProjection`, `ProductType` response models.
+- Draft models for creating resources on `Cart`, `Customer`, and `Order` endpoint.
+- Actions for updating `Cart` and `Customer` objects.
+- Updated User-Agent header format.
+
 
 ## [0.3.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.3.0)
 Released on 2016-09-23.
