@@ -51,6 +51,40 @@ public extension Endpoint {
         return nil
     }
 
+    /// The full user agent header sent with requests to the platform.
+    static var userAgent: String {
+        let commercetoolsSDK: String = {
+            let commercetoolsSDKVersion = Bundle(for: Config.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+            return "commercetools-ios-sdk/\(commercetoolsSDKVersion)"
+        }()
+        let osNameVersion: String = {
+            let version = ProcessInfo.processInfo.operatingSystemVersion
+
+            let osName: String = {
+            #if os(iOS)
+                return "iOS"
+            #else
+                return "Unknown"
+            #endif
+            }()
+
+            return "\(osName)/\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+        }()
+
+        if let info = Bundle.main.infoDictionary {
+            let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
+            let appVersion = info["CFBundleShortVersionString"] as? String ?? "Unknown"
+
+            if let config = Config.currentConfig, let emergencyContactInfo = config.emergencyContactInfo, config.validate() {
+                return "\(commercetoolsSDK) \(osNameVersion) \(executable)/\(appVersion) (+\(emergencyContactInfo))"
+            }
+
+            return "\(commercetoolsSDK) \(osNameVersion) \(executable)/\(appVersion)"
+        }
+
+        return "\(commercetoolsSDK) \(osNameVersion)"
+    }
+
     /**
         Appends expansion parameters at the end of the provided path.
 
@@ -81,6 +115,7 @@ public extension Endpoint {
     static func headers(_ token: String) -> [String: String] {
         var headers = SessionManager.defaultHTTPHeaders
         headers["Authorization"] = "Bearer \(token)"
+        headers["User-Agent"] = userAgent
         return headers
     }
 
