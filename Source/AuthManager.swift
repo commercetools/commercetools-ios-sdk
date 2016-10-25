@@ -135,11 +135,16 @@ open class AuthManager {
         In case this method is called before previously logging user out, it will automatically logout (i.e remove
         previously stored tokens).
 
-        - parameter username:           The user's username.
-        - parameter password:           The user's password.
-        - parameter completionHandler:  The code to be executed once the token fetching completes.
+        - parameter username:                  The user's username.
+        - parameter password:                  The user's password.
+        - parameter anonymousCartId:           Optional anonymous cart ID, which will become the customer’s cart after login.
+        - parameter anonymousCartSignInMode:   Optional sign in mode, specifying whether the cart line items should be merged.
+        - parameter anonymousId:               Optional anonymous ID used to assign all orders and carts after login.
+        - parameter completionHandler:         The code to be executed once the token fetching completes.
     */
-    open func login(username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
+    open func login(username: String, password: String, anonymousCartId: String? = nil,
+                    anonymousCartSignInMode: AnonymousCartSignInMode? = nil, anonymousId: String? = nil,
+                    completionHandler: @escaping (Error?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
         serialQueue.async(execute: {
@@ -147,7 +152,9 @@ open class AuthManager {
             if self.state != .plainToken {
                 self.logoutUser()
             }
-            self.processLoginUser(username, password: password, completionHandler: { token, error in
+            self.processLogin(username: username, password: password, anonymousCartId: anonymousCartId,
+                    anonymousCartSignInMode: anonymousCartSignInMode, anonymousId: anonymousId,
+                    completionHandler: { token, error in
                 completionHandler(error)
                 semaphore.signal()
             })
@@ -259,9 +266,21 @@ open class AuthManager {
         }
     }
 
-    private func processLoginUser(_ username: String, password: String, completionHandler: @escaping (String?, Error?) -> Void) {
+    private func processLogin(username: String, password: String, anonymousCartId: String?,
+                              anonymousCartSignInMode: AnonymousCartSignInMode?, anonymousId: String?,
+                              completionHandler: @escaping (String?, Error?) -> Void) {
         if let loginUrl = loginUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
-            Alamofire.request(loginUrl, method: .post, parameters: ["grant_type": "password", "scope": scope, "username": username, "password": password], encoding: URLEncoding.queryString, headers: authHeaders)
+            var params = ["grant_type": "password", "scope": scope, "username": username, "password": password]
+            if let anonymousCartId = anonymousCartId {
+                params["anonymousCartId"] = anonymousCartId
+            }
+            if let anonymousCartSignInMode = anonymousCartSignInMode {
+                params["anonymousCartSignInMode"] = anonymousCartSignInMode.rawValue
+            }
+            if let anonymousId = anonymousId {
+                params["anonymousId"] = anonymousId
+            }
+            Alamofire.request(loginUrl, method: .post, parameters: params, encoding: URLEncoding.queryString, headers: authHeaders)
             .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 self.state = .customerToken
                 self.handleAuthResponse(response, completionHandler: completionHandler)
