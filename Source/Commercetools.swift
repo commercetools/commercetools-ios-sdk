@@ -43,7 +43,7 @@ public var authState: AuthManager.TokenState {
     - parameter completionHandler:  The code to be executed once the token fetching completes.
 */
 public func loginUser(_ username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
-    AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: completionHandler)
+    AuthManager.sharedInstance.login(username: username, password: password, completionHandler: completionHandler)
 }
 
 /**

@@ -37,7 +37,7 @@ class UpdateEndpointTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         TestProductProjections.query(limit: 1, result: { result in
             if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
@@ -69,7 +69,7 @@ class UpdateEndpointTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         TestProductProjections.query(limit: 1, result: { result in
             if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
@@ -101,7 +101,7 @@ class UpdateEndpointTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         TestCart.update("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", version: 1, actions: [], result: { result in
             if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,

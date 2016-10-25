@@ -30,7 +30,7 @@ class CustomerTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         Customer.profile { result in
             if let response = result.json, let _ = response["firstName"] as? String,
@@ -73,7 +73,7 @@ class CustomerTests: XCTestCase {
                     && email == username {
                 createProfileExpectation.fulfill()
 
-                AuthManager.sharedInstance.loginUser(username, password: "password", completionHandler: {_ in})
+                AuthManager.sharedInstance.login(username: username, password: "password", completionHandler: { _ in})
                 Customer.delete(version: version, result: { result in
                     if let response = result.json, let email = response["email"] as? String, result.isSuccess
                             && email == username {
@@ -102,7 +102,7 @@ class CustomerTests: XCTestCase {
             if let customer = result.model?.customer, let version = customer.version, customer.email == username, result.isSuccess {
                 createProfileExpectation.fulfill()
 
-                AuthManager.sharedInstance.loginUser(username, password: "password", completionHandler: {_ in})
+                AuthManager.sharedInstance.login(username: username, password: "password", completionHandler: { _ in})
                 Customer.delete(version: version, result: { result in
                     if let deletedCustomer = result.model, deletedCustomer.email == username, result.isSuccess {
                         deleteProfileExpectation.fulfill()
@@ -122,7 +122,7 @@ class CustomerTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         Customer.profile { result in
             if let profile = result.model, let version = profile.version, result.isSuccess {
@@ -189,7 +189,7 @@ class CustomerTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         var setFirstNameAction: [String: Any] = ["action": "setFirstName", "firstName": "newName"]
 
@@ -241,7 +241,7 @@ class CustomerTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         Customer.profile { result in
             if let response = result.json, let version = response["version"] as? UInt, result.isSuccess {
@@ -326,7 +326,7 @@ class CustomerTests: XCTestCase {
                             
                             // Confirm email verification token with regular mobile client scope
                             self.setupTestConfiguration()
-                            AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+                            AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
                             
                             Customer.verifyEmail(token: token, result: { result in
                                 if let response = result.json, let email = response["email"] as? String, result.isSuccess

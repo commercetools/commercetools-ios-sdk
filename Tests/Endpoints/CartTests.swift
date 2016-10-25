@@ -24,7 +24,7 @@ class CartTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         Cart.create(["currency": "EUR"], result: { result in
             if let response = result.json, let cartState = response["cartState"] as? String, let id = response["id"] as? String,
@@ -46,7 +46,7 @@ class CartTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
             var cartDraft = CartDraft()
@@ -69,7 +69,7 @@ class CartTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
             var cartDraft = CartDraft()
@@ -103,7 +103,7 @@ class CartTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         var cartDraft = CartDraft()
         cartDraft.currency = "EUR"

@@ -100,7 +100,7 @@ open class Customer: Endpoint, Mappable {
                               "newPassword": newPassword, "version": version], encoding: JSONEncoding.default, result: { changePasswordResult in
 
             if let response = changePasswordResult.json, let email = response["email"] as? String, changePasswordResult.isSuccess {
-                AuthManager.sharedInstance.loginUser(email, password: newPassword, completionHandler: { error in
+                AuthManager.sharedInstance.login(username: email, password: newPassword, completionHandler: { error in
                     if let error = error as? CTError {
                         Log.error("Could not login automatically after password change "
                                 + (error.errorDescription ?? ""))

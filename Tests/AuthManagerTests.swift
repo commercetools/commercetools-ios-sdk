@@ -32,7 +32,7 @@ class AuthManagerTests: XCTestCase {
         var oldToken: String?
         authManager.token { token, error in oldToken = token }
 
-        authManager.loginUser(username, password: password, completionHandler: { error in
+        authManager.login(username: username, password: password, completionHandler: { error in
             if error == nil {
                 loginExpectation.fulfill()
             }
@@ -57,7 +57,7 @@ class AuthManagerTests: XCTestCase {
         let password = "password"
         let authManager = AuthManager.sharedInstance
 
-        authManager.loginUser(username, password: password, completionHandler: { error in
+        authManager.login(username: username, password: password, completionHandler: { error in
             if error == nil {
                 // Get the access token after login
                 authManager.token { oldToken, error in
@@ -91,7 +91,7 @@ class AuthManagerTests: XCTestCase {
         var oldToken: String?
         authManager.token { token, error in oldToken = token }
 
-        authManager.loginUser(username, password: password, completionHandler: { error in
+        authManager.login(username: username, password: password, completionHandler: { error in
             if let error = error as? CTError, case .accessTokenRetrievalFailed(let reason) = error, reason.message == "invalid_customer_account_credentials" &&
                     reason.details == "Customer account with the given credentials not found." {
                 loginExpectation.fulfill()
@@ -136,7 +136,7 @@ class AuthManagerTests: XCTestCase {
         let username = "swift.sdk.test.user@commercetools.com"
         let password = "password"
 
-        authManager.loginUser(username, password: password, completionHandler: { error in
+        authManager.login(username: username, password: password, completionHandler: { error in
             if error == nil {
 
                 var oldToken: String?

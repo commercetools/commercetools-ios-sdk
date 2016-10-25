@@ -31,7 +31,7 @@ class DeleteEndpointTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         TestCart.create(["currency": "EUR"], result: { result in
             if let response = result.json, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
@@ -54,7 +54,7 @@ class DeleteEndpointTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         TestCart.create(["currency": "EUR"], result: { result in
             if let response = result.json, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
@@ -77,7 +77,7 @@ class DeleteEndpointTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.login(username: username, password: password, completionHandler: { _ in})
 
         TestCart.delete("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", version: 1, result: { result in
             if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,

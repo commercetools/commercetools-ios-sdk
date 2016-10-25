@@ -139,7 +139,7 @@ open class AuthManager {
         - parameter password:           The user's password.
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    open func loginUser(_ username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
+    open func login(username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
         serialQueue.async(execute: {
