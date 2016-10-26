@@ -96,7 +96,6 @@ open class AuthManager {
     private var loginUrl: String? {
         if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, let projectKey = config.projectKey, config.validate() {
             return "\(baseAuthUrl)oauth/\(projectKey)/customers/token"
-
         }
         return nil
     }
@@ -135,31 +134,22 @@ open class AuthManager {
         In case this method is called before previously logging user out, it will automatically logout (i.e remove
         previously stored tokens).
 
-        - parameter username:                  The user's username.
-        - parameter password:                  The user's password.
-        - parameter anonymousCartId:           Optional anonymous cart ID, which will become the customer’s cart after login.
-        - parameter anonymousCartSignInMode:   Optional sign in mode, specifying whether the cart line items should be merged.
-        - parameter anonymousId:               Optional anonymous ID used to assign all orders and carts after login.
-        - parameter completionHandler:         The code to be executed once the token fetching completes.
+        - parameter username:               The user's username.
+        - parameter password:               The user's password.
+        - parameter activeCartSignInMode:   Optional sign in mode, specifying whether the cart line items should be merged.
+        - parameter completionHandler:      The code to be executed once the token fetching completes.
     */
-    open func login(username: String, password: String, anonymousCartId: String? = nil,
-                    anonymousCartSignInMode: AnonymousCartSignInMode? = nil, anonymousId: String? = nil,
+    open func login(username: String, password: String, activeCartSignInMode: AnonymousCartSignInMode? = nil,
                     completionHandler: @escaping (Error?) -> Void) {
-        // Process all token requests using private serial queue to avoid issues with race conditions
-        // when multiple credentials / login requests can lead auth manager in an unpredictable state
-        serialQueue.async(execute: {
-            let semaphore = DispatchSemaphore(value: 0)
-            if self.state != .plainToken {
-                self.logoutUser()
+        // If the user is logging after an anonymous session, `/me/login` endpoint is triggered before obtaining
+        // access and refresh tokens, so that carts and orders can be migrated
+        if state == .anonymousToken {
+            Customer.login(username: username, password: password, activeCartSignInMode: activeCartSignInMode) { _ in
+                self.queueLogin(username: username, password: password, completionHandler: completionHandler)
             }
-            self.processLogin(username: username, password: password, anonymousCartId: anonymousCartId,
-                    anonymousCartSignInMode: anonymousCartSignInMode, anonymousId: anonymousId,
-                    completionHandler: { token, error in
-                completionHandler(error)
-                semaphore.signal()
-            })
-            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        })
+        } else {
+            queueLogin(username: username, password: password, completionHandler: completionHandler)
+        }
     }
 
     /**
@@ -266,25 +256,31 @@ open class AuthManager {
         }
     }
 
-    private func processLogin(username: String, password: String, anonymousCartId: String?,
-                              anonymousCartSignInMode: AnonymousCartSignInMode?, anonymousId: String?,
-                              completionHandler: @escaping (String?, Error?) -> Void) {
-        if let loginUrl = loginUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
-            var params = ["grant_type": "password", "scope": scope, "username": username, "password": password]
-            if let anonymousCartId = anonymousCartId {
-                params["anonymousCartId"] = anonymousCartId
+    private func queueLogin(username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
+        // Process all token requests using private serial queue to avoid issues with race conditions
+        // when multiple credentials / login requests can lead auth manager in an unpredictable state
+        self.serialQueue.async(execute: {
+            let semaphore = DispatchSemaphore(value: 0)
+            if self.state != .plainToken {
+                self.logoutUser()
             }
-            if let anonymousCartSignInMode = anonymousCartSignInMode {
-                params["anonymousCartSignInMode"] = anonymousCartSignInMode.rawValue
-            }
-            if let anonymousId = anonymousId {
-                params["anonymousId"] = anonymousId
-            }
-            Alamofire.request(loginUrl, method: .post, parameters: params, encoding: URLEncoding.queryString, headers: authHeaders)
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                self.state = .customerToken
-                self.handleAuthResponse(response, completionHandler: completionHandler)
+            self.processLogin(username: username, password: password, completionHandler: { token, error in
+                completionHandler(error)
+                semaphore.signal()
             })
+            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        })
+    }
+
+    private func processLogin(username: String, password: String, completionHandler: @escaping (String?, Error?) -> Void) {
+        if let loginUrl = loginUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
+            Alamofire.request(loginUrl, method: .post,
+                            parameters: ["grant_type": "password", "scope": scope, "username": username, "password": password],
+                            encoding: URLEncoding.queryString, headers: authHeaders)
+                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                        self.state = .customerToken
+                        self.handleAuthResponse(response, completionHandler: completionHandler)
+                    })
         }
     }
 

@@ -232,5 +232,87 @@ class AuthManagerTests: XCTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-    
+
+    func testMigrateAnonymousCartOnLogin() {
+        setupTestConfiguration()
+
+        let cartMigrationExpectation = expectation(description: "cart migration expectation")
+
+        let authManager = AuthManager.sharedInstance
+
+        var cartDraft = CartDraft()
+        cartDraft.currency = "EUR"
+
+        Cart.create(cartDraft, result: { result in
+            if let oldCart = result.model, oldCart.cartState == .active && result.isSuccess {
+                let username = "swift.sdk.test.user8@commercetools.com"
+                let password = "password"
+
+                authManager.login(username: username, password: password, activeCartSignInMode: .mergeWithExistingCustomerCart,
+                        completionHandler: { error in
+                    if error == nil {
+                        authManager.token { token, error in
+                            if authManager.state == .customerToken {
+                                Cart.active(result: { result in
+                                    if let migratedCart = result.model, migratedCart.id == oldCart.id && result.isSuccess {
+                                        Cart.delete(migratedCart.id!, version: migratedCart.version!, result: { result in
+                                            cartMigrationExpectation.fulfill()
+                                        })
+                                    }
+                                })
+                            }
+                        }
+                    }
+                })
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testMigrateAnonymousCartOnSignUp() {
+        setupTestConfiguration()
+
+        let username = "new.swift.sdk.test.user@commercetools.com"
+
+        var customerDraft = CustomerDraft()
+        customerDraft.email = username
+        customerDraft.password = "password"
+
+        let cartMigrationExpectation = expectation(description: "cart migration expectation")
+
+        let authManager = AuthManager.sharedInstance
+
+        var cartDraft = CartDraft()
+        cartDraft.currency = "EUR"
+
+        Cart.create(cartDraft, result: { result in
+            if let oldCart = result.model, oldCart.cartState == .active && result.isSuccess {
+
+                Customer.signup(customerDraft, result: { result in
+                    if let customerVersion = result.model?.customer?.version, result.isSuccess {
+                        authManager.login(username: username, password: "password", completionHandler: { error in
+                            if error == nil {
+                                authManager.token { token, error in
+                                    if authManager.state == .customerToken {
+                                        Cart.active(result: { result in
+                                            if let migratedCart = result.model, migratedCart.id == oldCart.id && result.isSuccess {
+                                                Customer.delete(version: customerVersion, result: { result in
+                                                    if result.isSuccess {
+                                                        cartMigrationExpectation.fulfill()
+                                                    }
+                                                })
+                                            }
+                                        })
+                                    }
+                                }
+                            }
+                        })
+                    }
+                })
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
 }

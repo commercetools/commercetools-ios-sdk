@@ -102,12 +102,13 @@ class CustomerTests: XCTestCase {
             if let customer = result.model?.customer, let version = customer.version, customer.email == username, result.isSuccess {
                 createProfileExpectation.fulfill()
 
-                AuthManager.sharedInstance.login(username: username, password: "password", completionHandler: { _ in})
-                Customer.delete(version: version, result: { result in
-                    if let deletedCustomer = result.model, deletedCustomer.email == username, result.isSuccess {
-                        deleteProfileExpectation.fulfill()
-                    }
-                })
+                AuthManager.sharedInstance.login(username: username, password: "password") { _ in
+                    Customer.delete(version: version, result: { result in
+                        if let deletedCustomer = result.model, deletedCustomer.email == username, result.isSuccess {
+                            deleteProfileExpectation.fulfill()
+                        }
+                    })
+                }
             }
         })
 

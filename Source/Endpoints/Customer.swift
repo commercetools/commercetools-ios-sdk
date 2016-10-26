@@ -27,6 +27,29 @@ open class Customer: Endpoint, Mappable {
     }
 
     /**
+        Performs login operation in order to migrate carts and orders for anonymous user, when the login credentials
+        have been supplied.
+
+        - parameter username:               The user's username.
+        - parameter password:               The user's password.
+        - parameter activeCartSignInMode:   Optional sign in mode, specifying whether the cart line items should be merged.
+        - parameter completionHandler:      The code to be executed once the token fetching completes.
+    */
+    open static func login(username: String, password: String, activeCartSignInMode: AnonymousCartSignInMode?,
+                           result: @escaping (Result<CustomerSignInResult>) -> Void) {
+        var userDetails = ["email": username, "password": password]
+        if let activeCartSignInMode = activeCartSignInMode {
+            userDetails["activeCartSignInMode"] = activeCartSignInMode.rawValue
+        }
+        requestWithTokenAndPath(result, { token, path in
+            Alamofire.request("\(path)login", method: .post, parameters: userDetails, encoding: JSONEncoding.default, headers: self.headers(token))
+                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                        handleResponse(response, result: result)
+                    })
+        })
+    }
+
+    /**
         Creates new customer with specified profile.
 
         - parameter profile:                  Draft of the customer profile to be created.
