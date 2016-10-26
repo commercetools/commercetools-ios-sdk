@@ -40,10 +40,11 @@ public var authState: AuthManager.TokenState {
 
     - parameter username:           The user's username.
     - parameter password:           The user's password.
+    - parameter activeCartSignInMode:   Optional sign in mode, specifying whether the cart line items should be merged.
     - parameter completionHandler:  The code to be executed once the token fetching completes.
 */
-public func login(username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
-    AuthManager.sharedInstance.login(username: username, password: password, completionHandler: completionHandler)
+public func login(username: String, password: String, activeCartSignInMode: AnonymousCartSignInMode? = nil, completionHandler: @escaping (Error?) -> Void) {
+    AuthManager.sharedInstance.login(username: username, password: password, activeCartSignInMode: activeCartSignInMode, completionHandler: completionHandler)
 }
 
 /**

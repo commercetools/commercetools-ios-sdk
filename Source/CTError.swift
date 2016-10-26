@@ -20,10 +20,10 @@ public enum CTError: Error {
     public struct FailureReason {
 
         /// The error message returned by the API.
-        let message: String?
+        public let message: String?
 
         /// The detailed description when returned as a value of the `detailedErrorMessage` response field.
-        let details: String?
+        public let details: String?
     }
     
     case configurationValidationFailed
