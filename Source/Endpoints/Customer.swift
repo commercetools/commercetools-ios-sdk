@@ -35,8 +35,8 @@ open class Customer: Endpoint, Mappable {
         - parameter activeCartSignInMode:   Optional sign in mode, specifying whether the cart line items should be merged.
         - parameter completionHandler:      The code to be executed once the token fetching completes.
     */
-    open static func login(username: String, password: String, activeCartSignInMode: AnonymousCartSignInMode?,
-                           result: @escaping (Result<CustomerSignInResult>) -> Void) {
+    static func login(username: String, password: String, activeCartSignInMode: AnonymousCartSignInMode?,
+                      result: @escaping (Result<CustomerSignInResult>) -> Void) {
         var userDetails = ["email": username, "password": password]
         if let activeCartSignInMode = activeCartSignInMode {
             userDetails["activeCartSignInMode"] = activeCartSignInMode.rawValue
@@ -52,20 +52,10 @@ open class Customer: Endpoint, Mappable {
     /**
         Creates new customer with specified profile.
 
-        - parameter profile:                  Draft of the customer profile to be created.
-        - parameter result:                   The code to be executed after processing the response.
-    */
-    open static func signup(_ profile: CustomerDraft, result: @escaping (Result<CustomerSignInResult>) -> Void) {
-        signup(Mapper<CustomerDraft>().toJSON(profile), result: result)
-    }
-
-    /**
-        Creates new customer with specified profile.
-
         - parameter profile:                  Dictionary representation of the draft customer profile to be created.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func signup(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
+    open static func signUp(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
         requestWithTokenAndPath(result, { token, path in
             Alamofire.request("\(path)signup", method: .post, parameters: profile, encoding: JSONEncoding.default, headers: self.headers(token))
                     .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
@@ -123,7 +113,7 @@ open class Customer: Endpoint, Mappable {
                               "newPassword": newPassword, "version": version], encoding: JSONEncoding.default, result: { changePasswordResult in
 
             if let response = changePasswordResult.json, let email = response["email"] as? String, changePasswordResult.isSuccess {
-                AuthManager.sharedInstance.login(username: email, password: newPassword, completionHandler: { error in
+                AuthManager.sharedInstance.loginCustomer(username: email, password: newPassword, completionHandler: { error in
                     if let error = error as? CTError {
                         Log.error("Could not login automatically after password change "
                                 + (error.errorDescription ?? ""))

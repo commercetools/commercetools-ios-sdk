@@ -134,29 +134,31 @@ open class AuthManager {
         In case this method is called before previously logging user out, it will automatically logout (i.e remove
         previously stored tokens).
 
-        - parameter username:               The user's username.
-        - parameter password:               The user's password.
-        - parameter activeCartSignInMode:   Optional sign in mode, specifying whether the cart line items should be merged.
-        - parameter completionHandler:      The code to be executed once the token fetching completes.
+        - parameter username:           The user's username.
+        - parameter password:           The user's password.
+        - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    open func login(username: String, password: String, activeCartSignInMode: AnonymousCartSignInMode? = nil,
-                    completionHandler: @escaping (Error?) -> Void) {
-        // If the user is logging after an anonymous session, `/me/login` endpoint is triggered before obtaining
-        // access and refresh tokens, so that carts and orders can be migrated
-        if state == .anonymousToken {
-            Customer.login(username: username, password: password, activeCartSignInMode: activeCartSignInMode) { _ in
-                self.queueLogin(username: username, password: password, completionHandler: completionHandler)
+    open func loginCustomer(username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
+        // Process all token requests using private serial queue to avoid issues with race conditions
+        // when multiple credentials / login requests can lead auth manager in an unpredictable state
+        serialQueue.async(execute: {
+            let semaphore = DispatchSemaphore(value: 0)
+            if self.state != .plainToken {
+                self.logoutCustomer()
             }
-        } else {
-            queueLogin(username: username, password: password, completionHandler: completionHandler)
-        }
+            self.processLogin(username: username, password: password, completionHandler: { token, error in
+                completionHandler(error)
+                semaphore.signal()
+            })
+            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        })
     }
 
     /**
         This method will clear all tokens both from memory and persistent storage.
         Most common use case for this method is user logout.
     */
-    open func logoutUser() {
+    open func logoutCustomer() {
         clearAllTokens()
 
         Log.debug("Getting new anonymous access token after user logout")
@@ -226,7 +228,7 @@ open class AuthManager {
 
         if (state == .anonymousToken && !usingAnonymousSession) ||
                 (state == .plainToken && usingAnonymousSession) {
-            logoutUser()
+            logoutCustomer()
         }
     }
 
@@ -254,22 +256,6 @@ open class AuthManager {
             Log.error("Cannot obtain access token without valid configuration present.")
             completionHandler(nil, CTError.configurationValidationFailed)
         }
-    }
-
-    private func queueLogin(username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
-        // Process all token requests using private serial queue to avoid issues with race conditions
-        // when multiple credentials / login requests can lead auth manager in an unpredictable state
-        self.serialQueue.async(execute: {
-            let semaphore = DispatchSemaphore(value: 0)
-            if self.state != .plainToken {
-                self.logoutUser()
-            }
-            self.processLogin(username: username, password: password, completionHandler: { token, error in
-                completionHandler(error)
-                semaphore.signal()
-            })
-            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        })
     }
 
     private func processLogin(username: String, password: String, completionHandler: @escaping (String?, Error?) -> Void) {
@@ -346,7 +332,7 @@ open class AuthManager {
                         let statusCode = response.response?.statusCode, statusCode > 299 {
             // In case we got an error while using refresh token, we want to clear token storage - there's no way
             // to recover from this
-            logoutUser()
+            logoutCustomer()
             completionHandler(nil, CTError.accessTokenRetrievalFailed(reason: CTError.FailureReason(message: failureReason, details: responseDict["error_description"] as? String)))
 
         } else {
