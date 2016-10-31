@@ -96,8 +96,8 @@ If at some point you wish to login the user, that can be achieved using `loginUs
 let username = "swift.sdk.test.user@commercetools.com"
 let password = "password"
 
-Commercetools.loginUser(username, password: password, completionHandler: { error in
-    if let error = error as? CTError, case .accessTokenRetrievalFailed(let reason) = error {
+Commercetools.loginCustomer(username, password: password, completionHandler: { result in
+    if let error = result.errors?.first as? CTError, case .accessTokenRetrievalFailed(let reason) = error {
         // Handle error, and possibly get some more information from reason.message
     }
 })
@@ -106,7 +106,7 @@ Commercetools.loginUser(username, password: password, completionHandler: { error
 Similarly, after logging out, all further interactions continue to use new anonymous user token.
 
 ```swift
-Commercetools.logoutUser()
+Commercetools.logoutCustomer()
 ```
 
 Access and refresh tokens are being preserved across app launches. In order to inspect whether it's currently handling authenticated or anonymous user, `authState` property should be used:
@@ -118,13 +118,14 @@ if Commercetools.authState == .plainToken {
 ```
 In order for your app to support anonymous session, you should set the `anonymousSession` bool property in your configuration `.plist` file to `true`. Additionally, it is possible to override this setting, and also provide optional custom `anonymous_id` (for metrics and tracking purposes) by invoking:
 ```swift
-if Commercetools.obtainAnonymousToken(usingSession: true, anonymousId: "some-custom-id", completionHandler: { error in
-     if error == nil {
+Commercetools.obtainAnonymousToken(usingSession: true, anonymousId: "some-custom-id", completionHandler: { error in
+    if error == nil {
         // It is possible for token retrieval to fail, e.g custom token ID has already been taken,
         // in which case reason.message from the returned CTError instance is set to the anonymousId is already in use.
-     }
- })
+    }
+})
 ```
+When an anonymous sessions ends with a sign up or a login, carts and orders are migrated to the customer, and `CustomerSignInResult` is returned, providing access to both customer profile, and the currently active cart. For the login operation, you can define how to migrate line items from the currently active cart, by explicitly specifying one of two `AnonymousCartSignInMode` values: `.mergeWithExistingCustomerCart` or `.useAsNewActiveCustomerCart`. 
 
 ## Consuming Commercetools Endpoints
 
