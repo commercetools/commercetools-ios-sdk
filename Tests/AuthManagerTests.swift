@@ -32,7 +32,7 @@ class AuthManagerTests: XCTestCase {
         var oldToken: String?
         authManager.token { token, error in oldToken = token }
 
-        authManager.loginUser(username, password: password, completionHandler: { error in
+        authManager.loginCustomer(username: username, password: password, completionHandler: { error in
             if error == nil {
                 loginExpectation.fulfill()
             }
@@ -57,13 +57,13 @@ class AuthManagerTests: XCTestCase {
         let password = "password"
         let authManager = AuthManager.sharedInstance
 
-        authManager.loginUser(username, password: password, completionHandler: { error in
+        authManager.loginCustomer(username: username, password: password, completionHandler: { error in
             if error == nil {
                 // Get the access token after login
                 authManager.token { oldToken, error in
                     if let oldToken = oldToken, authManager.state == .customerToken {
                         // Then logout user
-                        authManager.logoutUser()
+                        authManager.logoutCustomer()
                         // Get the access token after logout
                         authManager.token { newToken, error in
                             if let newToken = newToken, newToken != oldToken && authManager.state == .anonymousToken {
@@ -91,7 +91,7 @@ class AuthManagerTests: XCTestCase {
         var oldToken: String?
         authManager.token { token, error in oldToken = token }
 
-        authManager.loginUser(username, password: password, completionHandler: { error in
+        authManager.loginCustomer(username: username, password: password, completionHandler: { error in
             if let error = error as? CTError, case .accessTokenRetrievalFailed(let reason) = error, reason.message == "invalid_customer_account_credentials" &&
                     reason.details == "Customer account with the given credentials not found." {
                 loginExpectation.fulfill()
@@ -136,7 +136,7 @@ class AuthManagerTests: XCTestCase {
         let username = "swift.sdk.test.user@commercetools.com"
         let password = "password"
 
-        authManager.loginUser(username, password: password, completionHandler: { error in
+        authManager.loginCustomer(username: username, password: password, completionHandler: { error in
             if error == nil {
 
                 var oldToken: String?
@@ -232,5 +232,85 @@ class AuthManagerTests: XCTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-    
+
+    func testMigrateAnonymousCartOnLogin() {
+        setupTestConfiguration()
+
+        let cartMigrationExpectation = expectation(description: "cart migration expectation")
+
+        let authManager = AuthManager.sharedInstance
+
+        var cartDraft = CartDraft()
+        cartDraft.currency = "EUR"
+
+        Cart.create(cartDraft, result: { result in
+            if let oldCart = result.model, oldCart.cartState == .active && result.isSuccess {
+                let username = "swift.sdk.test.user8@commercetools.com"
+                let password = "password"
+
+                Commercetools.loginCustomer(username: username, password: password,
+                        activeCartSignInMode: .mergeWithExistingCustomerCart, result: { result in
+                    if result.isSuccess {
+                        authManager.token { token, error in
+                            if authManager.state == .customerToken {
+                                Cart.active(result: { result in
+                                    if let migratedCart = result.model, migratedCart.id == oldCart.id && result.isSuccess {
+                                        Cart.delete(migratedCart.id!, version: migratedCart.version!, result: { result in
+                                            cartMigrationExpectation.fulfill()
+                                        })
+                                    }
+                                })
+                            }
+                        }
+                    }
+                })
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testMigrateAnonymousCartOnSignUp() {
+        setupTestConfiguration()
+
+        let username = "new.swift.sdk.test.user@commercetools.com"
+
+        var customerDraft = CustomerDraft()
+        customerDraft.email = username
+        customerDraft.password = "password"
+
+        let cartMigrationExpectation = expectation(description: "cart migration expectation")
+
+        let authManager = AuthManager.sharedInstance
+
+        var cartDraft = CartDraft()
+        cartDraft.currency = "EUR"
+
+        Cart.create(cartDraft, result: { result in
+            if let oldCart = result.model, oldCart.cartState == .active && result.isSuccess {
+
+                Commercetools.signUpCustomer(customerDraft, result: { result in
+                    if let customerVersion = result.model?.customer?.version, result.isSuccess {
+                        if result.isSuccess {
+                            authManager.token { token, error in
+                                if authManager.state == .customerToken {
+                                    Cart.active(result: { result in
+                                        if let migratedCart = result.model, migratedCart.id == oldCart.id && result.isSuccess {
+                                            Customer.delete(version: customerVersion, result: { result in
+                                                if result.isSuccess {
+                                                    cartMigrationExpectation.fulfill()
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+        })
+
+        waitForExpectations(timeout: 1000, handler: nil)
+    }
 }

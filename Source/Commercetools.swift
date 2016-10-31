@@ -2,7 +2,7 @@
 // Copyright (c) 2016 Commercetools. All rights reserved.
 //
 
-import Foundation
+import ObjectMapper
 
 // MARK: - Configuration
 
@@ -33,25 +33,77 @@ public var authState: AuthManager.TokenState {
 }
 
 /**
-    This method should be used for user login. After successful login the new auth token is used for all
+    This method should be used for customer login. After successful login the new auth token is used for all
     further requests with Commercetools services.
-    In case this method is called before previously logging user out, it will automatically logout (i.e remove
+    In case this method is called before previously logging customer out, it will automatically logout (i.e remove
     previously stored tokens).
 
-    - parameter username:           The user's username.
-    - parameter password:           The user's password.
-    - parameter completionHandler:  The code to be executed once the token fetching completes.
+    - parameter username:               The user's username.
+    - parameter password:               The user's password.
+    - parameter activeCartSignInMode:   Optional sign in mode, specifying whether the cart line items should be merged.
+    - parameter completionHandler:      The code to be executed once the token fetching completes.
 */
-public func loginUser(_ username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
-    AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: completionHandler)
+public func loginCustomer(username: String, password: String, activeCartSignInMode: AnonymousCartSignInMode? = nil,
+                          result: @escaping (Result<CustomerSignInResult>) -> Void) {
+    if authState == .customerToken {
+        logoutCustomer()
+    }
+
+    // If the user is logging after an anonymous session, `/me/login` endpoint is triggered before obtaining
+    // access and refresh tokens, so that carts and orders can be migrated
+    Customer.login(username: username, password: password, activeCartSignInMode: activeCartSignInMode) { loginResult in
+        if loginResult.isFailure {
+            result(loginResult)
+        } else {
+            AuthManager.sharedInstance.loginCustomer(username: username, password: password) { error in
+                if let error = error {
+                    result(.failure(nil, [error]))
+                } else {
+                    result(loginResult)
+                }
+            }
+        }
+    }
+}
+
+/**
+    Creates new customer with specified profile.
+
+    - parameter profile:                  Draft of the customer profile to be created.
+    - parameter result:                   The code to be executed after processing the response.
+*/
+public func signUpCustomer(_ profile: CustomerDraft, result: @escaping (Result<CustomerSignInResult>) -> Void) {
+    signUpCustomer(Mapper<CustomerDraft>().toJSON(profile), result: result)
+}
+
+/**
+    Creates new customer with specified profile.
+
+    - parameter profile:                  Dictionary representation of the draft customer profile to be created.
+    - parameter result:                   The code to be executed after processing the response.
+*/
+public func signUpCustomer(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
+    Customer.signUp(profile, result: { signUpResult in
+        if signUpResult.isFailure {
+            result(signUpResult)
+        } else if let username = signUpResult.model?.customer?.email, let password = profile["password"] as? String {
+            AuthManager.sharedInstance.loginCustomer(username: username, password: password) { error in
+                if let error = error {
+                    result(.failure(nil, [error]))
+                } else {
+                    result(signUpResult)
+                }
+            }
+        }
+    })
 }
 
 /**
     This method will clear all tokens both from memory and persistent storage.
-    Most common use case for this method is user logout.
+    Most common use case for this method is customer logout.
 */
-public func logoutUser() {
-    AuthManager.sharedInstance.logoutUser()
+public func logoutCustomer() {
+    AuthManager.sharedInstance.logoutCustomer()
 }
 
 /**

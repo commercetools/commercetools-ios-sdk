@@ -96,7 +96,6 @@ open class AuthManager {
     private var loginUrl: String? {
         if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, let projectKey = config.projectKey, config.validate() {
             return "\(baseAuthUrl)oauth/\(projectKey)/customers/token"
-
         }
         return nil
     }
@@ -139,15 +138,15 @@ open class AuthManager {
         - parameter password:           The user's password.
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    open func loginUser(_ username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
+    open func loginCustomer(username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
         serialQueue.async(execute: {
             let semaphore = DispatchSemaphore(value: 0)
             if self.state != .plainToken {
-                self.logoutUser()
+                self.logoutCustomer()
             }
-            self.processLoginUser(username, password: password, completionHandler: { token, error in
+            self.processLogin(username: username, password: password, completionHandler: { token, error in
                 completionHandler(error)
                 semaphore.signal()
             })
@@ -159,7 +158,7 @@ open class AuthManager {
         This method will clear all tokens both from memory and persistent storage.
         Most common use case for this method is user logout.
     */
-    open func logoutUser() {
+    open func logoutCustomer() {
         clearAllTokens()
 
         Log.debug("Getting new anonymous access token after user logout")
@@ -229,7 +228,7 @@ open class AuthManager {
 
         if (state == .anonymousToken && !usingAnonymousSession) ||
                 (state == .plainToken && usingAnonymousSession) {
-            logoutUser()
+            logoutCustomer()
         }
     }
 
@@ -259,13 +258,15 @@ open class AuthManager {
         }
     }
 
-    private func processLoginUser(_ username: String, password: String, completionHandler: @escaping (String?, Error?) -> Void) {
+    private func processLogin(username: String, password: String, completionHandler: @escaping (String?, Error?) -> Void) {
         if let loginUrl = loginUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
-            Alamofire.request(loginUrl, method: .post, parameters: ["grant_type": "password", "scope": scope, "username": username, "password": password], encoding: URLEncoding.queryString, headers: authHeaders)
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                self.state = .customerToken
-                self.handleAuthResponse(response, completionHandler: completionHandler)
-            })
+            Alamofire.request(loginUrl, method: .post,
+                            parameters: ["grant_type": "password", "scope": scope, "username": username, "password": password],
+                            encoding: URLEncoding.queryString, headers: authHeaders)
+                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                        self.state = .customerToken
+                        self.handleAuthResponse(response, completionHandler: completionHandler)
+                    })
         }
     }
 
@@ -331,7 +332,7 @@ open class AuthManager {
                         let statusCode = response.response?.statusCode, statusCode > 299 {
             // In case we got an error while using refresh token, we want to clear token storage - there's no way
             // to recover from this
-            logoutUser()
+            logoutCustomer()
             completionHandler(nil, CTError.accessTokenRetrievalFailed(reason: CTError.FailureReason(message: failureReason, details: responseDict["error_description"] as? String)))
 
         } else {

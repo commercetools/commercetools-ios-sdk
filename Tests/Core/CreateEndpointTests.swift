@@ -31,7 +31,7 @@ class CreateEndpointTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         TestCart.create(["currency": "EUR"], result: { result in
             if let response = result.json, let cartState = response["cartState"] as? String, let version = response["version"] as? Int,
@@ -50,7 +50,7 @@ class CreateEndpointTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        AuthManager.sharedInstance.loginUser(username, password: password, completionHandler: {_ in})
+        AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         TestCart.create(["currency": "BAD"], result: { result in
             if let error = result.errors?.first as? CTError, result.statusCode == 400, case .invalidJsonInputError(let reason) = error,
