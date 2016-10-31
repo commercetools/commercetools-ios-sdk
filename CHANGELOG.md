@@ -2,13 +2,24 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
-- `0.4.x` Releases - [0.4.0](#040)
+- `0.4.x` Releases - [0.4.0](#040) | [0.4.1](#041)
 - `0.3.x` Releases - [0.3.0](#030)
 - `0.2.x` Releases - [0.2.0](#020)
 - `0.1.x` Releases - [0.1.0](#010)
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.4.1](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.4.1)
+Released on 2016-10-31.
+
+#### Added
+- Support for carts and orders migration on successful log in or sign up, if using an anonymous session.
+- Centralized customer authorization methods.
+
+#### Removed
+- Direct access to `AuthManager` `login` and `logut` method. From now on, `Commercetools.loginCustomer` and `Commercetools.logoutCustomer` should be used.
+- Direct access to `Customer` `signUp` method. From now on, `Commercetools.signUpCustomer` should be used.
 
 ## [0.4.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.4.0)
 Released on 2016-10-25.

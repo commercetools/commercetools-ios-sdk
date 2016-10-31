@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "Commercetools"
-  s.version      = "0.4.0"
+  s.version      = "0.4.1"
   s.summary      = "The e-commerce iOS SDK from commercetools"
   s.homepage     = "https://github.com/commercetools/commercetools-ios-sdk"
   s.license      = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
@@ -11,6 +11,6 @@ Pod::Spec.new do |s|
   s.source_files = 'Source/**/*.swift'
 
   s.dependency 'Alamofire', '~> 4.0'
-  s.dependency 'ObjectMapper', '~> 2.0'
+  s.dependency 'ObjectMapper', '~> 2.2'
 
 end

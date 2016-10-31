@@ -138,7 +138,7 @@ open class AuthManager {
         - parameter password:           The user's password.
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    open func loginCustomer(username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
+    func loginCustomer(username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
         serialQueue.async(execute: {
@@ -158,7 +158,7 @@ open class AuthManager {
         This method will clear all tokens both from memory and persistent storage.
         Most common use case for this method is user logout.
     */
-    open func logoutCustomer() {
+    func logoutCustomer() {
         clearAllTokens()
 
         Log.debug("Getting new anonymous access token after user logout")

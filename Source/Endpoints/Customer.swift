@@ -55,7 +55,7 @@ open class Customer: Endpoint, Mappable {
         - parameter profile:                  Dictionary representation of the draft customer profile to be created.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func signUp(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
+    static func signUp(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
         requestWithTokenAndPath(result, { token, path in
             Alamofire.request("\(path)signup", method: .post, parameters: profile, encoding: JSONEncoding.default, headers: self.headers(token))
                     .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
