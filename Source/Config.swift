@@ -43,6 +43,9 @@ public class Config {
     /// Configuration parameter determining whether the SDK should obtain anonymous session token or plain token.
     public private(set) var anonymousSession: Bool
 
+    /// Keychain access group name the SDK will use for apps and extensions with enabled keychain sharing.
+    public private(set) var keychainAccessGroupName: String?
+
     /// Emergency contact info which is passed to the platform.
     public private(set) var emergencyContactInfo: String?
 
@@ -122,6 +125,7 @@ public class Config {
         authUrl = config["authUrl"] as? String
         apiUrl = config["apiUrl"] as? String
         anonymousSession = config["anonymousSession"] as? Bool ?? false
+        keychainAccessGroupName = config["keychainAccessGroupName"] as? String
         emergencyContactInfo = config["emergencyContactInfo"] as? String
 
         if let apiUrl = apiUrl, !apiUrl.hasSuffix("/") {
