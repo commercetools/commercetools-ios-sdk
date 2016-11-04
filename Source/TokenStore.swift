@@ -8,14 +8,15 @@ class TokenStore {
 
     // MARK: - Properties
 
-    private let SecMatchLimit: String! = kSecMatchLimit as String
-    private let SecReturnData: String! = kSecReturnData as String
-    private let SecValueData: String! = kSecValueData as String
-    private let SecAttrAccessible: String! = kSecAttrAccessible as String
-    private let SecClass: String! = kSecClass as String
-    private let SecAttrService: String! = kSecAttrService as String
-    private let SecAttrGeneric: String! = kSecAttrGeneric as String
-    private let SecAttrAccount: String! = kSecAttrAccount as String
+    private let secMatchLimit: String! = kSecMatchLimit as String
+    private let secReturnData: String! = kSecReturnData as String
+    private let secValueData: String! = kSecValueData as String
+    private let secAttrAccessible: String! = kSecAttrAccessible as String
+    private let secClass: String! = kSecClass as String
+    private let secAttrService: String! = kSecAttrService as String
+    private let secAttrGeneric: String! = kSecAttrGeneric as String
+    private let secAttrAccount: String! = kSecAttrAccount as String
+    private let secAttrAccessGroup: String! = kSecAttrAccessGroup as String
 
     /// The key used for storing access token.
     private var authAccessTokenKey: String {
@@ -120,10 +121,10 @@ class TokenStore {
         var keychainQuery = keychainQueryForKey(keyName)
 
         // Limit search results to one
-        keychainQuery[SecMatchLimit] = kSecMatchLimitOne
+        keychainQuery[secMatchLimit] = kSecMatchLimitOne
 
         // Specify we want NSData/CFData returned
-        keychainQuery[SecReturnData] = kCFBooleanTrue
+        keychainQuery[secReturnData] = kCFBooleanTrue
 
         var result: AnyObject?
         let status = withUnsafeMutablePointer(to: &result) {
@@ -155,10 +156,10 @@ class TokenStore {
     private func setData(_ value: Data, forKey keyName: String) {
         var keychainQuery = keychainQueryForKey(keyName)
 
-        keychainQuery[SecValueData] = value as AnyObject?
+        keychainQuery[secValueData] = value as AnyObject?
 
         // Protect the keychain entry so it's only available after first device unlocked
-        keychainQuery[SecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
+        keychainQuery[secAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
 
         let status: OSStatus = SecItemAdd(keychainQuery as CFDictionary, nil)
 
@@ -172,7 +173,7 @@ class TokenStore {
     private func updateData(_ value: Data, forKey keyName: String) {
         let keychainQuery = keychainQueryForKey(keyName)
 
-        let status: OSStatus = SecItemUpdate(keychainQuery as CFDictionary, [SecValueData: value] as CFDictionary)
+        let status: OSStatus = SecItemUpdate(keychainQuery as CFDictionary, [secValueData: value] as CFDictionary)
 
         if status != errSecSuccess {
             Log.error("Error while updating '\(keyName)' keychain entry.")
@@ -181,16 +182,21 @@ class TokenStore {
 
     private func keychainQueryForKey(_ key: String) -> [String: Any] {
         // Setup dictionary to access keychain and specify we are using a generic password (rather than a certificate, internet password, etc)
-        var keychainQueryDictionary: [String: Any] = [SecClass: kSecClassGenericPassword]
+        var keychainQueryDictionary: [String: Any] = [secClass: kSecClassGenericPassword]
 
         // Uniquely identify this keychain accessor
-        keychainQueryDictionary[SecAttrService] = kKeychainServiceName
+        keychainQueryDictionary[secAttrService] = kKeychainServiceName
 
         // Uniquely identify the account who will be accessing the keychain
         let encodedIdentifier: Data? = key.data(using: String.Encoding.utf8)
 
-        keychainQueryDictionary[SecAttrGeneric] = encodedIdentifier
-        keychainQueryDictionary[SecAttrAccount] = encodedIdentifier
+        keychainQueryDictionary[secAttrGeneric] = encodedIdentifier
+        keychainQueryDictionary[secAttrAccount] = encodedIdentifier
+
+        // For apps and extensions using keychain sharing, set the access group name defined in the config plist.
+        if let accessGroupName = Config.currentConfig?.keychainAccessGroupName {
+            keychainQueryDictionary[secAttrAccessGroup] = accessGroupName
+        }
 
         return keychainQueryDictionary
     }

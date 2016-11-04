@@ -57,6 +57,8 @@ The Commercetools SDK uses a `.plist` configuration file named `CommercetoolsCon
 	<string>https://api.sphere.io</string>
 	<key>anonymousSession</key>
     <true/>
+    <key>keychainAccessGroupName</key>
+    <string>AB123CDEF.yourKeychainGroup</string>
     <key>emergencyContactInfo</key>
     <string>you@yourdomain.com</string>
 </dict>
@@ -125,7 +127,10 @@ Commercetools.obtainAnonymousToken(usingSession: true, anonymousId: "some-custom
     }
 })
 ```
-When an anonymous sessions ends with a sign up or a login, carts and orders are migrated to the customer, and `CustomerSignInResult` is returned, providing access to both customer profile, and the currently active cart. For the login operation, you can define how to migrate line items from the currently active cart, by explicitly specifying one of two `AnonymousCartSignInMode` values: `.mergeWithExistingCustomerCart` or `.useAsNewActiveCustomerCart`. 
+When an anonymous sessions ends with a sign up or a login, carts and orders are migrated to the customer, and `CustomerSignInResult` is returned, providing access to both customer profile, and the currently active cart. For the login operation, you can define how to migrate line items from the currently active cart, by explicitly specifying one of two `AnonymousCartSignInMode` values: `.mergeWithExistingCustomerCart` or `.useAsNewActiveCustomerCart`.
+
+If your app has extensions, and you want to use Commercetools SDK in those extensions, we recommend enabling keychain sharing. By allowing keychain sharing, and setting the appropriate access group name in the configuration `.plist`, the SDK will save all tokens in the shared keychain. Be sure to include _App ID Prefix / Team ID_ in the access group name.
+As a result, you can use all endpoints with the same authorization state and tokens in both your app and any extension. The same goes for multiple apps from your development team using keychain sharing. 
 
 ## Consuming Commercetools Endpoints
 
