@@ -117,7 +117,7 @@ open class AuthManager {
     }
 
     /// The serial queue used for processing token requests.
-    private let serialQueue = DispatchQueue(label: "com.commercetools.authQueue");
+    private let serialQueue = DispatchQueue(label: "com.commercetools.authQueue")
 
     // MARK: - Lifecycle
 

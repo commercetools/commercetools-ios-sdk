@@ -8,7 +8,7 @@ import ObjectMapper
 /**
     Provides complete set of interactions for querying, retrieving and creating an order.
 */
-open class ProductProjection: QueryEndpoint, ByIdEndpoint, Mappable {
+open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappable {
     
     public typealias ResponseType = ProductProjection
 

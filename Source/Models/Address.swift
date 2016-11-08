@@ -31,6 +31,7 @@ public struct Address: Mappable {
     public var email: String?
     public var fax: String?
     public var additionalAddressInfo: String?
+    public var externalId: String?
 
     public init() {}
     public init?(map: Map) {}
@@ -61,6 +62,7 @@ public struct Address: Mappable {
         email                   <- map["email"]
         fax                     <- map["fax"]
         additionalAddressInfo   <- map["additionalAddressInfo"]
+        externalId              <- map["externalId"]
     }
 
 }
