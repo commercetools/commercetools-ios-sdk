@@ -241,4 +241,18 @@ class ProductProjectionTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    func testByKeyEndpoint() {
+
+        let byKeyExpectation = expectation(description: "by key expectation")
+
+        ProductProjection.byKey("missing") { result in
+            if let error = result.errors?.first as? CTError, case .resourceNotFoundError(let reason) = error,
+                    reason.message == "The Resource with key 'missing' was not found." {
+                byKeyExpectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
 }
