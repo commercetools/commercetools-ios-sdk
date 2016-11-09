@@ -2,13 +2,21 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
-- `0.4.x` Releases - [0.4.0](#040) | [0.4.1](#041)
+- `0.4.x` Releases - [0.4.0](#040) | [0.4.1](#041) | [0.4.2](#042)
 - `0.3.x` Releases - [0.3.0](#030)
 - `0.2.x` Releases - [0.2.0](#020)
 - `0.1.x` Releases - [0.1.0](#010)
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.4.2](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.4.2)
+Released on 2016-11-09.
+
+#### Added
+- Support for keychain sharing configuration when using the SDK for multiple apps, or apps and extension(s).
+- `externalId` to the Address struct.
+- `ProductProjection` endpoint now conforms to `ByKeyEndpoint` protocol.
 
 ## [0.4.1](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.4.1)
 Released on 2016-10-31.
