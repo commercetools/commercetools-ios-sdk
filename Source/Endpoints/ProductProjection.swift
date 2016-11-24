@@ -32,6 +32,8 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
         - parameter text:                     Localized text to analyze and search for.
         - parameter fuzzy:                    An optional parameter determining whether to apply fuzzy search on
                                               the text to analyze.
+        - parameter fuzzyLevel:               An optional `Int`, which if used, explicitly sets the desired
+                                              fuzzy level, if `fuzzy` is enabled.
         - parameter filter:                   An optional filter to be applied to the search results
                                               (after facets have been calculated).
         - parameter filterQuery:              An optional filter to be applied to the search results
@@ -39,6 +41,8 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
         - parameter filterFacets:             An optional filter for all facets calculations.
         - parameter facets:                   An optional facets param used for calculating statistical counts
                                               to aid in faceted navigation.
+        - parameter markMatchingVariants:     An optional boolean, specifying whether to mark product variants
+                                              in the search result matching the criteria.
         - parameter priceCurrency:            An optional currency code compliant to ISO 4217.
         - parameter priceCountry:             An optional two-digit country code as per ISO 3166-1 alpha-2.
         - parameter priceCustomerGroup:       An optional price customer group UUID.
@@ -47,19 +51,19 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
     */
     open static func search(staged: Bool? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil,
                             offset: UInt? = nil, lang: Locale = Locale.current, text: String? = nil,
-                            fuzzy: Bool? = nil, filter: String? = nil, filterQuery: String? = nil, filterFacets: String? = nil,
-                            facets: [String]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
-                            priceCustomerGroup: String? = nil, priceChannel: String? = nil,
-                            result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
+                            fuzzy: Bool? = nil, fuzzyLevel: Int? = nil, filter: String? = nil, filterQuery: String? = nil,
+                            filterFacets: String? = nil, facets: [String]? = nil, markMatchingVariants: Bool? = nil,
+                            priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
+                            priceChannel: String? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)search", expansion: expansion)
 
             var parameters = paramsWithStaged(staged, params: queryParameters(predicates: nil, sort: sort,
                     limit: limit, offset: offset))
-            parameters = searchParams(lang: lang, text: text, fuzzy: fuzzy, filter: filter, filterQuery: filterQuery,
-                    filterFacets: filterFacets, facets: facets, priceCurrency: priceCurrency,
-                    priceCountry: priceCountry, priceCustomerGroup: priceCustomerGroup,
+            parameters = searchParams(lang: lang, text: text, fuzzy: fuzzy, fuzzyLevel: fuzzyLevel, filter: filter,
+                    filterQuery: filterQuery, filterFacets: filterFacets, facets: facets, markMatchingVariants: markMatchingVariants,
+                    priceCurrency: priceCurrency, priceCountry: priceCountry, priceCustomerGroup: priceCustomerGroup,
                     priceChannel: priceChannel, params: parameters)
 
             Alamofire.request(fullPath, parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
@@ -223,10 +227,10 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
     }
 
     private static func searchParams(lang: Locale = Locale.current, text: String? = nil, fuzzy: Bool? = nil,
-                                     filter: String? = nil, filterQuery: String? = nil, filterFacets: String? = nil,
-                                     facets: [String]? = nil, priceCurrency: String? = nil, priceCountry: String? = nil,
-                                     priceCustomerGroup: String? = nil, priceChannel: String? = nil,
-                                     params: [String: Any]? = nil) -> [String: Any] {
+                                     fuzzyLevel: Int? = nil, filter: String? = nil, filterQuery: String? = nil,
+                                     filterFacets: String? = nil, facets: [String]? = nil, markMatchingVariants: Bool? = nil,
+                                     priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
+                                     priceChannel: String? = nil, params: [String: Any]? = nil) -> [String: Any] {
         var params = params ?? [String: Any]()
 
         if let text = text {
@@ -235,6 +239,10 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
 
         if let fuzzy = fuzzy {
             params["fuzzy"] = fuzzy ? "true" : "false"
+        }
+
+        if let fuzzyLevel = fuzzyLevel {
+            params["fuzzyLevel"]  = fuzzyLevel
         }
 
         if let filter = filter {
@@ -251,6 +259,10 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
 
         if let facets = facets, facets.count > 0 {
             params["facet"] = facets
+        }
+
+        if let markMatchingVariants = markMatchingVariants {
+            params["markMatchingVariants"] = markMatchingVariants ? "true" : "false"
         }
 
         if let priceCurrency = priceCurrency {

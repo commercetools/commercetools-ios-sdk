@@ -54,10 +54,9 @@ class ProductProjectionTests: XCTestCase {
 
                     let sizeFacets = facets["variants.attributes.commonSize.key"] as? [String: AnyObject],
                     let sizeFacetsTotal = sizeFacets["total"] as? UInt, let sizeTerms = sizeFacets["terms"] as? [[String: AnyObject]],
-                    let xxxlTerm = sizeTerms.first!["term"] as? String, let xxxlCount = sizeTerms.first!["count"] as? UInt
-
-           , result.isSuccess && colorFacetsTotal == 8703 && blueTerm == "blue" && blueCount == 1865
-                    && sizeFacetsTotal == 278 && xxxlTerm == "xxxl" && xxxlCount == 45 {
+                    let xxxlTerm = sizeTerms.first!["term"] as? String, let xxxlCount = sizeTerms.first!["count"] as? UInt, result.isSuccess
+                       && colorFacetsTotal == 8703 && blueTerm == "blue" && blueCount == 1865
+                       && sizeFacetsTotal == 278 && xxxlTerm == "xxxl" && xxxlCount == 45 {
 
                 searchExpectation.fulfill()
             }
@@ -102,6 +101,22 @@ class ProductProjectionTests: XCTestCase {
                         searchExpectation.fulfill()
                     }
                 })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testSearchWithoutMarkingMatchingVariants() {
+
+        let searchExpectation = expectation(description: "search expectation")
+
+        ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: Locale(identifier: "en"),
+                text: "Michael Kors", markMatchingVariants: false, result: { result in
+            if let total = result.model?.total, result.isSuccess
+                    && result.model?.results?.first?.masterVariant?.isMatchingVariant == nil
+                    && total == 103 {
+                searchExpectation.fulfill()
+            }
+        })
 
         waitForExpectations(timeout: 10, handler: nil)
     }
