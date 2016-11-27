@@ -1,12 +1,8 @@
 //
-//  Commercetools.h
-//  Commercetools
-//
-//  Created by Nikola Mladenovic on 4/13/16.
-//  Copyright © 2016 Commercetools. All rights reserved.
+// Copyright (c) 2016 Commercetools. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for CommercetoolsSDK.
 FOUNDATION_EXPORT double CommercetoolsVersionNumber;
