@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "0810"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "21C653411CBE6291008E84B2"
                BuildableName = "Commercetools.framework"
-               BlueprintName = "Commercetools"
+               BlueprintName = "Commercetools iOS"
                ReferencedContainer = "container:Commercetools.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,8 +33,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "21C6534B1CBE6292008E84B2"
-               BuildableName = "CommercetoolsTests.xctest"
-               BlueprintName = "CommercetoolsTests"
+               BuildableName = "Commercetools iOS Tests.xctest"
+               BlueprintName = "Commercetools iOS Tests"
                ReferencedContainer = "container:Commercetools.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -44,7 +44,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "21C653411CBE6291008E84B2"
             BuildableName = "Commercetools.framework"
-            BlueprintName = "Commercetools"
+            BlueprintName = "Commercetools iOS"
             ReferencedContainer = "container:Commercetools.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -66,7 +66,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "21C653411CBE6291008E84B2"
             BuildableName = "Commercetools.framework"
-            BlueprintName = "Commercetools"
+            BlueprintName = "Commercetools iOS"
             ReferencedContainer = "container:Commercetools.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -106,7 +106,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "21C653411CBE6291008E84B2"
             BuildableName = "Commercetools.framework"
-            BlueprintName = "Commercetools"
+            BlueprintName = "Commercetools iOS"
             ReferencedContainer = "container:Commercetools.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

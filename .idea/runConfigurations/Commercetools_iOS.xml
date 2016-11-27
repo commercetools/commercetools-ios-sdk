@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Commercetools iOS" type="AppleRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Commercetools" TARGET_NAME="Commercetools iOS" CONFIG_NAME="Debug" SCHEME_NAME="Commercetools iOS" MAKE_ACTIVE="TRUE">
+    <envs>
+      <env name="PROJECT_KEY" value="$(CT_SDK_TEST_PROJECT_KEY)" />
+      <env name="SCOPE" value="$(CT_SDK_TEST_SCOPE)" />
+      <env name="CLIENT_ID" value="$(CT_SDK_TEST_CLIENT_ID)" />
+      <env name="CLIENT_SECRET" value="$(CT_SDK_TEST_CLIENT_SECRET)" />
+    </envs>
+    <EXTENSION ID="org.jetbrains.appcode.reveal.RevealRunConfigurationExtension">
+      <REVEAL_SETTINGS autoInject="false" autoInstall="true" askToEnableAutoInstall="true" />
+    </EXTENSION>
+    <method />
+  </configuration>
+</component>

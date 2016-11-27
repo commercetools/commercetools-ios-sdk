@@ -14,7 +14,7 @@ xcode_sdk: iphonesimulator10.0
 script:
   - set -o pipefail
   - xcodebuild -showsdks
-  - xcodebuild -workspace Commercetools.xcworkspace -scheme "Commercetools" -destination "platform=iOS Simulator,name=iPhone 6" test | xcpretty -c;
+  - xcodebuild -workspace Commercetools.xcworkspace -scheme "Commercetools iOS" -destination "platform=iOS Simulator,name=iPhone 6" test | xcpretty -c;
 
 deploy:
   provider: script

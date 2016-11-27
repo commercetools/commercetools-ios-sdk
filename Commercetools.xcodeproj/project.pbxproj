@@ -122,14 +122,21 @@
 		2111C3F51CD7831D00B2C082 /* CustomerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2111C3F41CD7831D00B2C082 /* CustomerTests.swift */; };
 		211B59371CC77C7200246522 /* CommercetoolsTestConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 211B59361CC77C7200246522 /* CommercetoolsTestConfig.plist */; };
 		213398191CDB8BB2003248BD /* ProductProjectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213398181CDB8BB2003248BD /* ProductProjectionTests.swift */; };
-		21766DD87D8671A3760DFB32 /* Pods_CommercetoolsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C0889E723DFCA9C32A525D9 /* Pods_CommercetoolsTests.framework */; };
+		214EDC741DEA47A000562991 /* Info-tvOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 214EDC731DEA47A000562991 /* Info-tvOS.plist */; };
+		2152B6421DEA54F00075B584 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C608081CE006EE001A68A7 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2152B6431DEA55030075B584 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C608081CE006EE001A68A7 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2152B6441DEA55060075B584 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C608081CE006EE001A68A7 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		21BB6F341DDEF8900010127A /* GraphQLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21BB6F331DDEF8900010127A /* GraphQLTests.swift */; };
 		21C6080A1CE006EE001A68A7 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C608081CE006EE001A68A7 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		21C6534D1CBE6292008E84B2 /* Commercetools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21C653421CBE6291008E84B2 /* Commercetools.framework */; };
 		21C653521CBE6292008E84B2 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C653511CBE6292008E84B2 /* AuthManagerTests.swift */; };
 		21D462041D23FD0A00CB8C8E /* CartTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D462031D23FD0A00CB8C8E /* CartTests.swift */; };
 		21F26D8F1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F26D8E1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift */; };
-		5282479BE674314D916A0355 /* Pods_Commercetools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A456D0DAC39F1D37C1FEDB0 /* Pods_Commercetools.framework */; };
+		2699468A8EDDC145F9E519BD /* Pods_Commercetools_watchOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D1C0DE43563BABA0F6967 /* Pods_Commercetools_watchOS.framework */; };
+		414995925A8A1BA2A088EC04 /* Pods_Commercetools_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E9FFCA28231E62ECBEFB099 /* Pods_Commercetools_tvOS.framework */; };
+		A135824892735FBAFF37AB92 /* Pods_Commercetools_macOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 987B0CA927D3BBA10894B26C /* Pods_Commercetools_macOS.framework */; };
+		E90B27D6407A99B1135F0DD9 /* Pods_Commercetools_iOS_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AC995D8E85BABF3917400A /* Pods_Commercetools_iOS_Tests.framework */; };
+		FA1A0457616180BF322CFB23 /* Pods_Commercetools_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC433DD748A0A020E371D897 /* Pods_Commercetools_iOS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -143,6 +150,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		17AC995D8E85BABF3917400A /* Pods_Commercetools_iOS_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Commercetools_iOS_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C0889E723DFCA9C32A525D9 /* Pods_CommercetoolsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CommercetoolsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		210BE01056F4E128E522C7E7 /* ShippingRate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShippingRate.swift; sourceTree = "<group>"; };
 		210BE0267A045A944F60C0DB /* ReturnItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReturnItem.swift; sourceTree = "<group>"; };
@@ -260,27 +268,69 @@
 		211B59361CC77C7200246522 /* CommercetoolsTestConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CommercetoolsTestConfig.plist; sourceTree = "<group>"; };
 		211B59391CC782B400246522 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		213398181CDB8BB2003248BD /* ProductProjectionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductProjectionTests.swift; sourceTree = "<group>"; };
+		214EDC331DE9FA8800562991 /* Commercetools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Commercetools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		214EDC401DEA457F00562991 /* Commercetools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Commercetools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		214EDC6B1DEA470300562991 /* Commercetools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Commercetools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		214EDC731DEA47A000562991 /* Info-tvOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-tvOS.plist"; sourceTree = "<group>"; };
 		21BB6F331DDEF8900010127A /* GraphQLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphQLTests.swift; sourceTree = "<group>"; };
 		21C608081CE006EE001A68A7 /* Commercetools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Commercetools.h; sourceTree = "<group>"; };
 		21C608091CE006EE001A68A7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		21C653421CBE6291008E84B2 /* Commercetools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Commercetools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		21C6534C1CBE6292008E84B2 /* CommercetoolsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CommercetoolsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		21C6534C1CBE6292008E84B2 /* Commercetools iOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Commercetools iOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		21C653511CBE6292008E84B2 /* AuthManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManagerTests.swift; sourceTree = "<group>"; };
 		21D462031D23FD0A00CB8C8E /* CartTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CartTests.swift; sourceTree = "<group>"; };
 		21F26D8E1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Configuration.swift"; sourceTree = "<group>"; };
+		256A6E381D558468047FB1AB /* Pods-Commercetools tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools tvOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools tvOS/Pods-Commercetools tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		29502A041BA37E6BD22C3C21 /* Pods-Commercetools.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools.release.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools/Pods-Commercetools.release.xcconfig"; sourceTree = "<group>"; };
+		2D0D1C0DE43563BABA0F6967 /* Pods_Commercetools_watchOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Commercetools_watchOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		431DC1F7E4533642DFDF001D /* Pods-Commercetools iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools iOS/Pods-Commercetools iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		65677678C251AEA76C9A27D0 /* Pods-Commercetools macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools macOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools macOS/Pods-Commercetools macOS.release.xcconfig"; sourceTree = "<group>"; };
+		8DD433A770E449228860D9E9 /* Pods-Commercetools iOS Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools iOS Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools iOS Tests/Pods-Commercetools iOS Tests.release.xcconfig"; sourceTree = "<group>"; };
+		987B0CA927D3BBA10894B26C /* Pods_Commercetools_macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Commercetools_macOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A456D0DAC39F1D37C1FEDB0 /* Pods_Commercetools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Commercetools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C0B9BA2818AD6700B1510E5 /* Pods-CommercetoolsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CommercetoolsTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CommercetoolsTests/Pods-CommercetoolsTests.debug.xcconfig"; sourceTree = "<group>"; };
+		9E9FFCA28231E62ECBEFB099 /* Pods_Commercetools_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Commercetools_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0EDB697995DF8E6B98E3F51 /* Pods-CommercetoolsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CommercetoolsTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CommercetoolsTests/Pods-CommercetoolsTests.release.xcconfig"; sourceTree = "<group>"; };
+		A398C56CE6194700653936D4 /* Pods-Commercetools macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools macOS/Pods-Commercetools macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		B4BC5B13A5FAE631F09B678E /* Pods-Commercetools.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools/Pods-Commercetools.debug.xcconfig"; sourceTree = "<group>"; };
+		D015B16CB3BA970B8934A9F1 /* Pods-Commercetools watchOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools watchOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools watchOS/Pods-Commercetools watchOS.release.xcconfig"; sourceTree = "<group>"; };
+		D9182C6211114C048AB99135 /* Pods-Commercetools tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools tvOS/Pods-Commercetools tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		E5C4C922879FB4DC08C8694B /* Pods-Commercetools watchOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools watchOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools watchOS/Pods-Commercetools watchOS.debug.xcconfig"; sourceTree = "<group>"; };
+		FB95E92A9A10AFB28E211794 /* Pods-Commercetools iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools iOS/Pods-Commercetools iOS.release.xcconfig"; sourceTree = "<group>"; };
+		FC433DD748A0A020E371D897 /* Pods_Commercetools_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Commercetools_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FFE028FDF4C12E2044AA9F75 /* Pods-Commercetools iOS Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools iOS Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools iOS Tests/Pods-Commercetools iOS Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		214EDC2F1DE9FA8800562991 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2699468A8EDDC145F9E519BD /* Pods_Commercetools_watchOS.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		214EDC3C1DEA457F00562991 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				414995925A8A1BA2A088EC04 /* Pods_Commercetools_tvOS.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		214EDC671DEA470300562991 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A135824892735FBAFF37AB92 /* Pods_Commercetools_macOS.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		21C6533E1CBE6291008E84B2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5282479BE674314D916A0355 /* Pods_Commercetools.framework in Frameworks */,
+				FA1A0457616180BF322CFB23 /* Pods_Commercetools_iOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,7 +339,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				21C6534D1CBE6292008E84B2 /* Commercetools.framework in Frameworks */,
-				21766DD87D8671A3760DFB32 /* Pods_CommercetoolsTests.framework in Frameworks */,
+				E90B27D6407A99B1135F0DD9 /* Pods_Commercetools_iOS_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,6 +351,11 @@
 			children = (
 				9A456D0DAC39F1D37C1FEDB0 /* Pods_Commercetools.framework */,
 				1C0889E723DFCA9C32A525D9 /* Pods_CommercetoolsTests.framework */,
+				FC433DD748A0A020E371D897 /* Pods_Commercetools_iOS.framework */,
+				987B0CA927D3BBA10894B26C /* Pods_Commercetools_macOS.framework */,
+				9E9FFCA28231E62ECBEFB099 /* Pods_Commercetools_tvOS.framework */,
+				2D0D1C0DE43563BABA0F6967 /* Pods_Commercetools_watchOS.framework */,
+				17AC995D8E85BABF3917400A /* Pods_Commercetools_iOS_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -454,6 +509,7 @@
 			children = (
 				21C608081CE006EE001A68A7 /* Commercetools.h */,
 				21C608091CE006EE001A68A7 /* Info.plist */,
+				214EDC731DEA47A000562991 /* Info-tvOS.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -473,7 +529,10 @@
 			isa = PBXGroup;
 			children = (
 				21C653421CBE6291008E84B2 /* Commercetools.framework */,
-				21C6534C1CBE6292008E84B2 /* CommercetoolsTests.xctest */,
+				21C6534C1CBE6292008E84B2 /* Commercetools iOS Tests.xctest */,
+				214EDC331DE9FA8800562991 /* Commercetools.framework */,
+				214EDC401DEA457F00562991 /* Commercetools.framework */,
+				214EDC6B1DEA470300562991 /* Commercetools.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -516,6 +575,16 @@
 				29502A041BA37E6BD22C3C21 /* Pods-Commercetools.release.xcconfig */,
 				9C0B9BA2818AD6700B1510E5 /* Pods-CommercetoolsTests.debug.xcconfig */,
 				A0EDB697995DF8E6B98E3F51 /* Pods-CommercetoolsTests.release.xcconfig */,
+				431DC1F7E4533642DFDF001D /* Pods-Commercetools iOS.debug.xcconfig */,
+				FB95E92A9A10AFB28E211794 /* Pods-Commercetools iOS.release.xcconfig */,
+				A398C56CE6194700653936D4 /* Pods-Commercetools macOS.debug.xcconfig */,
+				65677678C251AEA76C9A27D0 /* Pods-Commercetools macOS.release.xcconfig */,
+				256A6E381D558468047FB1AB /* Pods-Commercetools tvOS.debug.xcconfig */,
+				D9182C6211114C048AB99135 /* Pods-Commercetools tvOS.release.xcconfig */,
+				E5C4C922879FB4DC08C8694B /* Pods-Commercetools watchOS.debug.xcconfig */,
+				D015B16CB3BA970B8934A9F1 /* Pods-Commercetools watchOS.release.xcconfig */,
+				FFE028FDF4C12E2044AA9F75 /* Pods-Commercetools iOS Tests.debug.xcconfig */,
+				8DD433A770E449228860D9E9 /* Pods-Commercetools iOS Tests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -523,6 +592,30 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		214EDC301DE9FA8800562991 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2152B6421DEA54F00075B584 /* Commercetools.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		214EDC3D1DEA457F00562991 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2152B6431DEA55030075B584 /* Commercetools.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		214EDC681DEA470300562991 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2152B6441DEA55060075B584 /* Commercetools.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		21C6533F1CBE6291008E84B2 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -534,9 +627,69 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		21C653411CBE6291008E84B2 /* Commercetools */ = {
+		214EDC321DE9FA8800562991 /* Commercetools watchOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 21C653561CBE6292008E84B2 /* Build configuration list for PBXNativeTarget "Commercetools" */;
+			buildConfigurationList = 214EDC3A1DE9FA8800562991 /* Build configuration list for PBXNativeTarget "Commercetools watchOS" */;
+			buildPhases = (
+				EA3016639FDEA57E9772CC6F /* [CP] Check Pods Manifest.lock */,
+				214EDC2E1DE9FA8800562991 /* Sources */,
+				214EDC2F1DE9FA8800562991 /* Frameworks */,
+				214EDC301DE9FA8800562991 /* Headers */,
+				214EDC311DE9FA8800562991 /* Resources */,
+				984AB1B9B613A915FDBDC485 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Commercetools watchOS";
+			productName = "Commercetools watchOS";
+			productReference = 214EDC331DE9FA8800562991 /* Commercetools.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		214EDC3F1DEA457F00562991 /* Commercetools tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 214EDC451DEA457F00562991 /* Build configuration list for PBXNativeTarget "Commercetools tvOS" */;
+			buildPhases = (
+				C1ED8DD605167DDE50798A32 /* [CP] Check Pods Manifest.lock */,
+				214EDC3B1DEA457F00562991 /* Sources */,
+				214EDC3C1DEA457F00562991 /* Frameworks */,
+				214EDC3D1DEA457F00562991 /* Headers */,
+				214EDC3E1DEA457F00562991 /* Resources */,
+				E59E8D80C8D1CC4CE253F2CA /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Commercetools tvOS";
+			productName = "Commercetools tvOS";
+			productReference = 214EDC401DEA457F00562991 /* Commercetools.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		214EDC6A1DEA470300562991 /* Commercetools macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 214EDC701DEA470300562991 /* Build configuration list for PBXNativeTarget "Commercetools macOS" */;
+			buildPhases = (
+				79C765A1C88C41C38B778009 /* [CP] Check Pods Manifest.lock */,
+				214EDC661DEA470300562991 /* Sources */,
+				214EDC671DEA470300562991 /* Frameworks */,
+				214EDC681DEA470300562991 /* Headers */,
+				214EDC691DEA470300562991 /* Resources */,
+				C2358260B80703BD4DBA768F /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Commercetools macOS";
+			productName = "Commercetools macOS";
+			productReference = 214EDC6B1DEA470300562991 /* Commercetools.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		21C653411CBE6291008E84B2 /* Commercetools iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 21C653561CBE6292008E84B2 /* Build configuration list for PBXNativeTarget "Commercetools iOS" */;
 			buildPhases = (
 				91A200CB2B9196DE02C1C916 /* [CP] Check Pods Manifest.lock */,
 				21C6533D1CBE6291008E84B2 /* Sources */,
@@ -549,14 +702,14 @@
 			);
 			dependencies = (
 			);
-			name = Commercetools;
+			name = "Commercetools iOS";
 			productName = Commercetools;
 			productReference = 21C653421CBE6291008E84B2 /* Commercetools.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		21C6534B1CBE6292008E84B2 /* CommercetoolsTests */ = {
+		21C6534B1CBE6292008E84B2 /* Commercetools iOS Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 21C653591CBE6292008E84B2 /* Build configuration list for PBXNativeTarget "CommercetoolsTests" */;
+			buildConfigurationList = 21C653591CBE6292008E84B2 /* Build configuration list for PBXNativeTarget "Commercetools iOS Tests" */;
 			buildPhases = (
 				3D2B4593A97F4CF73AD13F1A /* [CP] Check Pods Manifest.lock */,
 				21C653481CBE6292008E84B2 /* Sources */,
@@ -570,9 +723,9 @@
 			dependencies = (
 				21C6534F1CBE6292008E84B2 /* PBXTargetDependency */,
 			);
-			name = CommercetoolsTests;
+			name = "Commercetools iOS Tests";
 			productName = CommercetoolsTests;
-			productReference = 21C6534C1CBE6292008E84B2 /* CommercetoolsTests.xctest */;
+			productReference = 21C6534C1CBE6292008E84B2 /* Commercetools iOS Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -581,13 +734,27 @@
 		21C653391CBE6291008E84B2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0800;
+				LastSwiftUpdateCheck = 0810;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = Commercetools;
 				TargetAttributes = {
+					214EDC321DE9FA8800562991 = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+					};
+					214EDC3F1DEA457F00562991 = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+					};
+					214EDC6A1DEA470300562991 = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = H2968B9CHK;
+						ProvisioningStyle = Automatic;
+					};
 					21C653411CBE6291008E84B2 = {
 						CreatedOnToolsVersion = 7.3;
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Automatic;
 					};
 					21C6534B1CBE6292008E84B2 = {
 						CreatedOnToolsVersion = 7.3;
@@ -601,23 +768,49 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 21C653381CBE6291008E84B2;
 			productRefGroup = 21C653431CBE6291008E84B2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				21C653411CBE6291008E84B2 /* Commercetools */,
-				21C6534B1CBE6292008E84B2 /* CommercetoolsTests */,
+				21C653411CBE6291008E84B2 /* Commercetools iOS */,
+				21C6534B1CBE6292008E84B2 /* Commercetools iOS Tests */,
+				214EDC321DE9FA8800562991 /* Commercetools watchOS */,
+				214EDC3F1DEA457F00562991 /* Commercetools tvOS */,
+				214EDC6A1DEA470300562991 /* Commercetools macOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		214EDC311DE9FA8800562991 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		214EDC3E1DEA457F00562991 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		214EDC691DEA470300562991 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		21C653401CBE6291008E84B2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				214EDC741DEA47A000562991 /* Info-tvOS.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -644,7 +837,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Commercetools/Pods-Commercetools-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Commercetools iOS/Pods-Commercetools iOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		2E8EA9486AB94B3360539E76 /* [CP] Copy Pods Resources */ = {
@@ -659,10 +852,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CommercetoolsTests/Pods-CommercetoolsTests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Commercetools iOS Tests/Pods-Commercetools iOS Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		3D2B4593A97F4CF73AD13F1A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		79C765A1C88C41C38B778009 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -692,6 +900,51 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		984AB1B9B613A915FDBDC485 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Commercetools watchOS/Pods-Commercetools watchOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C1ED8DD605167DDE50798A32 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		C2358260B80703BD4DBA768F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Commercetools macOS/Pods-Commercetools macOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		DA00A08FA8DBF904EFFE1C95 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -704,12 +957,63 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CommercetoolsTests/Pods-CommercetoolsTests-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Commercetools iOS Tests/Pods-Commercetools iOS Tests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E59E8D80C8D1CC4CE253F2CA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Commercetools tvOS/Pods-Commercetools tvOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EA3016639FDEA57E9772CC6F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		214EDC2E1DE9FA8800562991 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		214EDC3B1DEA457F00562991 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		214EDC661DEA470300562991 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		21C6533D1CBE6291008E84B2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -847,12 +1151,169 @@
 /* Begin PBXTargetDependency section */
 		21C6534F1CBE6292008E84B2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 21C653411CBE6291008E84B2 /* Commercetools */;
+			target = 21C653411CBE6291008E84B2 /* Commercetools iOS */;
 			targetProxy = 21C6534E1CBE6292008E84B2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		214EDC381DE9FA8800562991 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E5C4C922879FB4DC08C8694B /* Pods-Commercetools watchOS.debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Source/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.SwiftSdk;
+				PRODUCT_NAME = Commercetools;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		214EDC391DE9FA8800562991 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D015B16CB3BA970B8934A9F1 /* Pods-Commercetools watchOS.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Source/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.SwiftSdk;
+				PRODUCT_NAME = Commercetools;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		214EDC461DEA457F00562991 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 256A6E381D558468047FB1AB /* Pods-Commercetools tvOS.debug.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Source/Info-tvOS.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.SwiftSdk;
+				PRODUCT_NAME = Commercetools;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		214EDC471DEA457F00562991 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D9182C6211114C048AB99135 /* Pods-Commercetools tvOS.release.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Source/Info-tvOS.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.SwiftSdk;
+				PRODUCT_NAME = Commercetools;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		214EDC711DEA470300562991 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A398C56CE6194700653936D4 /* Pods-Commercetools macOS.debug.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = H2968B9CHK;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = Source/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.SwiftSdk;
+				PRODUCT_NAME = Commercetools;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		214EDC721DEA470300562991 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 65677678C251AEA76C9A27D0 /* Pods-Commercetools macOS.release.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = H2968B9CHK;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = Source/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.SwiftSdk;
+				PRODUCT_NAME = Commercetools;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
 		21C653541CBE6292008E84B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -893,7 +1354,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -938,7 +1400,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -951,7 +1414,7 @@
 		};
 		21C653571CBE6292008E84B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B4BC5B13A5FAE631F09B678E /* Pods-Commercetools.debug.xcconfig */;
+			baseConfigurationReference = 431DC1F7E4533642DFDF001D /* Pods-Commercetools iOS.debug.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
@@ -960,9 +1423,10 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.sdk.ios.Commercetools;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.SwiftSdk;
+				PRODUCT_NAME = Commercetools;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
 			};
@@ -970,7 +1434,7 @@
 		};
 		21C653581CBE6292008E84B2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 29502A041BA37E6BD22C3C21 /* Pods-Commercetools.release.xcconfig */;
+			baseConfigurationReference = FB95E92A9A10AFB28E211794 /* Pods-Commercetools iOS.release.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
@@ -979,9 +1443,10 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.sdk.ios.Commercetools;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.commercetools.SwiftSdk;
+				PRODUCT_NAME = Commercetools;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
 			};
@@ -989,7 +1454,7 @@
 		};
 		21C6535A1CBE6292008E84B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9C0B9BA2818AD6700B1510E5 /* Pods-CommercetoolsTests.debug.xcconfig */;
+			baseConfigurationReference = FFE028FDF4C12E2044AA9F75 /* Pods-Commercetools iOS Tests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
@@ -1002,7 +1467,7 @@
 		};
 		21C6535B1CBE6292008E84B2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A0EDB697995DF8E6B98E3F51 /* Pods-CommercetoolsTests.release.xcconfig */;
+			baseConfigurationReference = 8DD433A770E449228860D9E9 /* Pods-Commercetools iOS Tests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
@@ -1016,6 +1481,33 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		214EDC3A1DE9FA8800562991 /* Build configuration list for PBXNativeTarget "Commercetools watchOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				214EDC381DE9FA8800562991 /* Debug */,
+				214EDC391DE9FA8800562991 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		214EDC451DEA457F00562991 /* Build configuration list for PBXNativeTarget "Commercetools tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				214EDC461DEA457F00562991 /* Debug */,
+				214EDC471DEA457F00562991 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		214EDC701DEA470300562991 /* Build configuration list for PBXNativeTarget "Commercetools macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				214EDC711DEA470300562991 /* Debug */,
+				214EDC721DEA470300562991 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		21C6533C1CBE6291008E84B2 /* Build configuration list for PBXProject "Commercetools" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1025,7 +1517,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		21C653561CBE6292008E84B2 /* Build configuration list for PBXNativeTarget "Commercetools" */ = {
+		21C653561CBE6292008E84B2 /* Build configuration list for PBXNativeTarget "Commercetools iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				21C653571CBE6292008E84B2 /* Debug */,
@@ -1034,7 +1526,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		21C653591CBE6292008E84B2 /* Build configuration list for PBXNativeTarget "CommercetoolsTests" */ = {
+		21C653591CBE6292008E84B2 /* Build configuration list for PBXNativeTarget "Commercetools iOS Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				21C6535A1CBE6292008E84B2 /* Debug */,
