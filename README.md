@@ -4,9 +4,16 @@
 
 [![][travis img]][travis]
 [![][cocoapods img]][cocoapods]
+[![][platforms img]][platforms]
 [![][license img]][license]
 
 ## Installation
+
+### Requirements
+
+- iOS 8.0+ / macOS 10.10+ / tvOS 9.0+ / watchOS 2.0+
+- Xcode 8.1+
+- Swift 3.0+
 
 ### CocoaPods
 
@@ -25,7 +32,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '9.0'
 use_frameworks!
 
-pod 'Commercetools', '~> 0.4'
+pod 'Commercetools', '~> 0.5'
 ```
 
 Then, run the following command:
@@ -426,8 +433,11 @@ private class Foobar: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoin
 [travis]:https://travis-ci.org/commercetools/commercetools-ios-sdk
 [travis img]:https://travis-ci.org/commercetools/commercetools-ios-sdk.svg?branch=master
 
-[cocoapods]:https://cocoapods.org/pods/Commercetools
+[cocoapods]:http://cocoadocs.org/docsets/Commercetools
 [cocoapods img]:https://img.shields.io/cocoapods/v/Commercetools.svg
+
+[platforms]:http://cocoadocs.org/docsets/Commercetools
+[platforms img]:https://img.shields.io/cocoapods/p/Commercetools.svg?style=flat
 
 [license]:LICENSE
 [license img]:https://img.shields.io/badge/License-Apache%202-blue.svg
