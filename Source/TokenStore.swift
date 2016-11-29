@@ -101,10 +101,10 @@ class TokenStore: NSObject {
     /// The serial queue used for storing tokens to keychain.
     private let serialQueue = DispatchQueue(label: "com.commercetools.authQueue", attributes: [])
 
-#if os(iOS) || os(watchOS)
+    #if os(iOS) || os(watchOS)
     /// The watch connectivity session used to share authorization tokens from the iOS SDK instance to the watchOS instance.
     fileprivate var wcSession: WCSession?
-#endif
+    #endif
 
     // MARK: - Lifecycle
 
@@ -114,6 +114,9 @@ class TokenStore: NSObject {
     override init() {
         super.init()
         reloadTokens()
+        #if os(iOS)
+            NotificationCenter.default.addObserver(self, selector: #selector(transferTokens), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        #endif
     }
 
     /**
@@ -132,7 +135,7 @@ class TokenStore: NSObject {
         }
     }
 
-#if os(iOS) || os(watchOS)
+    #if os(iOS) || os(watchOS)
     fileprivate func initAndConfigureWCSession() {
         if let shareWatchSession = Config.currentConfig?.shareWatchSession, WCSession.isSupported() && shareWatchSession {
             wcSession = WCSession.default()
@@ -143,13 +146,13 @@ class TokenStore: NSObject {
             wcSession = nil
         }
     }
-#endif
+    #endif
 
-#if os(iOS)
+    #if os(iOS)
 
     // MARK: - iOS - watchOS tokens transfer
 
-    fileprivate func transferTokens() {
+    @objc fileprivate func transferTokens() {
         if wcSession == nil {
             initAndConfigureWCSession()
         }
@@ -170,7 +173,7 @@ class TokenStore: NSObject {
         }
     }
 
-#endif
+    #endif
 
     // MARK: - Keychain access
 
@@ -272,7 +275,7 @@ class TokenStore: NSObject {
 
 #if os(iOS) || os(watchOS)
 extension TokenStore: WCSessionDelegate {
-#if os(watchOS)
+    #if os(watchOS)
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
         Log.debug("Receiving token dictionary from the phone with contents: \(applicationContext)")
         if let accessToken = applicationContext[authAccessTokenKey] as? String {
@@ -289,7 +292,7 @@ extension TokenStore: WCSessionDelegate {
         }
         NotificationCenter.default.post(name: Notification.Name.WatchSynchronization.DidReceiveTokens, object: nil, userInfo: nil)
     }
-#endif
+    #endif
 
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         if let error = error {
@@ -300,7 +303,7 @@ extension TokenStore: WCSessionDelegate {
         #endif
     }
 
-#if os(iOS)
+    #if os(iOS)
     func sessionDidBecomeInactive(_ session: WCSession) {
         wcSession = nil
     }
@@ -308,6 +311,6 @@ extension TokenStore: WCSessionDelegate {
     func sessionDidDeactivate(_ session: WCSession) {
         wcSession = nil
     }
-#endif
+    #endif
 }
 #endif
