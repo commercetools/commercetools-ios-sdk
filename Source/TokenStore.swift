@@ -3,8 +3,11 @@
 //
 
 import Foundation
+#if os(iOS) || os(watchOS)
+import WatchConnectivity
+#endif
 
-class TokenStore {
+class TokenStore: NSObject {
 
     // MARK: - Properties
 
@@ -19,24 +22,24 @@ class TokenStore {
     private let secAttrAccessGroup: String! = kSecAttrAccessGroup as String
 
     /// The key used for storing access token.
-    private var authAccessTokenKey: String {
+    fileprivate var authAccessTokenKey: String {
         // Appending project key from the current configuration if it is set, so we have unique
         // per project token entries.
         return "com.commercetools.authAccessTokenKey" + (Config.currentConfig?.projectKey ?? "")
     }
 
     /// The key used for storing refresh token.
-    private var authRefreshTokenKey: String {
+    fileprivate var authRefreshTokenKey: String {
         return "com.commercetools.authRefreshTokenKey" + (Config.currentConfig?.projectKey ?? "")
     }
 
     /// The key used for storing auth token valid date.
-    private var authTokenValidKey: String {
+    fileprivate var authTokenValidKey: String {
         return "com.commercetools.authTokenValidKey" + (Config.currentConfig?.projectKey ?? "")
     }
 
     /// The key used for storing auth token state.
-    private var authTokenStateKey: String {
+    fileprivate var authTokenStateKey: String {
         return "com.commercetools.authTokenStateKey" + (Config.currentConfig?.projectKey ?? "")
     }
 
@@ -49,6 +52,9 @@ class TokenStore {
             // Keychain write operation can be expensive, and we can do it asynchronously.
             serialQueue.async(execute: {
                 self.setObject(self.accessToken as NSCoding?, forKey: self.authAccessTokenKey)
+                #if os(iOS)
+                    self.transferTokens()
+                #endif
             })
         }
     }
@@ -59,6 +65,9 @@ class TokenStore {
             // Keychain write operation can be expensive, and we can do it asynchronously.
             serialQueue.async(execute: {
                 self.setObject(self.refreshToken as NSCoding?, forKey: self.authRefreshTokenKey)
+                #if os(iOS)
+                    self.transferTokens()
+                #endif
             })
         }
     }
@@ -69,6 +78,9 @@ class TokenStore {
             // Keychain write operation can be expensive, and we can do it asynchronously.
             serialQueue.async(execute: {
                 self.setObject(self.tokenValidDate as NSCoding?, forKey: self.authTokenValidKey)
+                #if os(iOS)
+                    self.transferTokens()
+                #endif
             })
         }
     }
@@ -79,26 +91,42 @@ class TokenStore {
             // Keychain write operation can be expensive, and we can do it asynchronously.
             serialQueue.async(execute: {
                 self.setObject(self.tokenState?.rawValue as NSCoding?, forKey: self.authTokenStateKey)
+                #if os(iOS)
+                    self.transferTokens()
+                #endif
             })
         }
     }
 
     /// The serial queue used for storing tokens to keychain.
-    private let serialQueue = DispatchQueue(label: "com.commercetools.authQueue", attributes: []);
+    private let serialQueue = DispatchQueue(label: "com.commercetools.authQueue", attributes: [])
+
+    #if os(iOS) || os(watchOS)
+    /// The watch connectivity session used to share authorization tokens from the iOS SDK instance to the watchOS instance.
+    fileprivate var wcSession: WCSession?
+    #endif
 
     // MARK: - Lifecycle
 
     /**
         Initializes the `TokenStore` by loading previously stored tokens and valid period.
     */
-    init() {
+    override init() {
+        super.init()
         reloadTokens()
+        #if os(iOS)
+            NotificationCenter.default.addObserver(self, selector: #selector(transferTokens), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        #endif
     }
 
     /**
         Loads previously stored tokens and valid period for the currently set Commercetools project.
     */
     func reloadTokens() {
+        #if os(iOS) || os(watchOS)
+            initAndConfigureWCSession()
+        #endif
+
         accessToken = objectForKey(authAccessTokenKey) as? String
         refreshToken = objectForKey(authRefreshTokenKey) as? String
         tokenValidDate = objectForKey(authTokenValidKey) as? Date
@@ -106,6 +134,46 @@ class TokenStore {
             tokenState = AuthManager.TokenState(rawValue: tokenStateValue)
         }
     }
+
+    #if os(iOS) || os(watchOS)
+    fileprivate func initAndConfigureWCSession() {
+        if let shareWatchSession = Config.currentConfig?.shareWatchSession, WCSession.isSupported() && shareWatchSession {
+            wcSession = WCSession.default()
+            wcSession?.delegate = self
+            wcSession?.activate()
+        } else {
+            wcSession?.delegate = nil
+            wcSession = nil
+        }
+    }
+    #endif
+
+    #if os(iOS)
+
+    // MARK: - iOS - watchOS tokens transfer
+
+    @objc fileprivate func transferTokens() {
+        if wcSession == nil {
+            initAndConfigureWCSession()
+        }
+        guard let accessToken = accessToken, let refreshToken = refreshToken,
+              let tokenValidDate = tokenValidDate, let tokenState = tokenState else { return }
+        if let session = wcSession, session.isPaired && session.isWatchAppInstalled && session.activationState == .activated {
+            let tokenInfo: [String: Any] = [authAccessTokenKey: accessToken,
+                                            authRefreshTokenKey: refreshToken,
+                                            authTokenValidKey: tokenValidDate,
+                                            authTokenStateKey: tokenState.rawValue]
+            Log.debug("Transferring token dictionary to the watch with contents: \(tokenInfo)")
+            do {
+                try session.updateApplicationContext(tokenInfo)
+            }
+            catch let error {
+                Log.error("Error while trying to send tokes to the watch: \(error)")
+            }
+        }
+    }
+
+    #endif
 
     // MARK: - Keychain access
 
@@ -194,11 +262,55 @@ class TokenStore {
         keychainQueryDictionary[secAttrAccount] = encodedIdentifier
 
         // For apps and extensions using keychain sharing, set the access group name defined in the config plist.
+        // The only exception is watchOS, where keychain sharing with the iOS app cannot be used.
+        #if !os(watchOS)
         if let accessGroupName = Config.currentConfig?.keychainAccessGroupName {
             keychainQueryDictionary[secAttrAccessGroup] = accessGroupName
         }
+        #endif
 
         return keychainQueryDictionary
     }
-
 }
+
+#if os(iOS) || os(watchOS)
+extension TokenStore: WCSessionDelegate {
+    #if os(watchOS)
+    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+        Log.debug("Receiving token dictionary from the phone with contents: \(applicationContext)")
+        if let accessToken = applicationContext[authAccessTokenKey] as? String {
+            self.accessToken = accessToken
+        }
+        if let refreshToken = applicationContext[authRefreshTokenKey] as? String {
+            self.refreshToken = refreshToken
+        }
+        if let tokenValidDate = applicationContext[authTokenValidKey] as? Date {
+            self.tokenValidDate = tokenValidDate
+        }
+        if let tokenStateValue = applicationContext[authTokenStateKey] as? Int {
+            tokenState = AuthManager.TokenState(rawValue: tokenStateValue)
+        }
+        NotificationCenter.default.post(name: Notification.Name.WatchSynchronization.DidReceiveTokens, object: nil, userInfo: nil)
+    }
+    #endif
+
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        if let error = error {
+            Log.error("Error while activating WCSession: \(error)")
+        }
+        #if os(iOS)
+            transferTokens()
+        #endif
+    }
+
+    #if os(iOS)
+    func sessionDidBecomeInactive(_ session: WCSession) {
+        wcSession = nil
+    }
+
+    func sessionDidDeactivate(_ session: WCSession) {
+        wcSession = nil
+    }
+    #endif
+}
+#endif

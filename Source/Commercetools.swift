@@ -25,6 +25,16 @@ public var config: Config? {
     }
 }
 
+#if os(watchOS)
+public extension Notification.Name {
+    /// Used as a namespace for all notifications related to watch token synchronization.
+    public struct WatchSynchronization {
+        /// Posted when proper access tokens have been received from the iOS app.
+        public static let DidReceiveTokens = Notification.Name(rawValue: "com.commercetools.notification.watchSynchronization.didReceiveTokens")
+    }
+}
+#endif
+
 // MARK: - Authorization management
 
 /// The current state handled by authentication manager.

@@ -16,5 +16,7 @@
 	<string>https://api.sphere.io</string>
 	<key>anonymousSession</key>
 	<true/>
+	<key>shareWatchSession</key>
+	<true/>
 </dict>
 </plist>

@@ -43,6 +43,10 @@ public class Config {
     /// Configuration parameter determining whether the SDK should obtain anonymous session token or plain token.
     public private(set) var anonymousSession: Bool
 
+    /// Configuration parameter determining whether the SDK should send the authorization tokens from the iOS keychain
+    /// over to the watchOS extension keychain. You have to include the SDK in both targets for this feature to work.
+    public private(set) var shareWatchSession: Bool
+
     /// Keychain access group name the SDK will use for apps and extensions with enabled keychain sharing.
     public private(set) var keychainAccessGroupName: String?
 
@@ -125,6 +129,7 @@ public class Config {
         authUrl = config["authUrl"] as? String
         apiUrl = config["apiUrl"] as? String
         anonymousSession = config["anonymousSession"] as? Bool ?? false
+        shareWatchSession = config["shareWatchSession"] as? Bool ?? false
         keychainAccessGroupName = config["keychainAccessGroupName"] as? String
         emergencyContactInfo = config["emergencyContactInfo"] as? String
 

@@ -1,4 +1,5 @@
 use_frameworks!
+platform :ios, '9.3'
 
 def common_pods
   pod 'Alamofire', '~> 4.0'
@@ -6,12 +7,11 @@ def common_pods
 end
 
 target 'Commercetools iOS' do
-  platform :ios, '8.0'
   common_pods
 end
 
 target 'Commercetools watchOS' do
-  platform :watchos, '2.0'
+  platform :watchos, '2.2'
   common_pods
 end
 
@@ -26,6 +26,5 @@ target 'Commercetools macOS' do
 end
 
 target 'Commercetools iOS Tests' do
-  platform :ios, '8.0'
   common_pods
 end
