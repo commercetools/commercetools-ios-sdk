@@ -28,8 +28,9 @@ class ByKeyEndpointTests: XCTestCase {
         let byKeyExpectation = expectation(description: "byKey expectation")
 
         TestProductType.byKey("main", result: { result in
-            if let response = result.json, let description = response["description"] as? String,
-                    result.isSuccess && description == "all products of max" {
+            if let response = result.json, let description = response["description"] as? String {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(description, "all products of max")
                 byKeyExpectation.fulfill()
             }
         })
@@ -42,8 +43,10 @@ class ByKeyEndpointTests: XCTestCase {
         let byKeyExpectation = expectation(description: "byKey expectation")
 
         TestProductType.byKey("second", result: { result in
-            if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
-                    reason.message == "The Resource with key 'second' was not found." {
+            if let error = result.errors?.first as? CTError, case .resourceNotFoundError(let reason) = error {
+                XCTAssert(result.isFailure)
+                XCTAssertEqual(result.statusCode, 404)
+                XCTAssertEqual(reason.message, "The Resource with key 'second' was not found.")
                 byKeyExpectation.fulfill()
             }
         })
