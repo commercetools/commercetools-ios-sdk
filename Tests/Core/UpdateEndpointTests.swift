@@ -51,6 +51,9 @@ class UpdateEndpointTests: XCTestCase {
                             if let response = result.json, let updatedId = response["id"] as? String,
                                     let newVersion = response["version"] as? UInt, result.isSuccess  && updatedId == id
                                     && newVersion > version {
+                                XCTAssert(result.isSuccess)
+                                XCTAssertEqual(updatedId, id)
+                                XCTAssertGreaterThan(newVersion, version)
                                 updateExpectation.fulfill()
                             }
                         })
@@ -81,8 +84,11 @@ class UpdateEndpointTests: XCTestCase {
                     if let response = result.json, let id = response["id"] as? String, let version = response["version"] as? UInt, result.isSuccess {
                         TestCart.update(id, version: version + 1, actions: [addLineItemAction], result: { result in
                             
-                            if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason, let currentVersion) = error,
-                                    reason.message == "Object \(id) has a different version than expected. Expected: 2 - Actual: 1." && version == currentVersion {
+                            if let error = result.errors?.first as? CTError, case .concurrentModificationError(let reason, let currentVersion) = error {
+                                XCTAssert(result.isFailure)
+                                XCTAssertEqual(result.statusCode, 409)
+                                XCTAssertEqual(reason.message, "Object \(id) has a different version than expected. Expected: 2 - Actual: 1.")
+                                XCTAssertEqual(version, currentVersion)
                                 updateExpectation.fulfill()
                             }
                         })
@@ -104,13 +110,14 @@ class UpdateEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         TestCart.update("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", version: 1, actions: [], result: { result in
-            if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
-                    reason.message == "The Cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." {
+            if let error = result.errors?.first as? CTError, case .resourceNotFoundError(let reason) = error {
+                XCTAssert(result.isFailure)
+                XCTAssertEqual(result.statusCode, 404)
+                XCTAssertEqual(reason.message, "The Cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found.")
                 updateExpectation.fulfill()
             }
         })
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-
 }
