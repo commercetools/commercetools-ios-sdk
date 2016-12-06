@@ -42,7 +42,11 @@ class ByIdEndpointTests: XCTestCase {
             if let response = result.json, let id = response["id"] as? String, result.isSuccess {
                 TestCart.byId(id, result: { result in
                     if let response = result.json, let cartState = response["cartState"] as? String,
-                            let version = response["version"] as? Int, let obtainedId = response["id"] as? String, result.isSuccess && cartState == "Active" && version == 1 && obtainedId == id {
+                       let version = response["version"] as? Int, let obtainedId = response["id"] as? String {
+                        XCTAssert(result.isSuccess)
+                        XCTAssertEqual(cartState, "Active")
+                        XCTAssertEqual(version, 1)
+                        XCTAssertEqual(obtainedId, id)
                         byIdExpectation.fulfill()
                     }
                 })
@@ -62,8 +66,10 @@ class ByIdEndpointTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         TestCart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
-            if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
-                    reason.message == "The Resource with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." {
+            if let error = result.errors?.first as? CTError, case .resourceNotFoundError(let reason) = error {
+                XCTAssert(result.isFailure)
+                XCTAssertEqual(result.statusCode, 404)
+                XCTAssertEqual(reason.message, "The Resource with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found.")
                 byIdExpectation.fulfill()
             }
         })
@@ -80,7 +86,9 @@ class ByIdEndpointTests: XCTestCase {
                     let id = results.first?["id"] as? String, result.isSuccess {
                 TestProductProjections.byId(id, expansion: ["productType"], result: { result in
                     if let response = result.json, let productType = response["productType"] as? [String: AnyObject],
-                    let productTypeObject = productType["obj"] as? [String: AnyObject], result.isSuccess && productTypeObject.count > 0 {
+                    let productTypeObject = productType["obj"] as? [String: AnyObject] {
+                        XCTAssert(result.isSuccess)
+                        XCTAssertGreaterThan(productTypeObject.count, 0)
                         byIdExpectation.fulfill()
                     }
                 })
@@ -89,7 +97,4 @@ class ByIdEndpointTests: XCTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-
-
-    
 }
