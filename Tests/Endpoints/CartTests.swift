@@ -27,10 +27,13 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         Cart.create(["currency": "EUR"], result: { result in
-            if let response = result.json, let cartState = response["cartState"] as? String, let id = response["id"] as? String,
-                    result.isSuccess && cartState == "Active" {
+            if let response = result.json, let cartState = response["cartState"] as? String, let id = response["id"] as? String {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(cartState, "Active")
                 Cart.active(result: { result in
-                    if let response = result.json, let activeCartId = response["id"] as? String, activeCartId == id {
+                    if let response = result.json, let activeCartId = response["id"] as? String {
+                        XCTAssert(result.isSuccess)
+                        XCTAssertEqual(activeCartId, id)
                         activeCartExpectation.fulfill()
                     }
                 })
@@ -54,7 +57,9 @@ class CartTests: XCTestCase {
             cartDraft.lineItems = [lineItemDraft]
 
             Cart.create(cartDraft, result: { result in
-                if let cart = result.model, cart.cartState == .active && result.isSuccess {
+                if let cart = result.model {
+                    XCTAssert(result.isSuccess)
+                    XCTAssertEqual(cart.cartState, .active)
                     cartCreationExpectation.fulfill()
                 }
             })
@@ -86,7 +91,9 @@ class CartTests: XCTestCase {
                     orderDraft.id = cart.id
                     orderDraft.version = cart.version
                     Order.create(orderDraft, result: { result in
-                        if let order = result.model, result.isSuccess, order.cart?.id == cart.id {
+                        if let order = result.model {
+                            XCTAssert(result.isSuccess)
+                            XCTAssertEqual(order.cart?.id, cart.id)
                             orderCreationExpectation.fulfill()
                         }
                     })
@@ -118,7 +125,9 @@ class CartTests: XCTestCase {
 
                         let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.addLineItem(options: options)])
                         Cart.update(id, actions: updateActions, result: { result in
-                            if let cart = result.model, cart.lineItems?.count == 1 {
+                            if let cart = result.model {
+                                XCTAssert(result.isSuccess)
+                                XCTAssertEqual(cart.lineItems?.count, 1)
                                 updateExpectation.fulfill()
                             }
                         })

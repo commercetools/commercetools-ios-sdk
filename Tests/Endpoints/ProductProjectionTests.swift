@@ -32,8 +32,10 @@ class ProductProjectionTests: XCTestCase {
 
         ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: Locale(identifier: "en"),
                                  text: "Michael Kors", result: { result in
-            if let response = result.json, let total = response["total"] as? Int,
-                    let _ = response["results"] as? [[String: AnyObject]], result.isSuccess && total == 103 {
+            if let response = result.json, let total = response["total"] as? Int {
+                XCTAssert(result.isSuccess)
+                XCTAssertNotNil(response["results"] as? [[String: AnyObject]])
+                XCTAssertEqual(total, 103)
                 searchExpectation.fulfill()
             }
         })
@@ -54,9 +56,15 @@ class ProductProjectionTests: XCTestCase {
 
                     let sizeFacets = facets["variants.attributes.commonSize.key"] as? [String: AnyObject],
                     let sizeFacetsTotal = sizeFacets["total"] as? UInt, let sizeTerms = sizeFacets["terms"] as? [[String: AnyObject]],
-                    let xxxlTerm = sizeTerms.first!["term"] as? String, let xxxlCount = sizeTerms.first!["count"] as? UInt, result.isSuccess
-                       && colorFacetsTotal == 8703 && blueTerm == "blue" && blueCount == 1865
-                       && sizeFacetsTotal == 278 && xxxlTerm == "xxxl" && xxxlCount == 45 {
+                    let xxxlTerm = sizeTerms.first!["term"] as? String, let xxxlCount = sizeTerms.first!["count"] as? UInt {
+
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(colorFacetsTotal, 8703)
+                XCTAssertEqual(blueTerm, "blue")
+                XCTAssertEqual(blueCount, 1865)
+                XCTAssertEqual(sizeFacetsTotal, 278)
+                XCTAssertEqual(xxxlTerm, "xxxl")
+                XCTAssertEqual(xxxlCount, 45)
 
                 searchExpectation.fulfill()
             }
@@ -76,8 +84,10 @@ class ProductProjectionTests: XCTestCase {
                 ProductProjection.search(staged: true, limit: 1, filterQuery: "taxCategory.id:\"\(taxCategoryId)\"",
                         result: { result in
 
-                    if let response = result.json, let total = response["total"] as? Int,
-                            let _ = response["results"] as? [[String: AnyObject]], result.isSuccess && total == 999 {
+                    if let response = result.json, let total = response["total"] as? Int {
+                        XCTAssert(result.isSuccess)
+                        XCTAssertNotNil(response["results"] as? [[String: AnyObject]])
+                        XCTAssertEqual(total, 999)
                         searchExpectation.fulfill()
                     }
                 })
@@ -94,10 +104,11 @@ class ProductProjectionTests: XCTestCase {
         ProductProjection.search(expansion: ["productType"], limit: 10, lang: Locale(identifier: "en"), text: "Michael Kors",
                 result: { result in
                     if let response = result.json, let _ = response["count"] as? Int,
-                            let results = response["results"] as? [[String: AnyObject]],
-                            let productType = results.first?["productType"] as? [String: AnyObject],
-                            let productTypeObject = productType["obj"] as? [String: AnyObject], result.isSuccess
-                            && productTypeObject.count > 0 {
+                       let results = response["results"] as? [[String: AnyObject]],
+                       let productType = results.first?["productType"] as? [String: AnyObject],
+                       let productTypeObject = productType["obj"] as? [String: AnyObject] {
+                        XCTAssert(result.isSuccess)
+                        XCTAssertGreaterThan(productTypeObject.count, 0)
                         searchExpectation.fulfill()
                     }
                 })
@@ -111,9 +122,10 @@ class ProductProjectionTests: XCTestCase {
 
         ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: Locale(identifier: "en"),
                 text: "Michael Kors", markMatchingVariants: false, result: { result in
-            if let total = result.model?.total, result.isSuccess
-                    && result.model?.results?.first?.masterVariant?.isMatchingVariant == nil
-                    && total == 103 {
+            if let total = result.model?.total {
+                XCTAssert(result.isSuccess)
+                XCTAssertNil(result.model?.results?.first?.masterVariant?.isMatchingVariant)
+                XCTAssertEqual(total, 103)
                 searchExpectation.fulfill()
             }
         })
@@ -126,8 +138,9 @@ class ProductProjectionTests: XCTestCase {
         let suggestExpectation = expectation(description: "suggest expectation")
 
         ProductProjection.suggest(lang: Locale(identifier: "en"), searchKeywords: "michael", result: { result in
-            if let response = result.json, let keywords = response["searchKeywords.en"] as? [[String: AnyObject]],
-            let _ = keywords.first?["text"] as? String, result.isSuccess {
+            if let response = result.json, let keywords = response["searchKeywords.en"] as? [[String: AnyObject]] {
+                XCTAssert(result.isSuccess)
+                XCTAssertNotNil(keywords.first?["text"] as? String)
                 suggestExpectation.fulfill()
             }
         })
@@ -141,12 +154,15 @@ class ProductProjectionTests: XCTestCase {
 
         ProductProjection.query(limit: 1, result: { result in
             if let response = result.json, let count = response["count"] as? Int,
-                    let results = response["results"] as? [[String: AnyObject]],
-                    let id = results.first?["id"] as? String, result.isSuccess && count == 1 {
+               let results = response["results"] as? [[String: AnyObject]],
+               let id = results.first?["id"] as? String {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(count, 1)
 
                 ProductProjection.byId(id, result: { result in
-                    if let response = result.json, let retrievedId = response["id"] as? String, result.isSuccess
-                            && retrievedId == id {
+                    if let response = result.json, let retrievedId = response["id"] as? String {
+                        XCTAssert(result.isSuccess)
+                        XCTAssertEqual(retrievedId, id)
                         byIdExpectation.fulfill()
                     }
                 })
@@ -161,8 +177,9 @@ class ProductProjectionTests: XCTestCase {
         let byIdExpectation = expectation(description: "byId expectation")
 
         ProductProjection.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
-            if let error = result.errors?.first as? CTError, case .resourceNotFoundError(let reason) = error,
-                    reason.message == "The Resource with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found." {
+            if let error = result.errors?.first as? CTError, case .resourceNotFoundError(let reason) = error {
+                XCTAssert(result.isFailure)
+                XCTAssertEqual(reason.message, "The Resource with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found.")
                 byIdExpectation.fulfill()
             }
         })
@@ -180,8 +197,10 @@ class ProductProjectionTests: XCTestCase {
             if let response = result.json, let count = response["count"] as? Int,
             let results = response["results"] as? [[String: AnyObject]],
             let slug = results.first?["slug"] as? [String: String],
-            let enSlug = slug["en"], result.isSuccess && count == 1
-                    && enSlug == "michael-kors-bag-30T3GTVT7L-lightbrown" {
+            let enSlug = slug["en"] {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(count, 1)
+                XCTAssertEqual(enSlug, "michael-kors-bag-30T3GTVT7L-lightbrown")
                 queryExpectation.fulfill()
             }
         })
@@ -196,8 +215,10 @@ class ProductProjectionTests: XCTestCase {
         ProductProjection.query(sort: ["name.en asc"], limit: 8, result: { result in
             if let response = result.json, let count = response["count"] as? Int,
             let results = response["results"] as? [[String: AnyObject]],
-            let name = results.first?["name"] as? [String: String], let enName = name["en"],
-                    result.isSuccess && count == 8 && enName == "Alberto Guardiani – Slip on “Cherie”" {
+            let name = results.first?["name"] as? [String: String], let enName = name["en"] {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(count, 8)
+                XCTAssertEqual(enName, "Alberto Guardiani – Slip on “Cherie”")
                 queryExpectation.fulfill()
             }
         })
@@ -211,9 +232,11 @@ class ProductProjectionTests: XCTestCase {
 
         ProductProjection.query(sort: ["name.en asc"], limit: 2, offset: 1, result: { result in
             if let response = result.json, let count = response["count"] as? Int,
-            let results = response["results"] as? [[String: AnyObject]],
-            let name = results.first?["name"] as? [String: String], let enName = name["en"],
-                    result.isSuccess && count == 2 && enName == "Bag DKNY beige" {
+               let results = response["results"] as? [[String: AnyObject]],
+               let name = results.first?["name"] as? [String: String], let enName = name["en"] {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(count, 2)
+                XCTAssertEqual(enName, "Bag DKNY beige")
                 queryExpectation.fulfill()
             }
         })
@@ -227,9 +250,11 @@ class ProductProjectionTests: XCTestCase {
 
         ProductProjection.query(sort: ["name.en asc", "slug.en asc"], limit: 1, result: { result in
             if let response = result.json, let count = response["count"] as? Int,
-            let results = response["results"] as? [[String: AnyObject]],
-            let name = results.first?["name"] as? [String: String], let enName = name["en"],
-                    result.isSuccess && count == 1 && enName == "Alberto Guardiani – Slip on “Cherie”" {
+               let results = response["results"] as? [[String: AnyObject]],
+               let name = results.first?["name"] as? [String: String], let enName = name["en"] {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(count, 1)
+                XCTAssertEqual(enName, "Alberto Guardiani – Slip on “Cherie”")
                 queryExpectation.fulfill()
             }
         })
@@ -245,10 +270,11 @@ class ProductProjectionTests: XCTestCase {
 
         ProductProjection.query(predicates: [predicate], expansion: ["productType"], result: { result in
             if let response = result.json, let _ = response["count"] as? Int,
-                    let results = response["results"] as? [[String: AnyObject]],
-                    let productType = results.first?["productType"] as? [String: AnyObject],
-                    let productTypeObject = productType["obj"] as? [String: AnyObject], result.isSuccess
-                    && productTypeObject.count > 0 {
+               let results = response["results"] as? [[String: AnyObject]],
+               let productType = results.first?["productType"] as? [String: AnyObject],
+               let productTypeObject = productType["obj"] as? [String: AnyObject] {
+                XCTAssert(result.isSuccess)
+                XCTAssertGreaterThan(productTypeObject.count, 0)
                 queryExpectation.fulfill()
             }
         })
@@ -261,13 +287,13 @@ class ProductProjectionTests: XCTestCase {
         let byKeyExpectation = expectation(description: "by key expectation")
 
         ProductProjection.byKey("missing") { result in
-            if let error = result.errors?.first as? CTError, case .resourceNotFoundError(let reason) = error,
-                    reason.message == "The Resource with key 'missing' was not found." {
+            if let error = result.errors?.first as? CTError, case .resourceNotFoundError(let reason) = error {
+                XCTAssert(result.isFailure)
+                XCTAssertEqual(reason.message, "The Resource with key 'missing' was not found.")
                 byKeyExpectation.fulfill()
             }
         }
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-
 }

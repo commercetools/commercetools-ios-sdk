@@ -39,7 +39,10 @@ class GraphQLTests: XCTestCase {
                let results = products["results"] as? [[String: Any]],
                let masterData = results.first?["masterData"] as? [String: Any],
                let current = masterData["current"] as? [String: String],
-               let name = current["name"], name.characters.count > 0, results.count == 1, result.isSuccess {
+               let name = current["name"] {
+                XCTAssert(result.isSuccess)
+                XCTAssertGreaterThan(name.characters.count, 0)
+                XCTAssertEqual(results.count, 1)
                 queryExpectation.fulfill()
             }
         }

@@ -33,8 +33,10 @@ class CustomerTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         Customer.profile { result in
-            if let response = result.json, let _ = response["firstName"] as? String,
-                    let _ = response["lastName"] as? String, result.isSuccess {
+            if let response = result.json {
+                XCTAssert(result.isSuccess)
+                XCTAssertNotNil(response["firstName"] as? String)
+                XCTAssertNotNil(response["lastName"] as? String)
                 retrieveProfileExpectation.fulfill()
             }
         }
@@ -48,8 +50,9 @@ class CustomerTests: XCTestCase {
         let retrieveProfileExpectation = expectation(description: "retrieve profile expectation")
 
         Customer.profile { result in
-            if let error = result.errors?.first as? CTError, case .insufficientTokenGrantTypeError(let reason) = error,
-                    reason.message == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." {
+            if let error = result.errors?.first as? CTError, case .insufficientTokenGrantTypeError(let reason) = error {
+                XCTAssert(result.isFailure)
+                XCTAssertEqual(reason.message, "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'.")
                 retrieveProfileExpectation.fulfill()
             }
         }
@@ -65,18 +68,20 @@ class CustomerTests: XCTestCase {
         let createProfileExpectation = expectation(description: "create profile expectation")
         let deleteProfileExpectation = expectation(description: "delete profile expectation")
 
-        let signupDraft = ["email": username, "password": "password"]
+        let signUpDraft = ["email": username, "password": "password"]
 
-        Customer.signUp(signupDraft, result: { result in
+        Customer.signUp(signUpDraft, result: { result in
             if let response = result.json, let customer = response["customer"] as? [String: Any],
-                    let email = customer["email"] as? String, let version = customer["version"] as? UInt, result.isSuccess
-                    && email == username {
+               let email = customer["email"] as? String, let version = customer["version"] as? UInt {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(email, username)
                 createProfileExpectation.fulfill()
 
                 AuthManager.sharedInstance.loginCustomer(username: username, password: "password", completionHandler: { _ in})
                 Customer.delete(version: version, result: { result in
-                    if let response = result.json, let email = response["email"] as? String, result.isSuccess
-                            && email == username {
+                    if let response = result.json, let email = response["email"] as? String {
+                        XCTAssert(result.isSuccess)
+                        XCTAssertEqual(email, username)
                         deleteProfileExpectation.fulfill()
                     }
                 })
@@ -100,11 +105,15 @@ class CustomerTests: XCTestCase {
 
         Commercetools.signUpCustomer(customerDraft, result: { result in
             if let customer = result.model?.customer, let version = customer.version, customer.email == username, result.isSuccess {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(customer.email, username)
                 createProfileExpectation.fulfill()
 
                 AuthManager.sharedInstance.loginCustomer(username: username, password: "password") { _ in
                     Customer.delete(version: version, result: { result in
-                        if let deletedCustomer = result.model, deletedCustomer.email == username, result.isSuccess {
+                        if let deletedCustomer = result.model {
+                            XCTAssert(result.isSuccess)
+                            XCTAssertEqual(deletedCustomer.email, username)
                             deleteProfileExpectation.fulfill()
                         }
                     })
@@ -131,14 +140,18 @@ class CustomerTests: XCTestCase {
                 options.firstName = "newName"
                 let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: options)])
                 Customer.update(actions: updateActions, result: { result in
-                    if let profile = result.model, let version = profile.version, result.isSuccess && profile.firstName == "newName" {
+                    if let profile = result.model, let version = profile.version  {
+                        XCTAssert(result.isSuccess)
+                        XCTAssertEqual(profile.firstName, "newName")
 
                         // Now revert back to the old name
                         options.firstName = "Test"
                         let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: options)])
 
                         Customer.update(actions: updateActions, result: { result in
-                            if let profile = result.model, result.isSuccess && profile.firstName == "Test" {
+                            if let profile = result.model {
+                                XCTAssert(result.isSuccess)
+                                XCTAssertEqual(profile.firstName, "Test")
                                 updateProfileExpectation.fulfill()
                             }
                         })
@@ -155,11 +168,12 @@ class CustomerTests: XCTestCase {
 
         let createProfileExpectation = expectation(description: "create profile expectation")
 
-        let signupDraft = ["email": "swift.sdk.test.user2@commercetools.com", "password": "password"]
+        let signUpDraft = ["email": "swift.sdk.test.user2@commercetools.com", "password": "password"]
 
-        Customer.signUp(signupDraft, result: { result in
-            if let error = result.errors?.first as? CTError, case .generalError(let reason) = error,
-                    reason?.message == "There is already an existing customer with the email '\"swift.sdk.test.user2@commercetools.com\"'." {
+        Customer.signUp(signUpDraft, result: { result in
+            if let error = result.errors?.first as? CTError, case .generalError(let reason) = error {
+                XCTAssert(result.isFailure)
+                XCTAssertEqual(reason?.message, "There is already an existing customer with the email '\"swift.sdk.test.user2@commercetools.com\"'.")
                 createProfileExpectation.fulfill()
             }
         })
@@ -173,8 +187,9 @@ class CustomerTests: XCTestCase {
         let deleteProfileExpectation = expectation(description: "delete profile expectation")
 
         Customer.delete(version: 1, result: { result in
-            if let error = result.errors?.first as? CTError, case .insufficientTokenGrantTypeError(let reason) = error,
-                    reason.message == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." {
+            if let error = result.errors?.first as? CTError, case .insufficientTokenGrantTypeError(let reason) = error {
+                XCTAssert(result.isFailure)
+                XCTAssertEqual(reason.message, "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'.")
                 deleteProfileExpectation.fulfill()
             }
         })
@@ -198,14 +213,17 @@ class CustomerTests: XCTestCase {
             if let response = result.json, let version = response["version"] as? UInt, result.isSuccess {
                 Customer.update(version: version, actions: [setFirstNameAction], result: { result in
                     if let response = result.json, let version = response["version"] as? UInt,
-                            let firstName = response["firstName"] as? String, result.isSuccess
-                            && firstName == "newName" {
+                            let firstName = response["firstName"] as? String {
+                        XCTAssert(result.isSuccess)
+                        XCTAssertEqual(firstName, "newName")
 
                         // Now revert back to the old name
                         setFirstNameAction["firstName"] = "Test"
 
                         Customer.update(version: version, actions: [setFirstNameAction], result: { result in
-                            if let response = result.json, let firstName = response["firstName"] as? String, result.isSuccess && firstName == "Test" {
+                            if let response = result.json, let firstName = response["firstName"] as? String {
+                                XCTAssert(result.isSuccess)
+                                XCTAssertEqual(firstName, "Test")
                                 updateProfileExpectation.fulfill()
                             }
                         })
@@ -225,8 +243,9 @@ class CustomerTests: XCTestCase {
         let setFirstNameAction: [String: Any] = ["action": "setFirstName", "firstName": "newName"]
 
         Customer.update(version: 1, actions: [setFirstNameAction], result: { result in
-            if let error = result.errors?.first as? CTError, case .insufficientTokenGrantTypeError(let reason) = error,
-                    reason.message == "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'." {
+            if let error = result.errors?.first as? CTError, case .insufficientTokenGrantTypeError(let reason) = error {
+                XCTAssert(result.isFailure)
+                XCTAssertEqual(reason.message, "This endpoint requires an access token issued with the 'Resource Owner Password Credentials Grant'.")
                 updateProfileExpectation.fulfill()
             }
         })
@@ -252,9 +271,8 @@ class CustomerTests: XCTestCase {
 
                         // Now revert the password change
                         Customer.changePassword(currentPassword: "newPassword", newPassword: password, version: version, result: { result in
-                            if result.isSuccess {
-                                changePasswordExpectation.fulfill()
-                            }
+                            XCTAssert(result.isSuccess)
+                            changePasswordExpectation.fulfill()
                         })
                     }
                 })
@@ -284,8 +302,9 @@ class CustomerTests: XCTestCase {
                     self.setupTestConfiguration()
                     
                     Customer.resetPassword(token: token, newPassword: "password", result: { result in
-                        if let response = result.json, let email = response["email"] as? String, result.isSuccess
-                            && email == username {
+                        if let response = result.json, let email = response["email"] as? String {
+                            XCTAssert(result.isSuccess)
+                            XCTAssertEqual(email, username)
                             resetPasswordExpectation.fulfill()
                         }
                     })
@@ -330,8 +349,9 @@ class CustomerTests: XCTestCase {
                             AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
                             
                             Customer.verifyEmail(token: token, result: { result in
-                                if let response = result.json, let email = response["email"] as? String, result.isSuccess
-                                    && email == username {
+                                if let response = result.json, let email = response["email"] as? String {
+                                    XCTAssert(result.isSuccess)
+                                    XCTAssertEqual(email, username)
                                     resetPasswordExpectation.fulfill()
                                 }
                             })
@@ -349,5 +369,4 @@ class CustomerTests: XCTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-
 }
