@@ -29,19 +29,25 @@ class UpdateByKeyEndpointTests: XCTestCase {
 
         TestProductType.byKey("main", result: { result in
             if let response = result.json, let originalName = response["name"] as? String,
-                    let version = response["version"] as? UInt, result.isSuccess && originalName == "main" {
+               let version = response["version"] as? UInt {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(originalName, "main")
 
                 var changeNameAction = ["action": "changeName", "name": "newName"]
 
                 TestProductType.updateByKey("main", version: version, actions: [changeNameAction], result: { result in
                     if let response = result.json, let newName = response["name"] as? String,
-                            let version = response["version"] as? UInt, result.isSuccess && newName == "newName" {
+                       let version = response["version"] as? UInt {
+                        XCTAssert(result.isSuccess)
+                        XCTAssertEqual(newName, "newName")
 
                         // Now revert back to the original name for the test data consistency reasons
                         changeNameAction["name"] = originalName
 
                         TestProductType.updateByKey("main", version: version, actions: [changeNameAction], result: { result in
-                            if let response = result.json, let name = response["name"] as? String, result.isSuccess && name == originalName {
+                            if let response = result.json, let name = response["name"] as? String {
+                                XCTAssert(result.isSuccess)
+                                XCTAssertEqual(name, originalName)
                                 updateExpectation.fulfill()
                             }
                         })
@@ -64,8 +70,11 @@ class UpdateByKeyEndpointTests: XCTestCase {
                 let changeNameAction = ["action": "changeName", "name": "newName"]
 
                 TestProductType.updateByKey("main", version: version + 1, actions: [changeNameAction], result: { result in
-                    if let error = result.errors?.first as? CTError, result.statusCode == 409, case .concurrentModificationError(let reason, let currentVersion) = error,
-                            reason.message!.hasPrefix("Object \(id) has a different version than expected.") && version == currentVersion {
+                    if let error = result.errors?.first as? CTError, case .concurrentModificationError(let reason, let currentVersion) = error {
+                        XCTAssert(result.isFailure)
+                        XCTAssertEqual(result.statusCode, 409)
+                        XCTAssert(reason.message!.hasPrefix("Object \(id) has a different version than expected."))
+                        XCTAssertEqual(version, currentVersion)
                         updateExpectation.fulfill()
                     }
                 })
@@ -82,13 +91,14 @@ class UpdateByKeyEndpointTests: XCTestCase {
         let changeNameAction = ["action": "changeName", "name": "newName"]
 
         TestProductType.updateByKey("incorrect_key", version: 1, actions: [changeNameAction], result: { result in            
-            if let error = result.errors?.first as? CTError, result.statusCode == 404, case .resourceNotFoundError(let reason) = error,
-                    reason.message == "The product-type with key 'incorrect_key' was not found." {
+            if let error = result.errors?.first as? CTError, case .resourceNotFoundError(let reason) = error {
+                XCTAssert(result.isFailure)
+                XCTAssertEqual(result.statusCode, 404)
+                XCTAssertEqual(reason.message, "The product-type with key 'incorrect_key' was not found.")
                 updateExpectation.fulfill()
             }
         })
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-
 }
