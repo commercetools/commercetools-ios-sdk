@@ -61,11 +61,17 @@ public extension Endpoint {
             let version = ProcessInfo.processInfo.operatingSystemVersion
 
             let osName: String = {
-            #if os(iOS)
-                return "iOS"
-            #else
-                return "Unknown"
-            #endif
+                #if os(iOS)
+                    return "iOS"
+                #elseif os(watchOS)
+                    return "watchOS"
+                #elseif os(tvOS)
+                    return "tvOS"
+                #elseif os(macOS)
+                    return "macOS"
+                #else
+                    return "Unknown"
+                #endif
             }()
 
             return "\(osName)/\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
