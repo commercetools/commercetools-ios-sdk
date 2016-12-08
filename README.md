@@ -1,4 +1,4 @@
-# Commercetools iOS SDK
+# Commercetools Swift SDK
 
 ![SPHERE.IO icon](https://admin.sphere.io/assets/images/sphere_logo_rgb_long.png)
 
@@ -66,6 +66,8 @@ The Commercetools SDK uses a `.plist` configuration file named `CommercetoolsCon
     <true/>
     <key>keychainAccessGroupName</key>
     <string>AB123CDEF.yourKeychainGroup</string>
+    <key>shareWatchSession</key>
+    <true/>
     <key>emergencyContactInfo</key>
     <string>you@yourdomain.com</string>
 </dict>
@@ -136,8 +138,27 @@ Commercetools.obtainAnonymousToken(usingSession: true, anonymousId: "some-custom
 ```
 When an anonymous sessions ends with a sign up or a login, carts and orders are migrated to the customer, and `CustomerSignInResult` is returned, providing access to both customer profile, and the currently active cart. For the login operation, you can define how to migrate line items from the currently active cart, by explicitly specifying one of two `AnonymousCartSignInMode` values: `.mergeWithExistingCustomerCart` or `.useAsNewActiveCustomerCart`.
 
+## Using the SDK in App Extensions
+
 If your app has extensions, and you want to use Commercetools SDK in those extensions, we recommend enabling keychain sharing. By allowing keychain sharing, and setting the appropriate access group name in the configuration `.plist`, the SDK will save all tokens in the shared keychain. Be sure to include _App ID Prefix / Team ID_ in the access group name.
-As a result, you can use all endpoints with the same authorization state and tokens in both your app and any extension. The same goes for multiple apps from your development team using keychain sharing. 
+As a result, you can use all endpoints with the same authorization state and tokens in both your app and any extension. The same goes for multiple apps from your development team using keychain sharing.
+
+## Using the SDK on watchOS
+
+Since the keychain on Apple Watch contains a distinct set of entries from the keychain on the paired iPhone, sharing the same customer session between iOS and watchOS is not possible by setting the `keychainAccessGroupName` in the configuration `.plist`. Instead, Commercetools SDK uses WatchConnectivity to transfer access tokens from iPhone to Apple Watch, where they are also stored securely in the watchOS keychain. The only step you have to take to opt in, is to set the `shareWatchSession` configuration property to `true`.
+
+Common way for users to log in on Apple Watch is via iPhone app. The watchOS SDK will post a notification when the access tokens have been received from the iOS app, so you can check the new `authState` and perform UI changes accordingly.
+```swift
+NotificationCenter.default.addObserver(self, selector: #selector(checkAuthState), name: Notification.Name.WatchSynchronization.DidReceiveTokens, object: nil)
+
+func checkAuthState() {
+    if Commercetools.authState == .customerToken {
+        // The customer is logged in, present the appropriate screen
+    } else {
+        // The customer is not logged in, present the login message if needed 
+    }
+}
+```
 
 ## Consuming Commercetools Endpoints
 
