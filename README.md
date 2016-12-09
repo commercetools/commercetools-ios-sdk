@@ -145,9 +145,9 @@ As a result, you can use all endpoints with the same authorization state and tok
 
 ## Using the SDK on watchOS
 
-Since the keychain on Apple Watch contains a distinct set of entries from the keychain on the paired iPhone, sharing the same customer session between iOS and watchOS is not possible by setting the `keychainAccessGroupName` in the configuration `.plist`. Instead, Commercetools SDK uses WatchConnectivity to transfer access tokens from iPhone to Apple Watch, where they are also stored securely in the watchOS keychain. The only step you have to take to opt in, is to set the `shareWatchSession` configuration property to `true`.
+Since the keychain on Apple Watch contains a distinct set of entries from the keychain on the paired iPhone, sharing the same customer session between iOS and watchOS is not possible by setting the `keychainAccessGroupName` in the configuration `.plist`. Instead, the Commercetools SDK uses WatchConnectivity to transfer access tokens from an iPhone to an Apple Watch, where they are also stored securely in the watchOS keychain. The only step you have to take to opt in, is to set the `shareWatchSession` configuration property to `true`.
 
-Common way for users to log in on Apple Watch is via iPhone app. The watchOS SDK will post a notification when the access tokens have been received from the iOS app, so you can check the new `authState` and perform UI changes accordingly.
+A common way for users to log in on Apple Watch is via the iPhone app. The watchOS SDK will post a notification when the access tokens have been received from the iOS app, so you can check the new `authState` and perform UI changes accordingly.
 ```swift
 NotificationCenter.default.addObserver(self, selector: #selector(checkAuthState), name: Notification.Name.WatchSynchronization.DidReceiveTokens, object: nil)
 
