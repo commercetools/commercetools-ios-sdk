@@ -980,7 +980,11 @@ public enum CustomerUpdateAction: JSONRepresentable {
     case changeAddress(options: ChangeAddressOptions)
     case removeAddress(options: RemoveAddressOptions)
     case setDefaultShippingAddress(options: SetDefaultShippingAddressOptions)
+    case addShippingAddressId(options: AddressIdOptions)
+    case removeShippingAddressId(options: AddressIdOptions)
     case setDefaultBillingAddress(options: SetDefaultBillingAddressOptions)
+    case addBillingAddressId(options: AddressIdOptions)
+    case removeBillingAddressId(options: AddressIdOptions)
     case setCompanyName(options: SetCompanyNameOptions)
     case setDateOfBirth(options: SetDateOfBirthOptions)
     case setVatId(options: SetVatIdOptions)
@@ -1026,9 +1030,25 @@ public enum CustomerUpdateAction: JSONRepresentable {
             var optionsJSON = toJSON(options)
             optionsJSON["action"] = "setDefaultShippingAddress"
             return optionsJSON
+        case .addShippingAddressId(let options):
+            var optionsJSON = toJSON(options)
+            optionsJSON["action"] = "addShippingAddressId"
+            return optionsJSON
+        case .removeShippingAddressId(let options):
+            var optionsJSON = toJSON(options)
+            optionsJSON["action"] = "removeShippingAddressId"
+            return optionsJSON
         case .setDefaultBillingAddress(let options):
             var optionsJSON = toJSON(options)
             optionsJSON["action"] = "setDefaultBillingAddress"
+            return optionsJSON
+        case .addBillingAddressId(let options):
+            var optionsJSON = toJSON(options)
+            optionsJSON["action"] = "addBillingAddressId"
+            return optionsJSON
+        case .removeBillingAddressId(let options):
+            var optionsJSON = toJSON(options)
+            optionsJSON["action"] = "removeBillingAddressId"
             return optionsJSON
         case .setCompanyName(let options):
             var optionsJSON = toJSON(options)
@@ -1189,6 +1209,22 @@ public struct RemoveAddressOptions: Mappable {
 }
 
 public struct SetDefaultShippingAddressOptions: Mappable {
+
+    // MARK: - Properties
+
+    public var addressId: String?
+
+    public init() {}
+    public init?(map: Map) {}
+
+    // MARK: - Mappable
+
+    mutating public func mapping(map: Map) {
+        addressId                   <- map["addressId"]
+    }
+}
+
+public struct AddressIdOptions: Mappable {
 
     // MARK: - Properties
 
