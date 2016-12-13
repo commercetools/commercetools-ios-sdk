@@ -171,7 +171,9 @@ open class Customer: Endpoint, Mappable {
     public var vatId: String?
     public var addresses: [Address]?
     public var defaultShippingAddressId: String?
+    public var shippingAddressIds: [String]?
     public var defaultBillingAddressId: String?
+    public var billingAddressIds: [String]?
     public var isEmailVerified: Bool?
     public var externalId: String?
     public var customerGroup: Reference<CustomerGroup>?
@@ -199,7 +201,9 @@ open class Customer: Endpoint, Mappable {
         vatId                     <- map["vatId"]
         addresses                 <- map["addresses"]
         defaultShippingAddressId  <- map["defaultShippingAddressId"]
+        shippingAddressIds        <- map["shippingAddressIds"]
         defaultBillingAddressId   <- map["defaultBillingAddressId"]
+        billingAddressIds         <- map["billingAddressIds"]
         isEmailVerified           <- map["isEmailVerified"]
         externalId                <- map["externalId"]
         customerGroup             <- map["customerGroup"]
