@@ -22,8 +22,8 @@ open class Customer: Endpoint, Mappable {
 
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func profile(_ result: @escaping (Result<ResponseType>) -> Void) {
-        customerProfileAction(method: .get, result: result)
+    open static func profile(expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        customerProfileAction(method: .get, expansion: expansion, result: result)
     }
 
     /**
@@ -213,12 +213,14 @@ open class Customer: Endpoint, Mappable {
     
     // MARK: - Helpers
 
-    private static func customerProfileAction(method: HTTPMethod, basePath: String? = nil,
+    private static func customerProfileAction(method: HTTPMethod, basePath: String? = nil, expansion: [String]? = nil,
                                               parameters: [String: Any]? = nil, encoding: ParameterEncoding = URLEncoding.default,
                                               result: @escaping (Result<ResponseType>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
-            Alamofire.request(path + (basePath ?? ""), method: method, parameters: parameters, encoding: encoding, headers: self.headers(token))
+            let fullPath = pathWithExpansion(path, expansion: expansion)
+
+            Alamofire.request(fullPath + (basePath ?? ""), method: method, parameters: parameters, encoding: encoding, headers: self.headers(token))
             .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })
