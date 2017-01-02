@@ -3,6 +3,7 @@
 //
 
 import ObjectMapper
+import CoreLocation
 
 public struct Address: Mappable {
 
@@ -789,6 +790,14 @@ public struct Channel: Mappable {
     public var address: Address?
     public var reviewRatingStatistics: ReviewRatingStatistics?
     public var custom: [String: Any]?
+    public var geoLocation: [String: Any]?
+    public var location: CLLocation? {
+        if let coordinates = geoLocation?["coordinates"] as? [Double], let type = geoLocation?["type"] as? String,
+           coordinates.count == 2 && type == "Point" {
+            return CLLocation(latitude: coordinates[1], longitude: coordinates[0])
+        }
+        return nil
+    }
 
     public init?(map: Map) {}
 
@@ -806,6 +815,7 @@ public struct Channel: Mappable {
         address                 <- map["address"]
         reviewRatingStatistics  <- map["reviewRatingStatistics"]
         custom                  <- map["custom"]
+        geoLocation             <- map["geoLocation"]
     }
 
 }
