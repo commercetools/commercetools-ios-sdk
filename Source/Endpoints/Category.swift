@@ -30,6 +30,7 @@ open class Category: ByIdEndpoint, QueryEndpoint, Mappable {
     public var metaDescription: LocalizedString?
     public var metaKeywords: LocalizedString?
     public var custom: [String: Any]?
+    public var assets: [Asset]?
 
     public required init?(map: Map) {}
 
@@ -51,5 +52,6 @@ open class Category: ByIdEndpoint, QueryEndpoint, Mappable {
         metaDescription         <- map["metaDescription"]
         metaKeywords            <- map["metaKeywords"]
         custom                  <- map["custom"]
+        assets                  <- map["assets"]
     }
 }
