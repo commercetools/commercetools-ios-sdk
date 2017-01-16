@@ -30,7 +30,7 @@ class ByKeyEndpointTests: XCTestCase {
         TestProductType.byKey("main", result: { result in
             if let response = result.json, let description = response["description"] as? String {
                 XCTAssert(result.isSuccess)
-                XCTAssertEqual(description, "all products of max")
+                XCTAssertEqual(description, "Sunrise Product Data Set Structure")
                 byKeyExpectation.fulfill()
             }
         })

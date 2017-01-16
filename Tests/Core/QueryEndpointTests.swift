@@ -54,7 +54,7 @@ class QueryEndpointTests: XCTestCase {
                let name = results.first?["name"] as? [String: String], let enName = name["en"] {
                 XCTAssert(result.isSuccess)
                 XCTAssertEqual(count, 8)
-                XCTAssertEqual(enName, "Alberto Guardiani – Slip on “Cherie”")
+                XCTAssertEqual(enName, "Bag Moschino Love purple")
                 queryExpectation.fulfill()
             }
         })
@@ -72,7 +72,7 @@ class QueryEndpointTests: XCTestCase {
                let name = results.first?["name"] as? [String: String], let enName = name["en"] {
                 XCTAssert(result.isSuccess)
                 XCTAssertEqual(count, 2)
-                XCTAssertEqual(enName, "Bag DKNY beige")
+                XCTAssertEqual(enName, "Bag “Cindy“ small Michael Kors light brown")
                 queryExpectation.fulfill()
             }
         })
@@ -90,7 +90,7 @@ class QueryEndpointTests: XCTestCase {
                let name = results.first?["name"] as? [String: String], let enName = name["en"] {
                 XCTAssert(result.isSuccess)
                 XCTAssertEqual(count, 1)
-                XCTAssertEqual(enName, "Alberto Guardiani – Slip on “Cherie”")
+                XCTAssertEqual(enName, "Bag Moschino Love purple")
                 queryExpectation.fulfill()
             }
         })

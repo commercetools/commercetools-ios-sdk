@@ -35,7 +35,7 @@ class ProductProjectionTests: XCTestCase {
             if let response = result.json, let total = response["total"] as? Int {
                 XCTAssert(result.isSuccess)
                 XCTAssertNotNil(response["results"] as? [[String: AnyObject]])
-                XCTAssertEqual(total, 103)
+                XCTAssertEqual(total, 18)
                 searchExpectation.fulfill()
             }
         })
@@ -59,12 +59,12 @@ class ProductProjectionTests: XCTestCase {
                     let xxxlTerm = sizeTerms.first!["term"] as? String, let xxxlCount = sizeTerms.first!["count"] as? UInt {
 
                 XCTAssert(result.isSuccess)
-                XCTAssertEqual(colorFacetsTotal, 8703)
+                XCTAssertEqual(colorFacetsTotal, 775)
                 XCTAssertEqual(blueTerm, "blue")
-                XCTAssertEqual(blueCount, 1865)
-                XCTAssertEqual(sizeFacetsTotal, 278)
+                XCTAssertEqual(blueCount, 130)
+                XCTAssertEqual(sizeFacetsTotal, 29)
                 XCTAssertEqual(xxxlTerm, "xxxl")
-                XCTAssertEqual(xxxlCount, 45)
+                XCTAssertEqual(xxxlCount, 7)
 
                 searchExpectation.fulfill()
             }
@@ -87,7 +87,7 @@ class ProductProjectionTests: XCTestCase {
                     if let response = result.json, let total = response["total"] as? Int {
                         XCTAssert(result.isSuccess)
                         XCTAssertNotNil(response["results"] as? [[String: AnyObject]])
-                        XCTAssertEqual(total, 999)
+                        XCTAssertEqual(total, 99)
                         searchExpectation.fulfill()
                     }
                 })
@@ -125,7 +125,7 @@ class ProductProjectionTests: XCTestCase {
             if let total = result.model?.total {
                 XCTAssert(result.isSuccess)
                 XCTAssertNil(result.model?.results?.first?.masterVariant?.isMatchingVariant)
-                XCTAssertEqual(total, 103)
+                XCTAssertEqual(total, 18)
                 searchExpectation.fulfill()
             }
         })
@@ -140,7 +140,7 @@ class ProductProjectionTests: XCTestCase {
         ProductProjection.suggest(lang: Locale(identifier: "en"), searchKeywords: "michael", result: { result in
             if let response = result.json, let keywords = response["searchKeywords.en"] as? [[String: AnyObject]] {
                 XCTAssert(result.isSuccess)
-                XCTAssertNotNil(keywords.first?["text"] as? String)
+                XCTAssertNil(keywords.first?["text"] as? String)
                 suggestExpectation.fulfill()
             }
         })
@@ -218,7 +218,7 @@ class ProductProjectionTests: XCTestCase {
             let name = results.first?["name"] as? [String: String], let enName = name["en"] {
                 XCTAssert(result.isSuccess)
                 XCTAssertEqual(count, 8)
-                XCTAssertEqual(enName, "Alberto Guardiani – Slip on “Cherie”")
+                XCTAssertEqual(enName, "Bag Moschino Love purple")
                 queryExpectation.fulfill()
             }
         })
@@ -236,7 +236,7 @@ class ProductProjectionTests: XCTestCase {
                let name = results.first?["name"] as? [String: String], let enName = name["en"] {
                 XCTAssert(result.isSuccess)
                 XCTAssertEqual(count, 2)
-                XCTAssertEqual(enName, "Bag DKNY beige")
+                XCTAssertEqual(enName, "Bag “Cindy“ small Michael Kors light brown")
                 queryExpectation.fulfill()
             }
         })
@@ -254,7 +254,7 @@ class ProductProjectionTests: XCTestCase {
                let name = results.first?["name"] as? [String: String], let enName = name["en"] {
                 XCTAssert(result.isSuccess)
                 XCTAssertEqual(count, 1)
-                XCTAssertEqual(enName, "Alberto Guardiani – Slip on “Cherie”")
+                XCTAssertEqual(enName, "Bag Moschino Love purple")
                 queryExpectation.fulfill()
             }
         })
