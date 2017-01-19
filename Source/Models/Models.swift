@@ -1589,6 +1589,7 @@ public struct LineItem: Mappable {
     public var productId: String?
     public var name: LocalizedString?
     public var productSlug: LocalizedString?
+    public var productType: Reference<ProductType>?
     public var variant: ProductVariant?
     public var price: Price?
     public var taxedPrice: TaxedItemPrice?
@@ -1611,6 +1612,7 @@ public struct LineItem: Mappable {
         productId                  <- map["productId"]
         name                       <- map["name"]
         productSlug                <- map["productSlug"]
+        productType                <- map["productType"]
         variant                    <- map["variant"]
         price                      <- map["price"]
         totalPrice                 <- map["totalPrice"]

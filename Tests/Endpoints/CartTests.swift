@@ -128,6 +128,7 @@ class CartTests: XCTestCase {
                             if let cart = result.model {
                                 XCTAssert(result.isSuccess)
                                 XCTAssertEqual(cart.lineItems?.count, 1)
+                                XCTAssertNotNil(cart.lineItems?.first?.productType?.id)
                                 updateExpectation.fulfill()
                             }
                         })
