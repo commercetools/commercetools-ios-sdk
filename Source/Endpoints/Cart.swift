@@ -45,6 +45,7 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
     public var billingAddress: Address?
     public var inventoryMode: InventoryMode?
     public var taxMode: TaxMode?
+    public var taxRoundingMode: RoundingMode?
     public var customerGroup: Reference<CustomerGroup>?
     public var country: String?
     public var shippingInfo: ShippingInfo?
@@ -74,6 +75,7 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
         billingAddress   <- map["billingAddress"]
         inventoryMode    <- map["inventoryMode"]
         taxMode          <- map["taxMode"]
+        taxRoundingMode  <- map["taxRoundingMode"]
         customerGroup    <- map["customerGroup"]
         country          <- map["country"]
         shippingInfo     <- map["shippingInfo"]
