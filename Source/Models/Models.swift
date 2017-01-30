@@ -356,6 +356,7 @@ public enum CartUpdateAction: JSONRepresentable {
     case setLineItemCustomField(options: SetLineItemCustomFieldOptions)
     case addPayment(options: AddPaymentOptions)
     case removePayment(options: RemovePaymentOptions)
+    case changeTaxMode(options: ChangeTaxModeOptions)
     case setLocale(options: SetLocaleOptions)
 
     public var toJSON: [String: Any] {
@@ -431,6 +432,10 @@ public enum CartUpdateAction: JSONRepresentable {
         case .removePayment(let options):
             var optionsJSON = toJSON(options)
             optionsJSON["action"] = "removePayment"
+            return optionsJSON
+        case .changeTaxMode(let options):
+            var optionsJSON = toJSON(options)
+            optionsJSON["action"] = "changeTaxMode"
             return optionsJSON
         case .setLocale(let options):
             var optionsJSON = toJSON(options)
@@ -759,6 +764,22 @@ public struct RemovePaymentOptions: Mappable {
 
     mutating public func mapping(map: Map) {
         payment                     <- map["payment"]
+    }
+}
+
+public struct ChangeTaxModeOptions: Mappable {
+
+    // MARK: - Properties
+
+    public var taxMode: TaxMode?
+
+    public init() {}
+    public init?(map: Map) {}
+
+    // MARK: - Mappable
+
+    mutating public func mapping(map: Map) {
+        taxMode                     <- map["taxMode"]
     }
 }
 

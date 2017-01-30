@@ -140,6 +140,80 @@ class CartTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    func testTaxModeChangeToDisabled() {
+        let cartTaxModeExpectation = expectation(description: "cart tax mode expectation")
+
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+
+        AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
+
+        retrieveSampleProduct { lineItemDraft in
+            var cartDraft = CartDraft()
+            cartDraft.currency = "EUR"
+            cartDraft.lineItems = [lineItemDraft]
+            cartDraft.taxMode = .external
+
+            Cart.create(cartDraft, result: { result in
+                if let cart = result.model, let id = cart.id, let version = cart.version {
+                    XCTAssert(result.isSuccess)
+                    XCTAssertEqual(cart.taxMode, .external)
+
+                    var options = ChangeTaxModeOptions()
+                    options.taxMode = .disabled
+
+                    let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.changeTaxMode(options: options)])
+                    Cart.update(id, actions: updateActions, result: { result in
+                        if let error = result.errors?.first as? CTError, case .generalError(let reason) = error {
+                            XCTAssert(result.isFailure)
+                            XCTAssertEqual(reason?.message, "Disabled tax mode is not allowed on my cart.")
+                            cartTaxModeExpectation.fulfill()
+                        }
+                    })
+                }
+            })
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testTaxModeChange() {
+        let cartTaxModeExpectation = expectation(description: "cart tax mode expectation")
+
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+
+        AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
+
+        retrieveSampleProduct { lineItemDraft in
+            var cartDraft = CartDraft()
+            cartDraft.currency = "EUR"
+            cartDraft.lineItems = [lineItemDraft]
+            cartDraft.taxMode = .external
+
+            Cart.create(cartDraft, result: { result in
+                if let cart = result.model, let id = cart.id, let version = cart.version {
+                    XCTAssert(result.isSuccess)
+                    XCTAssertEqual(cart.taxMode, .external)
+
+                    var options = ChangeTaxModeOptions()
+                    options.taxMode = .platform
+
+                    let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.changeTaxMode(options: options)])
+                    Cart.update(id, actions: updateActions, result: { result in
+                        if let cart = result.model {
+                            XCTAssert(result.isSuccess)
+                            XCTAssertEqual(cart.taxMode, .platform)
+                            cartTaxModeExpectation.fulfill()
+                        }
+                    })
+                }
+            })
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
     private func retrieveSampleProduct(_ completion: @escaping (LineItemDraft) -> Void) {
         ProductProjection.query(limit:1, result: { result in
             if let product = result.model?.results?.first, result.isSuccess {
