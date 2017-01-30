@@ -292,7 +292,6 @@ public struct CartDraft: Mappable {
     public var country: String?
     public var inventoryMode: InventoryMode?
     public var taxMode: TaxMode?
-    public var taxRoundingMode: RoundingMode?
     public var lineItems: [LineItemDraft]?
     public var customLineItems: [CustomLineItemDraft]?
     public var shippingAddress: Address?
@@ -315,7 +314,6 @@ public struct CartDraft: Mappable {
         country                           <- map["country"]
         inventoryMode                     <- map["inventoryMode"]
         taxMode                           <- map["taxMode"]
-        taxRoundingMode                   <- map["taxRoundingMode"]
         lineItems                         <- map["lineItems"]
         customLineItems                   <- map["customLineItems"]
         shippingAddress                   <- map["shippingAddress"]
