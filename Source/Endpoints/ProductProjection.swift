@@ -34,7 +34,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
                                               the text to analyze.
         - parameter fuzzyLevel:               An optional `Int`, which if used, explicitly sets the desired
                                               fuzzy level, if `fuzzy` is enabled.
-        - parameter filter:                   An optional filter to be applied to the search results
+        - parameter filters:                  An optional array of filters to be applied to the search results
                                               (after facets have been calculated).
         - parameter filterQuery:              An optional filter to be applied to the search results
                                               (before facets have been calculated).
@@ -51,7 +51,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
     */
     open static func search(staged: Bool? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil,
                             offset: UInt? = nil, lang: Locale = Locale.current, text: String? = nil,
-                            fuzzy: Bool? = nil, fuzzyLevel: Int? = nil, filter: String? = nil, filterQuery: String? = nil,
+                            fuzzy: Bool? = nil, fuzzyLevel: Int? = nil, filters: [String]? = nil, filterQuery: String? = nil,
                             filterFacets: String? = nil, facets: [String]? = nil, markMatchingVariants: Bool? = nil,
                             priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
                             priceChannel: String? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
@@ -61,7 +61,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
 
             var parameters = paramsWithStaged(staged, params: queryParameters(predicates: nil, sort: sort,
                     limit: limit, offset: offset))
-            parameters = searchParams(lang: lang, text: text, fuzzy: fuzzy, fuzzyLevel: fuzzyLevel, filter: filter,
+            parameters = searchParams(lang: lang, text: text, fuzzy: fuzzy, fuzzyLevel: fuzzyLevel, filters: filters,
                     filterQuery: filterQuery, filterFacets: filterFacets, facets: facets, markMatchingVariants: markMatchingVariants,
                     priceCurrency: priceCurrency, priceCountry: priceCountry, priceCustomerGroup: priceCustomerGroup,
                     priceChannel: priceChannel, params: parameters)
@@ -227,7 +227,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
     }
 
     private static func searchParams(lang: Locale = Locale.current, text: String? = nil, fuzzy: Bool? = nil,
-                                     fuzzyLevel: Int? = nil, filter: String? = nil, filterQuery: String? = nil,
+                                     fuzzyLevel: Int? = nil, filters: [String]? = nil, filterQuery: String? = nil,
                                      filterFacets: String? = nil, facets: [String]? = nil, markMatchingVariants: Bool? = nil,
                                      priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
                                      priceChannel: String? = nil, params: [String: Any]? = nil) -> [String: Any] {
@@ -245,8 +245,8 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
             params["fuzzyLevel"]  = fuzzyLevel
         }
 
-        if let filter = filter {
-            params["filter"] = filter
+        if let filters = filters, filters.count > 0 {
+            params["filter"] = filters
         }
 
         if let filterQuery = filterQuery {
