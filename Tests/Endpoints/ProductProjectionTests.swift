@@ -97,6 +97,23 @@ class ProductProjectionTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    func testMultipleFilters() {
+
+        let searchExpectation = expectation(description: "search expectation")
+        let filters = ["categories:exists", "variants.price.centAmount:20750"]
+
+        ProductProjection.search(staged: true, limit: 1, filters: filters, result: { result in
+            if let product = result.model?.results?.first, let total = result.model?.total, result.isSuccess {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(product.masterVariant?.prices?.first?.value?.centAmount, 20750)
+                XCTAssertEqual(total, 1)
+                searchExpectation.fulfill()
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
     func testSearchWithExpansion() {
 
         let searchExpectation = expectation(description: "search expectation")
