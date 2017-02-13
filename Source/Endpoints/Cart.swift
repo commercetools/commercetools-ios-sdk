@@ -31,8 +31,6 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
 
     public var id: String?
     public var version: UInt?
-    public var createdAt: Date?
-    public var lastModifiedAt: Date?
     public var customerId: String?
     public var customerEmail: String?
     public var anonymousId: String?
@@ -53,34 +51,38 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
     public var custom: [String: Any]?
     public var paymentInfo: PaymentInfo?
     public var locale: String?
+    public var deleteDaysAfterLastModification: UInt?
+    public var createdAt: Date?
+    public var lastModifiedAt: Date?
 
     public required init?(map: Map) {}
 
     // MARK: - Mappable
 
     public func mapping(map: Map) {
-        id               <- map["id"]
-        version          <- map["version"]
-        createdAt        <- (map["createdAt"], ISO8601DateTransform())
-        lastModifiedAt   <- (map["lastModifiedAt"], ISO8601DateTransform())
-        customerId       <- map["customerId"]
-        customerEmail    <- map["customerEmail"]
-        anonymousId      <- map["anonymousId"]
-        lineItems        <- map["lineItems"]
-        customLineItems  <- map["customLineItems"]
-        totalPrice       <- map["totalPrice"]
-        taxedPrice       <- map["taxedPrice"]
-        cartState        <- map["cartState"]
-        shippingAddress  <- map["shippingAddress"]
-        billingAddress   <- map["billingAddress"]
-        inventoryMode    <- map["inventoryMode"]
-        taxMode          <- map["taxMode"]
-        taxRoundingMode  <- map["taxRoundingMode"]
-        customerGroup    <- map["customerGroup"]
-        country          <- map["country"]
-        shippingInfo     <- map["shippingInfo"]
-        custom           <- map["custom"]
-        paymentInfo      <- map["paymentInfo"]
-        locale           <- map["locale"]
+        id                                  <- map["id"]
+        version                             <- map["version"]
+        customerId                          <- map["customerId"]
+        customerEmail                       <- map["customerEmail"]
+        anonymousId                         <- map["anonymousId"]
+        lineItems                           <- map["lineItems"]
+        customLineItems                     <- map["customLineItems"]
+        totalPrice                          <- map["totalPrice"]
+        taxedPrice                          <- map["taxedPrice"]
+        cartState                           <- map["cartState"]
+        shippingAddress                     <- map["shippingAddress"]
+        billingAddress                      <- map["billingAddress"]
+        inventoryMode                       <- map["inventoryMode"]
+        taxMode                             <- map["taxMode"]
+        taxRoundingMode                     <- map["taxRoundingMode"]
+        customerGroup                       <- map["customerGroup"]
+        country                             <- map["country"]
+        shippingInfo                        <- map["shippingInfo"]
+        custom                              <- map["custom"]
+        paymentInfo                         <- map["paymentInfo"]
+        locale                              <- map["locale"]
+        deleteDaysAfterLastModification     <- map["deleteDaysAfterLastModification"]
+        createdAt                           <- (map["createdAt"], ISO8601DateTransform())
+        lastModifiedAt                      <- (map["lastModifiedAt"], ISO8601DateTransform())
     }
 }
