@@ -300,6 +300,7 @@ public struct CartDraft: Mappable {
     public var externalTaxRateForShippingMethod: ExternalTaxRateDraft?
     public var custom: [String: Any]?
     public var locale: String?
+    public var deleteDaysAfterLastModification: UInt?
 
     public init() {}
     public init?(map: Map) {}
@@ -322,6 +323,7 @@ public struct CartDraft: Mappable {
         externalTaxRateForShippingMethod  <- map["externalTaxRateForShippingMethod"]
         custom                            <- map["custom"]
         locale                            <- map["locale"]
+        deleteDaysAfterLastModification   <- map["deleteDaysAfterLastModification"]
     }
 
 }
@@ -356,6 +358,7 @@ public enum CartUpdateAction: JSONRepresentable {
     case removePayment(options: RemovePaymentOptions)
     case changeTaxMode(options: ChangeTaxModeOptions)
     case setLocale(options: SetLocaleOptions)
+    case setDeleteDaysAfterLastModification(options: SetDeleteDaysAfterLastModificationOptions)
 
     public var toJSON: [String: Any] {
         switch self {
@@ -438,6 +441,10 @@ public enum CartUpdateAction: JSONRepresentable {
         case .setLocale(let options):
             var optionsJSON = toJSON(options)
             optionsJSON["action"] = "setLocale"
+            return optionsJSON
+        case .setDeleteDaysAfterLastModification(let options):
+            var optionsJSON = toJSON(options)
+            optionsJSON["action"] = "setDeleteDaysAfterLastModification"
             return optionsJSON
         }
     }
@@ -796,6 +803,23 @@ public struct SetLocaleOptions: Mappable {
         locale                       <- map["locale"]
     }
 }
+
+public struct SetDeleteDaysAfterLastModificationOptions: Mappable {
+
+    // MARK: - Properties
+
+    public var deleteDaysAfterLastModification: UInt?
+
+    public init() {}
+    public init?(map: Map) {}
+
+    // MARK: - Mappable
+
+    mutating public func mapping(map: Map) {
+        deleteDaysAfterLastModification     <- map["deleteDaysAfterLastModification"]
+    }
+}
+
 public struct Channel: Mappable {
 
     // MARK: - Properties

@@ -214,6 +214,43 @@ class CartTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    func testDeleteDaysAfterLastModification() {
+        let cartDeleteExpectation = expectation(description: "cart delete if not modified expectation")
+
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+
+        AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
+
+        retrieveSampleProduct { lineItemDraft in
+            var cartDraft = CartDraft()
+            cartDraft.currency = "EUR"
+            cartDraft.lineItems = [lineItemDraft]
+            cartDraft.deleteDaysAfterLastModification = 3
+
+            Cart.create(cartDraft, result: { result in
+                if let cart = result.model, let id = cart.id, let version = cart.version {
+                    XCTAssert(result.isSuccess)
+                    XCTAssertEqual(cart.deleteDaysAfterLastModification, 3)
+
+                    var options = SetDeleteDaysAfterLastModificationOptions()
+                    options.deleteDaysAfterLastModification = 8
+
+                    let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.setDeleteDaysAfterLastModification(options: options)])
+                    Cart.update(id, actions: updateActions, result: { result in
+                        if let cart = result.model {
+                            XCTAssert(result.isSuccess)
+                            XCTAssertEqual(cart.deleteDaysAfterLastModification, 8)
+                            cartDeleteExpectation.fulfill()
+                        }
+                    })
+                }
+            })
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
     private func retrieveSampleProduct(_ completion: @escaping (LineItemDraft) -> Void) {
         ProductProjection.query(limit:1, result: { result in
             if let product = result.model?.results?.first, result.isSuccess {
