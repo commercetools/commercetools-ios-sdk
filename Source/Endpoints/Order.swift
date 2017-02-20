@@ -32,6 +32,7 @@ open class Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Mappable {
     public var shippingAddress: Address?
     public var billingAddress: Address?
     public var taxMode: TaxMode?
+    public var taxRoundingMode: RoundingMode?
     public var customerGroup: Reference<CustomerGroup>?
     public var country: String?
     public var orderState: OrderState?
@@ -70,6 +71,7 @@ open class Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Mappable {
         shippingAddress            <- map["shippingAddress"]
         billingAddress             <- map["billingAddress"]
         taxMode                    <- map["taxMode"]
+        taxRoundingMode            <- map["taxRoundingMode"]
         customerGroup              <- map["customerGroup"]
         country                    <- map["country"]
         orderState                 <- map["orderState"]
