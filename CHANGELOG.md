@@ -2,7 +2,7 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
-- `0.5.x` Releases - [0.5.0](#050) | [0.5.1](#051) | [0.5.2](#052) | [0.5.3](#053)
+- `0.5.x` Releases - [0.5.0](#050) | [0.5.1](#051) | [0.5.2](#052) | [0.5.3](#053) | [0.5.4](#054)
 - `0.4.x` Releases - [0.4.0](#040) | [0.4.1](#041) | [0.4.2](#042)
 - `0.3.x` Releases - [0.3.0](#030)
 - `0.2.x` Releases - [0.2.0](#020)
@@ -10,6 +10,15 @@ All changes to this project will be documented in this file.
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.5.4](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.5.4)
+Released on 2017-02-20.
+
+#### Added
+- `taxRoundingMode` field to `Cart` and `Order` endpoints.
+- Support for multiple filters for product projection search.
+- `deleteDaysAfterLastModification` to the `Cart` endpoint.
+- Fixes for Swift Package Manager.
 
 ## [0.5.3](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.5.3)
 Released on 2017-01-23.

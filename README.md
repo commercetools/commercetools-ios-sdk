@@ -367,7 +367,7 @@ Order endpoint provides the ability to create an order from an existing `Cart`, 
 Most common way for your iOS app to retrieve the product data is by consuming the product projection endpoint. The following actions are currently supported:
 - Search for product projections
 ```swift
-ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: NSLocale(localeIdentifier: "en"), text: "Michael Kors", result: { result in
+ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: Locale(identifier: "en"), text: "Michael Kors", result: { result in
     if let response = result.model, let total = response.total,
     		let results = response.results, result.isSuccess {
         // results contains an array of product projection objects
@@ -376,7 +376,7 @@ ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: NSLocale(locale
 ```
 - Product projection keyword suggestions
 ```swift
-ProductProjection.suggest(lang: NSLocale(localeIdentifier: "en"), searchKeywords: "michael", result: { result in
+ProductProjection.suggest(lang: Locale(identifier: "en"), searchKeywords: "michael", result: { result in
     if let response = result.json, let keywords = response["searchKeywords.en"] as? [[String: AnyObject]],
     		let firstKeyword = keywords.first?["text"] as? String, result.isSuccess {
         // keywords contains an array of suggestions in dictionary representation
