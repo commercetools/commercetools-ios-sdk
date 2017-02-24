@@ -172,11 +172,6 @@ public class Config {
             valid = false
         }
 
-        if (scope ?? "").isEmpty {
-            Log.error("Specified configuration does not contain client scope")
-            valid = false
-        }
-
         if (authUrl ?? "").isEmpty {
             Log.debug("No authUrl specified - using deafult: https://auth.sphere.io/")
             authUrl = "https://auth.sphere.io/"

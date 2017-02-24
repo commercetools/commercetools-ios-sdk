@@ -259,14 +259,16 @@ open class AuthManager {
     }
 
     private func processLogin(username: String, password: String, completionHandler: @escaping (String?, Error?) -> Void) {
-        if let loginUrl = loginUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
-            Alamofire.request(loginUrl, method: .post,
-                            parameters: ["grant_type": "password", "scope": scope, "username": username, "password": password],
-                            encoding: URLEncoding.queryString, headers: authHeaders)
-                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                        self.state = .customerToken
-                        self.handleAuthResponse(response, completionHandler: completionHandler)
-                    })
+        if let loginUrl = loginUrl, let authHeaders = authHeaders {
+            var parameters = ["grant_type": "password", "username": username, "password": password]
+            if let scope = Config.currentConfig?.scope {
+                parameters["scope"] = scope
+            }
+            Alamofire.request(loginUrl, method: .post, parameters: parameters, encoding: URLEncoding.queryString, headers: authHeaders)
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                self.state = .customerToken
+                self.handleAuthResponse(response, completionHandler: completionHandler)
+            })
         }
     }
 
@@ -275,8 +277,11 @@ open class AuthManager {
     }
 
     private func obtainAnonymousSessionToken(_ completionHandler: @escaping (String?, Error?) -> Void) {
-        if let authUrl = anonymousSessionTokenUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
-            var parameters = ["grant_type": "client_credentials", "scope": scope]
+        if let authUrl = anonymousSessionTokenUrl, let authHeaders = authHeaders {
+            var parameters = ["grant_type": "client_credentials"]
+            if let scope = Config.currentConfig?.scope {
+                parameters["scope"] = scope
+            }
             if let anonymousId = anonymousId {
                 parameters["anonymous_id"] = anonymousId
             }
@@ -290,8 +295,12 @@ open class AuthManager {
     }
 
     private func obtainPlainAnonymousToken(_ completionHandler: @escaping (String?, Error?) -> Void) {
-        if let authUrl = clientCredentialsUrl, let authHeaders = authHeaders, let scope = Config.currentConfig?.scope {
-            Alamofire.request(authUrl, method: .post, parameters: ["grant_type": "client_credentials", "scope": scope], encoding: URLEncoding.queryString, headers: authHeaders)
+        if let authUrl = clientCredentialsUrl, let authHeaders = authHeaders {
+            var parameters = ["grant_type": "client_credentials"]
+            if let scope = Config.currentConfig?.scope {
+                parameters["scope"] = scope
+            }
+            Alamofire.request(authUrl, method: .post, parameters: parameters, encoding: URLEncoding.queryString, headers: authHeaders)
             .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 self.state = .plainToken
                 self.handleAuthResponse(response, completionHandler: completionHandler)
