@@ -104,6 +104,7 @@ class TokenStore: NSObject {
     #if os(iOS) || os(watchOS)
     /// The watch connectivity session used to share authorization tokens from the iOS SDK instance to the watchOS instance.
     fileprivate var wcSession: WCSession?
+    fileprivate let kRequestWatchSession = "RequestWatchSession"
     #endif
 
     // MARK: - Lifecycle
@@ -301,9 +302,21 @@ extension TokenStore: WCSessionDelegate {
         #if os(iOS)
             transferTokens()
         #endif
+
+        #if os(watchOS)
+            if activationState == .activated && Config.currentConfig?.validate() != true {
+                session.sendMessage([kRequestWatchSession: kRequestWatchSession], replyHandler: nil)
+            }
+        #endif
     }
 
     #if os(iOS)
+    func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+        if let requestWatchSession = message[kRequestWatchSession] as? String, requestWatchSession == kRequestWatchSession {
+            transferTokens()
+        }
+    }
+
     func sessionDidBecomeInactive(_ session: WCSession) {
         wcSession = nil
     }
