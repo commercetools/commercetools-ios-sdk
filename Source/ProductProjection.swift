@@ -7,10 +7,10 @@ import Alamofire
 import ObjectMapper
 
 /**
-    Provides complete set of interactions for querying, retrieving and creating an order.
+    Provides complete set of interactions for querying and retrieving product projections.
 */
 open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappable {
-    
+
     public typealias ResponseType = ProductProjection
 
     // MARK: - Properties
