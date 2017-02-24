@@ -119,7 +119,7 @@ public class Config {
 
         - returns: The new `Config` instance if all configuration parameters were valid, 'nil' otherwise.
     */
-    init?(config: NSDictionary, loggingEnabled: Bool = true, logLevel: LogLevel = .debug) {
+    public init?(config: NSDictionary, loggingEnabled: Bool = true, logLevel: LogLevel = .debug) {
         self.loggingEnabled = loggingEnabled
         self.logLevel = logLevel
         projectKey = config["projectKey"] as? String
