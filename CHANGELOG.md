@@ -11,6 +11,16 @@ All changes to this project will be documented in this file.
 
 ---
 
+## [0.5.5](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.5.5)
+Released on 2017-03-01.
+
+#### Added
+- Public modifier for the dictionary config initializer.
+
+#### Updated
+- Scope to be optional configuration parameter.
+- Improved WatchConnectivity communication.
+
 ## [0.5.4](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.5.4)
 Released on 2017-02-20.
 
