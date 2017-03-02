@@ -12,8 +12,8 @@ import ObjectMapper
     - Failure: The result from the Commercetools endpoint encountered an error resulting in a failure. Provided status
                code and an array of errors should be used to examine the origin of the problem.
 */
-public enum Result<Response: Mappable> {
-    case success([String: Any])
+public enum Result<T> {
+    case success(Any)
     case failure(Int?, [Error])
 
     /// Returns `true` if the result is a success, `false` otherwise.
@@ -34,19 +34,9 @@ public enum Result<Response: Mappable> {
     /// Returns the associated JSON response in dictionary format, if the result is a success, `nil` otherwise.
     public var json: [String: Any]? {
         switch self {
-        case .success(let value):
+        case .success(let value as [String: Any]):
             return value
-        case .failure:
-            return nil
-        }
-    }
-
-    /// Returns the associated response, with in the  if the result is a success, `nil` otherwise.
-    public var model: Response? {
-        switch self {
-        case .success(let value):
-            return Mapper<Response>().map(JSONObject: value)
-        case .failure:
+        default:
             return nil
         }
     }
@@ -102,5 +92,29 @@ extension Result: CustomDebugStringConvertible {
         case .failure(let statusCode, let errors):
             return "FAILURE: StatusCode: \(statusCode ?? -1), Errors: \(errors)"
         }
+    }
+}
+
+extension Result where T: Mappable {
+    /// Returns the associated response, if the result is a success, `nil` otherwise.
+    public var model: T? {
+        if case .success(let value) = self {
+            return Mapper<T>().map(JSONObject: value)
+        }
+        return nil
+    }
+}
+
+public protocol ArrayResponse {
+    associatedtype ArrayElement: Mappable
+}
+
+extension Result where T: ArrayResponse {
+    /// Returns the associated array, if the result is a success, `nil` otherwise.
+    public var model: [T.ArrayElement]? {
+        if case .success(let value) = self {
+            return Mapper<T.ArrayElement>().mapArray(JSONObject: value)
+        }
+        return nil
     }
 }
