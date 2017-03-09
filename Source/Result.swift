@@ -31,16 +31,6 @@ public enum Result<T> {
         return !isSuccess
     }
 
-    /// Returns the associated JSON response in dictionary format, if the result is a success, `nil` otherwise.
-    public var json: [String: Any]? {
-        switch self {
-        case .success(let value as [String: Any]):
-            return value
-        default:
-            return nil
-        }
-    }
-
     /// Returns the associated array of error values if the result is a failure, `nil` otherwise.
     public var errors: [Error]? {
         switch self {
@@ -96,6 +86,14 @@ extension Result: CustomDebugStringConvertible {
 }
 
 extension Result where T: Mappable {
+    /// Returns the associated JSON response in dictionary format, if the result is a success, `nil` otherwise.
+    public var json: [String: Any]? {
+        if case .success(let value as [String: Any]) = self {
+            return value
+        }
+        return nil
+    }
+
     /// Returns the associated response, if the result is a success, `nil` otherwise.
     public var model: T? {
         if case .success(let value) = self {
@@ -110,6 +108,14 @@ public protocol ArrayResponse {
 }
 
 extension Result where T: ArrayResponse {
+    /// Returns the associated JSON response in dictionary format, if the result is a success, `nil` otherwise.
+    public var json: [[String: Any]]? {
+        if case .success(let value as [[String: Any]]) = self {
+            return value
+        }
+        return nil
+    }
+
     /// Returns the associated array, if the result is a success, `nil` otherwise.
     public var model: [T.ArrayElement]? {
         if case .success(let value) = self {
