@@ -125,6 +125,7 @@
 		21C6534D1CBE6292008E84B2 /* Commercetools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21C653421CBE6291008E84B2 /* Commercetools.framework */; };
 		21C653521CBE6292008E84B2 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C653511CBE6292008E84B2 /* AuthManagerTests.swift */; };
 		21D462041D23FD0A00CB8C8E /* CartTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D462031D23FD0A00CB8C8E /* CartTests.swift */; };
+		21DE0C741E70C74E00644A16 /* ShippingMethodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21DE0C731E70C74E00644A16 /* ShippingMethodTests.swift */; };
 		21F26D8F1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F26D8E1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift */; };
 		2699468A8EDDC145F9E519BD /* Pods_Commercetools_watchOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0D1C0DE43563BABA0F6967 /* Pods_Commercetools_watchOS.framework */; };
 		414995925A8A1BA2A088EC04 /* Pods_Commercetools_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E9FFCA28231E62ECBEFB099 /* Pods_Commercetools_tvOS.framework */; };
@@ -193,6 +194,7 @@
 		21C6534C1CBE6292008E84B2 /* Commercetools iOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Commercetools iOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		21C653511CBE6292008E84B2 /* AuthManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManagerTests.swift; sourceTree = "<group>"; };
 		21D462031D23FD0A00CB8C8E /* CartTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CartTests.swift; sourceTree = "<group>"; };
+		21DE0C731E70C74E00644A16 /* ShippingMethodTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShippingMethodTests.swift; sourceTree = "<group>"; };
 		21F26D8E1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Configuration.swift"; sourceTree = "<group>"; };
 		256A6E381D558468047FB1AB /* Pods-Commercetools tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools tvOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools tvOS/Pods-Commercetools tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		29502A041BA37E6BD22C3C21 /* Pods-Commercetools.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commercetools.release.xcconfig"; path = "Pods/Target Support Files/Pods-Commercetools/Pods-Commercetools.release.xcconfig"; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 				213398181CDB8BB2003248BD /* ProductProjectionTests.swift */,
 				21D462031D23FD0A00CB8C8E /* CartTests.swift */,
 				21BB6F331DDEF8900010127A /* GraphQLTests.swift */,
+				21DE0C731E70C74E00644A16 /* ShippingMethodTests.swift */,
 			);
 			path = Endpoints;
 			sourceTree = "<group>";
@@ -968,6 +971,7 @@
 				213398191CDB8BB2003248BD /* ProductProjectionTests.swift in Sources */,
 				210BE9FDDE49F1D7D4F53430 /* UpdateByKeyEndpointTests.swift in Sources */,
 				210BEDE9A321298095FE617F /* ByIdEndpointTests.swift in Sources */,
+				21DE0C741E70C74E00644A16 /* ShippingMethodTests.swift in Sources */,
 				210BE27112B084029788BD8A /* QueryEndpointTests.swift in Sources */,
 				2111C3F51CD7831D00B2C082 /* CustomerTests.swift in Sources */,
 				21D462041D23FD0A00CB8C8E /* CartTests.swift in Sources */,
