@@ -362,6 +362,45 @@ Customer.verifyEmail(token: token, result: { result in
 
 Order endpoint provides the ability to create an order from an existing `Cart`, but also retrieve orders by UUID, and perform queries for orders.
 
+#### Shipping Method
+
+In order to present shipping options to the customer during checkout, you need to use the shipping method endpoint:
+- Retrieve shipping methods for a cart
+```swift
+ShippingMethod.for(cart: cart) { result in
+    if let shippingMethods = result.model, result.isSuccess {
+        // present shipping methods to the customer
+    }
+}
+```
+- Retrieve shipping methods for a country
+```swift
+ShippingMethod.for(country: "DE") { result in
+    if let shippingMethods = result.model, result.isSuccess {
+        // present shipping methods to the customer
+    }
+}
+```
+- Query for shipping methods
+```swift
+let predicate = "name=\"DHL\""
+
+ShippingMethod.query(predicates: [predicate], result: { result in
+    if let response = result.model, let count = response.count,
+			let results = response.results, result.isSuccess {
+        // results contains an array of shipping method objects
+    }
+})
+```
+- Retrieve shipping method by UUID
+```swift
+ShippingMethod.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
+    if let shippingMethod = result.model, result.isSuccess {
+        // response contains product projection object
+    }
+})
+```
+
 #### Product Projection
 
 Most common way for your iOS app to retrieve the product data is by consuming the product projection endpoint. The following actions are currently supported:
