@@ -128,12 +128,12 @@ public extension Endpoint {
     /**
         This method provides default response handling from all endpoints, providing successful result in dictionary format.
 
-        - parameter token:                    Auth token to be included in the headers.
+        - parameter response:                 Received response.
         - parameter result:                   The code to be executed after processing the response, providing response
                                               in dictionary format in case of a successful result.
     */
     static func handleResponse<T>(_ response: DataResponse<Any>, result: (Result<T>) -> Void) {
-        if let responseDict = response.result.value as? [String: Any], let response = response.response, case 200 ... 299 = response.statusCode {
+        if let responseDict = response.result.value, let response = response.response, case 200 ... 299 = response.statusCode {
             result(Result.success(responseDict))
         } else {
             checkResponseForErrors(response: response, result: result)

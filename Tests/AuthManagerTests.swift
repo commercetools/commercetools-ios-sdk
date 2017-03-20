@@ -311,6 +311,6 @@ class AuthManagerTests: XCTestCase {
             }
         })
 
-        waitForExpectations(timeout: 1000, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 }

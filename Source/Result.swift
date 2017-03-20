@@ -12,8 +12,8 @@ import ObjectMapper
     - Failure: The result from the Commercetools endpoint encountered an error resulting in a failure. Provided status
                code and an array of errors should be used to examine the origin of the problem.
 */
-public enum Result<Response: Mappable> {
-    case success([String: Any])
+public enum Result<T> {
+    case success(Any)
     case failure(Int?, [Error])
 
     /// Returns `true` if the result is a success, `false` otherwise.
@@ -29,26 +29,6 @@ public enum Result<Response: Mappable> {
     /// Returns `true` if the result is a failure, `false` otherwise.
     public var isFailure: Bool {
         return !isSuccess
-    }
-
-    /// Returns the associated JSON response in dictionary format, if the result is a success, `nil` otherwise.
-    public var json: [String: Any]? {
-        switch self {
-        case .success(let value):
-            return value
-        case .failure:
-            return nil
-        }
-    }
-
-    /// Returns the associated response, with in the  if the result is a success, `nil` otherwise.
-    public var model: Response? {
-        switch self {
-        case .success(let value):
-            return Mapper<Response>().map(JSONObject: value)
-        case .failure:
-            return nil
-        }
     }
 
     /// Returns the associated array of error values if the result is a failure, `nil` otherwise.
@@ -102,5 +82,45 @@ extension Result: CustomDebugStringConvertible {
         case .failure(let statusCode, let errors):
             return "FAILURE: StatusCode: \(statusCode ?? -1), Errors: \(errors)"
         }
+    }
+}
+
+extension Result where T: Mappable {
+    /// Returns the associated JSON response in dictionary format, if the result is a success, `nil` otherwise.
+    public var json: [String: Any]? {
+        if case .success(let value as [String: Any]) = self {
+            return value
+        }
+        return nil
+    }
+
+    /// Returns the associated response, if the result is a success, `nil` otherwise.
+    public var model: T? {
+        if case .success(let value) = self {
+            return Mapper<T>().map(JSONObject: value)
+        }
+        return nil
+    }
+}
+
+public protocol ArrayResponse {
+    associatedtype ArrayElement: Mappable
+}
+
+extension Result where T: ArrayResponse {
+    /// Returns the associated JSON response in dictionary format, if the result is a success, `nil` otherwise.
+    public var json: [[String: Any]]? {
+        if case .success(let value as [[String: Any]]) = self {
+            return value
+        }
+        return nil
+    }
+
+    /// Returns the associated array, if the result is a success, `nil` otherwise.
+    public var model: [T.ArrayElement]? {
+        if case .success(let value) = self {
+            return Mapper<T.ArrayElement>().mapArray(JSONObject: value)
+        }
+        return nil
     }
 }
