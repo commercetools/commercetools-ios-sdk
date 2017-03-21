@@ -66,13 +66,13 @@ public struct Project: Endpoint, Mappable {
 
     // MARK: - Properties
 
-    var key: String?
-    var name: String?
-    var countries: [String]?
-    var currencies: [String]?
-    var languages: [String]?
-    var createdAt: Date?
-    var messagesEnabled: Bool?
+    public var key: String?
+    public var name: String?
+    public var countries: [String]?
+    public var currencies: [String]?
+    public var languages: [String]?
+    public var createdAt: Date?
+    public var messagesEnabled: Bool?
 
     public init?(map: Map) {}
 
