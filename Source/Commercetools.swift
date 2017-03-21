@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import Alamofire
 import ObjectMapper
 
 // MARK: - Configuration
@@ -41,6 +42,51 @@ public extension Notification.Name {
 /// The current state handled by authentication manager.
 public var authState: AuthManager.TokenState {
     return AuthManager.sharedInstance.state
+}
+
+// MARK: - Project settings
+
+public struct Project: Endpoint, Mappable {
+    public typealias ResponseType = Project
+    public static let path = ""
+
+    /**
+        Retrieves project settings.
+
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    public static func settings(result: @escaping (Result<ResponseType>) -> Void) {
+        requestWithTokenAndPath(result, { token, path in
+            Alamofire.request(path, headers: self.headers(token))
+            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+                handleResponse(response, result: result)
+            })
+        })
+    }
+
+    // MARK: - Properties
+
+    var key: String?
+    var name: String?
+    var countries: [String]?
+    var currencies: [String]?
+    var languages: [String]?
+    var createdAt: Date?
+    var messagesEnabled: Bool?
+
+    public init?(map: Map) {}
+
+    // MARK: - Mappable
+
+    mutating public func mapping(map: Map) {
+        key                       <- map["key"]
+        name                      <- map["name"]
+        countries                 <- map["countries"]
+        currencies                <- map["currencies"]
+        languages                 <- map["languages"]
+        createdAt                 <- (map["createdAt"], ISO8601DateTransform())
+        messagesEnabled           <- map["messagesEnabled"]
+    }
 }
 
 /**

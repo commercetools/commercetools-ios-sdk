@@ -121,6 +121,7 @@
 		2152B6431DEA55030075B584 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C608081CE006EE001A68A7 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2152B6441DEA55060075B584 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C608081CE006EE001A68A7 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		21BB6F341DDEF8900010127A /* GraphQLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21BB6F331DDEF8900010127A /* GraphQLTests.swift */; };
+		21C0B6321E814AD600D666F5 /* ProjectSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C0B6311E814AD600D666F5 /* ProjectSettingsTests.swift */; };
 		21C6080A1CE006EE001A68A7 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C608081CE006EE001A68A7 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		21C6534D1CBE6292008E84B2 /* Commercetools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21C653421CBE6291008E84B2 /* Commercetools.framework */; };
 		21C653521CBE6292008E84B2 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C653511CBE6292008E84B2 /* AuthManagerTests.swift */; };
@@ -188,6 +189,7 @@
 		214EDC6B1DEA470300562991 /* Commercetools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Commercetools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		214EDC731DEA47A000562991 /* Info-tvOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-tvOS.plist"; sourceTree = "<group>"; };
 		21BB6F331DDEF8900010127A /* GraphQLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphQLTests.swift; sourceTree = "<group>"; };
+		21C0B6311E814AD600D666F5 /* ProjectSettingsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectSettingsTests.swift; sourceTree = "<group>"; };
 		21C608081CE006EE001A68A7 /* Commercetools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Commercetools.h; sourceTree = "<group>"; };
 		21C608091CE006EE001A68A7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		21C653421CBE6291008E84B2 /* Commercetools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Commercetools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -284,6 +286,7 @@
 				21D462031D23FD0A00CB8C8E /* CartTests.swift */,
 				21BB6F331DDEF8900010127A /* GraphQLTests.swift */,
 				21DE0C731E70C74E00644A16 /* ShippingMethodTests.swift */,
+				21C0B6311E814AD600D666F5 /* ProjectSettingsTests.swift */,
 			);
 			path = Endpoints;
 			sourceTree = "<group>";
@@ -964,6 +967,7 @@
 				21C653521CBE6292008E84B2 /* AuthManagerTests.swift in Sources */,
 				21F26D8F1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift in Sources */,
 				210BE1B77F7D1AB5026075DA /* DeleteEndpointTests.swift in Sources */,
+				21C0B6321E814AD600D666F5 /* ProjectSettingsTests.swift in Sources */,
 				210BEBAB76278A85D14568D0 /* ByKeyEndpointTests.swift in Sources */,
 				21BB6F341DDEF8900010127A /* GraphQLTests.swift in Sources */,
 				210BEA16377561C1FC741F28 /* CreateEndpointTests.swift in Sources */,
