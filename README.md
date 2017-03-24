@@ -195,6 +195,18 @@ The following list represents currently supported abstract endpoints. For each p
 
 ### Currently Supported Endpoints
 
+#### Project settings
+
+In order to get the countries, languages, and currencies supported for the current Commercetools project, you should use the project settings endpoint:
+- Retrieve active cart (user must be logged in)
+```swift
+Project.settings { result in
+    if let settings = result.model {
+        // use settings.currencies, settings.countries, settings.languages, etc
+    }
+}
+```
+
 #### Cart
 
 Cart endpoint supports all common operations:
