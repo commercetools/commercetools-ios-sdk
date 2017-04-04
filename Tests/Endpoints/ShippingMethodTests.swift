@@ -37,7 +37,9 @@ class ShippingMethodTests: XCTestCase {
                         CreateZone.create(["name": "Germany", "locations": [["country": "DE"]]]) { zoneResult in
                             CreateShippingMethod.create(["name": "test-shipping-method", "isDefault": true,
                                                          "zoneRates":[["zone": ["id": zoneResult.model!.id!, "typeId": "zone"],
-                                                                       "shippingRates": [["price": ["currencyCode": "EUR", "centAmount": 1000]]]]],
+                                                                       "shippingRates": [["price": ["currencyCode": "EUR", "centAmount": 1000]]]],
+                                                                      ["zone": ["id": zoneResult.model!.id!, "typeId": "zone"],
+                                                                       "shippingRates": [["price": ["currencyCode": "USD", "centAmount": 1100]]]]],
                                                          "taxCategory": ["id": taxCategoryResult.model!.results!.first!.id!,
                                                                          "typeId": "tax-category"]]) { result in
                                 semaphore.signal()
@@ -76,8 +78,10 @@ class ShippingMethodTests: XCTestCase {
         let shippingMethodsExpectation = expectation(description: "shipping methods expectation")
 
         ShippingMethod.for(country: "DE") { result in
+            let methods = result.model
             XCTAssert(result.isSuccess)
-            XCTAssertEqual(result.model?.filter({ $0.name == "test-shipping-method" }).count, 1)
+            XCTAssert(methods?.first?.zoneRates?.first?.shippingRates?.filter({ $0.price?.currencyCode == "EUR" }).first?.isMatching == true)
+            XCTAssertEqual(methods?.filter({ $0.name == "test-shipping-method" }).count, 1)
             shippingMethodsExpectation.fulfill()
         }
 
@@ -102,8 +106,10 @@ class ShippingMethodTests: XCTestCase {
             if let cart = result.model {
                 XCTAssert(result.isSuccess)
                 ShippingMethod.for(cart: cart) { result in
-                    XCTAssert(result.isSuccess)
-                    XCTAssertEqual(result.model?.filter({ $0.name == "test-shipping-method" }).count, 1)
+                    let methods = result.model
+                    XCTAssert(methods?.first?.zoneRates?.first?.shippingRates?.filter({ $0.price?.currencyCode == "EUR" }).first?.isMatching == true)
+                    XCTAssertEqual(methods?.filter({ $0.name == "test-shipping-method" }).count, 1)
+
                     shippingMethodsExpectation.fulfill()
                 }
             }

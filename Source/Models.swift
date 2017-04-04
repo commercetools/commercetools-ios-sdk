@@ -2326,6 +2326,7 @@ public struct ShippingRate: Mappable {
 
     public var price: Money?
     public var freeAbove: Money?
+    public var isMatching: Bool?
 
     public init?(map: Map) {}
 
@@ -2334,6 +2335,7 @@ public struct ShippingRate: Mappable {
     mutating public func mapping(map: Map) {
         price             <- map["price"]
         freeAbove         <- map["freeAbove"]
+        isMatching        <- map["isMatching"]
     }
 
 }
