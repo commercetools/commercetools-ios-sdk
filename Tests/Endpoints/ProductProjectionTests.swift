@@ -30,7 +30,7 @@ class ProductProjectionTests: XCTestCase {
 
         let searchExpectation = expectation(description: "search expectation")
 
-        ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: Locale(identifier: "en"),
+        ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: Locale.current,
                                  text: "Michael Kors", result: { result in
             if let response = result.json, let total = response["total"] as? Int {
                 XCTAssert(result.isSuccess)

@@ -235,7 +235,11 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
         var params = params ?? [String: Any]()
 
         if let text = text {
-            params["text." + lang.identifier.replacingOccurrences(of: "_", with: "-")] = text
+            if let languageCode = lang.languageCode {
+                params["text." + languageCode.replacingOccurrences(of: "_", with: "-")] = text
+            } else {
+                Log.error("Cannot perform text search for a locale without language code: \(lang)")
+            }
         }
 
         if let fuzzy = fuzzy {
