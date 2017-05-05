@@ -57,15 +57,15 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
                             priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
                             priceChannel: String? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
 
+        var parameters = paramsWithStaged(staged, params: queryParameters(predicates: nil, sort: sort,
+                limit: limit, offset: offset))
+        parameters = searchParams(lang: lang, text: text, fuzzy: fuzzy, fuzzyLevel: fuzzyLevel, filters: filters,
+                filterQuery: filterQuery, filterFacets: filterFacets, facets: facets, markMatchingVariants: markMatchingVariants,
+                priceCurrency: priceCurrency, priceCountry: priceCountry, priceCustomerGroup: priceCustomerGroup,
+                priceChannel: priceChannel, params: parameters)
+
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)search", expansion: expansion)
-
-            var parameters = paramsWithStaged(staged, params: queryParameters(predicates: nil, sort: sort,
-                    limit: limit, offset: offset))
-            parameters = searchParams(lang: lang, text: text, fuzzy: fuzzy, fuzzyLevel: fuzzyLevel, filters: filters,
-                    filterQuery: filterQuery, filterFacets: filterFacets, facets: facets, markMatchingVariants: markMatchingVariants,
-                    priceCurrency: priceCurrency, priceCountry: priceCountry, priceCustomerGroup: priceCustomerGroup,
-                    priceChannel: priceChannel, params: parameters)
 
             Alamofire.request(fullPath, parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
                     .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
@@ -90,11 +90,11 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
     open static func suggest(staged: Bool? = nil, limit: UInt? = nil, lang: Locale = Locale.current,
                              searchKeywords: String, fuzzy: Bool? = nil, result: @escaping (Result<NoMapping>) -> Void) {
 
-        requestWithTokenAndPath(result, { token, path in
-            var parameters = paramsWithStaged(staged, params: queryParameters(limit: limit))
-            parameters = searchParams(fuzzy: fuzzy)
-            parameters["searchKeywords." + lang.identifier.replacingOccurrences(of: "_", with: "-")] = searchKeywords as NSString
+        var parameters = paramsWithStaged(staged, params: queryParameters(limit: limit))
+        parameters = searchParams(fuzzy: fuzzy)
+        parameters["searchKeywords." + searchLanguage(for: lang)] = searchKeywords as NSString
 
+        requestWithTokenAndPath(result, { token, path in
             Alamofire.request("\(path)suggest", parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
                     .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                         handleResponse(response, result: result)
@@ -235,7 +235,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
         var params = params ?? [String: Any]()
 
         if let text = text {
-            params["text." + lang.identifier.replacingOccurrences(of: "_", with: "-")] = text
+            params["text." + searchLanguage(for: lang)] = text
         }
 
         if let fuzzy = fuzzy {
@@ -283,5 +283,26 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
         }
 
         return params
+    }
+
+    private static func searchLanguage(for locale: Locale) -> String {
+        var projectLanguages = Project.cached?.languages
+        if projectLanguages == nil {
+            let semaphore = DispatchSemaphore(value: 0)
+            Project.settings { result in
+                projectLanguages = result.model?.languages
+                semaphore.signal()
+            }
+            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        }
+
+        let localeIdentifier = locale.identifier.replacingOccurrences(of: "_", with: "-")
+        if let language = projectLanguages?.filter({ $0.hasPrefix(localeIdentifier) }).first {
+            return language
+        } else if let languageCode = locale.languageCode, let language = projectLanguages?.filter({ $0.hasPrefix(languageCode) }).first {
+            return language
+        } else {
+            return projectLanguages?.first ?? locale.identifier
+        }
     }
 }

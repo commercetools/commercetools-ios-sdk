@@ -17,11 +17,15 @@ public var config: Config? {
     }
     set (newConfig) {
         Config.currentConfig = newConfig
-        // After setting new configuration, we try to obtain the access token
+        // After setting the new configuration, we try to obtain the access token, and cache new project settings
         AuthManager.sharedInstance.token { token, error in
             if let error = error as? CTError {
                 Log.error("Could not obtain auth token "
                         + (error.errorDescription ?? ""))
+            } else {
+                Project.settings { result in
+                    Project.cached = result.model
+                }
             }
         }
     }
@@ -49,6 +53,8 @@ public var authState: AuthManager.TokenState {
 public struct Project: Endpoint, Mappable {
     public typealias ResponseType = Project
     public static let path = ""
+
+    public static var cached: Project?
 
     /**
         Retrieves project settings.

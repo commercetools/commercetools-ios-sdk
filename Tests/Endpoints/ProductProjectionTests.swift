@@ -30,13 +30,27 @@ class ProductProjectionTests: XCTestCase {
 
         let searchExpectation = expectation(description: "search expectation")
 
-        ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: Locale(identifier: "en"),
+        ProductProjection.search(sort: ["name.en asc"], limit: 10, lang: Locale.current,
                                  text: "Michael Kors", result: { result in
             if let response = result.json, let total = response["total"] as? Int {
                 XCTAssert(result.isSuccess)
                 XCTAssertNotNil(response["results"] as? [[String: AnyObject]])
                 XCTAssertEqual(total, 18)
                 searchExpectation.fulfill()
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testSearchLanguageFallback() {
+
+        let fallbackExpectation = expectation(description: "fallback expectation")
+
+        ProductProjection.search(lang: Locale(identifier: "sr"), text: "Michael Kors", result: { result in
+            if let response = result.json, let total = response["total"] as? Int {
+                XCTAssertEqual(total, 18)
+                fallbackExpectation.fulfill()
             }
         })
 
