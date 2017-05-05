@@ -297,10 +297,10 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
         }
 
         let localeIdentifier = locale.identifier.replacingOccurrences(of: "_", with: "-")
-        if projectLanguages?.contains(localeIdentifier) == true {
-            return localeIdentifier
-        } else if let languageCode = locale.languageCode, projectLanguages?.contains(languageCode) == true {
-            return languageCode
+        if let language = projectLanguages?.filter({ $0.hasPrefix(localeIdentifier) }).first {
+            return language
+        } else if let languageCode = locale.languageCode, let language = projectLanguages?.filter({ $0.hasPrefix(languageCode) }).first {
+            return language
         } else {
             return projectLanguages?.first ?? locale.identifier
         }
