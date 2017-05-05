@@ -43,6 +43,20 @@ class ProductProjectionTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    func testSearchLanguageFallback() {
+
+        let fallbackExpectation = expectation(description: "fallback expectation")
+
+        ProductProjection.search(lang: Locale(identifier: "sr"), text: "Michael Kors", result: { result in
+            if let response = result.json, let total = response["total"] as? Int {
+                XCTAssertEqual(total, 18)
+                fallbackExpectation.fulfill()
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
     func testSearchFacets() {
 
         let searchExpectation = expectation(description: "search expectation")
