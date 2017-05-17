@@ -1928,12 +1928,14 @@ public struct Price: Mappable {
 
     // MARK: - Properties
 
+    public var id: String?
     public var value: Money?
     public var country: String?
     public var customerGroup: Reference<CustomerGroup>?
     public var channel: Reference<Channel>?
     public var validFrom: Date?
     public var validUntil: Date?
+    public var tiers: [PriceTier]?
     public var discounted: DiscountedPrice?
     public var custom: [String: Any]?
 
@@ -1942,14 +1944,33 @@ public struct Price: Mappable {
     // MARK: - Mappable
 
     mutating public func mapping(map: Map) {
+        id                 <- map["id"]
         value              <- map["value"]
         country            <- map["country"]
         customerGroup      <- map["customerGroup"]
         channel            <- map["channel"]
         validFrom          <- (map["validFrom"], ISO8601DateTransform())
         validUntil         <- (map["validUntil"], ISO8601DateTransform())
+        tiers              <- map["tiers"]
         discounted         <- map["discounted"]
         custom             <- map["custom"]
+    }
+}
+
+public struct PriceTier: Mappable {
+
+    // MARK: - Properties
+
+    public var minimumQuantity: UInt?
+    public var value: Money?
+
+    public init?(map: Map) {}
+
+    // MARK: - Mappable
+
+    mutating public func mapping(map: Map) {
+        minimumQuantity    <- map["minimumQuantity"]
+        value              <- map["value"]
     }
 }
 
