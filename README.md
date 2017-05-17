@@ -1,6 +1,6 @@
 # Commercetools Swift SDK
 
-![SPHERE.IO icon](https://admin.sphere.io/assets/images/sphere_logo_rgb_long.png)
+<img src="https://raw.githubusercontent.com/commercetools/press-kit/master/PNG/72DPI/CT%20logo%20horizontal%20RGB%2072dpi.png" height="80" />
 
 [![][travis img]][travis]
 [![][cocoapods img]][cocoapods]
