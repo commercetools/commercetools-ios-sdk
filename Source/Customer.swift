@@ -167,6 +167,7 @@ open class Customer: Endpoint, Mappable {
     public var lastName: String?
     public var middleName: String?
     public var title: String?
+    public var salutation: String?
     public var dateOfBirth: Date?
     public var companyName: String?
     public var vatId: String?
@@ -197,6 +198,7 @@ open class Customer: Endpoint, Mappable {
         lastName                  <- map["lastName"]
         middleName                <- map["middleName"]
         title                     <- map["title"]
+        salutation                <- map["salutation"]
         dateOfBirth               <- (map["dateOfBirth"], ISO8601DateTransform())
         companyName               <- map["companyName"]
         vatId                     <- map["vatId"]
