@@ -1031,6 +1031,7 @@ public enum CustomerUpdateAction: JSONRepresentable {
     case setLastName(options: SetLastNameOptions)
     case setMiddleName(options: SetMiddleNameOptions)
     case setTitle(options: SetTitleOptions)
+    case setSalutation(options: SetSalutationOptions)
     case addAddress(options: AddAddressOptions)
     case changeAddress(options: ChangeAddressOptions)
     case removeAddress(options: RemoveAddressOptions)
@@ -1068,6 +1069,10 @@ public enum CustomerUpdateAction: JSONRepresentable {
         case .setTitle(let options):
             var optionsJSON = toJSON(options)
             optionsJSON["action"] = "setTitle"
+            return optionsJSON
+        case .setSalutation(let options):
+            var optionsJSON = toJSON(options)
+            optionsJSON["action"] = "setSalutation"
             return optionsJSON
         case .addAddress(let options):
             var optionsJSON = toJSON(options)
@@ -1210,6 +1215,22 @@ public struct SetTitleOptions: Mappable {
 
     mutating public func mapping(map: Map) {
         title                      <- map["title"]
+    }
+}
+
+public struct SetSalutationOptions: Mappable {
+
+    // MARK: - Properties
+
+    public var salutation: String?
+
+    public init() {}
+    public init?(map: Map) {}
+
+    // MARK: - Mappable
+
+    mutating public func mapping(map: Map) {
+        salutation                 <- map["salutation"]
     }
 }
 

@@ -136,22 +136,27 @@ class CustomerTests: XCTestCase {
 
         Customer.profile { result in
             if let profile = result.model, let version = profile.version, result.isSuccess {
-                var options = SetFirstNameOptions()
-                options.firstName = "newName"
-                let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: options)])
+                var nameOptions = SetFirstNameOptions()
+                nameOptions.firstName = "newName"
+                var salutationOptions = SetSalutationOptions()
+                salutationOptions.salutation = "salutation"
+                let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: nameOptions), .setSalutation(options: salutationOptions)])
                 Customer.update(actions: updateActions, result: { result in
                     if let profile = result.model, let version = profile.version  {
                         XCTAssert(result.isSuccess)
                         XCTAssertEqual(profile.firstName, "newName")
+                        XCTAssertEqual(profile.salutation, "salutation")
 
-                        // Now revert back to the old name
-                        options.firstName = "Test"
-                        let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: options)])
+                        // Now revert back to the old values
+                        nameOptions.firstName = "Test"
+                        salutationOptions.salutation = ""
+                        let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: nameOptions), .setSalutation(options: salutationOptions)])
 
                         Customer.update(actions: updateActions, result: { result in
                             if let profile = result.model {
                                 XCTAssert(result.isSuccess)
                                 XCTAssertEqual(profile.firstName, "Test")
+                                XCTAssertEqual(profile.salutation, "")
                                 updateProfileExpectation.fulfill()
                             }
                         })
