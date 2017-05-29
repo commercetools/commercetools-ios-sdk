@@ -8,7 +8,7 @@ import ObjectMapper
 /**
     Provides set of interactions for querying and retrieving by UUID for categories.
 */
-open class Category: ByIdEndpoint, QueryEndpoint, Mappable {
+open class Category: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Mappable {
     
     public typealias ResponseType = Category
 
@@ -20,6 +20,7 @@ open class Category: ByIdEndpoint, QueryEndpoint, Mappable {
     public var version: UInt?
     public var createdAt: Date?
     public var lastModifiedAt: Date?
+    public var key: String?
     public var name: LocalizedString?
     public var slug: LocalizedString?
     public var description: LocalizedString?
@@ -42,6 +43,7 @@ open class Category: ByIdEndpoint, QueryEndpoint, Mappable {
         version                 <- map["version"]
         createdAt               <- (map["createdAt"], ISO8601DateTransform())
         lastModifiedAt          <- (map["lastModifiedAt"], ISO8601DateTransform())
+        key                     <- map["key"]
         name                    <- map["name"]
         slug                    <- map["slug"]
         description             <- map["description"]
