@@ -1667,6 +1667,7 @@ public struct LineItem: Mappable {
     public var distributionChannel: Reference<Channel>?
     public var discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]?
     public var priceMode: LineItemPriceMode?
+    public var lineItemMode: LineItemMode?
     public var custom: [String: Any]?
 
     public init?(map: Map) {}
@@ -1681,10 +1682,17 @@ public struct LineItem: Mappable {
         productType                <- map["productType"]
         variant                    <- map["variant"]
         price                      <- map["price"]
+        taxedPrice                 <- map["taxedPrice"]
         totalPrice                 <- map["totalPrice"]
-        discountedPricePerQuantity <- map["discountedPricePerQuantity"]
         quantity                   <- map["quantity"]
+        state                      <- map["state"]
+        taxRate                    <- map["taxRate"]
+        supplyChannel              <- map["supplyChannel"]
         distributionChannel        <- map["distributionChannel"]
+        discountedPricePerQuantity <- map["discountedPricePerQuantity"]
+        priceMode                  <- map["priceMode"]
+        lineItemMode               <- map["lineItemMode"]
+        custom                     <- map["custom"]
     }
 
 }
@@ -1721,6 +1729,13 @@ public enum LineItemPriceMode: String {
 
     case platform = "Platform"
     case externalTotal = "ExternalTotal"
+
+}
+
+public enum LineItemMode: String {
+
+    case standard = "Standard"
+    case giftLineItem = "GiftLineItem"
 
 }
 

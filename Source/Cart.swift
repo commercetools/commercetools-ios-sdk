@@ -49,6 +49,7 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
     public var country: String?
     public var shippingInfo: ShippingInfo?
     public var discountCodes: [DiscountCodeInfo]?
+    public var refusedGifts: [Reference<CartDiscount>]?
     public var custom: [String: Any]?
     public var paymentInfo: PaymentInfo?
     public var locale: String?
@@ -79,6 +80,8 @@ open class Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint, De
         customerGroup                       <- map["customerGroup"]
         country                             <- map["country"]
         shippingInfo                        <- map["shippingInfo"]
+        discountCodes                       <- map["discountCodes"]
+        refusedGifts                        <- map["refusedGifts"]
         custom                              <- map["custom"]
         paymentInfo                         <- map["paymentInfo"]
         locale                              <- map["locale"]
