@@ -2,7 +2,7 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
-- `0.5.x` Releases - [0.5.0](#050) | [0.5.1](#051) | [0.5.2](#052) | [0.5.3](#053) | [0.5.4](#054) | [0.5.5](#055) | [0.5.6](#056) | [0.5.7](#057) | [0.5.8](#058)
+- `0.5.x` Releases - [0.5.0](#050) | [0.5.1](#051) | [0.5.2](#052) | [0.5.3](#053) | [0.5.4](#054) | [0.5.5](#055) | [0.5.6](#056) | [0.5.7](#057) | [0.5.8](#058) | [0.5.9](#059)
 - `0.4.x` Releases - [0.4.0](#040) | [0.4.1](#041) | [0.4.2](#042)
 - `0.3.x` Releases - [0.3.0](#030)
 - `0.2.x` Releases - [0.2.0](#020)
@@ -10,6 +10,18 @@ All changes to this project will be documented in this file.
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.5.9](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.5.9)
+Released on 2017-05-31.
+
+#### Added
+- `PriceTier`, `tiers` array to the `Price` model.
+- `salutation` field for the `Customer` endpoint, as well as `setSalutation` update action.
+- `Category` endpoint now confirms to `ByKeyEndpoint` protocol.
+- `lineItemMode` to `LineItem`, `refusedGifts` to `Cart` endpoint.
+
+#### Updated
+- `ProductProjection` `search` and `suggest` endpoint: language parameter now being set based on the locale and language identifier, compared against project settings.
 
 ## [0.5.8](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.5.8)
 Released on 2017-05-05.
