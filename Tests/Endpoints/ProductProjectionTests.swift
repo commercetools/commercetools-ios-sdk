@@ -8,11 +8,10 @@ import ObjectMapper
 
 class ProductProjectionTests: XCTestCase {
 
-    private class TestTaxCategory: QueryEndpoint, Mappable {
+    private class TestTaxCategory: QueryEndpoint, ImmutableMappable {
         public typealias ResponseType = TestTaxCategory
         static let path = "tax-categories"
-        required init?(map: Map) {}
-        func mapping(map: Map) {}
+        required init(map: Map) throws {}
     }
 
     override func setUp() {
@@ -117,9 +116,9 @@ class ProductProjectionTests: XCTestCase {
         let filters = ["categories:exists", "variants.price.centAmount:20750"]
 
         ProductProjection.search(staged: true, limit: 1, filters: filters, result: { result in
-            if let product = result.model?.results?.first, let total = result.model?.total, result.isSuccess {
+            if let product = result.model?.results.first, let total = result.model?.total, result.isSuccess {
                 XCTAssert(result.isSuccess)
-                XCTAssertEqual(product.masterVariant?.prices?.first?.value?.centAmount, 20750)
+                XCTAssertEqual(product.masterVariant.prices?.first?.value?.centAmount, 20750)
                 XCTAssertEqual(total, 1)
                 searchExpectation.fulfill()
             }
@@ -155,7 +154,7 @@ class ProductProjectionTests: XCTestCase {
                 text: "Michael Kors", markMatchingVariants: false, result: { result in
             if let total = result.model?.total {
                 XCTAssert(result.isSuccess)
-                XCTAssertNil(result.model?.results?.first?.masterVariant?.isMatchingVariant)
+                XCTAssertNil(result.model?.results.first?.masterVariant.isMatchingVariant)
                 XCTAssertEqual(total, 18)
                 searchExpectation.fulfill()
             }

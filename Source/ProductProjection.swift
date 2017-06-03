@@ -9,7 +9,7 @@ import ObjectMapper
 /**
     Provides complete set of interactions for querying and retrieving product projections.
 */
-open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappable {
+open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, ImmutableMappable {
 
     public typealias ResponseType = ProductProjection
 
@@ -152,67 +152,60 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Mappab
 
     // MARK: - Properties
 
-    public var id: String?
-    public var key: String?
-    public var version: UInt?
-    public var createdAt: Date?
-    public var lastModifiedAt: Date?
-    public var productType: Reference<ProductType>?
-    public var name: LocalizedString?
-    public var description: LocalizedString?
-    public var slug: LocalizedString?
-    public var categories: [Reference<Category>]?
-    public var categoryOrderHints: [String: String]?
-    public var metaTitle: LocalizedString?
-    public var metaDescription: LocalizedString?
-    public var metaKeywords: LocalizedString?
-    public var searchKeywords: [String: [SearchKeyword]]?
-    public var hasStagedChanges: Bool?
-    public var published: Bool?
-    public var masterVariant: ProductVariant?
-    public var variants: [ProductVariant]?
+    public let id: String
+    public let key: String?
+    public let version: UInt
+    public let createdAt: Date
+    public let lastModifiedAt: Date
+    public let productType: Reference<ProductType>
+    public let name: LocalizedString
+    public let description: LocalizedString?
+    public let slug: LocalizedString
+    public let categories: [Reference<Category>]
+    public let categoryOrderHints: [String: String]?
+    public let metaTitle: LocalizedString?
+    public let metaDescription: LocalizedString?
+    public let metaKeywords: LocalizedString?
+    public let searchKeywords: [String: [SearchKeyword]]
+    public let hasStagedChanges: Bool
+    public let published: Bool
+    public let masterVariant: ProductVariant
+    public let variants: [ProductVariant]
     /// The union of `masterVariant` and other`variants`.
     public var allVariants: [ProductVariant] {
-        var allVariants = [ProductVariant]()
-        if let masterVariant = masterVariant {
-            allVariants.append(masterVariant)
-        }
-        if let otherVariants = variants {
-            allVariants += otherVariants
-        }
+        var allVariants = [masterVariant]
+        allVariants += variants
         return allVariants
     }
-    public var taxCategory: Reference<TaxCategory>?
-    public var state: Reference<State>?
-    public var reviewRatingStatistics: ReviewRatingStatistics?
-
-    public required init?(map: Map) {}
+    public let taxCategory: Reference<TaxCategory>?
+    public let state: Reference<State>?
+    public let reviewRatingStatistics: ReviewRatingStatistics?
 
     // MARK: - Mappable
 
-    public func mapping(map: Map) {
-        id                      <- map["id"]
-        key                     <- map["key"]
-        version                 <- map["version"]
-        createdAt               <- (map["createdAt"], ISO8601DateTransform())
-        lastModifiedAt          <- (map["lastModifiedAt"], ISO8601DateTransform())
-        productType             <- map["productType"]
-        name                    <- map["name"]
-        description             <- map["description"]
-        slug                    <- map["slug"]
-        categories              <- map["categories"]
-        categoryOrderHints      <- map["categoryOrderHints"]
-        metaTitle               <- map["metaTitle"]
-        metaDescription         <- map["metaDescription"]
-        metaKeywords            <- map["metaKeywords"]
-        searchKeywords          <- map["searchKeywords"]
-        hasStagedChanges        <- map["hasStagedChanges"]
-        published               <- map["published"]
-        masterVariant           <- map["masterVariant"]
-        variants                <- map["variants"]
-        taxCategory             <- map["taxCategory"]
-        state                   <- map["state"]
-        reviewRatingStatistics  <- map["reviewRatingStatistics"]
+    public required init(map: Map) throws {
+        id                      = try map.value("id")
+        key                     = try? map.value("key")
+        version                 = try map.value("version")
+        createdAt               = try map.value("createdAt", using: ISO8601DateTransform())
+        lastModifiedAt          = try map.value("lastModifiedAt", using: ISO8601DateTransform())
+        productType             = try map.value("productType")
+        name                    = try map.value("name")
+        description             = try? map.value("description")
+        slug                    = try map.value("slug")
+        categories              = try map.value("categories")
+        categoryOrderHints      = try? map.value("categoryOrderHints")
+        metaTitle               = try? map.value("metaTitle")
+        metaDescription         = try? map.value("metaDescription")
+        metaKeywords            = try? map.value("metaKeywords")
+        searchKeywords          = try map.value("searchKeywords")
+        hasStagedChanges        = try map.value("hasStagedChanges")
+        published               = try map.value("published")
+        masterVariant           = try map.value("masterVariant")
+        variants                = try map.value("variants")
+        taxCategory             = try? map.value("taxCategory")
+        state                   = try? map.value("state")
+        reviewRatingStatistics  = try? map.value("reviewRatingStatistics")
     }
 
     // MARK: - Helpers

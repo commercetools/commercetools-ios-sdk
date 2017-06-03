@@ -26,7 +26,7 @@ class ProjectSettingsTests: XCTestCase {
             if let settings = result.model {
                 XCTAssertEqual(settings.key, "swift-development-42")
                 XCTAssertEqual(settings.name, "Swift Development")
-                XCTAssertEqual(settings.currencies?.first, "EUR")
+                XCTAssertEqual(settings.currencies.first, "EUR")
                 projectSettingsExpectation.fulfill()
             }
         }

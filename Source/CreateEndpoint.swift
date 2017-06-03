@@ -14,7 +14,7 @@ import ObjectMapper
 */
 public protocol CreateEndpoint: Endpoint {
 
-    associatedtype RequestDraft: Mappable
+    associatedtype RequestDraft: BaseMappable
 
     /**
         Creates new object at the endpoint specified with `path` value.

@@ -29,24 +29,22 @@ public protocol QueryEndpoint: Endpoint {
 
 }
 
-public class QueryResponse<ResponseType: Mappable>: Mappable {
-    
-    public required init?(map: Map) {}
+public class QueryResponse<ResponseType: ImmutableMappable>: ImmutableMappable {
     
     // MARK: - Properties
     
-    public var offset: UInt?
-    public var count: UInt?
-    public var total: UInt?
-    public var results: [ResponseType]?
-    
+    public let offset: UInt
+    public let count: UInt
+    public let total: UInt
+    public let results: [ResponseType]
+
     // MARK: - Mappable
-    
-    public func mapping(map: Map) {
-        offset           <- map["offset"]
-        count            <- map["count"]
-        total            <- (map["total"])
-        results          <- (map["results"])
+
+    public required init(map: Map) throws {
+        offset           = try map.value("offset")
+        count            = try map.value("count")
+        total            = try map.value("total")
+        results          = try map.value("results")
     }
 }
 

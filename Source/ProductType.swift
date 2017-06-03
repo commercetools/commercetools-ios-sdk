@@ -8,7 +8,7 @@ import ObjectMapper
 /**
     Provides set of interactions for querying, retrieving by UUID and by key for product types.
 */
-open class ProductType: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Mappable {
+open class ProductType: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, ImmutableMappable {
     
     public typealias ResponseType = ProductType
 
@@ -16,27 +16,25 @@ open class ProductType: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Mappable {
 
     // MARK: - Properties
 
-    public var id: String?
-    public var version: UInt?
-    public var createdAt: Date?
-    public var lastModifiedAt: Date?
-    public var key: String?
-    public var name: String?
-    public var description: String?
-    public var attributes: [AttributeDefinition]?
-
-    public required init?(map: Map) {}
+    public let id: String
+    public let version: UInt
+    public let createdAt: Date
+    public let lastModifiedAt: Date
+    public let key: String?
+    public let name: String
+    public let description: String
+    public let attributes: [AttributeDefinition]
 
     // MARK: - Mappable
 
-    public func mapping(map: Map) {
-        id               <- map["id"]
-        version          <- map["version"]
-        createdAt        <- (map["createdAt"], ISO8601DateTransform())
-        lastModifiedAt   <- (map["lastModifiedAt"], ISO8601DateTransform())
-        key              <- map["key"]
-        name             <- map["name"]
-        description      <- map["description"]
-        attributes       <- map["attributes"]
+    public required init(map: Map) throws {
+        id               = try map.value("id")
+        version          = try map.value("version")
+        createdAt        = try map.value("createdAt", using: ISO8601DateTransform())
+        lastModifiedAt   = try map.value("lastModifiedAt", using: ISO8601DateTransform())
+        key              = try? map.value("key")
+        name             = try map.value("name")
+        description      = try map.value("description")
+        attributes       = try map.value("attributes")
     }
 }

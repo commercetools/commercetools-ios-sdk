@@ -8,7 +8,7 @@ import ObjectMapper
 /**
     Provides complete set of interactions for querying, retrieving and creating an order.
 */
-open class Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Mappable {
+open class Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, ImmutableMappable {
     
     public typealias ResponseType = Order
     public typealias RequestDraft = OrderDraft
@@ -17,77 +17,75 @@ open class Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Mappable {
 
     // MARK: - Properties
 
-    public var id: String?
-    public var version: UInt?
-    public var createdAt: Date?
-    public var lastModifiedAt: Date?
-    public var completedAt: Date?
-    public var orderNumber: String?
-    public var customerId: String?
-    public var customerEmail: String?
-    public var anonymousId: String?
-    public var lineItems: [LineItem]?
-    public var customLineItems: [CustomLineItem]?
-    public var totalPrice: Money?
-    public var taxedPrice: TaxedPrice?
-    public var shippingAddress: Address?
-    public var billingAddress: Address?
-    public var taxMode: TaxMode?
-    public var taxRoundingMode: RoundingMode?
-    public var customerGroup: Reference<CustomerGroup>?
-    public var country: String?
-    public var orderState: OrderState?
-    public var state: Reference<State>?
-    public var shipmentState: ShipmentState?
-    public var paymentState: PaymentState?
-    public var shippingInfo: ShippingInfo?
-    public var syncInfo: [SyncInfo]?
-    public var returnInfo: [ReturnInfo]?
-    public var discountCodes: [DiscountCodeInfo]?
-    public var lastMessageSequenceNumber: Int?
-    public var cart: Reference<Cart>?
-    public var custom: [String: Any]?
-    public var paymentInfo: PaymentInfo?
-    public var locale: String?
-    public var inventoryMode: InventoryMode?
-
-    public required init?(map: Map) {}
+    public let id: String
+    public let version: UInt
+    public let createdAt: Date
+    public let lastModifiedAt: Date
+    public let completedAt: Date?
+    public let orderNumber: String?
+    public let customerId: String?
+    public let customerEmail: String?
+    public let anonymousId: String?
+    public let lineItems: [LineItem]
+    public let customLineItems: [CustomLineItem]
+    public let totalPrice: Money
+    public let taxedPrice: TaxedPrice?
+    public let shippingAddress: Address?
+    public let billingAddress: Address?
+    public let taxMode: TaxMode
+    public let taxRoundingMode: RoundingMode
+    public let customerGroup: Reference<CustomerGroup>?
+    public let country: String?
+    public let orderState: OrderState
+    public let state: Reference<State>?
+    public let shipmentState: ShipmentState?
+    public let paymentState: PaymentState?
+    public let shippingInfo: ShippingInfo?
+    public let syncInfo: [SyncInfo]
+    public let returnInfo: [ReturnInfo]
+    public let discountCodes: [DiscountCodeInfo]
+    public let lastMessageSequenceNumber: Int
+    public let cart: Reference<Cart>?
+    public let custom: [String: Any]?
+    public let paymentInfo: PaymentInfo?
+    public let locale: String?
+    public let inventoryMode: InventoryMode
 
     // MARK: - Mappable
 
-    public func mapping(map: Map) {
-        id                         <- map["id"]
-        version                    <- map["version"]
-        createdAt                  <- (map["createdAt"], ISO8601DateTransform())
-        lastModifiedAt             <- (map["lastModifiedAt"], ISO8601DateTransform())
-        completedAt                <- (map["completedAt"], ISO8601DateTransform())
-        orderNumber                <- map["orderNumber"]
-        customerId                 <- map["customerId"]
-        customerEmail              <- map["customerEmail"]
-        anonymousId                <- map["anonymousId"]
-        lineItems                  <- map["lineItems"]
-        customLineItems            <- map["customLineItems"]
-        totalPrice                 <- map["totalPrice"]
-        taxedPrice                 <- map["taxedPrice"]
-        shippingAddress            <- map["shippingAddress"]
-        billingAddress             <- map["billingAddress"]
-        taxMode                    <- map["taxMode"]
-        taxRoundingMode            <- map["taxRoundingMode"]
-        customerGroup              <- map["customerGroup"]
-        country                    <- map["country"]
-        orderState                 <- map["orderState"]
-        state                      <- map["state"]
-        shipmentState              <- map["shipmentState"]
-        paymentState               <- map["paymentState"]
-        shippingInfo               <- map["shippingInfo"]
-        syncInfo                   <- map["syncInfo"]
-        returnInfo                 <- map["returnInfo"]
-        discountCodes              <- map["discountCodes"]
-        lastMessageSequenceNumber  <- map["lastMessageSequenceNumber"]
-        cart                       <- map["cart"]
-        custom                     <- map["custom"]
-        paymentInfo                <- map["paymentInfo"]
-        locale                     <- map["locale"]
-        inventoryMode              <- map["inventoryMode"]
+    public required init(map: Map) throws {
+        id                         = try map.value("id")
+        version                    = try map.value("version")
+        createdAt                  = try map.value("createdAt", using: ISO8601DateTransform())
+        lastModifiedAt             = try map.value("lastModifiedAt", using: ISO8601DateTransform())
+        completedAt                = try? map.value("completedAt", using: ISO8601DateTransform())
+        orderNumber                = try? map.value("orderNumber")
+        customerId                 = try? map.value("customerId")
+        customerEmail              = try? map.value("customerEmail")
+        anonymousId                = try? map.value("anonymousId")
+        lineItems                  = try map.value("lineItems")
+        customLineItems            = try map.value("customLineItems")
+        totalPrice                 = try map.value("totalPrice")
+        taxedPrice                 = try? map.value("taxedPrice")
+        shippingAddress            = try? map.value("shippingAddress")
+        billingAddress             = try? map.value("billingAddress")
+        taxMode                    = try map.value("taxMode")
+        taxRoundingMode            = try map.value("taxRoundingMode")
+        customerGroup              = try? map.value("customerGroup")
+        country                    = try? map.value("country")
+        orderState                 = try map.value("orderState")
+        state                      = try? map.value("state")
+        shipmentState              = try? map.value("shipmentState")
+        paymentState               = try? map.value("paymentState")
+        shippingInfo               = try? map.value("shippingInfo")
+        syncInfo                   = try map.value("syncInfo")
+        returnInfo                 = try map.value("returnInfo")
+        discountCodes              = try map.value("discountCodes")
+        lastMessageSequenceNumber  = try map.value("lastMessageSequenceNumber")
+        cart                       = try? map.value("cart")
+        custom                     = try? map.value("custom")
+        paymentInfo                = try? map.value("paymentInfo")
+        locale                     = try? map.value("locale")
+        inventoryMode              = try map.value("inventoryMode")
     }
 }
