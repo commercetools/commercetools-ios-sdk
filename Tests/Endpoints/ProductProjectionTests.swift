@@ -118,7 +118,7 @@ class ProductProjectionTests: XCTestCase {
         ProductProjection.search(staged: true, limit: 1, filters: filters, result: { result in
             if let product = result.model?.results.first, let total = result.model?.total, result.isSuccess {
                 XCTAssert(result.isSuccess)
-                XCTAssertEqual(product.masterVariant.prices?.first?.value?.centAmount, 20750)
+                XCTAssertEqual(product.masterVariant.prices?.first?.value.centAmount, 20750)
                 XCTAssertEqual(total, 1)
                 searchExpectation.fulfill()
             }

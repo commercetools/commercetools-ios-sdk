@@ -79,8 +79,7 @@ class CartTests: XCTestCase {
         retrieveSampleProduct { lineItemDraft in
             var cartDraft = CartDraft()
 
-            var address = Address()
-            address.country = "DE"
+            let address = Address(country: "DE")
             cartDraft.shippingAddress = address
             cartDraft.currency = "EUR"
             cartDraft.lineItems = [lineItemDraft]
