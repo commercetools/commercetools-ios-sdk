@@ -1562,7 +1562,7 @@ public struct LineItem: ImmutableMappable {
     public let id: String
     public let productId: String
     public let name: LocalizedString
-    public let productSlug: LocalizedString
+    public let productSlug: LocalizedString?
     public let productType: Reference<ProductType>?
     public let variant: ProductVariant
     public let price: Price
@@ -1582,7 +1582,7 @@ public struct LineItem: ImmutableMappable {
         id                         = try map.value("id")
         productId                  = try map.value("productId")
         name                       = try map.value("name")
-        productSlug                = try map.value("productSlug")
+        productSlug                = try? map.value("productSlug")
         productType                = try? map.value("productType")
         variant                    = try map.value("variant")
         price                      = try map.value("price")
