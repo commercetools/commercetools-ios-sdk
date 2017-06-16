@@ -87,6 +87,35 @@ public struct Address: ImmutableMappable {
         additionalAddressInfo   = try? map.value("additionalAddressInfo")
         externalId              = try? map.value("externalId")
     }
+
+    // MARK: - Mappable
+
+    mutating public func mapping(map: Map) {
+        id                      >>> map["id"]
+        title                   >>> map["title"]
+        salutation              >>> map["salutation"]
+        firstName               >>> map["firstName"]
+        lastName                >>> map["lastName"]
+        city                    >>> map["city"]
+        region                  >>> map["region"]
+        postalCode              >>> map["postalCode"]
+        streetName              >>> map["streetName"]
+        additionalStreetInfo    >>> map["additionalStreetInfo"]
+        streetNumber            >>> map["streetNumber"]
+        state                   >>> map["state"]
+        country                 >>> map["country"]
+        company                 >>> map["company"]
+        department              >>> map["department"]
+        building                >>> map["building"]
+        apartment               >>> map["apartment"]
+        pOBox                   >>> map["pOBox"]
+        phone                   >>> map["phone"]
+        mobile                  >>> map["mobile"]
+        email                   >>> map["email"]
+        fax                     >>> map["fax"]
+        additionalAddressInfo   >>> map["additionalAddressInfo"]
+        externalId              >>> map["externalId"]
+    }
 }
 
 public enum AnonymousCartSignInMode: String {
@@ -1666,6 +1695,13 @@ public struct Money: ImmutableMappable {
         currencyCode       = try map.value("currencyCode")
         centAmount         = try map.value("centAmount")
     }
+
+    // MARK: - Mappable
+
+    mutating public func mapping(map: Map) {
+        currencyCode       >>> map["currencyCode"]
+        centAmount         >>> map["centAmount"]
+    }
 }
 
 public struct OrderDraft: Mappable {
@@ -2247,6 +2283,13 @@ public struct SubRate: ImmutableMappable {
     public init(map: Map) throws {
         name       = try map.value("name")
         amount     = try map.value("amount")
+    }
+
+    // MARK: - Mappable
+
+    mutating func mapping(map: Map) {
+        name       >>> map["name"]
+        amount     >>> map["amount"]
     }
 }
 

@@ -99,7 +99,13 @@ extension Result where T: ImmutableMappable {
     /// Returns the associated response, if the result is a success, `nil` otherwise.
     public var model: T? {
         if case .success(let value) = self {
-            return try? T(JSONObject: value)
+            do {
+                let model = try T(JSONObject: value)
+                return model
+            } catch {
+                Log.error("\(error)")
+                return nil
+            }
         }
         return nil
     }
@@ -120,8 +126,14 @@ extension Result where T: ArrayResponse {
 
     /// Returns the associated array, if the result is a success, `nil` otherwise.
     public var model: [T.ArrayElement]? {
-        if case .success(let value) = self, let model = try? Mapper<T.ArrayElement>().mapArray(JSONObject: value) {
-            return model
+        if case .success(let value) = self {
+            do {
+                let model = try Mapper<T.ArrayElement>().mapArray(JSONObject: value)
+                return model
+            } catch {
+                Log.error("\(error)")
+                return nil
+            }
         }
         return nil
     }
