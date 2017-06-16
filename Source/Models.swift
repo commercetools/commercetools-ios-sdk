@@ -1691,6 +1691,11 @@ public struct Money: ImmutableMappable {
     public let currencyCode: String
     public let centAmount: Int
     
+    public init(currencyCode: String, centAmount: Int) {
+        self.currencyCode = currencyCode
+        self.centAmount = centAmount
+    }
+    
     public init(map: Map) throws {
         currencyCode       = try map.value("currencyCode")
         centAmount         = try map.value("centAmount")
@@ -2005,10 +2010,22 @@ public struct Reference<T: BaseMappable>: ImmutableMappable {
     public let typeId: String
     public let obj: T?
     
+    public init(id: String, typeId: String) {
+        self.id = id
+        self.typeId = typeId
+    }
+    
     public init(map: Map) throws {
         id              = try map.value("id")
         typeId          = try map.value("typeId")
         obj             = try? map.value("obj")
+    }
+    
+    // MARK: - Mappable
+    
+    mutating public func mapping(map: Map) {
+        id                      >>> map["id"]
+        typeId                  >>> map["typeId"]
     }
 }
 
@@ -2018,10 +2035,22 @@ public struct GenericReference: ImmutableMappable {
 
     public let id: String
     public let typeId: String
+    
+    public init(id: String, typeId: String) {
+        self.id = id
+        self.typeId = typeId
+    }
 
     public init(map: Map) throws {
         id              = try map.value("id")
         typeId          = try map.value("typeId")
+    }
+    
+    // MARK: - Mappable
+    
+    mutating public func mapping(map: Map) {
+        id                      >>> map["id"]
+        typeId                  >>> map["typeId"]
     }
 }
 
@@ -2279,6 +2308,11 @@ public struct SubRate: ImmutableMappable {
 
     public let name: String
     public let amount: Double
+    
+    public init(name: String, amount: Double) {
+        self.name = name
+        self.amount = amount
+    }
     
     public init(map: Map) throws {
         name       = try map.value("name")
