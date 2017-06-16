@@ -372,6 +372,6 @@ class CustomerTests: XCTestCase {
             })
         }
 
-        waitForExpectations(timeout: 10, handler: nil)
+        waitForExpectations(timeout: 20, handler: nil)
     }
 }

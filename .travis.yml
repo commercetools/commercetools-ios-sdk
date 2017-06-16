@@ -7,7 +7,7 @@ install:
    - pod repo update
    - pod install
 
-osx_image: xcode8
+osx_image: xcode8.3
 
 xcode_sdk: iphonesimulator10.0
 
