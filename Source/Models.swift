@@ -2013,6 +2013,7 @@ public struct Reference<T: BaseMappable>: ImmutableMappable {
     public init(id: String, typeId: String) {
         self.id = id
         self.typeId = typeId
+        self.obj = nil
     }
     
     public init(map: Map) throws {
@@ -2321,7 +2322,7 @@ public struct SubRate: ImmutableMappable {
 
     // MARK: - Mappable
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         name       >>> map["name"]
         amount     >>> map["amount"]
     }
