@@ -294,7 +294,7 @@ public struct CartDraft: Mappable {
 
     // MARK: - Properties
 
-    public var currency: String?
+    public var currency: String!
     public var customerId: String?
     public var customerEmail: String?
     public var anonymousId: String?
@@ -311,7 +311,25 @@ public struct CartDraft: Mappable {
     public var locale: String?
     public var deleteDaysAfterLastModification: UInt?
 
-    public init() {}
+    public init(currency: String, customerId: String? = nil, customerEmail: String? = nil, anonymousId: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, customLineItems: [CustomLineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: Reference<ShippingMethod>? = nil, externalTaxRateForShippingMethod: ExternalTaxRateDraft? = nil, custom: [String: Any]? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil) {
+        self.currency = currency
+        self.customerId = customerId
+        self.customerEmail = customerEmail
+        self.anonymousId = anonymousId
+        self.country = country
+        self.inventoryMode = inventoryMode
+        self.taxMode = taxMode
+        self.lineItems = lineItems
+        self.customLineItems = customLineItems
+        self.shippingAddress = shippingAddress
+        self.billingAddress = billingAddress
+        self.shippingMethod = shippingMethod
+        self.externalTaxRateForShippingMethod = externalTaxRateForShippingMethod
+        self.custom = custom
+        self.locale = locale
+        self.deleteDaysAfterLastModification = deleteDaysAfterLastModification
+    }
+    
     public init?(map: Map) {}
 
     // MARK: - Mappable
@@ -916,15 +934,24 @@ public struct CustomLineItemDraft: Mappable {
 
     // MARK: - Properties
 
-    public var name: LocalizedString?
+    public var name: LocalizedString!
     public var quantity: UInt?
-    public var money: Money?
-    public var slug: String?
+    public var money: Money!
+    public var slug: String!
     public var taxCategory: Reference<TaxCategory>?
     public var externalTaxRate: ExternalTaxRateDraft?
     public var custom: [String: Any]?
 
-    public init() {}
+    public init(name: LocalizedString, quantity: UInt? = nil, money: Money, slug: String, taxCategory: Reference<TaxCategory>? = nil, externalTaxRate: ExternalTaxRateDraft? = nil, custom: [String: Any]? = nil) {
+        self.name = name
+        self.quantity = quantity
+        self.money = money
+        self.slug = slug
+        self.taxCategory = taxCategory
+        self.externalTaxRate = externalTaxRate
+        self.custom = custom
+    }
+    
     public init?(map: Map) {}
 
     // MARK: - Mappable
@@ -944,8 +971,8 @@ public struct CustomerDraft: Mappable {
 
     // MARK: - Properties
 
-    public var email: String?
-    public var password: String?
+    public var email: String!
+    public var password: String!
     public var firstName: String?
     public var lastName: String?
     public var middleName: String?
@@ -959,7 +986,23 @@ public struct CustomerDraft: Mappable {
     public var custom: [String: Any]?
     public var locale: String?
 
-    public init() {}
+    public init(email: String, password: String, firstName: String? = nil, lastName: String? = nil, middleName: String? = nil, title: String? = nil, dateOfBirth: Date? = nil, companyName: String? = nil, vatId: String? = nil, addresses: [Address]? = nil, defaultBillingAddress: Int? = nil, defaultShippingAddress: Int? = nil, custom: [String: Any]? = nil, locale: String? = nil) {
+        self.email = email
+        self.password = password
+        self.firstName = firstName
+        self.lastName = lastName
+        self.middleName = middleName
+        self.title = title
+        self.dateOfBirth = dateOfBirth
+        self.companyName = companyName
+        self.vatId = vatId
+        self.addresses = addresses
+        self.defaultBillingAddress = defaultBillingAddress
+        self.defaultShippingAddress = defaultShippingAddress
+        self.custom = custom
+        self.locale = locale
+    }
+    
     public init?(map: Map) {}
 
     // MARK: - Mappable
@@ -1526,13 +1569,20 @@ public struct ExternalTaxRateDraft: Mappable {
 
     // MARK: - Properties
 
-    public var name: String?
+    public var name: String!
     public var amount: Double?
-    public var country: String?
+    public var country: String!
     public var state: String?
     public var subRates: [SubRate]?
 
-    public init() {}
+    public init(name: String, amount: Double? = nil, country: String, state: String? = nil, subRates: [SubRate]? = nil) {
+        self.name = name
+        self.amount = amount
+        self.country = country
+        self.state = state
+        self.subRates = subRates
+    }
+    
     public init?(map: Map) {}
 
     // MARK: - Mappable
@@ -1633,15 +1683,24 @@ public struct LineItemDraft: Mappable {
 
     // MARK: - Properties
 
-    public var productId: String?
-    public var variantId: Int?
+    public var productId: String!
+    public var variantId: Int!
     public var quantity: UInt?
     public var supplyChannel: Reference<Channel>?
     public var distributionChannel: Reference<Channel>?
     public var externalTaxRate: ExternalTaxRateDraft?
     public var custom: [String: Any]?
 
-    public init() {}
+    public init(productId: String, variantId: Int, quantity: UInt? = nil, supplyChannel: Reference<Channel>? = nil, distributionChannel: Reference<Channel>? = nil, externalTaxRate: ExternalTaxRateDraft? = nil, custom: [String: Any]? = nil) {
+        self.productId = productId
+        self.variantId = variantId
+        self.quantity = quantity
+        self.supplyChannel = supplyChannel
+        self.distributionChannel = distributionChannel
+        self.externalTaxRate = externalTaxRate
+        self.custom = custom
+    }
+    
     public init?(map: Map) {}
 
     // MARK: - Mappable
@@ -1713,10 +1772,14 @@ public struct OrderDraft: Mappable {
 
     // MARK: - Properties
 
-    public var id: String?
-    public var version: UInt?
+    public var id: String!
+    public var version: UInt!
 
-    public init() {}
+    public init(id: String, version: UInt) {
+        self.id = id
+        self.version = version
+    }
+    
     public init?(map: Map) {}
 
     // MARK: - Mappable

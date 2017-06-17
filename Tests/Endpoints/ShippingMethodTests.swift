@@ -96,10 +96,7 @@ class ShippingMethodTests: XCTestCase {
 
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
-        var cartDraft = CartDraft()
-        cartDraft.currency = "EUR"
-        let address = Address(country: "DE")        
-        cartDraft.shippingAddress = address
+        let cartDraft = CartDraft(currency: "EUR", shippingAddress: Address(country: "DE"))
 
         Cart.create(cartDraft, result: { result in
             if let cart = result.model {

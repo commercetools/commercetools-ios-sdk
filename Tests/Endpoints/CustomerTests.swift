@@ -99,9 +99,7 @@ class CustomerTests: XCTestCase {
         let createProfileExpectation = expectation(description: "create profile expectation")
         let deleteProfileExpectation = expectation(description: "delete profile expectation")
 
-        var customerDraft = CustomerDraft()
-        customerDraft.email = username
-        customerDraft.password = "password"
+        let customerDraft = CustomerDraft(email: username, password: "password")
 
         Commercetools.signUpCustomer(customerDraft, result: { result in
             if let customer = result.model?.customer, customer.email == username, result.isSuccess {

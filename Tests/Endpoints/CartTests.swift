@@ -52,9 +52,7 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
-            var cartDraft = CartDraft()
-            cartDraft.currency = "EUR"
-            cartDraft.lineItems = [lineItemDraft]
+            let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft])
 
             Cart.create(cartDraft, result: { result in
                 if let cart = result.model {
@@ -77,18 +75,11 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
-            var cartDraft = CartDraft()
-
-            let address = Address(country: "DE")
-            cartDraft.shippingAddress = address
-            cartDraft.currency = "EUR"
-            cartDraft.lineItems = [lineItemDraft]
+            let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft], shippingAddress: Address(country: "DE"))
 
             Cart.create(cartDraft, result: { result in
                 if let cart = result.model, result.isSuccess {
-                    var orderDraft = OrderDraft()
-                    orderDraft.id = cart.id
-                    orderDraft.version = cart.version
+                    let orderDraft = OrderDraft(id: cart.id, version: cart.version)
                     Order.create(orderDraft, result: { result in
                         if let order = result.model {
                             XCTAssert(result.isSuccess)
@@ -111,8 +102,7 @@ class CartTests: XCTestCase {
 
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
-        var cartDraft = CartDraft()
-        cartDraft.currency = "EUR"
+        let cartDraft = CartDraft(currency: "EUR")
 
         Cart.create(cartDraft, result: { result in
             if let cart = result.model, result.isSuccess {
@@ -148,10 +138,7 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
-            var cartDraft = CartDraft()
-            cartDraft.currency = "EUR"
-            cartDraft.lineItems = [lineItemDraft]
-            cartDraft.taxMode = .external
+            let cartDraft = CartDraft(currency: "EUR", taxMode: .external, lineItems: [lineItemDraft])
 
             Cart.create(cartDraft, result: { result in
                 if let cart = result.model {
@@ -185,10 +172,7 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
-            var cartDraft = CartDraft()
-            cartDraft.currency = "EUR"
-            cartDraft.lineItems = [lineItemDraft]
-            cartDraft.taxMode = .external
+            let cartDraft = CartDraft(currency: "EUR", taxMode: .external, lineItems: [lineItemDraft])
 
             Cart.create(cartDraft, result: { result in
                 if let cart = result.model {
@@ -222,10 +206,7 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
-            var cartDraft = CartDraft()
-            cartDraft.currency = "EUR"
-            cartDraft.lineItems = [lineItemDraft]
-            cartDraft.deleteDaysAfterLastModification = 3
+            let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft], deleteDaysAfterLastModification: 3)
 
             Cart.create(cartDraft, result: { result in
                 if let cart = result.model {
@@ -253,10 +234,7 @@ class CartTests: XCTestCase {
     private func retrieveSampleProduct(_ completion: @escaping (LineItemDraft) -> Void) {
         ProductProjection.query(limit:1, result: { result in
             if let product = result.model?.results.first, result.isSuccess {
-                var lineItemDraft = LineItemDraft()
-                lineItemDraft.productId = product.id
-                lineItemDraft.variantId = product.masterVariant.id
-                lineItemDraft.quantity = 3
+                let lineItemDraft = LineItemDraft(productId: product.id, variantId: product.masterVariant.id, quantity: 3)
                 completion(lineItemDraft)
             }
         })
