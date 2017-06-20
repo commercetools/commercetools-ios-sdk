@@ -140,10 +140,10 @@ class CustomerTests: XCTestCase {
                         XCTAssert(result.isSuccess)
                         XCTAssertEqual(profile.firstName, "newName")
                         XCTAssertEqual(profile.salutation, "salutation")
-
+                        
                         // Now revert back to the old values
                         let updateActions = UpdateActions<CustomerUpdateAction>(version: profile.version, actions: [.setFirstName(firstName: "Test"), .setSalutation(salutation: "")])
-
+                        
                         Customer.update(actions: updateActions, result: { result in
                             if let profile = result.model {
                                 XCTAssert(result.isSuccess)
@@ -319,7 +319,7 @@ class CustomerTests: XCTestCase {
 
     func testVerifyEmail() {
 
-        let resetPasswordExpectation = expectation(description: "reset password expectation")
+        let verifyEmailExpectation = expectation(description: "verify email expectation")
 
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
@@ -349,7 +349,7 @@ class CustomerTests: XCTestCase {
                                 if let response = result.json, let email = response["email"] as? String {
                                     XCTAssert(result.isSuccess)
                                     XCTAssertEqual(email, username)
-                                    resetPasswordExpectation.fulfill()
+                                    verifyEmailExpectation.fulfill()
                                 }
                             })
                         }
