@@ -96,6 +96,22 @@ public extension UpdateEndpoint {
 }
 
 public extension JSONRepresentable {
+    func filterJSON(parameters: [String: Any?]) -> [String: Any] {
+        var filteredParameters: [String: Any] = [:]
+        parameters.keys.forEach {
+            if let value = parameters[$0] {
+                if let mappable = value as? BaseMappable {
+                    filteredParameters[$0] = mappable.toJSON()
+                } else {
+                    filteredParameters[$0] = value
+                }
+            }
+        }
+        return filteredParameters
+    }
+}
+
+public extension JSONRepresentable {
     func toJSON<T: Mappable>(_ options: T) -> [String: Any] {
         return Mapper<T>().toJSON(options)
     }

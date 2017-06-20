@@ -134,11 +134,7 @@ class CustomerTests: XCTestCase {
 
         Customer.profile { result in
             if let profile = result.model, result.isSuccess {
-                var nameOptions = SetFirstNameOptions()
-                nameOptions.firstName = "newName"
-                var salutationOptions = SetSalutationOptions()
-                salutationOptions.salutation = "salutation"
-                let updateActions = UpdateActions<CustomerUpdateAction>(version: profile.version, actions: [.setFirstName(options: nameOptions), .setSalutation(options: salutationOptions)])
+                let updateActions = UpdateActions<CustomerUpdateAction>(version: profile.version, actions: [.setFirstName(firstName: "newName"), .setSalutation(salutation: "salutation")])
                 Customer.update(actions: updateActions, result: { result in
                     if let profile = result.model {
                         XCTAssert(result.isSuccess)
@@ -146,9 +142,7 @@ class CustomerTests: XCTestCase {
                         XCTAssertEqual(profile.salutation, "salutation")
 
                         // Now revert back to the old values
-                        nameOptions.firstName = "Test"
-                        salutationOptions.salutation = ""
-                        let updateActions = UpdateActions<CustomerUpdateAction>(version: profile.version, actions: [.setFirstName(options: nameOptions), .setSalutation(options: salutationOptions)])
+                        let updateActions = UpdateActions<CustomerUpdateAction>(version: profile.version, actions: [.setFirstName(firstName: "Test"), .setSalutation(salutation: "")])
 
                         Customer.update(actions: updateActions, result: { result in
                             if let profile = result.model {

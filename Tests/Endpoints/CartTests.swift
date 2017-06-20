@@ -107,12 +107,10 @@ class CartTests: XCTestCase {
         Cart.create(cartDraft, result: { result in
             if let cart = result.model, result.isSuccess {
                 ProductProjection.query(limit:1, result: { result in
-                    if let product = result.model?.results.first, result.isSuccess {
-                        var options = AddLineItemOptions()
-                        options.productId = product.id
-                        options.variantId = product.masterVariant.id
-
-                        let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.addLineItem(options: options)])
+                    if let product = result.model?.results.first, result.isSuccess {                        
+                        let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.addLineItem(productId: product.id, variantId: product.masterVariant.id,
+                                                                                                                          quantity: nil, supplyChannel: nil, distributionChannel: nil,
+                                                                                                                          custom: nil)])
                         Cart.update(cart.id, actions: updateActions, result: { result in
                             if let cart = result.model {
                                 XCTAssert(result.isSuccess)
@@ -145,10 +143,7 @@ class CartTests: XCTestCase {
                     XCTAssert(result.isSuccess)
                     XCTAssertEqual(cart.taxMode, .external)
 
-                    var options = ChangeTaxModeOptions()
-                    options.taxMode = .disabled
-
-                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.changeTaxMode(options: options)])
+                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.changeTaxMode(taxMode: .disabled)])
                     Cart.update(cart.id, actions: updateActions, result: { result in
                         if let error = result.errors?.first as? CTError, case .generalError(let reason) = error {
                             XCTAssert(result.isFailure)
@@ -179,10 +174,7 @@ class CartTests: XCTestCase {
                     XCTAssert(result.isSuccess)
                     XCTAssertEqual(cart.taxMode, .external)
 
-                    var options = ChangeTaxModeOptions()
-                    options.taxMode = .platform
-
-                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.changeTaxMode(options: options)])
+                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.changeTaxMode(taxMode: .platform)])
                     Cart.update(cart.id, actions: updateActions, result: { result in
                         if let cart = result.model {
                             XCTAssert(result.isSuccess)
@@ -213,10 +205,7 @@ class CartTests: XCTestCase {
                     XCTAssert(result.isSuccess)
                     XCTAssertEqual(cart.deleteDaysAfterLastModification, 3)
 
-                    var options = SetDeleteDaysAfterLastModificationOptions()
-                    options.deleteDaysAfterLastModification = 8
-
-                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.setDeleteDaysAfterLastModification(options: options)])
+                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.setDeleteDaysAfterLastModification(deleteDaysAfterLastModification: 8)])
                     Cart.update(cart.id, actions: updateActions, result: { result in
                         if let cart = result.model {
                             XCTAssert(result.isSuccess)
