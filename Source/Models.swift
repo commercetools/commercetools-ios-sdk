@@ -1429,6 +1429,12 @@ public struct ResourceIdentifier: ImmutableMappable {
     public let id: String?
     public let typeId: String?
     public let key: String?
+
+    public init(id: String? = nil, typeId: String? = nil, key: String? = nil) {
+        self.id = id
+        self.typeId = typeId
+        self.key = key
+    }
     
     public init(map: Map) throws {
         id                 = try? map.value("id")
