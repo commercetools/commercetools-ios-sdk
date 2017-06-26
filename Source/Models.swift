@@ -465,7 +465,7 @@ public struct Channel: ImmutableMappable {
         createdAt               = try map.value("createdAt", using: ISO8601DateTransform())
         lastModifiedAt          = try map.value("lastModifiedAt", using: ISO8601DateTransform())
         key                     = try map.value("key")
-        roles                   = try map.value("roles")
+        roles                   = try map.value("roles", using: EnumTransform<ChannelRole>())
         name                    = try? map.value("name")
         description             = try? map.value("description")
         address                 = try? map.value("address")
@@ -1655,7 +1655,7 @@ public struct State: ImmutableMappable {
         description       = try map.value("description")
         initial           = try map.value("initial")
         builtIn           = try map.value("builtIn")
-        roles             = try? map.value("roles")
+        roles             = try? map.value("roles", using: EnumTransform<StateRole>())
         transitions       = try? map.value("transitions")
     }
 }
