@@ -758,7 +758,7 @@ public struct DiscountCode: ImmutableMappable {
     public let name: LocalizedString?
     public let description: LocalizedString?
     public let code: String
-    public let cartDiscounts: [CartDiscount]
+    public let cartDiscounts: [Reference<CartDiscount>]
     public let cartPredicate: String?
     public let isActive: Bool
     public let references: [GenericReference]
