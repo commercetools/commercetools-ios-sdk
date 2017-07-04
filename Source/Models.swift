@@ -1023,6 +1023,7 @@ public struct LineItemDraft: Mappable {
 public enum LineItemPriceMode: String {
 
     case platform = "Platform"
+    case externalPrice = "ExternalPrice"
     case externalTotal = "ExternalTotal"
 
 }
