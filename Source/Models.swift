@@ -618,6 +618,7 @@ public struct CustomerGroup: ImmutableMappable {
     // MARK: - Properties
 
     public let id: String
+    public let key: String?
     public let version: UInt
     public let createdAt: Date
     public let lastModifiedAt: Date
@@ -625,6 +626,7 @@ public struct CustomerGroup: ImmutableMappable {
 
     public init(map: Map) throws {
         id               = try map.value("id")
+        key              = try? map.value("key")
         version          = try map.value("version")
         createdAt        = try map.value("createdAt", using: ISO8601DateTransform())
         lastModifiedAt   = try map.value("lastModifiedAt", using: ISO8601DateTransform())
