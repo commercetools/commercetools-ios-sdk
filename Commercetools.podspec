@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.license      = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
   s.author       = { "Commercetools GmbH" => "support@commercetools.com" }
   s.source       = { :git => "https://github.com/commercetools/commercetools-ios-sdk.git", :tag => s.version.to_s }
-  s.source_files = 'Source/**/*.swift'
+  s.source_files = 'Source/*.swift'
 
   s.ios.deployment_target = '9.3'
   s.osx.deployment_target = '10.10'
