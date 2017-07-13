@@ -104,13 +104,13 @@ class CustomerTests: XCTestCase {
         customerDraft.password = "password"
 
         Commercetools.signUpCustomer(customerDraft, result: { result in
-            if let customer = result.model?.customer, let version = customer.version, customer.email == username, result.isSuccess {
+            if let customer = result.model?.customer, customer.email == username, result.isSuccess {
                 XCTAssert(result.isSuccess)
                 XCTAssertEqual(customer.email, username)
                 createProfileExpectation.fulfill()
 
                 AuthManager.sharedInstance.loginCustomer(username: username, password: "password") { _ in
-                    Customer.delete(version: version, result: { result in
+                    Customer.delete(version: customer.version, result: { result in
                         if let deletedCustomer = result.model {
                             XCTAssert(result.isSuccess)
                             XCTAssertEqual(deletedCustomer.email, username)
@@ -135,14 +135,14 @@ class CustomerTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         Customer.profile { result in
-            if let profile = result.model, let version = profile.version, result.isSuccess {
+            if let profile = result.model, result.isSuccess {
                 var nameOptions = SetFirstNameOptions()
                 nameOptions.firstName = "newName"
                 var salutationOptions = SetSalutationOptions()
                 salutationOptions.salutation = "salutation"
-                let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: nameOptions), .setSalutation(options: salutationOptions)])
+                let updateActions = UpdateActions<CustomerUpdateAction>(version: profile.version, actions: [.setFirstName(options: nameOptions), .setSalutation(options: salutationOptions)])
                 Customer.update(actions: updateActions, result: { result in
-                    if let profile = result.model, let version = profile.version  {
+                    if let profile = result.model {
                         XCTAssert(result.isSuccess)
                         XCTAssertEqual(profile.firstName, "newName")
                         XCTAssertEqual(profile.salutation, "salutation")
@@ -150,7 +150,7 @@ class CustomerTests: XCTestCase {
                         // Now revert back to the old values
                         nameOptions.firstName = "Test"
                         salutationOptions.salutation = ""
-                        let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: nameOptions), .setSalutation(options: salutationOptions)])
+                        let updateActions = UpdateActions<CustomerUpdateAction>(version: profile.version, actions: [.setFirstName(options: nameOptions), .setSalutation(options: salutationOptions)])
 
                         Customer.update(actions: updateActions, result: { result in
                             if let profile = result.model {

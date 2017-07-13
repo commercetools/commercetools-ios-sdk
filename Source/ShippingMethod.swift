@@ -10,7 +10,7 @@ import ObjectMapper
     Provides set of interactions for querying and retrieving by UUID for shipping methods. Retrieving a shipping method
     for a cart, or a location is also provided.
 */
-public struct ShippingMethod: ByIdEndpoint, QueryEndpoint, Mappable {
+public struct ShippingMethod: ByIdEndpoint, QueryEndpoint, ImmutableMappable {
 
     public typealias ResponseType = ShippingMethod
 
@@ -26,7 +26,7 @@ public struct ShippingMethod: ByIdEndpoint, QueryEndpoint, Mappable {
     */
     public static func `for`(cart: Cart, result: @escaping (Result<ShippingMethods>) -> Void) {
         requestWithTokenAndPath(result, { token, path in
-            Alamofire.request(path, parameters: ["cartId": cart.id ?? ""], encoding: URLEncoding.default, headers: self.headers(token))
+            Alamofire.request(path, parameters: ["cartId": cart.id], encoding: URLEncoding.default, headers: self.headers(token))
             .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
                 handleResponse(response, result: result)
             })
@@ -60,30 +60,28 @@ public struct ShippingMethod: ByIdEndpoint, QueryEndpoint, Mappable {
 
     // MARK: - Properties
 
-    public var id: String?
-    public var version: UInt?
-    public var createdAt: Date?
-    public var lastModifiedAt: Date?
-    public var name: String?
-    public var description: String?
-    public var taxCategory: Reference<TaxCategory>?
-    public var zoneRates: [ZoneRate]?
-    public var isDefault: Bool?
-
-    public init?(map: Map) {}
+    public let id: String
+    public let version: UInt
+    public let createdAt: Date
+    public let lastModifiedAt: Date
+    public let name: String
+    public let description: String?
+    public let taxCategory: Reference<TaxCategory>
+    public let zoneRates: [ZoneRate]
+    public let isDefault: Bool
 
     // MARK: - Mappable
 
-    mutating public func mapping(map: Map) {
-        id               <- map["id"]
-        version          <- map["version"]
-        createdAt        <- (map["createdAt"], ISO8601DateTransform())
-        lastModifiedAt   <- (map["lastModifiedAt"], ISO8601DateTransform())
-        name             <- map["name"]
-        description      <- map["description"]
-        taxCategory      <- map["taxCategory"]
-        zoneRates        <- map["zoneRates"]
-        isDefault        <- map["isDefault"]
+    public init(map: Map) throws {
+        id               = try map.value("id")
+        version          = try map.value("version")
+        createdAt        = try map.value("createdAt", using: ISO8601DateTransform())
+        lastModifiedAt   = try map.value("lastModifiedAt", using: ISO8601DateTransform())
+        name             = try map.value("name")
+        description      = try? map.value("description")
+        taxCategory      = try map.value("taxCategory")
+        zoneRates        = try map.value("zoneRates")
+        isDefault        = try map.value("isDefault")
     }
 }
 

@@ -24,7 +24,7 @@ import ObjectMapper
 */
 public protocol Endpoint {
     
-    associatedtype ResponseType: Mappable
+    associatedtype ResponseType: ImmutableMappable
 
     static var path: String { get }
 
@@ -33,10 +33,8 @@ public protocol Endpoint {
 /**
     Type used for endpoints which do not have any model specified yet.
 */
-public struct NoMapping: Mappable {
-    
-    public init?(map: Map) {}
-    mutating public func mapping(map: Map) {}
+public struct NoMapping: ImmutableMappable {
+    public init(map: Map) throws {}
 }
 
 public extension Endpoint {

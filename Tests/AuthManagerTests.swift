@@ -255,7 +255,7 @@ class AuthManagerTests: XCTestCase {
                             if authManager.state == .customerToken {
                                 Cart.active(result: { result in
                                     if let migratedCart = result.model, migratedCart.id == oldCart.id && result.isSuccess {
-                                        Cart.delete(migratedCart.id!, version: migratedCart.version!, result: { result in
+                                        Cart.delete(migratedCart.id, version: migratedCart.version, result: { result in
                                             cartMigrationExpectation.fulfill()
                                         })
                                     }
@@ -290,7 +290,7 @@ class AuthManagerTests: XCTestCase {
             if let oldCart = result.model, oldCart.cartState == .active && result.isSuccess {
 
                 Commercetools.signUpCustomer(customerDraft, result: { result in
-                    if let customerVersion = result.model?.customer?.version, result.isSuccess {
+                    if let customerVersion = result.model?.customer.version, result.isSuccess {
                         if result.isSuccess {
                             authManager.token { token, error in
                                 if authManager.state == .customerToken {

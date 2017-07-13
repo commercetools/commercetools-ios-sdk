@@ -8,7 +8,7 @@ import ObjectMapper
 /**
     Provides set of interactions for querying and retrieving by UUID for categories.
 */
-open class Category: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Mappable {
+open class Category: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, ImmutableMappable {
     
     public typealias ResponseType = Category
 
@@ -16,45 +16,43 @@ open class Category: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Mappable {
 
     // MARK: - Properties
 
-    public var id: String?
-    public var version: UInt?
-    public var createdAt: Date?
-    public var lastModifiedAt: Date?
-    public var key: String?
-    public var name: LocalizedString?
-    public var slug: LocalizedString?
-    public var description: LocalizedString?
-    public var ancestors: [Reference<Category>]?
-    public var parent: Reference<Category>?
-    public var orderHint: String?
-    public var externalId: String?
-    public var metaTitle: LocalizedString?
-    public var metaDescription: LocalizedString?
-    public var metaKeywords: LocalizedString?
-    public var custom: [String: Any]?
-    public var assets: [Asset]?
-
-    public required init?(map: Map) {}
+    public let id: String
+    public let version: UInt
+    public let createdAt: Date
+    public let lastModifiedAt: Date
+    public let key: String?
+    public let name: LocalizedString
+    public let slug: LocalizedString
+    public let description: LocalizedString?
+    public let ancestors: [Reference<Category>]
+    public let parent: Reference<Category>?
+    public let orderHint: String?
+    public let externalId: String?
+    public let metaTitle: LocalizedString?
+    public let metaDescription: LocalizedString?
+    public let metaKeywords: LocalizedString?
+    public let custom: [String: Any]?
+    public let assets: [Asset]
 
     // MARK: - Mappable
 
-    public func mapping(map: Map) {
-        id                      <- map["id"]
-        version                 <- map["version"]
-        createdAt               <- (map["createdAt"], ISO8601DateTransform())
-        lastModifiedAt          <- (map["lastModifiedAt"], ISO8601DateTransform())
-        key                     <- map["key"]
-        name                    <- map["name"]
-        slug                    <- map["slug"]
-        description             <- map["description"]
-        ancestors               <- map["ancestors"]
-        parent                  <- map["parent"]
-        orderHint               <- map["orderHint"]
-        externalId              <- map["externalId"]
-        metaTitle               <- map["metaTitle"]
-        metaDescription         <- map["metaDescription"]
-        metaKeywords            <- map["metaKeywords"]
-        custom                  <- map["custom"]
-        assets                  <- map["assets"]
+    public required init(map: Map) throws {
+        id                      = try map.value("id")
+        version                 = try map.value("version")
+        createdAt               = try map.value("createdAt", using: ISO8601DateTransform())
+        lastModifiedAt          = try map.value("lastModifiedAt", using: ISO8601DateTransform())
+        key                     = try? map.value("key")
+        name                    = try map.value("name")
+        slug                    = try map.value("slug")
+        description             = try? map.value("description")
+        ancestors               = try map.value("ancestors")
+        parent                  = try? map.value("parent")
+        orderHint               = try? map.value("orderHint")
+        externalId              = try? map.value("externalId")
+        metaTitle               = try? map.value("metaTitle")
+        metaDescription         = try? map.value("metaDescription")
+        metaKeywords            = try? map.value("metaKeywords")
+        custom                  = try? map.value("custom")
+        assets                  = try map.value("assets")
     }
 }

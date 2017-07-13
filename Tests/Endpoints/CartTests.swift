@@ -116,19 +116,19 @@ class CartTests: XCTestCase {
         cartDraft.currency = "EUR"
 
         Cart.create(cartDraft, result: { result in
-            if let cart = result.model, let id = cart.id, let version = cart.version, result.isSuccess {
+            if let cart = result.model, result.isSuccess {
                 ProductProjection.query(limit:1, result: { result in
-                    if let product = result.model?.results?.first, result.isSuccess {
+                    if let product = result.model?.results.first, result.isSuccess {
                         var options = AddLineItemOptions()
                         options.productId = product.id
-                        options.variantId = product.masterVariant?.id
+                        options.variantId = product.masterVariant.id
 
-                        let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.addLineItem(options: options)])
-                        Cart.update(id, actions: updateActions, result: { result in
+                        let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.addLineItem(options: options)])
+                        Cart.update(cart.id, actions: updateActions, result: { result in
                             if let cart = result.model {
                                 XCTAssert(result.isSuccess)
-                                XCTAssertEqual(cart.lineItems?.count, 1)
-                                XCTAssertNotNil(cart.lineItems?.first?.productType?.id)
+                                XCTAssertEqual(cart.lineItems.count, 1)
+                                XCTAssertNotNil(cart.lineItems.first?.productType?.id)
                                 updateExpectation.fulfill()
                             }
                         })
@@ -155,15 +155,15 @@ class CartTests: XCTestCase {
             cartDraft.taxMode = .external
 
             Cart.create(cartDraft, result: { result in
-                if let cart = result.model, let id = cart.id, let version = cart.version {
+                if let cart = result.model {
                     XCTAssert(result.isSuccess)
                     XCTAssertEqual(cart.taxMode, .external)
 
                     var options = ChangeTaxModeOptions()
                     options.taxMode = .disabled
 
-                    let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.changeTaxMode(options: options)])
-                    Cart.update(id, actions: updateActions, result: { result in
+                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.changeTaxMode(options: options)])
+                    Cart.update(cart.id, actions: updateActions, result: { result in
                         if let error = result.errors?.first as? CTError, case .generalError(let reason) = error {
                             XCTAssert(result.isFailure)
                             XCTAssertEqual(reason?.message, "Disabled tax mode is not allowed on my cart.")
@@ -192,15 +192,15 @@ class CartTests: XCTestCase {
             cartDraft.taxMode = .external
 
             Cart.create(cartDraft, result: { result in
-                if let cart = result.model, let id = cart.id, let version = cart.version {
+                if let cart = result.model {
                     XCTAssert(result.isSuccess)
                     XCTAssertEqual(cart.taxMode, .external)
 
                     var options = ChangeTaxModeOptions()
                     options.taxMode = .platform
 
-                    let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.changeTaxMode(options: options)])
-                    Cart.update(id, actions: updateActions, result: { result in
+                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.changeTaxMode(options: options)])
+                    Cart.update(cart.id, actions: updateActions, result: { result in
                         if let cart = result.model {
                             XCTAssert(result.isSuccess)
                             XCTAssertEqual(cart.taxMode, .platform)
@@ -229,15 +229,15 @@ class CartTests: XCTestCase {
             cartDraft.deleteDaysAfterLastModification = 3
 
             Cart.create(cartDraft, result: { result in
-                if let cart = result.model, let id = cart.id, let version = cart.version {
+                if let cart = result.model {
                     XCTAssert(result.isSuccess)
                     XCTAssertEqual(cart.deleteDaysAfterLastModification, 3)
 
                     var options = SetDeleteDaysAfterLastModificationOptions()
                     options.deleteDaysAfterLastModification = 8
 
-                    let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.setDeleteDaysAfterLastModification(options: options)])
-                    Cart.update(id, actions: updateActions, result: { result in
+                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.setDeleteDaysAfterLastModification(options: options)])
+                    Cart.update(cart.id, actions: updateActions, result: { result in
                         if let cart = result.model {
                             XCTAssert(result.isSuccess)
                             XCTAssertEqual(cart.deleteDaysAfterLastModification, 8)
@@ -253,10 +253,10 @@ class CartTests: XCTestCase {
 
     private func retrieveSampleProduct(_ completion: @escaping (LineItemDraft) -> Void) {
         ProductProjection.query(limit:1, result: { result in
-            if let product = result.model?.results?.first, result.isSuccess {
+            if let product = result.model?.results.first, result.isSuccess {
                 var lineItemDraft = LineItemDraft()
                 lineItemDraft.productId = product.id
-                lineItemDraft.variantId = product.masterVariant?.id
+                lineItemDraft.variantId = product.masterVariant.id
                 lineItemDraft.quantity = 3
                 completion(lineItemDraft)
             }

@@ -1007,20 +1007,16 @@ public struct CustomerGroup: Mappable {
 
 }
 
-public struct CustomerSignInResult: Mappable {
+public struct CustomerSignInResult: ImmutableMappable {
 
     // MARK: - Properties
 
-    public var customer: Customer?
-    public var cart: Cart?
+    public let customer: Customer
+    public let cart: Cart?
 
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        customer         <- map["customer"]
-        cart             <- map["cart"]
+    public init(map: Map) throws {
+        customer         = try map.value("customer")
+        cart             = try? map.value("cart")
     }
 }
 
@@ -2122,7 +2118,7 @@ public struct ProductVariantAvailability: Mappable {
     }
 }
 
-public struct Reference<T: Mappable>: Mappable {
+public struct Reference<T: BaseMappable>: Mappable {
 
     // MARK: - Properties
 
@@ -2489,32 +2485,27 @@ public struct SyncInfo: Mappable {
     }
 }
 
-public struct TaxCategory: Mappable {
+public struct TaxCategory: ImmutableMappable {
 
     // MARK: - Properties
 
-    public var id: String?
-    public var version: UInt?
-    public var createdAt: Date?
-    public var lastModifiedAt: Date?
-    public var name: String?
-    public var description: String?
-    public var rates: [TaxRate]?
+    public let id: String
+    public let version: UInt
+    public let createdAt: Date
+    public let lastModifiedAt: Date
+    public let name: String
+    public let description: String?
+    public let rates: [TaxRate]
 
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        id               <- map["id"]
-        version          <- map["version"]
-        createdAt        <- (map["createdAt"], ISO8601DateTransform())
-        lastModifiedAt   <- (map["lastModifiedAt"], ISO8601DateTransform())
-        name             <- map["name"]
-        description      <- map["description"]
-        rates            <- map["rates"]
+    public init(map: Map) throws {
+        id               = try map.value("id")
+        version          = try map.value("version")
+        createdAt        = try map.value("createdAt", using: ISO8601DateTransform())
+        lastModifiedAt   = try map.value("lastModifiedAt", using: ISO8601DateTransform())
+        name             = try map.value("name")
+        description      = try? map.value("description")
+        rates            = try map.value("rates")
     }
-
 }
 
 public enum TaxMode: String {
@@ -2663,32 +2654,27 @@ public enum TransactionType: String {
 
 }
 
-public struct Zone: Mappable {
+public struct Zone: ImmutableMappable {
 
     // MARK: - Properties
 
-    public var id: String?
-    public var version: UInt?
-    public var createdAt: Date?
-    public var lastModifiedAt: Date?
-    public var name: String?
-    public var description: String?
-    public var locations: [Location]?
+    public let id: String
+    public let version: UInt
+    public let createdAt: Date
+    public let lastModifiedAt: Date
+    public let name: String
+    public let description: String?
+    public let locations: [Location]
 
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        id               <- map["id"]
-        version          <- map["version"]
-        createdAt        <- (map["createdAt"], ISO8601DateTransform())
-        lastModifiedAt   <- (map["lastModifiedAt"], ISO8601DateTransform())
-        name             <- map["name"]
-        description      <- map["description"]
-        locations        <- map["locations"]
+    public init(map: Map) throws {
+        id               = try map.value("id")
+        version          = try map.value("version")
+        createdAt        = try map.value("createdAt", using: ISO8601DateTransform())
+        lastModifiedAt   = try map.value("lastModifiedAt", using: ISO8601DateTransform())
+        name             = try map.value("name")
+        description      = try? map.value("description")
+        locations        = try map.value("locations")
     }
-
 }
 
 public struct ZoneRate: Mappable {

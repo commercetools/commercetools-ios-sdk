@@ -10,7 +10,7 @@ import ObjectMapper
     Provides complete set of interactions for retrieving current customer profile, signing up,
     updating and profile deletion.
 */
-open class Customer: Endpoint, Mappable {
+open class Customer: Endpoint, ImmutableMappable {
     
     public typealias ResponseType = Customer
 
@@ -156,62 +156,60 @@ open class Customer: Endpoint, Mappable {
 
     // MARK: - Properties
 
-    public var id: String?
-    public var version: UInt?
-    public var customerNumber: String?
-    public var createdAt: Date?
-    public var lastModifiedAt: Date?
-    public var email: String?
-    public var password: String?
-    public var firstName: String?
-    public var lastName: String?
-    public var middleName: String?
-    public var title: String?
-    public var salutation: String?
-    public var dateOfBirth: Date?
-    public var companyName: String?
-    public var vatId: String?
-    public var addresses: [Address]?
-    public var defaultShippingAddressId: String?
-    public var shippingAddressIds: [String]?
-    public var defaultBillingAddressId: String?
-    public var billingAddressIds: [String]?
-    public var isEmailVerified: Bool?
-    public var externalId: String?
-    public var customerGroup: Reference<CustomerGroup>?
-    public var custom: [String: Any]?
-    public var locale: String?
-
-    public required init?(map: Map) {}
+    public let id: String
+    public let version: UInt
+    public let customerNumber: String?
+    public let createdAt: Date
+    public let lastModifiedAt: Date
+    public let email: String
+    public let password: String
+    public let firstName: String?
+    public let lastName: String?
+    public let middleName: String?
+    public let title: String?
+    public let salutation: String?
+    public let dateOfBirth: Date?
+    public let companyName: String?
+    public let vatId: String?
+    public let addresses: [Address]
+    public let defaultShippingAddressId: String?
+    public let shippingAddressIds: [String]?
+    public let defaultBillingAddressId: String?
+    public let billingAddressIds: [String]?
+    public let isEmailVerified: Bool
+    public let externalId: String?
+    public let customerGroup: Reference<CustomerGroup>?
+    public let custom: [String: Any]?
+    public let locale: String?
 
     // MARK: - Mappable
 
-    public func mapping(map: Map) {
-        id                        <- map["id"]
-        version                   <- map["version"]
-        customerNumber            <- map["customerNumber"]
-        createdAt                 <- (map["createdAt"], ISO8601DateTransform())
-        lastModifiedAt            <- (map["lastModifiedAt"], ISO8601DateTransform())
-        email                     <- map["email"]
-        password                  <- map["password"]
-        firstName                 <- map["firstName"]
-        lastName                  <- map["lastName"]
-        middleName                <- map["middleName"]
-        title                     <- map["title"]
-        salutation                <- map["salutation"]
-        dateOfBirth               <- (map["dateOfBirth"], ISO8601DateTransform())
-        companyName               <- map["companyName"]
-        vatId                     <- map["vatId"]
-        addresses                 <- map["addresses"]
-        defaultShippingAddressId  <- map["defaultShippingAddressId"]
-        shippingAddressIds        <- map["shippingAddressIds"]
-        defaultBillingAddressId   <- map["defaultBillingAddressId"]
-        billingAddressIds         <- map["billingAddressIds"]
-        isEmailVerified           <- map["isEmailVerified"]
-        externalId                <- map["externalId"]
-        customerGroup             <- map["customerGroup"]
-        custom                    <- map["custom"]
-        locale                    <- map["locale"]
+    public required init(map: Map) throws {
+        id                        = try map.value("id")
+        version                   = try map.value("version")
+        customerNumber            = try? map.value("customerNumber")
+        createdAt                 = try map.value("createdAt", using: ISO8601DateTransform())
+        lastModifiedAt            = try map.value("lastModifiedAt", using: ISO8601DateTransform())
+        email                     = try map.value("email")
+        password                  = try map.value("password")
+        firstName                 = try? map.value("firstName")
+        lastName                  = try? map.value("lastName")
+        middleName                = try? map.value("middleName")
+        title                     = try? map.value("title")
+        salutation                = try? map.value("salutation")
+        dateOfBirth               = try? map.value("dateOfBirth", using: ISO8601DateTransform())
+        companyName               = try? map.value("companyName")
+        vatId                     = try? map.value("vatId")
+        addresses                 = try map.value("addresses")
+        defaultShippingAddressId  = try? map.value("defaultShippingAddressId")
+        shippingAddressIds        = try? map.value("shippingAddressIds")
+        defaultBillingAddressId   = try? map.value("defaultBillingAddressId")
+        billingAddressIds         = try? map.value("billingAddressIds")
+        isEmailVerified           = try map.value("isEmailVerified")
+        externalId                = try? map.value("externalId")
+        customerGroup             = try? map.value("customerGroup")
+        custom                    = try? map.value("custom")
+        locale                    = try? map.value("locale")
     }
     
     // MARK: - Helpers

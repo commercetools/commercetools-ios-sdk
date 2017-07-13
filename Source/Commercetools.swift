@@ -50,7 +50,7 @@ public var authState: AuthManager.TokenState {
 
 // MARK: - Project settings
 
-public struct Project: Endpoint, Mappable {
+public struct Project: Endpoint, ImmutableMappable {
     public typealias ResponseType = Project
     public static let path = ""
 
@@ -72,26 +72,26 @@ public struct Project: Endpoint, Mappable {
 
     // MARK: - Properties
 
-    public var key: String?
-    public var name: String?
-    public var countries: [String]?
-    public var currencies: [String]?
-    public var languages: [String]?
-    public var createdAt: Date?
-    public var messagesEnabled: Bool?
-
-    public init?(map: Map) {}
+    public let key: String
+    public let name: String
+    public let countries: [String]
+    public let currencies: [String]
+    public let languages: [String]
+    public let createdAt: Date
+    public let trialUntil: Date?
+    public let messagesEnabled: Bool
 
     // MARK: - Mappable
 
-    mutating public func mapping(map: Map) {
-        key                       <- map["key"]
-        name                      <- map["name"]
-        countries                 <- map["countries"]
-        currencies                <- map["currencies"]
-        languages                 <- map["languages"]
-        createdAt                 <- (map["createdAt"], ISO8601DateTransform())
-        messagesEnabled           <- map["messagesEnabled"]
+    public init(map: Map) throws {
+        key                       = try map.value("key")
+        name                      = try map.value("name")
+        countries                 = try map.value("countries")
+        currencies                = try map.value("currencies")
+        languages                 = try map.value("languages")
+        createdAt                 = try map.value("createdAt", using: ISO8601DateTransform())
+        trialUntil                = try? map.value("trialUntil", using: ISO8601DateTransform())
+        messagesEnabled           = try map.value("messages.enabled")
     }
 }
 
@@ -149,7 +149,7 @@ public func signUpCustomer(_ profile: [String: Any], result: @escaping (Result<C
     Customer.signUp(profile, result: { signUpResult in
         if signUpResult.isFailure {
             result(signUpResult)
-        } else if let username = signUpResult.model?.customer?.email, let password = profile["password"] as? String {
+        } else if let username = signUpResult.model?.customer.email, let password = profile["password"] as? String {
             AuthManager.sharedInstance.loginCustomer(username: username, password: password) { error in
                 if let error = error {
                     result(.failure(nil, [error]))

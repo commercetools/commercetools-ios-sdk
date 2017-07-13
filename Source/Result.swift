@@ -85,7 +85,7 @@ extension Result: CustomDebugStringConvertible {
     }
 }
 
-extension Result where T: Mappable {
+extension Result where T: BaseMappable {
     /// Returns the associated JSON response in dictionary format, if the result is a success, `nil` otherwise.
     public var json: [String: Any]? {
         if case .success(let value as [String: Any]) = self {
@@ -93,18 +93,20 @@ extension Result where T: Mappable {
         }
         return nil
     }
+}
 
+extension Result where T: ImmutableMappable {
     /// Returns the associated response, if the result is a success, `nil` otherwise.
     public var model: T? {
         if case .success(let value) = self {
-            return Mapper<T>().map(JSONObject: value)
+            return try? T(JSONObject: value)
         }
         return nil
     }
 }
 
 public protocol ArrayResponse {
-    associatedtype ArrayElement: Mappable
+    associatedtype ArrayElement: ImmutableMappable
 }
 
 extension Result where T: ArrayResponse {
@@ -118,8 +120,8 @@ extension Result where T: ArrayResponse {
 
     /// Returns the associated array, if the result is a success, `nil` otherwise.
     public var model: [T.ArrayElement]? {
-        if case .success(let value) = self {
-            return Mapper<T.ArrayElement>().mapArray(JSONObject: value)
+        if case .success(let value) = self, let model = try? Mapper<T.ArrayElement>().mapArray(JSONObject: value) {
+            return model
         }
         return nil
     }
