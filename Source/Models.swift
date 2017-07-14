@@ -151,13 +151,13 @@ public struct AssetSource: ImmutableMappable {
     // MARK: - Properties
 
     public let uri: String
-    public let key: String
+    public let key: String?
     public let dimensions: [AssetDimensions]?
     public let contentType: String?
 
     public init(map: Map) throws {
         uri              = try map.value("uri")
-        key              = try map.value("key")
+        key              = try? map.value("key")
         dimensions       = try? map.value("dimensions")
         contentType      = try? map.value("contentType")
     }
