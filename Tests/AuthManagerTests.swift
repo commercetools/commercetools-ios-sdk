@@ -240,8 +240,7 @@ class AuthManagerTests: XCTestCase {
 
         let authManager = AuthManager.sharedInstance
 
-        var cartDraft = CartDraft()
-        cartDraft.currency = "EUR"
+        let cartDraft = CartDraft(currency: "EUR")
 
         Cart.create(cartDraft, result: { result in
             if let oldCart = result.model, oldCart.cartState == .active && result.isSuccess {
@@ -275,16 +274,13 @@ class AuthManagerTests: XCTestCase {
 
         let username = "new.swift.sdk.test.user@commercetools.com"
 
-        var customerDraft = CustomerDraft()
-        customerDraft.email = username
-        customerDraft.password = "password"
+        let customerDraft = CustomerDraft(email: username, password: "password")
 
         let cartMigrationExpectation = expectation(description: "cart migration expectation")
 
         let authManager = AuthManager.sharedInstance
 
-        var cartDraft = CartDraft()
-        cartDraft.currency = "EUR"
+        let cartDraft = CartDraft(currency: "EUR")
 
         Cart.create(cartDraft, result: { result in
             if let oldCart = result.model, oldCart.cartState == .active && result.isSuccess {

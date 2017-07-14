@@ -52,9 +52,7 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
-            var cartDraft = CartDraft()
-            cartDraft.currency = "EUR"
-            cartDraft.lineItems = [lineItemDraft]
+            let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft])
 
             Cart.create(cartDraft, result: { result in
                 if let cart = result.model {
@@ -77,19 +75,11 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
-            var cartDraft = CartDraft()
-
-            var address = Address()
-            address.country = "DE"
-            cartDraft.shippingAddress = address
-            cartDraft.currency = "EUR"
-            cartDraft.lineItems = [lineItemDraft]
+            let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft], shippingAddress: Address(country: "DE"))
 
             Cart.create(cartDraft, result: { result in
                 if let cart = result.model, result.isSuccess {
-                    var orderDraft = OrderDraft()
-                    orderDraft.id = cart.id
-                    orderDraft.version = cart.version
+                    let orderDraft = OrderDraft(id: cart.id, version: cart.version)
                     Order.create(orderDraft, result: { result in
                         if let order = result.model {
                             XCTAssert(result.isSuccess)
@@ -112,18 +102,15 @@ class CartTests: XCTestCase {
 
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
-        var cartDraft = CartDraft()
-        cartDraft.currency = "EUR"
+        let cartDraft = CartDraft(currency: "EUR")
 
         Cart.create(cartDraft, result: { result in
             if let cart = result.model, result.isSuccess {
                 ProductProjection.query(limit:1, result: { result in
-                    if let product = result.model?.results.first, result.isSuccess {
-                        var options = AddLineItemOptions()
-                        options.productId = product.id
-                        options.variantId = product.masterVariant.id
-
-                        let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.addLineItem(options: options)])
+                    if let product = result.model?.results.first, result.isSuccess {                        
+                        let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.addLineItem(productId: product.id, variantId: product.masterVariant.id,
+                                                                                                                          quantity: nil, supplyChannel: nil, distributionChannel: nil,
+                                                                                                                          custom: nil)])
                         Cart.update(cart.id, actions: updateActions, result: { result in
                             if let cart = result.model {
                                 XCTAssert(result.isSuccess)
@@ -149,20 +136,14 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
-            var cartDraft = CartDraft()
-            cartDraft.currency = "EUR"
-            cartDraft.lineItems = [lineItemDraft]
-            cartDraft.taxMode = .external
+            let cartDraft = CartDraft(currency: "EUR", taxMode: .external, lineItems: [lineItemDraft])
 
             Cart.create(cartDraft, result: { result in
                 if let cart = result.model {
                     XCTAssert(result.isSuccess)
                     XCTAssertEqual(cart.taxMode, .external)
 
-                    var options = ChangeTaxModeOptions()
-                    options.taxMode = .disabled
-
-                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.changeTaxMode(options: options)])
+                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.changeTaxMode(taxMode: .disabled)])
                     Cart.update(cart.id, actions: updateActions, result: { result in
                         if let error = result.errors?.first as? CTError, case .generalError(let reason) = error {
                             XCTAssert(result.isFailure)
@@ -186,20 +167,14 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
-            var cartDraft = CartDraft()
-            cartDraft.currency = "EUR"
-            cartDraft.lineItems = [lineItemDraft]
-            cartDraft.taxMode = .external
+            let cartDraft = CartDraft(currency: "EUR", taxMode: .external, lineItems: [lineItemDraft])
 
             Cart.create(cartDraft, result: { result in
                 if let cart = result.model {
                     XCTAssert(result.isSuccess)
                     XCTAssertEqual(cart.taxMode, .external)
 
-                    var options = ChangeTaxModeOptions()
-                    options.taxMode = .platform
-
-                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.changeTaxMode(options: options)])
+                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.changeTaxMode(taxMode: .platform)])
                     Cart.update(cart.id, actions: updateActions, result: { result in
                         if let cart = result.model {
                             XCTAssert(result.isSuccess)
@@ -223,20 +198,14 @@ class CartTests: XCTestCase {
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
         retrieveSampleProduct { lineItemDraft in
-            var cartDraft = CartDraft()
-            cartDraft.currency = "EUR"
-            cartDraft.lineItems = [lineItemDraft]
-            cartDraft.deleteDaysAfterLastModification = 3
+            let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft], deleteDaysAfterLastModification: 3)
 
             Cart.create(cartDraft, result: { result in
                 if let cart = result.model {
                     XCTAssert(result.isSuccess)
                     XCTAssertEqual(cart.deleteDaysAfterLastModification, 3)
 
-                    var options = SetDeleteDaysAfterLastModificationOptions()
-                    options.deleteDaysAfterLastModification = 8
-
-                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.setDeleteDaysAfterLastModification(options: options)])
+                    let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.setDeleteDaysAfterLastModification(deleteDaysAfterLastModification: 8)])
                     Cart.update(cart.id, actions: updateActions, result: { result in
                         if let cart = result.model {
                             XCTAssert(result.isSuccess)
@@ -254,10 +223,7 @@ class CartTests: XCTestCase {
     private func retrieveSampleProduct(_ completion: @escaping (LineItemDraft) -> Void) {
         ProductProjection.query(limit:1, result: { result in
             if let product = result.model?.results.first, result.isSuccess {
-                var lineItemDraft = LineItemDraft()
-                lineItemDraft.productId = product.id
-                lineItemDraft.variantId = product.masterVariant.id
-                lineItemDraft.quantity = 3
+                let lineItemDraft = LineItemDraft(productId: product.id, variantId: product.masterVariant.id, quantity: 3)
                 completion(lineItemDraft)
             }
         })

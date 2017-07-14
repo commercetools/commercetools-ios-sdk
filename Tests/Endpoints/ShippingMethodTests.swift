@@ -80,7 +80,7 @@ class ShippingMethodTests: XCTestCase {
         ShippingMethod.for(country: "DE") { result in
             let methods = result.model
             XCTAssert(result.isSuccess)
-            XCTAssert(methods?.first?.zoneRates.first?.shippingRates?.filter({ $0.price?.currencyCode == "EUR" }).first?.isMatching == true)
+            XCTAssert(methods?.first?.zoneRates.first?.shippingRates.filter({ $0.price.currencyCode == "EUR" }).first?.isMatching == true)
             XCTAssertEqual(methods?.filter({ $0.name == "test-shipping-method" }).count, 1)
             shippingMethodsExpectation.fulfill()
         }
@@ -96,18 +96,14 @@ class ShippingMethodTests: XCTestCase {
 
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
-        var cartDraft = CartDraft()
-        cartDraft.currency = "EUR"
-        var address = Address()
-        address.country = "DE"
-        cartDraft.shippingAddress = address
+        let cartDraft = CartDraft(currency: "EUR", shippingAddress: Address(country: "DE"))
 
         Cart.create(cartDraft, result: { result in
             if let cart = result.model {
                 XCTAssert(result.isSuccess)
                 ShippingMethod.for(cart: cart) { result in
                     let methods = result.model
-                    XCTAssert(methods?.first?.zoneRates.first?.shippingRates?.filter({ $0.price?.currencyCode == "EUR" }).first?.isMatching == true)
+                    XCTAssert(methods?.first?.zoneRates.first?.shippingRates.filter({ $0.price.currencyCode == "EUR" }).first?.isMatching == true)
                     XCTAssertEqual(methods?.filter({ $0.name == "test-shipping-method" }).count, 1)
 
                     shippingMethodsExpectation.fulfill()

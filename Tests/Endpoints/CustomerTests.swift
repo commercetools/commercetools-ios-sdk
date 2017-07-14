@@ -99,9 +99,7 @@ class CustomerTests: XCTestCase {
         let createProfileExpectation = expectation(description: "create profile expectation")
         let deleteProfileExpectation = expectation(description: "delete profile expectation")
 
-        var customerDraft = CustomerDraft()
-        customerDraft.email = username
-        customerDraft.password = "password"
+        let customerDraft = CustomerDraft(email: username, password: "password")
 
         Commercetools.signUpCustomer(customerDraft, result: { result in
             if let customer = result.model?.customer, customer.email == username, result.isSuccess {
@@ -136,22 +134,16 @@ class CustomerTests: XCTestCase {
 
         Customer.profile { result in
             if let profile = result.model, result.isSuccess {
-                var nameOptions = SetFirstNameOptions()
-                nameOptions.firstName = "newName"
-                var salutationOptions = SetSalutationOptions()
-                salutationOptions.salutation = "salutation"
-                let updateActions = UpdateActions<CustomerUpdateAction>(version: profile.version, actions: [.setFirstName(options: nameOptions), .setSalutation(options: salutationOptions)])
+                let updateActions = UpdateActions<CustomerUpdateAction>(version: profile.version, actions: [.setFirstName(firstName: "newName"), .setSalutation(salutation: "salutation")])
                 Customer.update(actions: updateActions, result: { result in
                     if let profile = result.model {
                         XCTAssert(result.isSuccess)
                         XCTAssertEqual(profile.firstName, "newName")
                         XCTAssertEqual(profile.salutation, "salutation")
-
+                        
                         // Now revert back to the old values
-                        nameOptions.firstName = "Test"
-                        salutationOptions.salutation = ""
-                        let updateActions = UpdateActions<CustomerUpdateAction>(version: profile.version, actions: [.setFirstName(options: nameOptions), .setSalutation(options: salutationOptions)])
-
+                        let updateActions = UpdateActions<CustomerUpdateAction>(version: profile.version, actions: [.setFirstName(firstName: "Test"), .setSalutation(salutation: "")])
+                        
                         Customer.update(actions: updateActions, result: { result in
                             if let profile = result.model {
                                 XCTAssert(result.isSuccess)
@@ -327,7 +319,7 @@ class CustomerTests: XCTestCase {
 
     func testVerifyEmail() {
 
-        let resetPasswordExpectation = expectation(description: "reset password expectation")
+        let verifyEmailExpectation = expectation(description: "verify email expectation")
 
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
@@ -357,7 +349,7 @@ class CustomerTests: XCTestCase {
                                 if let response = result.json, let email = response["email"] as? String {
                                     XCTAssert(result.isSuccess)
                                     XCTAssertEqual(email, username)
-                                    resetPasswordExpectation.fulfill()
+                                    verifyEmailExpectation.fulfill()
                                 }
                             })
                         }
@@ -372,6 +364,6 @@ class CustomerTests: XCTestCase {
             })
         }
 
-        waitForExpectations(timeout: 10, handler: nil)
+        waitForExpectations(timeout: 20, handler: nil)
     }
 }

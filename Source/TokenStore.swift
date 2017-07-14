@@ -139,7 +139,7 @@ class TokenStore: NSObject {
     #if os(iOS) || os(watchOS)
     fileprivate func initAndConfigureWCSession() {
         if let shareWatchSession = Config.currentConfig?.shareWatchSession, WCSession.isSupported() && shareWatchSession {
-            wcSession = WCSession.default()
+            wcSession = WCSession.default
             wcSession?.delegate = self
             wcSession?.activate()
         } else {
