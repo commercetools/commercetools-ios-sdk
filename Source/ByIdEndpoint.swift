@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 
 /**
     All endpoints capable of being retrieved by UUID should conform to this protocol.
@@ -29,11 +28,11 @@ public extension ByIdEndpoint {
         
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
+            let request = self.request(url: fullPath, headers: self.headers(token))
             
-            Alamofire.request(fullPath, parameters: nil, encoding: JSONEncoding.default, headers: self.headers(token))
-                .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                    handleResponse(response, result: result)
-                })
+            perform(request: request) { (response: Result<ResponseType>) in
+                result(response)
+            }
         })
     }
 }
