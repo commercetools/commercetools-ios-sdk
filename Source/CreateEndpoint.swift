@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 import ObjectMapper
 
 /**
@@ -41,11 +40,11 @@ public extension CreateEndpoint {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
+            let request = self.request(url: fullPath, method: .post, json: object, headers: self.headers(token))
 
-            Alamofire.request(fullPath, method: .post, parameters: object, encoding: JSONEncoding.default, headers: self.headers(token))
-                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                        handleResponse(response, result: result)
-                    })
+            perform(request: request) { (response: Result<ResponseType>) in
+                result(response)
+            }
         })
     }
 

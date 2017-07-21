@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 import ObjectMapper
 
 /**
@@ -56,30 +55,30 @@ public extension QueryEndpoint {
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
             let parameters = queryParameters(predicates: predicates, sort: sort, limit: limit, offset: offset)
-            
-            Alamofire.request(fullPath, parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
-                .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                    handleResponse(response, result: result)
-                })
+            let request = self.request(url: fullPath, queryItems: parameters, headers: self.headers(token))
+
+            perform(request: request) { (response: Result<QueryResponse<ResponseType>>) in
+                result(response)
+            }
         })
     }
 
     static func queryParameters(predicates: [String]? = nil, sort: [String]? = nil, limit: UInt? = nil,
-                                offset: UInt? = nil) -> [String: Any] {
-        var parameters = [String: Any]()
+                                offset: UInt? = nil) -> [URLQueryItem] {
+        var queryItems = [URLQueryItem]()
 
-        if let predicates = predicates, predicates.count > 0 {
-            parameters["where"] = predicates
+        predicates?.forEach {
+            queryItems.append(URLQueryItem(name: "where", value: $0))
         }
-        if let sort = sort, sort.count > 0 {
-            parameters["sort"] = sort
+        sort?.forEach {
+            queryItems.append(URLQueryItem(name: "sort", value: $0))
         }
         if let limit = limit {
-            parameters["limit"] = limit
+            queryItems.append(URLQueryItem(name: "limit", value: String(limit)))
         }
         if let offset = offset {
-            parameters["offset"] = offset
+            queryItems.append(URLQueryItem(name: "offset", value: String(offset)))
         }
-        return parameters
+        return queryItems
     }
 }
