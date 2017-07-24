@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 import ObjectMapper
 
 /**
@@ -47,6 +46,22 @@ public extension Endpoint {
                     + (path.hasSuffix("/") ? "" : "/")
         }
         return nil
+    }
+
+    static var defaultHeaders: [String: String] {
+        // Accept-Encoding HTTP Header; see https://tools.ietf.org/html/rfc7230#section-4.2.3
+        let acceptEncoding: String = "gzip;q=1.0, compress;q=0.5"
+        // Accept-Language HTTP Header; see https://tools.ietf.org/html/rfc7231#section-5.3.5
+        let acceptLanguage = Locale.preferredLanguages.prefix(6).enumerated().map { enumeratedLanguage in
+            let (index, languageCode) = enumeratedLanguage
+            let quality = 1.0 - (Double(index) * 0.1)
+            return "\(languageCode);q=\(quality)"
+        }.joined(separator: ", ")
+        return [
+            "Accept-Encoding": acceptEncoding,
+            "Accept-Language": acceptLanguage,
+            "User-Agent": userAgent
+        ]
     }
 
     /// The full user agent header sent with requests to the platform.
@@ -117,42 +132,42 @@ public extension Endpoint {
                    the "Accept-Encoding", "Accept-Language" and "User-Agent" headers.
     */
     static func headers(_ token: String) -> [String: String] {
-        var headers = SessionManager.defaultHTTPHeaders
+        var headers = defaultHeaders
         headers["Authorization"] = "Bearer \(token)"
-        headers["User-Agent"] = userAgent
         return headers
     }
 
     /**
-        This method provides default response handling from all endpoints, providing successful result in dictionary format.
+        This method provides default response handling from all endpoints, providing successful result in dictionary format. TODO update
 
         - parameter response:                 Received response.
         - parameter result:                   The code to be executed after processing the response, providing response
                                               in dictionary format in case of a successful result.
     */
-    static func handleResponse<T>(_ response: DataResponse<Any>, result: (Result<T>) -> Void) {
-        if let responseDict = response.result.value, let response = response.response, case 200 ... 299 = response.statusCode {
+    static func handleResponse<T>(data: Data?, response: URLResponse?, error: Error?, result: (Result<T>) -> Void) {
+        if let data = data, let responseDict = try? JSONSerialization.jsonObject(with: data, options: []), let statusCode = (response as? HTTPURLResponse)?.statusCode, case 200 ... 299 = statusCode {
             result(Result.success(responseDict))
         } else {
-            checkResponseForErrors(response: response, result: result)
+            checkResponseForErrors(data: data, response: response, error: error, result: result)
         }
     }
     
-    static func checkResponseForErrors<T>(response: DataResponse<Any>, result: (Result<T>) -> Void) {
-        if let responseDict = response.result.value as? [String: AnyObject], let response = response.response {
+    static func checkResponseForErrors<T>(data: Data?, response: URLResponse?, error: Error?, result: (Result<T>) -> Void) {
+        if let data = data, let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
+           let responseDict = jsonObject as? [String: Any], let statusCode = (response as? HTTPURLResponse)?.statusCode {
             if let errorsResponse = responseDict["errors"] as? [[String: AnyObject]] {
                 var errors = [CTError]()
                 errorsResponse.forEach {
                     errors += [CTError(code: $0["code"] as? String ?? "", failureMessage: $0["message"] as? String,
-                                       failureDetails: $0["detailedErrorMessage"] as? String, currentVersion: $0["currentVersion"] as? UInt)]
+                            failureDetails: $0["detailedErrorMessage"] as? String, currentVersion: $0["currentVersion"] as? UInt)]
                 }
-                result(Result.failure(response.statusCode, errors))
-                
+                result(Result.failure(statusCode, errors))
+
             } else {
-                result(Result.failure(response.statusCode, [CTError.generalError(reason: CTError.FailureReason(message: responseDict["error"] as? String, details: nil))]))
+                result(Result.failure(statusCode, [CTError.generalError(reason: CTError.FailureReason(message: responseDict["error"] as? String, details: nil))]))
             }
         } else {
-            result(Result.failure(response.response?.statusCode, [response.result.error ?? CTError.generalError(reason: nil)]))
+            result(Result.failure((response as? HTTPURLResponse)?.statusCode, [error ?? CTError.generalError(reason: nil)]))
         }
     }
 
@@ -177,4 +192,50 @@ public extension Endpoint {
             requestHandler(token, path)
         }
     }
+
+    static func request(url: String, method: HTTPMethod = .get, urlParameters: [String: String] = [:], json: [String: Any]? = nil, headers: [String: String] = [:]) -> URLRequest {
+        var queryItems = [URLQueryItem]()
+        urlParameters.forEach {
+            queryItems.append(URLQueryItem(name: $0.key, value: $0.value))
+        }
+        return request(url: url, method: method, queryItems: queryItems, json: json, headers: headers)
+    }
+
+    static func request(url: String, method: HTTPMethod = .get, queryItems: [URLQueryItem], json: [String: Any]? = nil, headers: [String: String] = [:]) -> URLRequest {
+        var urlComponents = URLComponents(string: url)!
+        urlComponents.queryItems = queryItems + (urlComponents.queryItems ?? [])
+
+        var urlRequest = URLRequest(url: urlComponents.url!)
+        urlRequest.httpMethod = method.rawValue
+        headers.forEach {
+            urlRequest.addValue($0.value, forHTTPHeaderField: $0.key)
+        }
+
+        if let json = json, let jsonData = try? JSONSerialization.data(withJSONObject: json, options: []) {
+            urlRequest.httpBody = jsonData
+        }
+
+        return urlRequest
+    }
+
+    static func perform<T>(request: URLRequest, result: @escaping (Result<T>) -> Void) {
+        urlSession.dataTask(with: request, completionHandler: { data, response, error in
+            self.handleResponse(data: data, response: response, error: error, result: result)
+        }).resume()
+    }
+}
+
+/// HTTP method definitions.
+///
+/// See https://tools.ietf.org/html/rfc7231#section-4.3
+public enum HTTPMethod: String {
+    case options = "OPTIONS"
+    case get     = "GET"
+    case head    = "HEAD"
+    case post    = "POST"
+    case put     = "PUT"
+    case patch   = "PATCH"
+    case delete  = "DELETE"
+    case trace   = "TRACE"
+    case connect = "CONNECT"
 }

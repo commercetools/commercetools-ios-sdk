@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 import ObjectMapper
 
 /**
@@ -26,10 +25,11 @@ public struct ShippingMethod: ByIdEndpoint, QueryEndpoint, ImmutableMappable {
     */
     public static func `for`(cart: Cart, result: @escaping (Result<ShippingMethods>) -> Void) {
         requestWithTokenAndPath(result, { token, path in
-            Alamofire.request(path, parameters: ["cartId": cart.id], encoding: URLEncoding.default, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                handleResponse(response, result: result)
-            })
+            let request = self.request(url: path, urlParameters: ["cartId": cart.id], headers: self.headers(token))
+
+            perform(request: request) { (response: Result<ShippingMethods>) in
+                result(response)
+            }
         })
     }
 
@@ -51,10 +51,11 @@ public struct ShippingMethod: ByIdEndpoint, QueryEndpoint, ImmutableMappable {
                 parameters["currency"] = currency
             }
 
-            Alamofire.request(path, parameters: parameters, encoding: URLEncoding.default, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                handleResponse(response, result: result)
-            })
+            let request = self.request(url: path, urlParameters: parameters, headers: self.headers(token))
+
+            perform(request: request) { (response: Result<ShippingMethods>) in
+                result(response)
+            }
         })
     }
 
