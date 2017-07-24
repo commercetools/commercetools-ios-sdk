@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 import ObjectMapper
 
 /**
@@ -43,10 +42,11 @@ open class Customer: Endpoint, ImmutableMappable {
             userDetails["activeCartSignInMode"] = activeCartSignInMode.rawValue
         }
         requestWithTokenAndPath(result, { token, path in
-            Alamofire.request("\(path)login", method: .post, parameters: userDetails, encoding: JSONEncoding.default, headers: self.headers(token))
-                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                        handleResponse(response, result: result)
-                    })
+            let request = self.request(url: "\(path)login", method: .post, json: userDetails, headers: self.headers(token))
+
+            perform(request: request) { (response: Result<CustomerSignInResult>) in
+                result(response)
+            }
         })
     }
 
@@ -58,10 +58,11 @@ open class Customer: Endpoint, ImmutableMappable {
     */
     static func signUp(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
         requestWithTokenAndPath(result, { token, path in
-            Alamofire.request("\(path)signup", method: .post, parameters: profile, encoding: JSONEncoding.default, headers: self.headers(token))
-                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                        handleResponse(response, result: result)
-                    })
+            let request = self.request(url: "\(path)signup", method: .post, json: profile, headers: self.headers(token))
+
+            perform(request: request) { (response: Result<CustomerSignInResult>) in
+                result(response)
+            }
         })
     }
 
@@ -73,7 +74,7 @@ open class Customer: Endpoint, ImmutableMappable {
         - parameter result:                   The code to be executed after processing the response.
     */
     open static func update(actions: UpdateActions<CustomerUpdateAction>, result: @escaping (Result<ResponseType>) -> Void) {
-        customerProfileAction(method: .post, parameters: actions.toJSON, encoding: JSONEncoding.default, result: result)
+        customerProfileAction(method: .post, json: actions.toJSON, result: result)
     }
 
     /**
@@ -84,7 +85,7 @@ open class Customer: Endpoint, ImmutableMappable {
         - parameter result:                   The code to be executed after processing the response.
     */
     open static func update(version: UInt, actions: [[String: Any]], result: @escaping (Result<ResponseType>) -> Void) {
-        customerProfileAction(method: .post, parameters: ["version": version, "actions": actions], encoding: JSONEncoding.default, result: result)
+        customerProfileAction(method: .post, json: ["version": version, "actions": actions], result: result)
     }
 
     /**
@@ -94,7 +95,7 @@ open class Customer: Endpoint, ImmutableMappable {
         - parameter result:                   The code to be executed after processing the response.
     */
     open static func delete(version: UInt, result: @escaping (Result<ResponseType>) -> Void) {
-        customerProfileAction(method: .delete, parameters: ["version": version], result: result)
+        customerProfileAction(method: .delete, urlParameters: ["version": String(version)], result: result)
     }
 
     // MARK: - Password management
@@ -110,8 +111,8 @@ open class Customer: Endpoint, ImmutableMappable {
     open static func changePassword(currentPassword: String, newPassword: String, version: UInt,
                                result: @escaping (Result<ResponseType>) -> Void) {
 
-        customerProfileAction(method: .post, basePath: "password", parameters: ["currentPassword": currentPassword,
-                              "newPassword": newPassword, "version": version], encoding: JSONEncoding.default, result: { changePasswordResult in
+        customerProfileAction(method: .post, basePath: "password", json: ["currentPassword": currentPassword,
+                              "newPassword": newPassword, "version": version], result: { changePasswordResult in
 
             if let response = changePasswordResult.json, let email = response["email"] as? String, changePasswordResult.isSuccess {
                 AuthManager.sharedInstance.loginCustomer(username: email, password: newPassword, completionHandler: { error in
@@ -136,8 +137,8 @@ open class Customer: Endpoint, ImmutableMappable {
     */
     open static func resetPassword(token: String, newPassword: String, result: @escaping (Result<ResponseType>) -> Void) {
 
-        customerProfileAction(method: .post, basePath: "password/reset", parameters: ["tokenValue": token,
-                              "newPassword": newPassword], encoding: JSONEncoding.default, result: result)
+        customerProfileAction(method: .post, basePath: "password/reset", json: ["tokenValue": token,
+                              "newPassword": newPassword], result: result)
     }
 
     /**
@@ -150,8 +151,7 @@ open class Customer: Endpoint, ImmutableMappable {
     */
     open static func verifyEmail(token: String, result: @escaping (Result<ResponseType>) -> Void) {
 
-        customerProfileAction(method: .post, basePath: "email/confirm", parameters: ["tokenValue": token],
-                              encoding: JSONEncoding.default, result: result)
+        customerProfileAction(method: .post, basePath: "email/confirm", json: ["tokenValue": token], result: result)
     }
 
     // MARK: - Properties
@@ -215,16 +215,17 @@ open class Customer: Endpoint, ImmutableMappable {
     // MARK: - Helpers
 
     private static func customerProfileAction(method: HTTPMethod, basePath: String? = nil, expansion: [String]? = nil,
-                                              parameters: [String: Any]? = nil, encoding: ParameterEncoding = URLEncoding.default,
+                                              urlParameters: [String: String] = [:], json: [String: Any]? = nil,
                                               result: @escaping (Result<ResponseType>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
+            let request = self.request(url: fullPath + (basePath ?? ""), method: method, urlParameters: urlParameters,
+                                       json: json, headers: self.headers(token))
 
-            Alamofire.request(fullPath + (basePath ?? ""), method: method, parameters: parameters, encoding: encoding, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                handleResponse(response, result: result)
-            })
+            perform(request: request) { (response: Result<ResponseType>) in
+                result(response)
+            }
         })
     }
 }

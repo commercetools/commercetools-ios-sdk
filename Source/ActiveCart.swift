@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 import ObjectMapper
 
 /**
@@ -25,11 +24,11 @@ class ActiveCart: Endpoint {
         
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
-            
-            Alamofire.request(fullPath, parameters: nil, encoding: JSONEncoding.default, headers: self.headers(token))
-                .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                    handleResponse(response, result: result)
-                })
+            let request = self.request(url: fullPath, headers: self.headers(token))
+
+            perform(request: request) { (response: Result<ResponseType>) in
+                result(response)
+            }
         })
     }
 }

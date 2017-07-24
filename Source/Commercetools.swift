@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 import ObjectMapper
 
 // MARK: - Configuration
@@ -30,6 +29,8 @@ public var config: Config? {
         }
     }
 }
+
+let urlSession = URLSession(configuration: URLSessionConfiguration.default)
 
 #if os(watchOS)
 public extension Notification.Name {
@@ -63,10 +64,11 @@ public struct Project: Endpoint, ImmutableMappable {
     */
     public static func settings(result: @escaping (Result<ResponseType>) -> Void) {
         requestWithTokenAndPath(result, { token, path in
-            Alamofire.request(path, headers: self.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                handleResponse(response, result: result)
-            })
+            let request = Customer.request(url: path, headers: self.headers(token))
+
+            perform(request: request) { (response: Result<ResponseType>) in
+                result(response)
+            }
         })
     }
 
