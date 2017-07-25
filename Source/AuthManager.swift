@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 
 /**
     Responsible for obtaining, refreshing and persisting OAuth token, both for client credentials and password flows.
@@ -104,14 +103,13 @@ open class AuthManager {
     private var usingAnonymousSession = false
 
     /// The HTTP headers containing basic HTTP auth needed to obtain the tokens.
-    private var authHeaders: HTTPHeaders? {
+    private var authHeaders: [String: String]? {
         if let config = Config.currentConfig, let clientId = config.clientId, let clientSecret = config.clientSecret,
         let authData = "\(clientId):\(clientSecret)".data(using: String.Encoding.utf8), config.validate() {
 
-            var headers = SessionManager.defaultHTTPHeaders
+            var headers = Customer.defaultHeaders
             headers["Authorization"] = "Basic \(authData.base64EncodedString())"
             return headers
-
         }
         return nil
     }
@@ -264,11 +262,12 @@ open class AuthManager {
             if let scope = Config.currentConfig?.scope {
                 parameters["scope"] = scope
             }
-            Alamofire.request(loginUrl, method: .post, parameters: parameters, encoding: URLEncoding.queryString, headers: authHeaders)
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+
+            let request = Customer.request(url: loginUrl, method: .post, urlParameters: parameters, headers: authHeaders)
+            urlSession.dataTask(with: request, completionHandler: { data, response, error in
                 self.state = .customerToken
-                self.handleAuthResponse(response, completionHandler: completionHandler)
-            })
+                self.handleAuthResponse(data: data, response: response, error: error, completionHandler: completionHandler)
+            }).resume()
         }
     }
 
@@ -285,12 +284,11 @@ open class AuthManager {
             if let anonymousId = anonymousId {
                 parameters["anonymous_id"] = anonymousId
             }
-
-            Alamofire.request(authUrl, method: .post, parameters: parameters, encoding: URLEncoding.queryString, headers: authHeaders)
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+            let request = Customer.request(url: authUrl, method: .post, urlParameters: parameters, headers: authHeaders)
+            urlSession.dataTask(with: request, completionHandler: { data, response, error in
                 self.state = .anonymousToken
-                self.handleAuthResponse(response, completionHandler: completionHandler)
-            })
+                self.handleAuthResponse(data: data, response: response, error: error, completionHandler: completionHandler)
+            }).resume()
         }
     }
 
@@ -300,20 +298,20 @@ open class AuthManager {
             if let scope = Config.currentConfig?.scope {
                 parameters["scope"] = scope
             }
-            Alamofire.request(authUrl, method: .post, parameters: parameters, encoding: URLEncoding.queryString, headers: authHeaders)
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
+            let request = Customer.request(url: authUrl, method: .post, urlParameters: parameters, headers: authHeaders)
+            urlSession.dataTask(with: request, completionHandler: { data, response, error in
                 self.state = .plainToken
-                self.handleAuthResponse(response, completionHandler: completionHandler)
-            })
+                self.handleAuthResponse(data: data, response: response, error: error, completionHandler: completionHandler)
+            }).resume()
         }
     }
 
     private func refreshToken(_ completionHandler: @escaping (String?, Error?) -> Void) {
         if let authUrl = clientCredentialsUrl, let authHeaders = authHeaders, let refreshToken = refreshToken {
-            Alamofire.request(authUrl, method: .post, parameters: ["grant_type": "refresh_token", "refresh_token": refreshToken], encoding: URLEncoding.queryString, headers: authHeaders)
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                self.handleAuthResponse(response, completionHandler: completionHandler)
-            })
+            let request = Customer.request(url: authUrl, method: .post, urlParameters: ["grant_type": "refresh_token", "refresh_token": refreshToken], headers: authHeaders)
+            urlSession.dataTask(with: request, completionHandler: { data, response, error in
+                self.handleAuthResponse(data: data, response: response, error: error, completionHandler: completionHandler)
+            }).resume()
         }
     }
 
@@ -324,10 +322,10 @@ open class AuthManager {
         state = .noToken
     }
 
-    private func handleAuthResponse(_ response: DataResponse<Any>, completionHandler: (String?, Error?) -> Void) {
-        if let responseDict = response.result.value as? [String: AnyObject],
-                let accessToken = responseDict["access_token"] as? String,
-                  let expiresIn = responseDict["expires_in"] as? Double, response.result.isSuccess {
+    private func handleAuthResponse(data: Data?, response: URLResponse?, error: Error?, completionHandler: (String?, Error?) -> Void) {
+        if let data = data, let responseJson = try? JSONSerialization.jsonObject(with: data, options: []),
+           let responseDict = responseJson as? [String: Any], let accessToken = responseDict["access_token"] as? String,
+           let expiresIn = responseDict["expires_in"] as? Double {
 
             self.anonymousId = nil
             self.accessToken = accessToken
@@ -336,9 +334,9 @@ open class AuthManager {
             self.refreshToken = responseDict["refresh_token"] as? String ?? self.refreshToken
             completionHandler(accessToken, nil)
 
-        } else if let responseDict = response.result.value as? [String: AnyObject],
-                     let failureReason = responseDict["error"] as? String,
-                        let statusCode = response.response?.statusCode, statusCode > 299 {
+        } else if let data = data, let responseJson = try? JSONSerialization.jsonObject(with: data, options: []),
+                  let responseDict = responseJson as? [String: Any], let failureReason = responseDict["error"] as? String,
+                  let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode > 299 {
             // In case we got an error while using refresh token, we want to clear token storage - there's no way
             // to recover from this
             logoutCustomer()
@@ -347,8 +345,7 @@ open class AuthManager {
         } else {
             // Any other error from NSURLErrorDomain (e.g internet offline) - we won't clear token storage
             state = .noToken
-            completionHandler(nil, response.result.error)
+            completionHandler(nil, error)
         }
     }
-
 }

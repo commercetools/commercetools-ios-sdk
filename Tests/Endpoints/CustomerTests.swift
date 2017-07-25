@@ -3,7 +3,6 @@
 //
 
 import XCTest
-import Alamofire
 @testable import Commercetools
 
 class CustomerTests: XCTestCase {
@@ -308,10 +307,11 @@ class CustomerTests: XCTestCase {
                 }
             }
 
-            Alamofire.request("\(path)password-token", method: .post, parameters: ["email": username], encoding: JSONEncoding.default, headers: TestCustomer.headers(token))
-            .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                TestCustomer.handleResponse(response, result: customerResult)
-            })
+            let request = TestCustomer.request(url: "\(path)password-token", method: .post, json: ["email": username], headers: TestCustomer.headers(token))
+
+            TestCustomer.perform(request: request) { (response: Result<NoMapping>) in
+                customerResult(response)
+            }
         }
 
         waitForExpectations(timeout: 10, handler: nil)
@@ -356,10 +356,11 @@ class CustomerTests: XCTestCase {
                     }
 
                     // Now generate email activation token
-                    Alamofire.request("\(path)email-token", method: .post, parameters: ["id": id, "ttlMinutes": 1], encoding: JSONEncoding.default, headers: TestCustomer.headers(token))
-                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                        TestCustomer.handleResponse(response, result: customerResult)
-                    })
+                    let request = TestCustomer.request(url: "\(path)email-token", method: .post, json: ["id": id, "ttlMinutes": 1], headers: TestCustomer.headers(token))
+
+                    TestCustomer.perform(request: request) { (response: Result<NoMapping>) in
+                        customerResult(response)
+                    }
                 }
             })
         }
