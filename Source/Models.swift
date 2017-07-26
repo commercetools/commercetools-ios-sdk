@@ -365,7 +365,7 @@ public enum CartState: String {
 
 public enum CartUpdateAction: JSONRepresentable {
 
-    case addLineItem(productId: String, variantId: Int, quantity: UInt?, supplyChannel: Reference<Channel>?, distributionChannel: Reference<Channel>?, custom: [String: Any]?)
+    case addLineItem(lineItemDraft: LineItemDraft)
     case removeLineItem(lineItemId: String, quantity: UInt?)
     case changeLineItemQuantity(lineItemId: String, quantity: UInt)
     case setCustomerEmail(email: String?)
@@ -389,8 +389,12 @@ public enum CartUpdateAction: JSONRepresentable {
     
     public var toJSON: [String: Any] {
         switch self {
-        case .addLineItem(let productId, let variantId, let quantity, let supplyChannel, let distributionChannel, let custom):
-            return filterJSON(parameters: ["action": "addLineItem", "productId": productId, "variantId": variantId, "quantity": quantity, "supplyChannel": supplyChannel, "distributionChannel": distributionChannel, "custom": custom])
+        case .addLineItem(let lineItemDraft):
+            return filterJSON(parameters: ["action": "addLineItem", "productId": lineItemDraft.productVariantSelection.values.productId,
+                                           "sku": lineItemDraft.productVariantSelection.values.sku, "quantity": lineItemDraft.quantity,
+                                           "variantId": lineItemDraft.productVariantSelection.values.variantId,
+                                           "supplyChannel": lineItemDraft.supplyChannel, "distributionChannel": lineItemDraft.distributionChannel,
+                                           "externalTaxRate": lineItemDraft.externalTaxRate, "custom": lineItemDraft.custom])
         case .removeLineItem(let lineItemId, let quantity):
             return filterJSON(parameters: ["action": "removeLineItem", "lineItemId": lineItemId, "quantity": quantity])
         case .changeLineItemQuantity(let lineItemId, let quantity):
@@ -985,21 +989,37 @@ public struct LineItem: ImmutableMappable {
     }
 }
 
-public struct LineItemDraft: Mappable {
+public class LineItemDraft: Mappable {
+
+    public enum ProductVariantSelection {
+
+        case sku(sku: String)
+        case productVariant(productId: String, variantId: Int)
+
+        var values: (productId: String?, variantId: Int?, sku: String?) {
+            switch self {
+                case .productVariant(let productId, let variantId):
+                    return (productId: productId, variantId: variantId, sku: nil)
+                case .sku(let sku):
+                    return (productId: nil, variantId: nil, sku: sku)
+            }
+        }
+    }
 
     // MARK: - Properties
 
-    public var productId: String!
-    public var variantId: Int!
+    public var productVariantSelection: ProductVariantSelection!
     public var quantity: UInt?
     public var supplyChannel: Reference<Channel>?
     public var distributionChannel: Reference<Channel>?
     public var externalTaxRate: ExternalTaxRateDraft?
     public var custom: [String: Any]?
+    internal var productId: String?
+    internal var variantId: Int?
+    internal var sku: String?
 
-    public init(productId: String, variantId: Int, quantity: UInt? = nil, supplyChannel: Reference<Channel>? = nil, distributionChannel: Reference<Channel>? = nil, externalTaxRate: ExternalTaxRateDraft? = nil, custom: [String: Any]? = nil) {
-        self.productId = productId
-        self.variantId = variantId
+    public init(productVariantSelection: ProductVariantSelection, quantity: UInt? = nil, supplyChannel: Reference<Channel>? = nil, distributionChannel: Reference<Channel>? = nil, externalTaxRate: ExternalTaxRateDraft? = nil, custom: [String: Any]? = nil) {
+        self.productVariantSelection = productVariantSelection
         self.quantity = quantity
         self.supplyChannel = supplyChannel
         self.distributionChannel = distributionChannel
@@ -1007,13 +1027,21 @@ public struct LineItemDraft: Mappable {
         self.custom = custom
     }
     
-    public init?(map: Map) {}
+    public required init?(map: Map) {}
 
     // MARK: - Mappable
 
-    mutating public func mapping(map: Map) {
-        productId                    <- map["productId"]
-        variantId                    <- map["variantId"]
+    public func mapping(map: Map) {
+        productId                    <- (map["productId"], TransformOf<String, String>(fromJSON: { _ in return nil },
+                                             toJSON: { [unowned self] _ in return self.productVariantSelection.values.productId
+                                         }))
+        variantId                    <- (map["variantId"], TransformOf<Int, Int>(fromJSON: { _ in return nil },
+                                             toJSON: { [unowned self] _ in return self.productVariantSelection.values.variantId
+                                         }))
+        sku                          <- (map["sku"], TransformOf<String, String>(fromJSON: { _ in return nil },
+                                             toJSON: { [unowned self] _ in return self.productVariantSelection.values.sku
+                                         }))
+        sku                          <- map["sku"]
         quantity                     <- map["quantity"]
         supplyChannel                <- map["supplyChannel"]
         distributionChannel          <- map["distributionChannel"]
