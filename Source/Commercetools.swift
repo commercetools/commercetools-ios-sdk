@@ -30,8 +30,6 @@ public var config: Config? {
     }
 }
 
-let urlSession = URLSession(configuration: URLSessionConfiguration.default)
-
 #if os(watchOS)
 public extension Notification.Name {
     /// Used as a namespace for all notifications related to watch token synchronization.

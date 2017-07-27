@@ -171,6 +171,12 @@ public extension Endpoint {
     }
 }
 
+var urlSession: URLSession = {
+    var configuration = URLSessionConfiguration.ephemeral
+    configuration.httpMaximumConnectionsPerHost = 8
+    return URLSession(configuration: configuration)
+}()
+
 /// HTTP method definitions.
 ///
 /// See https://tools.ietf.org/html/rfc7231#section-4.3
