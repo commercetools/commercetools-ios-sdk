@@ -48,62 +48,6 @@ public extension Endpoint {
         return nil
     }
 
-    static var defaultHeaders: [String: String] {
-        // Accept-Encoding HTTP Header; see https://tools.ietf.org/html/rfc7230#section-4.2.3
-        let acceptEncoding: String = "gzip;q=1.0, compress;q=0.5"
-        // Accept-Language HTTP Header; see https://tools.ietf.org/html/rfc7231#section-5.3.5
-        let acceptLanguage = Locale.preferredLanguages.prefix(6).enumerated().map { enumeratedLanguage in
-            let (index, languageCode) = enumeratedLanguage
-            let quality = 1.0 - (Double(index) * 0.1)
-            return "\(languageCode);q=\(quality)"
-        }.joined(separator: ", ")
-        return [
-            "Accept-Encoding": acceptEncoding,
-            "Accept-Language": acceptLanguage,
-            "User-Agent": userAgent
-        ]
-    }
-
-    /// The full user agent header sent with requests to the platform.
-    static var userAgent: String {
-        let commercetoolsSDK: String = {
-            let commercetoolsSDKVersion = Bundle(for: Config.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
-            return "commercetools-ios-sdk/\(commercetoolsSDKVersion)"
-        }()
-        let osNameVersion: String = {
-            let version = ProcessInfo.processInfo.operatingSystemVersion
-
-            let osName: String = {
-                #if os(iOS)
-                    return "iOS"
-                #elseif os(watchOS)
-                    return "watchOS"
-                #elseif os(tvOS)
-                    return "tvOS"
-                #elseif os(macOS)
-                    return "macOS"
-                #else
-                    return "Unknown"
-                #endif
-            }()
-
-            return "\(osName)/\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
-        }()
-
-        if let info = Bundle.main.infoDictionary {
-            let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
-            let appVersion = info["CFBundleShortVersionString"] as? String ?? "Unknown"
-
-            if let config = Config.currentConfig, let emergencyContactInfo = config.emergencyContactInfo, config.validate() {
-                return "\(commercetoolsSDK) \(osNameVersion) \(executable)/\(appVersion) (+\(emergencyContactInfo))"
-            }
-
-            return "\(commercetoolsSDK) \(osNameVersion) \(executable)/\(appVersion)"
-        }
-
-        return "\(commercetoolsSDK) \(osNameVersion)"
-    }
-
     /**
         Appends expansion parameters at the end of the provided path.
 
@@ -138,9 +82,11 @@ public extension Endpoint {
     }
 
     /**
-        This method provides default response handling from all endpoints, providing successful result in dictionary format. TODO update
+        This method provides default response handling from all endpoints, providing successful result in dictionary format.
 
-        - parameter response:                 Received response.
+        - parameter response:                 Received `Data`.
+        - parameter response:                 Received `URLResponse`.
+        - parameter response:                 Received `Error`.
         - parameter result:                   The code to be executed after processing the response, providing response
                                               in dictionary format in case of a successful result.
     */
@@ -239,3 +185,61 @@ public enum HTTPMethod: String {
     case trace   = "TRACE"
     case connect = "CONNECT"
 }
+
+var defaultHeaders: [String: String] = {
+    // Accept-Encoding HTTP Header; see https://tools.ietf.org/html/rfc7230#section-4.2.3
+    let acceptEncoding: String = "gzip;q=1.0, compress;q=0.5"
+    // Accept-Language HTTP Header; see https://tools.ietf.org/html/rfc7231#section-5.3.5
+    let acceptLanguage = Locale.preferredLanguages.prefix(6).enumerated().map { enumeratedLanguage in
+        let (index, languageCode) = enumeratedLanguage
+        let quality = 1.0 - (Double(index) * 0.1)
+        return "\(languageCode);q=\(quality)"
+    }.joined(separator: ", ")
+    return [
+        "Accept-Encoding": acceptEncoding,
+        "Accept-Language": acceptLanguage,
+        "User-Agent": userAgent
+    ]
+}()
+
+/// The full user agent header sent with requests to the platform.
+var userAgent: String = {
+    let commercetoolsSDK: String = {
+        let commercetoolsSDKVersion = Bundle(for: Config.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        return "commercetools-ios-sdk/\(commercetoolsSDKVersion)"
+    }()
+    let osNameVersion: String = {
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+
+        let osName: String = {
+            #if os(iOS)
+                return "iOS"
+            #elseif os(watchOS)
+                return "watchOS"
+            #elseif os(tvOS)
+                return "tvOS"
+            #elseif os(macOS)
+                return "macOS"
+            #elseif os(Linux)
+                return "Linux"
+            #else
+                return "Unknown"
+            #endif
+        }()
+
+        return "\(osName)/\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+    }()
+
+    if let info = Bundle.main.infoDictionary {
+        let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
+        let appVersion = info["CFBundleShortVersionString"] as? String ?? "Unknown"
+
+        if let config = Config.currentConfig, let emergencyContactInfo = config.emergencyContactInfo, config.validate() {
+            return "\(commercetoolsSDK) \(osNameVersion) \(executable)/\(appVersion) (+\(emergencyContactInfo))"
+        }
+
+        return "\(commercetoolsSDK) \(osNameVersion) \(executable)/\(appVersion)"
+    }
+
+    return "\(commercetoolsSDK) \(osNameVersion)"
+}()

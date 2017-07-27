@@ -107,7 +107,7 @@ open class AuthManager {
         if let config = Config.currentConfig, let clientId = config.clientId, let clientSecret = config.clientSecret,
         let authData = "\(clientId):\(clientSecret)".data(using: String.Encoding.utf8), config.validate() {
 
-            var headers = Customer.defaultHeaders
+            var headers = defaultHeaders
             headers["Authorization"] = "Basic \(authData.base64EncodedString())"
             return headers
         }
