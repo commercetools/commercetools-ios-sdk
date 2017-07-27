@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 import ObjectMapper
 
 /**
@@ -57,20 +56,22 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Immuta
                             priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
                             priceChannel: String? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
 
-        var parameters = paramsWithStaged(staged, params: queryParameters(predicates: nil, sort: sort,
-                limit: limit, offset: offset))
-        parameters = searchParams(lang: lang, text: text, fuzzy: fuzzy, fuzzyLevel: fuzzyLevel, filters: filters,
+        var parameters = queryParameters(predicates: nil, sort: sort, limit: limit, offset: offset)
+        if let staged = staged {
+            parameters.append(URLQueryItem(name: "staged", value: staged ? "true" : "false"))
+        }
+        parameters += searchParams(lang: lang, text: text, fuzzy: fuzzy, fuzzyLevel: fuzzyLevel, filters: filters,
                 filterQuery: filterQuery, filterFacets: filterFacets, facets: facets, markMatchingVariants: markMatchingVariants,
                 priceCurrency: priceCurrency, priceCountry: priceCountry, priceCustomerGroup: priceCustomerGroup,
-                priceChannel: priceChannel, params: parameters)
+                priceChannel: priceChannel)
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)search", expansion: expansion)
+            let request = self.request(url: fullPath, queryItems: parameters, headers: self.headers(token))
 
-            Alamofire.request(fullPath, parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
-                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                        handleResponse(response, result: result)
-                    })
+            perform(request: request) { (response: Result<QueryResponse<ResponseType>>) in
+                result(response)
+            }
         })
     }
 
@@ -90,15 +91,19 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Immuta
     open static func suggest(staged: Bool? = nil, limit: UInt? = nil, lang: Locale = Locale.current,
                              searchKeywords: String, fuzzy: Bool? = nil, result: @escaping (Result<NoMapping>) -> Void) {
 
-        var parameters = paramsWithStaged(staged, params: queryParameters(limit: limit))
-        parameters = searchParams(fuzzy: fuzzy)
-        parameters["searchKeywords." + searchLanguage(for: lang)] = searchKeywords as NSString
+        var parameters = queryParameters(limit: limit)
+        if let staged = staged {
+            parameters.append(URLQueryItem(name: "staged", value: staged ? "true" : "false"))
+        }
+        parameters += searchParams(fuzzy: fuzzy)
+        parameters.append(URLQueryItem(name: "searchKeywords." + searchLanguage(for: lang), value: searchKeywords))
 
         requestWithTokenAndPath(result, { token, path in
-            Alamofire.request("\(path)suggest", parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
-                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                        handleResponse(response, result: result)
-                    })
+            let request = self.request(url: "\(path)suggest", queryItems: parameters, headers: self.headers(token))
+
+            perform(request: request) { (response: Result<NoMapping>) in
+                result(response)
+            }
         })
     }
 
@@ -119,13 +124,17 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Immuta
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
-            let parameters = paramsWithStaged(staged, params: queryParameters(predicates: predicates, sort: sort,
-                    limit: limit, offset: offset))
 
-            Alamofire.request(fullPath, parameters: parameters, encoding: URLEncoding.queryString, headers: self.headers(token))
-                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                        handleResponse(response, result: result)
-                    })
+            var parameters = queryParameters(predicates: predicates, sort: sort, limit: limit, offset: offset)
+            if let staged = staged {
+                parameters.append(URLQueryItem(name: "staged", value: staged ? "true" : "false"))
+            }
+
+            let request = self.request(url: fullPath, queryItems: parameters, headers: self.headers(token))
+
+            perform(request: request) { (response: Result<QueryResponse<ResponseType>>) in
+                result(response)
+            }
         })
     }
 
@@ -143,10 +152,16 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Immuta
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
 
-            Alamofire.request(fullPath, parameters: paramsWithStaged(staged), encoding: URLEncoding.queryString, headers: self.headers(token))
-                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                        handleResponse(response, result: result)
-                    })
+            var parameters = [URLQueryItem]()
+            if let staged = staged {
+                parameters.append(URLQueryItem(name: "staged", value: staged ? "true" : "false"))
+            }
+
+            let request = self.request(url: fullPath, queryItems: parameters, headers: self.headers(token))
+
+            perform(request: request) { (response: Result<ResponseType>) in
+                result(response)
+            }
         })
     }
 
@@ -210,72 +225,62 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Immuta
 
     // MARK: - Helpers
 
-    private static func paramsWithStaged(_ staged: Bool?, params: [String: Any]? = nil) -> [String: Any] {
-        var params = params ?? [String: Any]()
-
-        if let staged = staged {
-            params["staged"] = staged ? "true" : "false"
-        }
-
-        return params
-    }
-
     private static func searchParams(lang: Locale = Locale.current, text: String? = nil, fuzzy: Bool? = nil,
                                      fuzzyLevel: Int? = nil, filters: [String]? = nil, filterQuery: String? = nil,
                                      filterFacets: String? = nil, facets: [String]? = nil, markMatchingVariants: Bool? = nil,
                                      priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
-                                     priceChannel: String? = nil, params: [String: Any]? = nil) -> [String: Any] {
-        var params = params ?? [String: Any]()
+                                     priceChannel: String? = nil) -> [URLQueryItem] {
+        var queryItems = [URLQueryItem]()
 
         if let text = text {
-            params["text." + searchLanguage(for: lang)] = text
+            queryItems.append(URLQueryItem(name: "text." + searchLanguage(for: lang), value: text))
         }
 
         if let fuzzy = fuzzy {
-            params["fuzzy"] = fuzzy ? "true" : "false"
+            queryItems.append(URLQueryItem(name: "fuzzy", value: fuzzy ? "true" : "false"))
         }
 
         if let fuzzyLevel = fuzzyLevel {
-            params["fuzzyLevel"]  = fuzzyLevel
+            queryItems.append(URLQueryItem(name: "fuzzyLevel", value: String(fuzzyLevel)))
         }
 
-        if let filters = filters, filters.count > 0 {
-            params["filter"] = filters
+        filters?.forEach {
+            queryItems.append(URLQueryItem(name: "filter", value: $0))
         }
 
         if let filterQuery = filterQuery {
-            params["filter.query"] = filterQuery
+            queryItems.append(URLQueryItem(name: "filter.query", value: filterQuery))
         }
 
         if let filterFacets = filterFacets {
-            params["filter.facets"] = filterFacets
+            queryItems.append(URLQueryItem(name: "filter.facets", value: filterFacets))
         }
 
-        if let facets = facets, facets.count > 0 {
-            params["facet"] = facets
+        facets?.forEach {
+            queryItems.append(URLQueryItem(name: "facet", value: $0))
         }
 
         if let markMatchingVariants = markMatchingVariants {
-            params["markMatchingVariants"] = markMatchingVariants ? "true" : "false"
+            queryItems.append(URLQueryItem(name: "markMatchingVariants", value: markMatchingVariants ? "true" : "false"))
         }
 
         if let priceCurrency = priceCurrency {
-            params["priceCurrency"] = priceCurrency
+            queryItems.append(URLQueryItem(name: "priceCurrency", value: priceCurrency))
         }
 
         if let priceCountry = priceCountry {
-            params["priceCountry"] = priceCountry
+            queryItems.append(URLQueryItem(name: "priceCountry", value: priceCountry))
         }
 
         if let priceCustomerGroup = priceCustomerGroup {
-            params["priceCustomerGroup"] = priceCustomerGroup
+            queryItems.append(URLQueryItem(name: "priceCustomerGroup", value: priceCustomerGroup))
         }
 
         if let priceChannel = priceChannel {
-            params["priceChannel"] = priceChannel
+            queryItems.append(URLQueryItem(name: "priceChannel", value: priceChannel))
         }
 
-        return params
+        return queryItems
     }
 
     private static func searchLanguage(for locale: Locale) -> String {

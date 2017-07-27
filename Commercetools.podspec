@@ -14,7 +14,6 @@ Pod::Spec.new do |s|
   s.tvos.deployment_target = '9.0'
   s.watchos.deployment_target = '2.2'
 
-  s.dependency 'Alamofire', '~> 4.5'
   s.dependency 'ObjectMapper', '~> 2.2'
 
 end

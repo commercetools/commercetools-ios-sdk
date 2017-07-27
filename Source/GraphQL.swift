@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 
 /**
     GraphQL endpoint implementation, providing the ability to query for data with queries, passing optional variables and
@@ -32,11 +31,11 @@ open class GraphQL: Endpoint {
             if let operationName = operationName {
                 parameters["operationName"] = operationName
             }
+            let request = self.request(url: path, method: .post, json: parameters, headers: self.headers(token))
 
-            Alamofire.request(path, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: self.headers(token))
-                    .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                        handleResponse(response, result: result)
-                    })
+            perform(request: request) { (response: Result<ResponseType>) in
+                result(response)
+            }
         })
     }
 }

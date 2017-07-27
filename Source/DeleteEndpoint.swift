@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 
 /**
     All endpoints capable of being deleted by UUID should conform to this protocol.
@@ -30,11 +29,11 @@ public extension DeleteEndpoint {
         
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
-            
-            Alamofire.request(fullPath, method: .delete, parameters: ["version": version], encoding: URLEncoding.queryString, headers: self.headers(token))
-                .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                    handleResponse(response, result: result)
-                })
+            let request = self.request(url: fullPath, method: .delete, urlParameters: ["version": String(version)], headers: self.headers(token))
+
+            perform(request: request) { (response: Result<ResponseType>) in
+                result(response)
+            }
         })
     }
 }

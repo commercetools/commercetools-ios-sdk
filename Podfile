@@ -2,7 +2,6 @@ use_frameworks!
 platform :ios, '9.3'
 
 def common_pods
-  pod 'Alamofire', '~> 4.0'
   pod 'ObjectMapper', '~> 2.2'
 end
 

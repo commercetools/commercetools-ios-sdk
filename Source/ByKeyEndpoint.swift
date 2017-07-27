@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 
 /**
     All endpoints capable of being retrieved by key should conform to this protocol.
@@ -29,11 +28,11 @@ public extension ByKeyEndpoint {
         
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)key=\(key)", expansion: expansion)
-            
-            Alamofire.request(fullPath, parameters: nil, encoding: JSONEncoding.default, headers: self.headers(token))
-                .responseJSON(queue: DispatchQueue.global(), completionHandler: { response in
-                    handleResponse(response, result: result)
-                })
+            let request = self.request(url: fullPath, headers: self.headers(token))
+
+            perform(request: request) { (response: Result<ResponseType>) in
+                result(response)
+            }
         })
     }
 }
