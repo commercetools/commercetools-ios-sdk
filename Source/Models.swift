@@ -406,7 +406,7 @@ public enum CartUpdateAction: JSONRepresentable {
         case .setBillingAddress(let address):
             return filterJSON(parameters: ["action": "setBillingAddress", "address": address])
         case .setCountry(let country):
-            return filterJSON(parameters: ["action": "setCountry", "country":country])
+            return filterJSON(parameters: ["action": "setCountry", "country": country])
         case .setShippingMethod(let shippingMethod, let externalTaxRate):
             return filterJSON(parameters: ["action": "setShippingMethod", "shippingMethod": shippingMethod, "externalTaxRate": externalTaxRate])
         case .setCustomShippingMethod(let shippingMethodName, let shippingRate, let taxCategory, let externalTaxRate):
