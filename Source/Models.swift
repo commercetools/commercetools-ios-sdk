@@ -1751,13 +1751,13 @@ public struct TaxCategory: ImmutableMappable {
 
     // MARK: - Properties
 
-    public let id: String!
-    public let version: UInt!
-    public let createdAt: Date!
-    public let lastModifiedAt: Date!
-    public let name: String!
+    public let id: String
+    public let version: UInt
+    public let createdAt: Date
+    public let lastModifiedAt: Date
+    public let name: String
     public let description: String?
-    public let rates: [TaxRate]!
+    public let rates: [TaxRate]
 
     public init(map: Map) throws {
         id               = try map.value("id")
