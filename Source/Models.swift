@@ -306,12 +306,11 @@ public struct CartDraft: Mappable {
     public var shippingAddress: Address?
     public var billingAddress: Address?
     public var shippingMethod: Reference<ShippingMethod>?
-    public var externalTaxRateForShippingMethod: ExternalTaxRateDraft?
     public var custom: [String: Any]?
     public var locale: String?
     public var deleteDaysAfterLastModification: UInt?
 
-    public init(currency: String, customerId: String? = nil, customerEmail: String? = nil, anonymousId: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, customLineItems: [CustomLineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: Reference<ShippingMethod>? = nil, externalTaxRateForShippingMethod: ExternalTaxRateDraft? = nil, custom: [String: Any]? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil) {
+    public init(currency: String, customerId: String? = nil, customerEmail: String? = nil, anonymousId: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, customLineItems: [CustomLineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: Reference<ShippingMethod>? = nil, custom: [String: Any]? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil) {
         self.currency = currency
         self.customerId = customerId
         self.customerEmail = customerEmail
@@ -324,7 +323,6 @@ public struct CartDraft: Mappable {
         self.shippingAddress = shippingAddress
         self.billingAddress = billingAddress
         self.shippingMethod = shippingMethod
-        self.externalTaxRateForShippingMethod = externalTaxRateForShippingMethod
         self.custom = custom
         self.locale = locale
         self.deleteDaysAfterLastModification = deleteDaysAfterLastModification
@@ -347,7 +345,6 @@ public struct CartDraft: Mappable {
         shippingAddress                   <- map["shippingAddress"]
         billingAddress                    <- map["billingAddress"]
         shippingMethod                    <- map["shippingMethod"]
-        externalTaxRateForShippingMethod  <- map["externalTaxRateForShippingMethod"]
         custom                            <- map["custom"]
         locale                            <- map["locale"]
         deleteDaysAfterLastModification   <- map["deleteDaysAfterLastModification"]
@@ -372,8 +369,8 @@ public enum CartUpdateAction: JSONRepresentable {
     case setShippingAddress(address: Address?)
     case setBillingAddress(address: Address?)
     case setCountry(country: String?)
-    case setShippingMethod(shippingMethod: Reference<ShippingMethod>?, externalTaxRate: ExternalTaxRateDraft?)
-    case setCustomShippingMethod(shippingMethodName: String, shippingRate: ShippingRate, taxCategory: Reference<TaxCategory>?, externalTaxRate: ExternalTaxRateDraft?)
+    case setShippingMethod(shippingMethod: Reference<ShippingMethod>?)
+    case setCustomShippingMethod(shippingMethodName: String, shippingRate: ShippingRate, taxCategory: Reference<TaxCategory>?)
     case addDiscountCode(code: String)
     case removeDiscountCode(discountCode: Reference<DiscountCode>)
     case recalculate(updateProductData: Bool?)
@@ -393,8 +390,8 @@ public enum CartUpdateAction: JSONRepresentable {
             return filterJSON(parameters: ["action": "addLineItem", "productId": lineItemDraft.productVariantSelection.values.productId,
                                            "sku": lineItemDraft.productVariantSelection.values.sku, "quantity": lineItemDraft.quantity,
                                            "variantId": lineItemDraft.productVariantSelection.values.variantId,
-                                           "supplyChannel": lineItemDraft.supplyChannel, "distributionChannel": lineItemDraft.distributionChannel,
-                                           "externalTaxRate": lineItemDraft.externalTaxRate, "custom": lineItemDraft.custom])
+                                           "supplyChannel": lineItemDraft.supplyChannel,
+                                           "distributionChannel": lineItemDraft.distributionChannel, "custom": lineItemDraft.custom])
         case .removeLineItem(let lineItemId, let quantity):
             return filterJSON(parameters: ["action": "removeLineItem", "lineItemId": lineItemId, "quantity": quantity])
         case .changeLineItemQuantity(let lineItemId, let quantity):
@@ -407,10 +404,10 @@ public enum CartUpdateAction: JSONRepresentable {
             return filterJSON(parameters: ["action": "setBillingAddress", "address": address])
         case .setCountry(let country):
             return filterJSON(parameters: ["action": "setCountry", "country": country])
-        case .setShippingMethod(let shippingMethod, let externalTaxRate):
-            return filterJSON(parameters: ["action": "setShippingMethod", "shippingMethod": shippingMethod, "externalTaxRate": externalTaxRate])
-        case .setCustomShippingMethod(let shippingMethodName, let shippingRate, let taxCategory, let externalTaxRate):
-            return filterJSON(parameters: ["action": "setCustomShippingMethod", "shippingMethodName": shippingMethodName, "shippingRate": shippingRate, "taxCategory": taxCategory, "externalTaxRate": externalTaxRate])
+        case .setShippingMethod(let shippingMethod):
+            return filterJSON(parameters: ["action": "setShippingMethod", "shippingMethod": shippingMethod])
+        case .setCustomShippingMethod(let shippingMethodName, let shippingRate, let taxCategory):
+            return filterJSON(parameters: ["action": "setCustomShippingMethod", "shippingMethodName": shippingMethodName, "shippingRate": shippingRate, "taxCategory": taxCategory])
         case .addDiscountCode(let code):
             return filterJSON(parameters: ["action": "addDiscountCode", "code": code])
         case .removeDiscountCode(let discountCode):
@@ -531,16 +528,14 @@ public struct CustomLineItemDraft: Mappable {
     public var money: Money!
     public var slug: String!
     public var taxCategory: Reference<TaxCategory>?
-    public var externalTaxRate: ExternalTaxRateDraft?
     public var custom: [String: Any]?
 
-    public init(name: LocalizedString, quantity: UInt? = nil, money: Money, slug: String, taxCategory: Reference<TaxCategory>? = nil, externalTaxRate: ExternalTaxRateDraft? = nil, custom: [String: Any]? = nil) {
+    public init(name: LocalizedString, quantity: UInt? = nil, money: Money, slug: String, taxCategory: Reference<TaxCategory>? = nil, custom: [String: Any]? = nil) {
         self.name = name
         self.quantity = quantity
         self.money = money
         self.slug = slug
         self.taxCategory = taxCategory
-        self.externalTaxRate = externalTaxRate
         self.custom = custom
     }
     
@@ -554,7 +549,6 @@ public struct CustomLineItemDraft: Mappable {
         money                     <- map["money"]
         slug                      <- map["slug"]
         taxCategory               <- map["taxCategory"]
-        externalTaxRate           <- map["externalTaxRate"]
         custom                    <- map["custom"]
     }
 }
@@ -1012,18 +1006,16 @@ public class LineItemDraft: Mappable {
     public var quantity: UInt?
     public var supplyChannel: Reference<Channel>?
     public var distributionChannel: Reference<Channel>?
-    public var externalTaxRate: ExternalTaxRateDraft?
     public var custom: [String: Any]?
     internal var productId: String?
     internal var variantId: Int?
     internal var sku: String?
 
-    public init(productVariantSelection: ProductVariantSelection, quantity: UInt? = nil, supplyChannel: Reference<Channel>? = nil, distributionChannel: Reference<Channel>? = nil, externalTaxRate: ExternalTaxRateDraft? = nil, custom: [String: Any]? = nil) {
+    public init(productVariantSelection: ProductVariantSelection, quantity: UInt? = nil, supplyChannel: Reference<Channel>? = nil, distributionChannel: Reference<Channel>? = nil, custom: [String: Any]? = nil) {
         self.productVariantSelection = productVariantSelection
         self.quantity = quantity
         self.supplyChannel = supplyChannel
         self.distributionChannel = distributionChannel
-        self.externalTaxRate = externalTaxRate
         self.custom = custom
     }
     
@@ -1045,7 +1037,6 @@ public class LineItemDraft: Mappable {
         quantity                     <- map["quantity"]
         supplyChannel                <- map["supplyChannel"]
         distributionChannel          <- map["distributionChannel"]
-        externalTaxRate              <- map["externalTaxRate"]
         custom                       <- map["custom"]
     }
 }
