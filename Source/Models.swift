@@ -370,7 +370,6 @@ public enum CartUpdateAction: JSONRepresentable {
     case setBillingAddress(address: Address?)
     case setCountry(country: String?)
     case setShippingMethod(shippingMethod: Reference<ShippingMethod>?)
-    case setCustomShippingMethod(shippingMethodName: String, shippingRate: ShippingRate, taxCategory: Reference<TaxCategory>?)
     case addDiscountCode(code: String)
     case removeDiscountCode(discountCode: Reference<DiscountCode>)
     case recalculate(updateProductData: Bool?)
@@ -406,8 +405,6 @@ public enum CartUpdateAction: JSONRepresentable {
             return filterJSON(parameters: ["action": "setCountry", "country": country])
         case .setShippingMethod(let shippingMethod):
             return filterJSON(parameters: ["action": "setShippingMethod", "shippingMethod": shippingMethod])
-        case .setCustomShippingMethod(let shippingMethodName, let shippingRate, let taxCategory):
-            return filterJSON(parameters: ["action": "setCustomShippingMethod", "shippingMethodName": shippingMethodName, "shippingRate": shippingRate, "taxCategory": taxCategory])
         case .addDiscountCode(let code):
             return filterJSON(parameters: ["action": "addDiscountCode", "code": code])
         case .removeDiscountCode(let discountCode):

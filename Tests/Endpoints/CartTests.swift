@@ -243,6 +243,35 @@ class CartTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    func testCustomShippingMethodNotAvailable() {
+        let cartExpectation = expectation(description: "cart expectation")
+
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+
+        AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
+
+        sampleLineItemDraft { lineItemDraft in
+            let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft], deleteDaysAfterLastModification: 3)
+
+            Cart.create(cartDraft, result: { result in
+                if let cart = result.model {
+                    XCTAssert(result.isSuccess)
+                    XCTAssertEqual(cart.deleteDaysAfterLastModification, 3)
+
+                    Cart.update(cart.id, version: cart.version, actions: [["action": "setCustomShippingMethod", "shippingMethodName": "test",
+                                                                           "shippingRate": ["currencyCode": "EUR", "centAmount": 8000]]], result: { result in
+                        XCTAssert(result.isFailure)
+                        XCTAssertEqual(result.errors!.first!.localizedDescription, "Invalid json input occurred\nRequest body does not contain valid JSON.: actions: Invalid type value \'setCustomShippingMethod\' in \'{\"shippingMethodName\":\"test\",\"action\":\"setCustomShippingMethod\",\"shippingRate\":{\"currencyCode\":\"EUR\",\"centAmount\":8000}}\'\nIt\'s very likely due to invalid \'create\' or \'update\' dictionary. Have a look at the API documentation.")
+                        cartExpectation.fulfill()
+                    })
+                }
+            })
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
     private func sampleLineItemDraft(_ completion: @escaping (LineItemDraft) -> Void) {
         ProductProjection.query(limit:1, result: { result in
             if let product = result.model?.results.first, result.isSuccess {
