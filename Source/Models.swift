@@ -2,10 +2,9 @@
 // Copyright (c) 2016 Commercetools. All rights reserved.
 //
 
-import ObjectMapper
 import CoreLocation
 
-public struct Address: ImmutableMappable {
+public struct Address: Codable {
 
     // MARK: - Properties
 
@@ -60,72 +59,16 @@ public struct Address: ImmutableMappable {
         self.additionalAddressInfo = additionalAddressInfo
         self.externalId = externalId
     }
-    
-    public init(map: Map) throws {
-        id                      = try? map.value("id")
-        title                   = try? map.value("title")
-        salutation              = try? map.value("salutation")
-        firstName               = try? map.value("firstName")
-        lastName                = try? map.value("lastName")
-        city                    = try? map.value("city")
-        region                  = try? map.value("region")
-        postalCode              = try? map.value("postalCode")
-        streetName              = try? map.value("streetName")
-        additionalStreetInfo    = try? map.value("additionalStreetInfo")
-        streetNumber            = try? map.value("streetNumber")
-        state                   = try? map.value("state")
-        country                 = try map.value("country")
-        company                 = try? map.value("company")
-        department              = try? map.value("department")
-        building                = try? map.value("building")
-        apartment               = try? map.value("apartment")
-        pOBox                   = try? map.value("pOBox")
-        phone                   = try? map.value("phone")
-        mobile                  = try? map.value("mobile")
-        email                   = try? map.value("email")
-        fax                     = try? map.value("fax")
-        additionalAddressInfo   = try? map.value("additionalAddressInfo")
-        externalId              = try? map.value("externalId")
-    }
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        id                      >>> map["id"]
-        title                   >>> map["title"]
-        salutation              >>> map["salutation"]
-        firstName               >>> map["firstName"]
-        lastName                >>> map["lastName"]
-        city                    >>> map["city"]
-        region                  >>> map["region"]
-        postalCode              >>> map["postalCode"]
-        streetName              >>> map["streetName"]
-        additionalStreetInfo    >>> map["additionalStreetInfo"]
-        streetNumber            >>> map["streetNumber"]
-        state                   >>> map["state"]
-        country                 >>> map["country"]
-        company                 >>> map["company"]
-        department              >>> map["department"]
-        building                >>> map["building"]
-        apartment               >>> map["apartment"]
-        pOBox                   >>> map["pOBox"]
-        phone                   >>> map["phone"]
-        mobile                  >>> map["mobile"]
-        email                   >>> map["email"]
-        fax                     >>> map["fax"]
-        additionalAddressInfo   >>> map["additionalAddressInfo"]
-        externalId              >>> map["externalId"]
-    }
 }
 
-public enum AnonymousCartSignInMode: String {
+public enum AnonymousCartSignInMode: String, Codable {
 
     case mergeWithExistingCustomerCart = "MergeWithExistingCustomerCart"
     case useAsNewActiveCustomerCart = "UseAsNewActiveCustomerCart"
 
 }
 
-public struct Asset: ImmutableMappable {
+public struct Asset: Codable {
 
     // MARK: - Properties
 
@@ -134,19 +77,10 @@ public struct Asset: ImmutableMappable {
     public let name: LocalizedString
     public let description: LocalizedString?
     public let tags: [String]?
-    public let custom: [String: Any]?
-
-    public init(map: Map) throws {
-        id               = try map.value("id")
-        sources          = try map.value("sources")
-        name             = try map.value("name")
-        description      = try? map.value("description")
-        tags             = try? map.value("tags")
-        custom           = try? map.value("custom")
-    }
+    public let custom: JsonValue?
 }
 
-public struct AssetSource: ImmutableMappable {
+public struct AssetSource: Codable {
 
     // MARK: - Properties
 
@@ -154,42 +88,25 @@ public struct AssetSource: ImmutableMappable {
     public let key: String?
     public let dimensions: [AssetDimensions]?
     public let contentType: String?
-
-    public init(map: Map) throws {
-        uri              = try map.value("uri")
-        key              = try? map.value("key")
-        dimensions       = try? map.value("dimensions")
-        contentType      = try? map.value("contentType")
-    }
 }
 
-public struct AssetDimensions: ImmutableMappable {
+public struct AssetDimensions: Codable {
 
     // MARK: - Properties
 
     public let w: Double
     public let h: Double
-
-    public init(map: Map) throws {
-        w              = try map.value("w")
-        h              = try map.value("h")
-    }
 }
 
-public struct Attribute: ImmutableMappable {
+public struct Attribute: Codable {
 
     // MARK: - Properties
 
     public let name: String
-    public let value: AnyObject
-
-    public init(map: Map) throws {
-        name               = try map.value("name")
-        value              = try map.value("value")
-    }
+    public let value: JsonValue
 }
 
-public struct AttributeDefinition: ImmutableMappable {
+public struct AttributeDefinition: Codable {
 
     // MARK: - Properties
 
@@ -199,31 +116,22 @@ public struct AttributeDefinition: ImmutableMappable {
     public let inputTip: [String: String]?
     public let isRequired: Bool
     public let isSearchable: Bool
-
-    public init(map: Map) throws {
-        type               = try map.value("type")
-        name               = try map.value("name")
-        label              = try map.value("label")
-        inputTip           = try? map.value("inputTip")
-        isRequired         = try map.value("isRequired")
-        isSearchable       = try map.value("isSearchable")
-    }
 }
 
-public class AttributeType: ImmutableMappable {
+public class AttributeType: Codable {
+    
+    public init(name: String, elementType: AttributeType?) {
+        self.name = name
+        self.elementType = elementType
+    }
 
     // MARK: - Properties
 
     public let name: String
     public let elementType: AttributeType?
-
-    required public init(map: Map) throws {
-        name               = try map.value("name")
-        elementType        = try? map.value("elementType")
-    }
 }
 
-public struct CartDiscount: ImmutableMappable {
+public struct CartDiscount: Codable {
 
     // MARK: - Properties
 
@@ -242,55 +150,26 @@ public struct CartDiscount: ImmutableMappable {
     public let validUntil: Date?
     public let requiresDiscountCode: Bool
     public let references: [GenericReference]
-
-    public init(map: Map) throws {
-        id                    = try map.value("id")
-        version               = try map.value("version")
-        createdAt             = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt        = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        name                  = try map.value("name")
-        description           = try? map.value("description")
-        value                 = try map.value("value")
-        cartPredicate         = try map.value("cartPredicate")
-        target                = try map.value("target")
-        sortOrder             = try map.value("sortOrder")
-        isActive              = try map.value("isActive")
-        validFrom             = try? map.value("validFrom", using: ISO8601DateTransform())
-        validUntil            = try? map.value("validUntil", using: ISO8601DateTransform())
-        requiresDiscountCode  = try map.value("requiresDiscountCode")
-        references            = try map.value("references")
-    }
 }
 
-public struct CartDiscountTarget: ImmutableMappable {
+public struct CartDiscountTarget: Codable {
 
     // MARK: - Properties
 
     public let type: String
     public let predicate: String?
-
-    public init(map: Map) throws {
-        type          = try map.value("type")
-        predicate     = try? map.value("predicate")
-    }
 }
 
-public struct CartDiscountValue: ImmutableMappable {
+public struct CartDiscountValue: Codable {
 
     // MARK: - Properties
 
     public let type: String
     public let permyriad: Int?
     public let money: Money?
-
-    public init(map: Map) throws {
-        type          = try map.value("type")
-        permyriad     = try? map.value("permyriad")
-        money         = try? map.value("money")
-    }
 }
 
-public struct CartDraft: Mappable {
+public struct CartDraft: Codable {
 
     // MARK: - Properties
 
@@ -306,11 +185,11 @@ public struct CartDraft: Mappable {
     public var shippingAddress: Address?
     public var billingAddress: Address?
     public var shippingMethod: Reference<ShippingMethod>?
-    public var custom: [String: Any]?
+    public var custom: JsonValue?
     public var locale: String?
     public var deleteDaysAfterLastModification: UInt?
 
-    public init(currency: String, customerId: String? = nil, customerEmail: String? = nil, anonymousId: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, customLineItems: [CustomLineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: Reference<ShippingMethod>? = nil, custom: [String: Any]? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil) {
+    public init(currency: String, customerId: String? = nil, customerEmail: String? = nil, anonymousId: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, customLineItems: [CustomLineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: Reference<ShippingMethod>? = nil, custom: JsonValue? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil) {
         self.currency = currency
         self.customerId = customerId
         self.customerEmail = customerEmail
@@ -327,32 +206,9 @@ public struct CartDraft: Mappable {
         self.locale = locale
         self.deleteDaysAfterLastModification = deleteDaysAfterLastModification
     }
-    
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        currency                          <- map["currency"]
-        customerId                        <- map["customerId"]
-        customerEmail                     <- map["customerEmail"]
-        anonymousId                       <- map["anonymousId"]
-        country                           <- map["country"]
-        inventoryMode                     <- map["inventoryMode"]
-        taxMode                           <- map["taxMode"]
-        lineItems                         <- map["lineItems"]
-        customLineItems                   <- map["customLineItems"]
-        shippingAddress                   <- map["shippingAddress"]
-        billingAddress                    <- map["billingAddress"]
-        shippingMethod                    <- map["shippingMethod"]
-        custom                            <- map["custom"]
-        locale                            <- map["locale"]
-        deleteDaysAfterLastModification   <- map["deleteDaysAfterLastModification"]
-    }
-
 }
 
-public enum CartState: String {
+public enum CartState: String, Codable {
 
     case active = "Active"
     case merged = "Merged"
@@ -373,23 +229,21 @@ public enum CartUpdateAction: JSONRepresentable {
     case addDiscountCode(code: String)
     case removeDiscountCode(discountCode: Reference<DiscountCode>)
     case recalculate(updateProductData: Bool?)
-    case setCustomType(type: ResourceIdentifier?, fields: [String: Any]?)
+    case setCustomType(type: ResourceIdentifier?, fields: [String: Data]?)
     case setCustomField(name: String, value: Any?)
-    case setLineItemCustomType(type: ResourceIdentifier?, lineItemId: String, fields: [String: Any]?)
+    case setLineItemCustomType(type: ResourceIdentifier?, lineItemId: String, fields: [String: Data]?)
     case setLineItemCustomField(lineItemId: String, name: String, value: Any?)
     case addPayment(payment: Reference<Payment>)
     case removePayment(payment: Reference<Payment>)
     case changeTaxMode(taxMode: TaxMode)
     case setLocale(locale: String)
     case setDeleteDaysAfterLastModification(deleteDaysAfterLastModification: UInt?)
-    
-    public var toJSON: [String: Any] {
+
+    public var toJSON: [String: Any]? {
         switch self {
         case .addLineItem(let lineItemDraft):
-            return filterJSON(parameters: ["action": "addLineItem", "productId": lineItemDraft.productVariantSelection.values.productId,
-                                           "sku": lineItemDraft.productVariantSelection.values.sku, "quantity": lineItemDraft.quantity,
-                                           "variantId": lineItemDraft.productVariantSelection.values.variantId,
-                                           "supplyChannel": lineItemDraft.supplyChannel,
+            return filterJSON(parameters: ["action": "addLineItem", "productId": lineItemDraft.productId, "sku": lineItemDraft.sku,
+                                           "quantity": lineItemDraft.quantity, "variantId": lineItemDraft.variantId, "supplyChannel": lineItemDraft.supplyChannel,
                                            "distributionChannel": lineItemDraft.distributionChannel, "custom": lineItemDraft.custom])
         case .removeLineItem(let lineItemId, let quantity):
             return filterJSON(parameters: ["action": "removeLineItem", "lineItemId": lineItemId, "quantity": quantity])
@@ -433,7 +287,7 @@ public enum CartUpdateAction: JSONRepresentable {
     }
 }
 
-public struct Channel: ImmutableMappable {
+public struct Channel: Codable {
 
     // MARK: - Properties
 
@@ -447,33 +301,21 @@ public struct Channel: ImmutableMappable {
     public let description: LocalizedString?
     public let address: Address?
     public let reviewRatingStatistics: ReviewRatingStatistics?
-    public let custom: [String: Any]?
-    public let geoLocation: [String: Any]?
+    public let custom: JsonValue?
+    public let geoLocation: JsonValue?
     public var location: CLLocation? {
-        if let coordinates = geoLocation?["coordinates"] as? [Double], let type = geoLocation?["type"] as? String,
+        if let geoLocation = geoLocation, case .dictionary(let dictionary) = geoLocation,
+           let coordinatesValue = dictionary["coordinates"], let typeValue = dictionary["type"],
+           case .array(let coordinates) = coordinatesValue, case .string(let type) = typeValue,
+           case .double(let latitude) = coordinates[1], case .double(let longitude) = coordinates[0],
            coordinates.count == 2 && type == "Point" {
-            return CLLocation(latitude: coordinates[1], longitude: coordinates[0])
+            return CLLocation(latitude: latitude, longitude: longitude)
         }
         return nil
     }
-
-    public init(map: Map) throws {
-        id                      = try map.value("id")
-        version                 = try map.value("version")
-        createdAt               = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt          = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        key                     = try map.value("key")
-        roles                   = try map.value("roles", using: EnumTransform<ChannelRole>())
-        name                    = try? map.value("name")
-        description             = try? map.value("description")
-        address                 = try? map.value("address")
-        reviewRatingStatistics  = try? map.value("reviewRatingStatistics")
-        custom                  = try? map.value("custom")
-        geoLocation             = try? map.value("geoLocation")
-    }
 }
 
-public enum ChannelRole: String {
+public enum ChannelRole: String, Codable {
 
     case inventorySupply = "InventorySupply"
     case productDistribution = "ProductDistribution"
@@ -483,7 +325,7 @@ public enum ChannelRole: String {
 
 }
 
-public struct CustomLineItem: ImmutableMappable {
+public struct CustomLineItem: Codable {
 
     // MARK: - Properties
 
@@ -498,25 +340,10 @@ public struct CustomLineItem: ImmutableMappable {
     public let taxCategory: Reference<TaxCategory>?
     public let taxRate: TaxRate?
     public let discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]
-    public let custom: [String: Any]?
-
-    public init(map: Map) throws {
-        id                          = try map.value("id")
-        name                        = try map.value("name")
-        money                       = try map.value("money")
-        taxedPrice                  = try? map.value("taxedPrice")
-        totalPrice                  = try map.value("totalPrice")
-        slug                        = try map.value("slug")
-        quantity                    = try map.value("quantity")
-        state                       = try map.value("state")
-        taxCategory                 = try? map.value("taxCategory")
-        taxRate                     = try? map.value("taxRate")
-        discountedPricePerQuantity  = try map.value("discountedPricePerQuantity")
-        custom                      = try? map.value("custom")
-    }
+    public let custom: Data?
 }
 
-public struct CustomLineItemDraft: Mappable {
+public struct CustomLineItemDraft: Codable {
 
     // MARK: - Properties
 
@@ -525,9 +352,9 @@ public struct CustomLineItemDraft: Mappable {
     public var money: Money!
     public var slug: String!
     public var taxCategory: Reference<TaxCategory>?
-    public var custom: [String: Any]?
+    public var custom: JsonValue?
 
-    public init(name: LocalizedString, quantity: UInt? = nil, money: Money, slug: String, taxCategory: Reference<TaxCategory>? = nil, custom: [String: Any]? = nil) {
+    public init(name: LocalizedString, quantity: UInt? = nil, money: Money, slug: String, taxCategory: Reference<TaxCategory>? = nil, custom: JsonValue? = nil) {
         self.name = name
         self.quantity = quantity
         self.money = money
@@ -535,22 +362,9 @@ public struct CustomLineItemDraft: Mappable {
         self.taxCategory = taxCategory
         self.custom = custom
     }
-    
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        name                      <- map["name"]
-        quantity                  <- map["quantity"]
-        money                     <- map["money"]
-        slug                      <- map["slug"]
-        taxCategory               <- map["taxCategory"]
-        custom                    <- map["custom"]
-    }
 }
 
-public struct CustomerDraft: Mappable {
+public struct CustomerDraft: Codable {
 
     // MARK: - Properties
 
@@ -566,10 +380,10 @@ public struct CustomerDraft: Mappable {
     public var addresses: [Address]?
     public var defaultBillingAddress: Int?
     public var defaultShippingAddress: Int?
-    public var custom: [String: Any]?
+    public var custom: JsonValue?
     public var locale: String?
 
-    public init(email: String, password: String, firstName: String? = nil, lastName: String? = nil, middleName: String? = nil, title: String? = nil, dateOfBirth: Date? = nil, companyName: String? = nil, vatId: String? = nil, addresses: [Address]? = nil, defaultBillingAddress: Int? = nil, defaultShippingAddress: Int? = nil, custom: [String: Any]? = nil, locale: String? = nil) {
+    public init(email: String, password: String, firstName: String? = nil, lastName: String? = nil, middleName: String? = nil, title: String? = nil, dateOfBirth: Date? = nil, companyName: String? = nil, vatId: String? = nil, addresses: [Address]? = nil, defaultBillingAddress: Int? = nil, defaultShippingAddress: Int? = nil, custom: JsonValue? = nil, locale: String? = nil) {
         self.email = email
         self.password = password
         self.firstName = firstName
@@ -585,30 +399,9 @@ public struct CustomerDraft: Mappable {
         self.custom = custom
         self.locale = locale
     }
-    
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        email                     <- map["email"]
-        password                  <- map["password"]
-        firstName                 <- map["firstName"]
-        lastName                  <- map["lastName"]
-        middleName                <- map["middleName"]
-        title                     <- map["title"]
-        dateOfBirth               <- (map["dateOfBirth"], ISO8601DateTransform())
-        companyName               <- map["companyName"]
-        vatId                     <- map["vatId"]
-        addresses                 <- map["addresses"]
-        defaultBillingAddress     <- map["defaultBillingAddress"]
-        defaultShippingAddress    <- map["defaultShippingAddress"]
-        custom                    <- map["custom"]
-        locale                    <- map["locale"]
-    }
 }
 
-public struct CustomerGroup: ImmutableMappable {
+public struct CustomerGroup: Codable {
 
     // MARK: - Properties
 
@@ -618,28 +411,14 @@ public struct CustomerGroup: ImmutableMappable {
     public let createdAt: Date
     public let lastModifiedAt: Date
     public let name: String
-
-    public init(map: Map) throws {
-        id               = try map.value("id")
-        key              = try? map.value("key")
-        version          = try map.value("version")
-        createdAt        = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt   = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        name             = try map.value("name")
-    }
 }
 
-public struct CustomerSignInResult: ImmutableMappable {
+public struct CustomerSignInResult: Codable {
 
     // MARK: - Properties
 
     public let customer: Customer
     public let cart: Cart?
-
-    public init(map: Map) throws {
-        customer         = try map.value("customer")
-        cart             = try? map.value("cart")
-    }
 }
 
 public enum CustomerUpdateAction: JSONRepresentable {
@@ -662,11 +441,11 @@ public enum CustomerUpdateAction: JSONRepresentable {
     case setCompanyName(companyName: String?)
     case setDateOfBirth(dateOfBirth: Date?)
     case setVatId(vatId: String?)
-    case setCustomType(type: ResourceIdentifier?, fields: [String: Any]?)
+    case setCustomType(type: ResourceIdentifier?, fields: [String: Data]?)
     case setCustomField(name: String, value: Any?)
     case setLocale(locale: String)
 
-    public var toJSON: [String: Any] {
+    public var toJSON: [String: Any]? {
         switch self {
         case .changeEmail(let email):
             return filterJSON(parameters: ["action": "changeEmail", "email": email])
@@ -701,7 +480,7 @@ public enum CustomerUpdateAction: JSONRepresentable {
         case .setCompanyName(let companyName):
             return filterJSON(parameters: ["action": "setCompanyName", "companyName": companyName])
         case .setDateOfBirth(let dateOfBirth):
-            return filterJSON(parameters: ["action": "setDateOfBirth", "dateOfBirth": ISO8601DateTransform().transformToJSON(dateOfBirth)])
+            return filterJSON(parameters: ["action": "setDateOfBirth", "dateOfBirth": dateOfBirth != nil ? dateFormatter.string(from: dateOfBirth!) : nil])
         case .setVatId(let vatId):
             return filterJSON(parameters: ["action": "setVatId", "vatId": vatId])
         case .setCustomType(let type, let fields):
@@ -714,7 +493,7 @@ public enum CustomerUpdateAction: JSONRepresentable {
     }
 }
 
-public struct Delivery: ImmutableMappable {
+public struct Delivery: Codable {
 
     // MARK: - Properties
 
@@ -722,29 +501,17 @@ public struct Delivery: ImmutableMappable {
     public let createdAt: Date
     public let items: [DeliveryItem]
     public let parcels: [Parcel]
-
-    public init(map: Map) throws {
-        id                = try map.value("id")
-        createdAt         = try map.value("createdAt", using: ISO8601DateTransform())
-        items             = try map.value("items")
-        parcels           = try map.value("parcels")
-    }
 }
 
-public struct DeliveryItem: ImmutableMappable {
+public struct DeliveryItem: Codable {
 
     // MARK: - Properties
 
     public let id: String
     public let quantity: Int
-
-    public init(map: Map) throws {
-        id                = try map.value("id")
-        quantity          = try map.value("quantity")
-    }
 }
 
-public struct DiscountCode: ImmutableMappable {
+public struct DiscountCode: Codable {
 
     // MARK: - Properties
 
@@ -761,38 +528,17 @@ public struct DiscountCode: ImmutableMappable {
     public let references: [GenericReference]
     public let maxApplications: Int?
     public let maxApplicationsPerCustomer: Int?
-
-    public init(map: Map) throws {
-        id                           = try map.value("id")
-        version                      = try map.value("version")
-        createdAt                    = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt               = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        name                         = try? map.value("name")
-        description                  = try? map.value("description")
-        code                         = try map.value("code")
-        cartDiscounts                = try map.value("cartDiscounts")
-        cartPredicate                = try? map.value("cartPredicate")
-        isActive                     = try map.value("isActive")
-        references                   = try map.value("references")
-        maxApplications              = try? map.value("maxApplications")
-        maxApplicationsPerCustomer   = try? map.value("maxApplicationsPerCustomer")
-    }
 }
 
-public struct DiscountCodeInfo: ImmutableMappable {
+public struct DiscountCodeInfo: Codable {
 
     // MARK: - Properties
 
     public let discountCode: Reference<DiscountCode>
     public let state: DiscountCodeState?
-
-    public init(map: Map) throws {
-        discountCode           = try map.value("discountCode")
-        state                  = try? map.value("state")
-    }
 }
 
-public enum DiscountCodeState: String {
+public enum DiscountCodeState: String, Codable {
 
     case notActive = "NotActive"
     case doesNotMatchCart = "DoesNotMatchCart"
@@ -801,72 +547,47 @@ public enum DiscountCodeState: String {
 
 }
 
-public struct DiscountedLineItemPortion: ImmutableMappable {
+public struct DiscountedLineItemPortion: Codable {
 
     // MARK: - Properties
 
     public let discount: Reference<CartDiscount>
     public let discountedAmount: Money
-
-    public init(map: Map) throws {
-        discount          = try map.value("discount")
-        discountedAmount  = try map.value("discountedAmount")
-    }
 }
 
-public struct DiscountedLineItemPrice: ImmutableMappable {
+public struct DiscountedLineItemPrice: Codable {
 
     // MARK: - Properties
 
     public let value: Money
     public let includedDiscounts: [DiscountedLineItemPortion]
-
-    public init(map: Map) throws {
-        value             = try map.value("value")
-        includedDiscounts = try map.value("includedDiscounts")
-    }
 }
 
-public struct DiscountedLineItemPriceForQuantity: ImmutableMappable {
+public struct DiscountedLineItemPriceForQuantity: Codable {
 
     // MARK: - Properties
 
     public let quantity: Int
     public let discountedPrice: DiscountedLineItemPrice
-
-    public init(map: Map) throws {
-        quantity         = try map.value("quantity")
-        discountedPrice  = try map.value("discountedPrice")
-    }
 }
 
-public struct DiscountedPrice: ImmutableMappable {
+public struct DiscountedPrice: Codable {
 
     // MARK: - Properties
 
     public let value: Money
     public let discount: Reference<ProductDiscount>
-
-    public init(map: Map) throws {
-        value              = try map.value("value")
-        discount           = try map.value("discount")
-    }
 }
 
-public struct ExternalLineItemTotalPrice: ImmutableMappable {
+public struct ExternalLineItemTotalPrice: Codable {
 
     // MARK: - Properties
 
     public let price: Money
     public let totalPrice: Money
-
-    public init(map: Map) throws {
-        price              = try map.value("price")
-        totalPrice         = try map.value("totalPrice")
-    }
 }
 
-public struct ExternalTaxRateDraft: Mappable {
+public struct ExternalTaxRateDraft: Codable {
 
     // MARK: - Properties
 
@@ -883,36 +604,18 @@ public struct ExternalTaxRateDraft: Mappable {
         self.state = state
         self.subRates = subRates
     }
-    
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        name                   <- map["name"]
-        amount                 <- map["amount"]
-        country                <- map["country"]
-        state                  <- map["state"]
-        subRates               <- map["subRates"]
-    }
 }
 
-public struct Image: ImmutableMappable {
+public struct Image: Codable {
 
     // MARK: - Properties
 
     public let url: String
     public let dimensions: [String: Int]
     public let label: String?
-
-    public init(map: Map) throws {
-        url                = try map.value("url")
-        dimensions         = try map.value("dimensions")
-        label              = try? map.value("label")
-    }
 }
 
-public enum InventoryMode: String {
+public enum InventoryMode: String, Codable {
 
     case trackOnly = "TrackOnly"
     case reserveOnOrder = "ReserveOnOrder"
@@ -920,22 +623,17 @@ public enum InventoryMode: String {
 
 }
 
-public struct ItemState: ImmutableMappable {
+public struct ItemState: Codable {
 
     // MARK: - Properties
 
     public let quantity: Int
     public let state: Reference<State>
-
-    public init(map: Map) throws {
-        quantity                = try map.value("quantity")
-        state                   = try map.value("state")
-    }
 }
 
 public typealias LocalizedString = [String: String]
 
-public struct LineItem: ImmutableMappable {
+public struct LineItem: Codable {
 
     // MARK: - Properties
 
@@ -956,31 +654,10 @@ public struct LineItem: ImmutableMappable {
     public let discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]
     public let priceMode: LineItemPriceMode
     public let lineItemMode: LineItemMode
-    public let custom: [String: Any]?
-
-    public init(map: Map) throws {
-        id                         = try map.value("id")
-        productId                  = try map.value("productId")
-        name                       = try map.value("name")
-        productSlug                = try? map.value("productSlug")
-        productType                = try? map.value("productType")
-        variant                    = try map.value("variant")
-        price                      = try map.value("price")
-        taxedPrice                 = try? map.value("taxedPrice")
-        totalPrice                 = try map.value("totalPrice")
-        quantity                   = try map.value("quantity")
-        state                      = try map.value("state")
-        taxRate                    = try? map.value("taxRate")
-        supplyChannel              = try? map.value("supplyChannel")
-        distributionChannel        = try? map.value("distributionChannel")
-        discountedPricePerQuantity = try map.value("discountedPricePerQuantity")
-        priceMode                  = try map.value("priceMode")
-        lineItemMode               = try map.value("lineItemMode")
-        custom                     = try? map.value("custom")
-    }
+    public let custom: JsonValue?
 }
 
-public class LineItemDraft: Mappable {
+public class LineItemDraft: Codable {
 
     public enum ProductVariantSelection {
 
@@ -998,47 +675,34 @@ public class LineItemDraft: Mappable {
     }
 
     // MARK: - Properties
-
-    public var productVariantSelection: ProductVariantSelection!
-    public var quantity: UInt?
-    public var supplyChannel: Reference<Channel>?
-    public var distributionChannel: Reference<Channel>?
-    public var custom: [String: Any]?
+    
     internal var productId: String?
     internal var variantId: Int?
     internal var sku: String?
+    public var quantity: UInt?
+    public var supplyChannel: Reference<Channel>?
+    public var distributionChannel: Reference<Channel>?
+    public var custom: JsonValue?
 
-    public init(productVariantSelection: ProductVariantSelection, quantity: UInt? = nil, supplyChannel: Reference<Channel>? = nil, distributionChannel: Reference<Channel>? = nil, custom: [String: Any]? = nil) {
-        self.productVariantSelection = productVariantSelection
+    public init(productVariantSelection: ProductVariantSelection, quantity: UInt? = nil, supplyChannel: Reference<Channel>? = nil, distributionChannel: Reference<Channel>? = nil, custom: JsonValue? = nil) {
+        switch productVariantSelection {
+        case .productVariant(let productId, let variantId):
+            self.productId = productId
+            self.variantId = variantId
+            self.sku = nil
+        case .sku(let sku):
+            self.productId = nil
+            self.variantId = nil
+            self.sku = sku
+        }
         self.quantity = quantity
         self.supplyChannel = supplyChannel
         self.distributionChannel = distributionChannel
         self.custom = custom
     }
-    
-    public required init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    public func mapping(map: Map) {
-        productId                    <- (map["productId"], TransformOf<String, String>(fromJSON: { _ in return nil },
-                                             toJSON: { [unowned self] _ in return self.productVariantSelection.values.productId
-                                         }))
-        variantId                    <- (map["variantId"], TransformOf<Int, Int>(fromJSON: { _ in return nil },
-                                             toJSON: { [unowned self] _ in return self.productVariantSelection.values.variantId
-                                         }))
-        sku                          <- (map["sku"], TransformOf<String, String>(fromJSON: { _ in return nil },
-                                             toJSON: { [unowned self] _ in return self.productVariantSelection.values.sku
-                                         }))
-        sku                          <- map["sku"]
-        quantity                     <- map["quantity"]
-        supplyChannel                <- map["supplyChannel"]
-        distributionChannel          <- map["distributionChannel"]
-        custom                       <- map["custom"]
-    }
 }
 
-public enum LineItemPriceMode: String {
+public enum LineItemPriceMode: String, Codable {
 
     case platform = "Platform"
     case externalPrice = "ExternalPrice"
@@ -1046,27 +710,22 @@ public enum LineItemPriceMode: String {
 
 }
 
-public enum LineItemMode: String {
+public enum LineItemMode: String, Codable {
 
     case standard = "Standard"
     case giftLineItem = "GiftLineItem"
 
 }
 
-public struct Location: ImmutableMappable {
+public struct Location: Codable {
 
     // MARK: - Properties
 
     public let country: String
     public let state: String?
-
-    public init(map: Map) throws {
-        country           = try map.value("country")
-        state             = try? map.value("state")
-    }
 }
 
-public struct Money: ImmutableMappable {
+public struct Money: Codable {
 
     // MARK: - Properties
 
@@ -1077,43 +736,22 @@ public struct Money: ImmutableMappable {
         self.currencyCode = currencyCode
         self.centAmount = centAmount
     }
-    
-    public init(map: Map) throws {
-        currencyCode       = try map.value("currencyCode")
-        centAmount         = try map.value("centAmount")
-    }
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        currencyCode       >>> map["currencyCode"]
-        centAmount         >>> map["centAmount"]
-    }
 }
 
-public struct OrderDraft: Mappable {
+public struct OrderDraft: Codable {
 
     // MARK: - Properties
 
-    public var id: String!
-    public var version: UInt!
+    public var id: String
+    public var version: UInt
 
     public init(id: String, version: UInt) {
         self.id = id
         self.version = version
     }
-    
-    public init?(map: Map) {}
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        id                          <- map["id"]
-        version                     <- map["version"]
-    }
 }
 
-public enum OrderState: String {
+public enum OrderState: String, Codable {
 
     case `open` = "Open"
     case confirmed = "Confirmed"
@@ -1122,7 +760,7 @@ public enum OrderState: String {
 
 }
 
-public struct Parcel: ImmutableMappable {
+public struct Parcel: Codable {
 
     // MARK: - Properties
 
@@ -1130,16 +768,9 @@ public struct Parcel: ImmutableMappable {
     public let createdAt: Date
     public let measurements: ParcelMeasurements?
     public let trackingData: TrackingData?
-
-    public init(map: Map) throws {
-        id                = try map.value("id")
-        createdAt         = try map.value("createdAt", using: ISO8601DateTransform())
-        measurements      = try? map.value("measurements")
-        trackingData      = try? map.value("trackingData")
-    }
 }
 
-public struct ParcelMeasurements: ImmutableMappable {
+public struct ParcelMeasurements: Codable {
 
     // MARK: - Properties
 
@@ -1147,16 +778,9 @@ public struct ParcelMeasurements: ImmutableMappable {
     public let lengthInMillimeter: Double
     public let widthInMillimeter: Double
     public let weightInGram: Double
-
-    public init(map: Map) throws {
-        heightInMillimeter   = try map.value("heightInMillimeter")
-        lengthInMillimeter   = try map.value("lengthInMillimeter")
-        widthInMillimeter    = try map.value("widthInMillimeter")
-        weightInGram         = try map.value("weightInGram")
-    }
 }
 
-public struct Payment: ImmutableMappable {
+public struct Payment: Codable {
 
     // MARK: - Properties
 
@@ -1173,59 +797,29 @@ public struct Payment: ImmutableMappable {
     public let paymentMethodInfo: PaymentMethodInfo
     public let paymentStatus: PaymentStatus
     public let transactions: [Transaction]
-    public let interfaceInteractions: [[String: Any]]
-    public let custom: [String: Any]?
+    public let interfaceInteractions: [[Data]]
+    public let custom: JsonValue?
     public let createdAt: Date
     public let lastModifiedAt: Date
-
-    public init(map: Map) throws {
-        id                    = try map.value("id")
-        version               = try map.value("version")
-        customer              = try? map.value("customer")
-        externalId            = try? map.value("externalId")
-        interfaceId           = try? map.value("interfaceId")
-        amountPlanned         = try map.value("amountPlanned")
-        amountAuthorized      = try? map.value("amountAuthorized")
-        authorizedUntil       = try? map.value("authorizedUntil")
-        amountPaid            = try? map.value("amountPaid")
-        amountRefunded        = try? map.value("amountRefunded")
-        paymentMethodInfo     = try map.value("paymentMethodInfo")
-        paymentStatus         = try map.value("paymentStatus")
-        transactions          = try map.value("transactions")
-        interfaceInteractions = try map.value("interfaceInteractions")
-        custom                = try? map.value("custom")
-        createdAt             = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt        = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-    }
 }
 
-public struct PaymentInfo: ImmutableMappable {
+public struct PaymentInfo: Codable {
 
     // MARK: - Properties
 
     public let payments: [Reference<Payment>]
-
-    public init(map: Map) throws {
-        payments           = try map.value("payments")
-    }
 }
 
-public struct PaymentMethodInfo: ImmutableMappable {
+public struct PaymentMethodInfo: Codable {
 
     // MARK: - Properties
 
     public let paymentInterface: String?
     public let method: String?
     public let name: LocalizedString?
-
-    public init(map: Map) throws {
-        paymentInterface      = try? map.value("paymentInterface")
-        method                = try? map.value("method")
-        name                  = try? map.value("name")
-    }
 }
 
-public enum PaymentState: String {
+public enum PaymentState: String, Codable {
 
     case balanceDue = "BalanceDue"
     case failed = "Failed"
@@ -1235,22 +829,16 @@ public enum PaymentState: String {
 
 }
 
-public struct PaymentStatus: ImmutableMappable {
+public struct PaymentStatus: Codable {
 
     // MARK: - Properties
 
     public let interfaceCode: String?
     public let interfaceText: String?
     public let state: Reference<State>?
-
-    public init(map: Map) throws {
-        interfaceCode      = try? map.value("interfaceCode")
-        interfaceText      = try? map.value("interfaceText")
-        state              = try? map.value("state")
-    }
 }
 
-public struct Price: ImmutableMappable {
+public struct Price: Codable {
 
     // MARK: - Properties
 
@@ -1263,36 +851,18 @@ public struct Price: ImmutableMappable {
     public let validUntil: Date?
     public let tiers: [PriceTier]?
     public let discounted: DiscountedPrice?
-    public let custom: [String: Any]?
-
-    public init(map: Map) throws {
-        id                 = try map.value("id")
-        value              = try map.value("value")
-        country            = try? map.value("country")
-        customerGroup      = try? map.value("customerGroup")
-        channel            = try? map.value("channel")
-        validFrom          = try? map.value("validFrom", using: ISO8601DateTransform())
-        validUntil         = try? map.value("validUntil", using: ISO8601DateTransform())
-        tiers              = try? map.value("tiers")
-        discounted         = try? map.value("discounted")
-        custom             = try? map.value("custom")
-    }
+    public let custom: JsonValue?
 }
 
-public struct PriceTier: ImmutableMappable {
+public struct PriceTier: Codable {
 
     // MARK: - Properties
 
     public let minimumQuantity: UInt
     public let value: Money
-
-    public init(map: Map) throws {
-        minimumQuantity    = try map.value("minimumQuantity")
-        value              = try map.value("value")
-    }
 }
 
-public struct ProductDiscount: ImmutableMappable {
+public struct ProductDiscount: Codable {
 
     // MARK: - Properties
 
@@ -1307,38 +877,18 @@ public struct ProductDiscount: ImmutableMappable {
     public let sortOrder: String
     public let isActive: Bool
     public let references: [GenericReference]
-
-    public init(map: Map) throws {
-        id                = try map.value("id")
-        version           = try map.value("version")
-        createdAt         = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt    = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        name              = try map.value("name")
-        description       = try? map.value("description")
-        value             = try map.value("value")
-        predicate         = try map.value("predicate")
-        sortOrder         = try map.value("sortOrder")
-        isActive          = try map.value("isActive")
-        references        = try map.value("references")
-    }
 }
 
-public struct ProductDiscountValue: ImmutableMappable {
+public struct ProductDiscountValue: Codable {
 
     // MARK: - Properties
 
     public let type: String
     public let permyriad: Int?
     public let money: Money?
-
-    public init(map: Map) throws {
-        type            = try map.value("type")
-        permyriad       = try? map.value("permyriad")
-        money           = try? map.value("money")
-    }
 }
 
-public struct ProductVariant: ImmutableMappable {
+public struct ProductVariant: Codable {
 
     // MARK: - Properties
 
@@ -1354,24 +904,9 @@ public struct ProductVariant: ImmutableMappable {
     public let isMatchingVariant: Bool?
     public let scopedPrice: ScopedPrice?
     public let scopedPriceDiscounted: Bool?
-
-    public init(map: Map) throws {
-        id                     = try map.value("id")
-        sku                    = try? map.value("sku")
-        key                    = try? map.value("key")
-        prices                 = try? map.value("prices")
-        attributes             = try? map.value("attributes")
-        price                  = try? map.value("price")
-        images                 = try? map.value("images")
-        assets                 = try? map.value("assets")
-        availability           = try? map.value("availability")
-        isMatchingVariant      = try? map.value("isMatchingVariant")
-        scopedPrice            = try? map.value("scopedPrice")
-        scopedPriceDiscounted  = try? map.value("scopedPriceDiscounted")
-    }
 }
 
-public struct ProductVariantAvailability: ImmutableMappable {
+public struct ProductVariantAvailability: Codable {
 
     // MARK: - Properties
 
@@ -1379,16 +914,9 @@ public struct ProductVariantAvailability: ImmutableMappable {
     public let restockableInDays: Int?
     public let availableQuantity: Int?
     public let channels: [String: ProductVariantAvailability]?
-
-    public init(map: Map) throws {
-        isOnStock                = try? map.value("isOnStock")
-        restockableInDays        = try? map.value("restockableInDays")
-        availableQuantity        = try? map.value("availableQuantity")
-        channels                 = try? map.value("channels")
-    }
 }
 
-public struct Reference<T: BaseMappable>: ImmutableMappable {
+public struct Reference<T: Codable>: Codable {
 
     // MARK: - Properties
 
@@ -1401,22 +929,9 @@ public struct Reference<T: BaseMappable>: ImmutableMappable {
         self.typeId = typeId
         self.obj = nil
     }
-    
-    public init(map: Map) throws {
-        id              = try map.value("id")
-        typeId          = try map.value("typeId")
-        obj             = try? map.value("obj")
-    }
-    
-    // MARK: - Mappable
-    
-    mutating public func mapping(map: Map) {
-        id                      >>> map["id"]
-        typeId                  >>> map["typeId"]
-    }
 }
 
-public struct GenericReference: ImmutableMappable {
+public struct GenericReference: Codable {
 
     // MARK: - Properties
 
@@ -1427,21 +942,9 @@ public struct GenericReference: ImmutableMappable {
         self.id = id
         self.typeId = typeId
     }
-
-    public init(map: Map) throws {
-        id              = try map.value("id")
-        typeId          = try map.value("typeId")
-    }
-    
-    // MARK: - Mappable
-    
-    mutating public func mapping(map: Map) {
-        id                      >>> map["id"]
-        typeId                  >>> map["typeId"]
-    }
 }
 
-public struct ResourceIdentifier: ImmutableMappable {
+public struct ResourceIdentifier: Codable {
 
     // MARK: - Properties
 
@@ -1454,30 +957,18 @@ public struct ResourceIdentifier: ImmutableMappable {
         self.typeId = typeId
         self.key = key
     }
-    
-    public init(map: Map) throws {
-        id                 = try? map.value("id")
-        typeId             = try? map.value("typeId")
-        key                = try? map.value("key")
-    }
 }
 
-public struct ReturnInfo: ImmutableMappable {
+public struct ReturnInfo: Codable {
 
     // MARK: - Properties
 
     public let items: [ReturnItem]
     public let returnTrackingId: String
     public let returnDate: Date
-
-    public init(map: Map) throws {
-        items              = try map.value("items")
-        returnTrackingId   = try map.value("returnTrackingId")
-        returnDate         = try map.value("returnDate", using: ISO8601DateTransform())
-    }
 }
 
-public struct ReturnItem: ImmutableMappable {
+public struct ReturnItem: Codable {
 
     // MARK: - Properties
 
@@ -1489,36 +980,25 @@ public struct ReturnItem: ImmutableMappable {
     public let paymentState: ReturnPaymentState
     public let lastModifiedAt: Date
     public let createdAt: Date
-
-    public init(map: Map) throws {
-        id             = try map.value("id")
-        quantity       = try map.value("quantity")
-        lineItemId     = try map.value("lineItemId")
-        comment        = try map.value("comment")
-        shipmentState  = try map.value("shipmentState")
-        paymentState   = try map.value("paymentState")
-        lastModifiedAt = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        createdAt      = try map.value("createdAt", using: ISO8601DateTransform())
-    }
 }
 
-public enum ReturnPaymentState: String {
+public enum ReturnPaymentState: String, Codable {
 
     case nonRefundable = "NonRefundable"
     case initial = "Initial"
     case refunded = "Refunded"
     case notRefunded = "NotRefunded"
-
 }
-public enum ReturnShipmentState: String {
+
+public enum ReturnShipmentState: String, Codable {
 
     case advised = "Advised"
     case returned = "Returned"
     case backInStock = "BackInStock"
     case unusable = "Unusable"
-
 }
-public struct ReviewRatingStatistics: ImmutableMappable {
+
+public struct ReviewRatingStatistics: Codable {
 
     // MARK: - Properties
 
@@ -1526,18 +1006,10 @@ public struct ReviewRatingStatistics: ImmutableMappable {
     public let highestRating: Double
     public let lowestRating: Double
     public let count: UInt
-    public let ratingsDistribution: [String: Any]
-
-    public init(map: Map) throws {
-        averageRating        = try map.value("averageRating")
-        highestRating        = try map.value("highestRating")
-        lowestRating         = try map.value("lowestRating")
-        count                = try map.value("count")
-        ratingsDistribution  = try map.value("ratingsDistribution")
-    }
+    public let ratingsDistribution: [Data]
 }
 
-public struct ScopedPrice: ImmutableMappable {
+public struct ScopedPrice: Codable {
 
     // MARK: - Properties
 
@@ -1550,49 +1022,26 @@ public struct ScopedPrice: ImmutableMappable {
     public let validFrom: Date?
     public let validUntil: Date?
     public let discounted: DiscountedPrice?
-    public let custom: [String: Any]?
-
-    public init(map: Map) throws {
-        id                   = try map.value("id")
-        value                = try map.value("value")
-        currentValue         = try map.value("currentValue")
-        country              = try? map.value("country")
-        customerGroup        = try? map.value("customerGroup")
-        channel              = try? map.value("channel")
-        validFrom            = try? map.value("validFrom")
-        validUntil           = try? map.value("validUntil")
-        discounted           = try? map.value("discounted")
-        custom               = try? map.value("custom")
-    }
+    public let custom: JsonValue?
 }
 
-public struct SearchKeyword: ImmutableMappable {
+public struct SearchKeyword: Codable {
 
     // MARK: - Properties
 
     public let text: String
     public let suggestTokenizer: SuggestTokenizer?
-
-    public init(map: Map) throws {
-        text                  = try map.value("text")
-        suggestTokenizer      = try? map.value("suggestTokenizer")
-    }
 }
 
-public struct SuggestTokenizer: ImmutableMappable {
+public struct SuggestTokenizer: Codable {
 
     // MARK: - Properties
 
     public let type: String
     public let inputs: [String]?
-
-    public init(map: Map) throws {
-        type                  = try map.value("type")
-        inputs                = try? map.value("inputs")
-    }
 }
 
-public enum ShipmentState: String {
+public enum ShipmentState: String, Codable {
 
     case shipped = "Shipped"
     case ready = "Ready"
@@ -1600,11 +1049,10 @@ public enum ShipmentState: String {
     case delayed = "Delayed"
     case partial = "Partial"
     case backorder = "Backorder"
-
 }
 
 
-public struct ShippingInfo: ImmutableMappable {
+public struct ShippingInfo: Codable {
 
     // MARK: - Properties
 
@@ -1617,36 +1065,18 @@ public struct ShippingInfo: ImmutableMappable {
     public let shippingMethod: Reference<ShippingMethod>?
     public let deliveries: [Delivery]
     public let discountedPrice: DiscountedLineItemPrice?
-
-    public init(map: Map) throws {
-        shippingMethodName         = try map.value("shippingMethodName")
-        price                      = try map.value("price")
-        shippingRate               = try map.value("shippingRate")
-        taxedPrice                 = try? map.value("taxedPrice")
-        taxRate                    = try? map.value("taxRate")
-        taxCategory                = try? map.value("taxCategory")
-        shippingMethod             = try? map.value("shippingMethod")
-        deliveries                 = try map.value("deliveries")
-        discountedPrice            = try? map.value("discountedPrice")
-    }
 }
 
-public struct ShippingRate: ImmutableMappable {
+public struct ShippingRate: Codable {
 
     // MARK: - Properties
 
     public let price: Money
     public let freeAbove: Money?
     public let isMatching: Bool?
-
-    public init(map: Map) throws {
-        price             = try map.value("price")
-        freeAbove         = try? map.value("freeAbove")
-        isMatching        = try? map.value("isMatching")
-    }
 }
 
-public struct State: ImmutableMappable {
+public struct State: Codable {
 
     // MARK: - Properties
 
@@ -1662,40 +1092,23 @@ public struct State: ImmutableMappable {
     public let builtIn: Bool
     public let roles: [StateRole]?
     public let transitions: [Reference<State>]?
-
-    public init(map: Map) throws {
-        id                = try map.value("id")
-        version           = try map.value("version")
-        createdAt         = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt    = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        key               = try map.value("key")
-        type              = try map.value("type")
-        name              = try map.value("name")
-        description       = try map.value("description")
-        initial           = try map.value("initial")
-        builtIn           = try map.value("builtIn")
-        roles             = try? map.value("roles", using: EnumTransform<StateRole>())
-        transitions       = try? map.value("transitions")
-    }
 }
 
-public enum StateRole: String {
+public enum StateRole: String, Codable {
 
     case reviewIncludedInStatistics = "ReviewIncludedInStatistics"
-
 }
 
-public enum StateType: String {
+public enum StateType: String, Codable {
 
     case orderState = "OrderState"
     case lineItemState = "LineItemState"
     case productState =  "ProductState"
     case reviewState = "ReviewState"
     case paymentState = "PaymentState"
-
 }
 
-public struct SubRate: ImmutableMappable {
+public struct SubRate: Codable {
 
     // MARK: - Properties
 
@@ -1706,36 +1119,18 @@ public struct SubRate: ImmutableMappable {
         self.name = name
         self.amount = amount
     }
-    
-    public init(map: Map) throws {
-        name       = try map.value("name")
-        amount     = try map.value("amount")
-    }
-
-    // MARK: - Mappable
-
-    mutating public func mapping(map: Map) {
-        name       >>> map["name"]
-        amount     >>> map["amount"]
-    }
 }
 
-public struct SyncInfo: ImmutableMappable {
+public struct SyncInfo: Codable {
 
     // MARK: - Properties
 
     public let channel: Reference<Channel>
     public let externalId: String?
     public let syncedAt: Date
-
-    public init(map: Map) throws {
-        channel          = try map.value("channel")
-        externalId       = try? map.value("externalId")
-        syncedAt         = try map.value("syncedAt", using: ISO8601DateTransform())
-    }
 }
 
-public struct TaxCategory: ImmutableMappable {
+public struct TaxCategory: Codable {
 
     // MARK: - Properties
 
@@ -1746,35 +1141,23 @@ public struct TaxCategory: ImmutableMappable {
     public let name: String
     public let description: String?
     public let rates: [TaxRate]
-
-    public init(map: Map) throws {
-        id               = try map.value("id")
-        version          = try map.value("version")
-        createdAt        = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt   = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        name             = try map.value("name")
-        description      = try? map.value("description")
-        rates            = try map.value("rates")
-    }
 }
 
-public enum TaxMode: String {
+public enum TaxMode: String, Codable {
 
     case platform = "Platform"
     case external = "External"
     case disabled = "Disabled"
-
 }
 
-public enum RoundingMode: String {
+public enum RoundingMode: String, Codable {
 
     case halfEven = "HalfEven"
     case halfUp = "HalfUp"
     case halfDown = "HalfDown"
-
 }
 
-public struct TaxRate: ImmutableMappable {
+public struct TaxRate: Codable {
 
     // MARK: - Properties
 
@@ -1784,61 +1167,35 @@ public struct TaxRate: ImmutableMappable {
     public let country: String
     public let state: String?
     public let subRates: [SubRate]
-
-    public init(map: Map) throws {
-        id                = try? map.value("id")
-        name              = try map.value("name")
-        includedInPrice   = try map.value("includedInPrice")
-        country           = try map.value("country")
-        state             = try? map.value("state")
-        subRates          = try map.value("subRates")
-    }
 }
 
-public struct TaxedItemPrice: ImmutableMappable {
+public struct TaxedItemPrice: Codable {
 
     // MARK: - Properties
 
     public let totalNet: Money
     public let totalGross: Money
-
-    public init(map: Map) throws {
-        totalNet                = try map.value("totalNet")
-        totalGross              = try map.value("totalGross")
-    }
 }
 
-public struct TaxedPrice: ImmutableMappable {
+public struct TaxedPrice: Codable {
 
     // MARK: - Properties
 
     public let totalNet: Money
     public let totalGross: Money
     public let taxPortions: [TaxPortion]
-
-    public init(map: Map) throws {
-        totalNet         = try map.value("totalNet")
-        totalGross       = try map.value("totalGross")
-        taxPortions      = try map.value("taxPortions")
-    }
 }
 
-public struct TaxPortion: ImmutableMappable {
+public struct TaxPortion: Codable {
 
 	// MARK: - Properties
 	
 	public let name: String?
 	public let rate: Double
 	public let amount: Money
-	
-	public init(map: Map) throws {
-        name             = try? map.value("name")
-        rate             = try map.value("rate")
-        amount           = try map.value("amount")
-    }
 }
 
-public struct TrackingData: ImmutableMappable {
+public struct TrackingData: Codable {
 
     // MARK: - Properties
 
@@ -1847,17 +1204,9 @@ public struct TrackingData: ImmutableMappable {
     public let provider: String?
     public let providerTransaction: String?
     public let isReturn: Bool?
-
-    public init(map: Map) throws {
-        trackingId           = try? map.value("trackingId")
-        carrier              = try? map.value("carrier")
-        provider             = try? map.value("provider")
-        providerTransaction  = try? map.value("providerTransaction")
-        isReturn             = try? map.value("isReturn")
-    }
 }
 
-public struct Transaction: ImmutableMappable {
+public struct Transaction: Codable {
 
     // MARK: - Properties
 
@@ -1867,36 +1216,25 @@ public struct Transaction: ImmutableMappable {
     public let amount: Money
     public let interactionId: String?
     public let state: TransactionState
-
-    public init(map: Map) throws {
-        id                    = try map.value("id")
-        timestamp             = try? map.value("timestamp")
-        type                  = try map.value("type")
-        amount                = try map.value("amount")
-        interactionId         = try? map.value("interactionId")
-        state                 = try map.value("state")
-    }
 }
 
-public enum TransactionState: String {
+public enum TransactionState: String, Codable {
 
     case pending = "Pending"
     case success = "Success"
     case failure = "Failure"
-
 }
 
-public enum TransactionType: String {
+public enum TransactionType: String, Codable {
 
     case authorization = "Authorization"
     case cancelAuthorization = "CancelAuthorization"
     case charge =  "Charge"
     case refund = "Refund"
     case chargeback = "Chargeback"
-
 }
 
-public struct Zone: ImmutableMappable {
+public struct Zone: Codable {
 
     // MARK: - Properties
 
@@ -1907,27 +1245,61 @@ public struct Zone: ImmutableMappable {
     public let name: String
     public let description: String?
     public let locations: [Location]
-
-    public init(map: Map) throws {
-        id               = try map.value("id")
-        version          = try map.value("version")
-        createdAt        = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt   = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        name             = try map.value("name")
-        description      = try? map.value("description")
-        locations        = try map.value("locations")
-    }
 }
 
-public struct ZoneRate: ImmutableMappable {
+public struct ZoneRate: Codable {
 
     // MARK: - Properties
 
     public let zone: Reference<Zone>
     public let shippingRates: [ShippingRate]
+}
 
-    public init(map: Map) throws {
-        zone              = try map.value("zone")
-        shippingRates     = try map.value("shippingRates")
+public enum JsonValue: Codable {
+    case bool(value: Bool)
+    case int(value: Int)
+    case double(value: Double)
+    case string(value: String)
+    case dictionary(value: [String: JsonValue])
+    case array(value: [JsonValue])
+    case unknown
+    
+    public init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer()
+        if let string = try? value.decode(String.self) {
+            self = .string(value: string)
+        } else if let int = try? value.decode(Int.self) {
+            self = .int(value: int)
+        } else if let double = try? value.decode(Double.self) {
+            self = .double(value: double)
+        } else if let bool = try? value.decode(Bool.self) {
+            self = .bool(value: bool)
+        } else if let dictionary = try? value.decode([String: JsonValue].self) {
+            self = .dictionary(value: dictionary)
+        } else if let array = try? value.decode([JsonValue].self) {
+            self = .array(value: array)
+        } else {
+            self = .unknown
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .bool(let value):
+            try container.encode(value)
+        case .int(let value):
+            try container.encode(value)
+        case .double(let value):
+            try container.encode(value)
+        case .string(let value):
+            try container.encode(value)
+        case .dictionary(let value):
+            try container.encode(value)
+        case .array(let value):
+            try container.encode(value)
+        case .unknown:
+            Log.error("Error while trying to encode unknown JsonValue")
+        }
     }
 }
