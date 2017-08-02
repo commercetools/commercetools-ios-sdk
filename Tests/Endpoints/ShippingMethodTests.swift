@@ -35,7 +35,7 @@ class ShippingMethodTests: XCTestCase {
                 if result.model!.count == 0 {
                     QueryTaxCategory.query(limit: 1) { taxCategoryResult in
                         CreateZone.create(["name": "Germany", "locations": [["country": "DE"]]]) { zoneResult in
-                            CreateShippingMethod.create(["name": "test-shipping-method", "isDefault": true,
+                            CreateShippingMethod.create(["name": "test-shipping-method", "key": "test-key", "isDefault": true,
                                                          "zoneRates":[["zone": ["id": zoneResult.model!.id, "typeId": "zone"],
                                                                        "shippingRates": [["price": ["currencyCode": "EUR", "centAmount": 1000]]]],
                                                                       ["zone": ["id": zoneResult.model!.id, "typeId": "zone"],
@@ -110,6 +110,18 @@ class ShippingMethodTests: XCTestCase {
                 }
             }
         })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testShippingMethodsByKey() {
+        let shippingMethodsExpectation = expectation(description: "shipping methods expectation")
+
+        ShippingMethod.byKey("test-key") { result in
+            XCTAssert(result.isSuccess)
+            XCTAssertEqual(result.model?.key, "test-key")
+            shippingMethodsExpectation.fulfill()
+        }
 
         waitForExpectations(timeout: 10, handler: nil)
     }

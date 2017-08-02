@@ -9,7 +9,7 @@ import ObjectMapper
     Provides set of interactions for querying and retrieving by UUID for shipping methods. Retrieving a shipping method
     for a cart, or a location is also provided.
 */
-public struct ShippingMethod: ByIdEndpoint, QueryEndpoint, ImmutableMappable {
+public struct ShippingMethod: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, ImmutableMappable {
 
     public typealias ResponseType = ShippingMethod
 
@@ -62,6 +62,7 @@ public struct ShippingMethod: ByIdEndpoint, QueryEndpoint, ImmutableMappable {
     // MARK: - Properties
 
     public let id: String
+    public let key: String?
     public let version: UInt
     public let createdAt: Date
     public let lastModifiedAt: Date
@@ -75,6 +76,7 @@ public struct ShippingMethod: ByIdEndpoint, QueryEndpoint, ImmutableMappable {
 
     public init(map: Map) throws {
         id               = try map.value("id")
+        key              = try? map.value("key")
         version          = try map.value("version")
         createdAt        = try map.value("createdAt", using: ISO8601DateTransform())
         lastModifiedAt   = try map.value("lastModifiedAt", using: ISO8601DateTransform())
