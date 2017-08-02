@@ -51,7 +51,7 @@ class CartTests: XCTestCase {
 
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
-        retrieveSampleProduct { lineItemDraft in
+        sampleLineItemDraft { lineItemDraft in
             let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft])
 
             Cart.create(cartDraft, result: { result in
@@ -59,6 +59,29 @@ class CartTests: XCTestCase {
                     XCTAssert(result.isSuccess)
                     XCTAssertEqual(cart.cartState, .active)
                     cartCreationExpectation.fulfill()
+                }
+            })
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testCartCreationWithLineItemsBySku() {
+        let addBySkuExpectation = expectation(description: "add by sku expectation")
+
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+
+        AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
+
+        sampleProduct { product in
+            let cartDraft = CartDraft(currency: "EUR", lineItems: [LineItemDraft(productVariantSelection: .sku(sku: product.masterVariant.sku!), quantity: 3)])
+
+            Cart.create(cartDraft, result: { result in
+                if let cart = result.model {
+                    XCTAssert(result.isSuccess)
+                    XCTAssertEqual(cart.lineItems.first?.variant.sku, product.masterVariant.sku)
+                    addBySkuExpectation.fulfill()
                 }
             })
         }
@@ -74,7 +97,7 @@ class CartTests: XCTestCase {
 
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
-        retrieveSampleProduct { lineItemDraft in
+        sampleLineItemDraft { lineItemDraft in
             let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft], shippingAddress: Address(country: "DE"))
 
             Cart.create(cartDraft, result: { result in
@@ -108,9 +131,9 @@ class CartTests: XCTestCase {
             if let cart = result.model, result.isSuccess {
                 ProductProjection.query(limit:1, result: { result in
                     if let product = result.model?.results.first, result.isSuccess {                        
-                        let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.addLineItem(productId: product.id, variantId: product.masterVariant.id,
-                                                                                                                          quantity: nil, supplyChannel: nil, distributionChannel: nil,
-                                                                                                                          custom: nil)])
+                        let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.addLineItem(lineItemDraft:
+                            LineItemDraft(productVariantSelection: .productVariant(productId: product.id, variantId: product.masterVariant.id)))])
+
                         Cart.update(cart.id, actions: updateActions, result: { result in
                             if let cart = result.model {
                                 XCTAssert(result.isSuccess)
@@ -135,7 +158,7 @@ class CartTests: XCTestCase {
 
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
-        retrieveSampleProduct { lineItemDraft in
+        sampleLineItemDraft { lineItemDraft in
             let cartDraft = CartDraft(currency: "EUR", taxMode: .external, lineItems: [lineItemDraft])
 
             Cart.create(cartDraft, result: { result in
@@ -166,7 +189,7 @@ class CartTests: XCTestCase {
 
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
-        retrieveSampleProduct { lineItemDraft in
+        sampleLineItemDraft { lineItemDraft in
             let cartDraft = CartDraft(currency: "EUR", taxMode: .external, lineItems: [lineItemDraft])
 
             Cart.create(cartDraft, result: { result in
@@ -197,7 +220,7 @@ class CartTests: XCTestCase {
 
         AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
 
-        retrieveSampleProduct { lineItemDraft in
+        sampleLineItemDraft { lineItemDraft in
             let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft], deleteDaysAfterLastModification: 3)
 
             Cart.create(cartDraft, result: { result in
@@ -220,13 +243,20 @@ class CartTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
-    private func retrieveSampleProduct(_ completion: @escaping (LineItemDraft) -> Void) {
+    private func sampleLineItemDraft(_ completion: @escaping (LineItemDraft) -> Void) {
         ProductProjection.query(limit:1, result: { result in
             if let product = result.model?.results.first, result.isSuccess {
-                let lineItemDraft = LineItemDraft(productId: product.id, variantId: product.masterVariant.id, quantity: 3)
+                let lineItemDraft = LineItemDraft(productVariantSelection: .productVariant(productId: product.id, variantId: product.masterVariant.id), quantity: 3)
                 completion(lineItemDraft)
             }
         })
     }
 
+    private func sampleProduct(_ completion: @escaping (ProductProjection) -> Void) {
+        ProductProjection.query(limit:1, result: { result in
+            if let product = result.model?.results.first, result.isSuccess {
+                completion(product)
+            }
+        })
+    }
 }
