@@ -2,7 +2,7 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
-- `0.6.x` Releases - [0.6.0](#060)
+- `0.6.x` Releases - [0.6.0](#060) | [0.6.1](#061)
 - `0.5.x` Releases - [0.5.0](#050) | [0.5.1](#051) | [0.5.2](#052) | [0.5.3](#053) | [0.5.4](#054) | [0.5.5](#055) | [0.5.6](#056) | [0.5.7](#057) | [0.5.8](#058) | [0.5.9](#059)
 - `0.4.x` Releases - [0.4.0](#040) | [0.4.1](#041) | [0.4.2](#042)
 - `0.3.x` Releases - [0.3.0](#030)
@@ -11,6 +11,17 @@ All changes to this project will be documented in this file.
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.6.1](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.6.1)
+Released on 2017-08-04.
+
+#### Added
+- Support for adding products to cart by SKU.
+- `ShippingMethod` endpoint now conforms to `ByKeyEndpoint` protocol.
+- Linux support.
+
+#### Removed
+- Alamofire dependency.
 
 ## [0.6.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.6.0)
 Released on 2017-07-14.
@@ -29,7 +40,7 @@ Released on 2017-05-31.
 #### Added
 - `PriceTier`, `tiers` array to the `Price` model.
 - `salutation` field for the `Customer` endpoint, as well as `setSalutation` update action.
-- `Category` endpoint now confirms to `ByKeyEndpoint` protocol.
+- `Category` endpoint now conforms to `ByKeyEndpoint` protocol.
 - `lineItemMode` to `LineItem`, `refusedGifts` to `Cart` endpoint.
 
 #### Updated
