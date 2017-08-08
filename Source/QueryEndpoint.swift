@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import ObjectMapper
 
 /**
     All endpoints capable of being queried should conform to this protocol.
@@ -28,7 +27,7 @@ public protocol QueryEndpoint: Endpoint {
 
 }
 
-public class QueryResponse<ResponseType: ImmutableMappable>: ImmutableMappable {
+public class QueryResponse<ResponseType: Codable>: Codable {
     
     // MARK: - Properties
     
@@ -36,14 +35,12 @@ public class QueryResponse<ResponseType: ImmutableMappable>: ImmutableMappable {
     public let count: UInt
     public let total: UInt
     public let results: [ResponseType]
-
-    // MARK: - Mappable
-
-    public required init(map: Map) throws {
-        offset           = try map.value("offset")
-        count            = try map.value("count")
-        total            = try map.value("total")
-        results          = try map.value("results")
+    
+    public init (offset: UInt, count: UInt, total: UInt, results: [ResponseType]) {
+        self.offset = offset
+        self.count = count
+        self.total = total
+        self.results = results
     }
 }
 

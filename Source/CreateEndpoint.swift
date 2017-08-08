@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import ObjectMapper
 
 /**
     All endpoints capable of creating new objects should conform to this protocol.
@@ -13,7 +12,7 @@ import ObjectMapper
 */
 public protocol CreateEndpoint: Endpoint {
 
-    associatedtype RequestDraft: BaseMappable
+    associatedtype RequestDraft: Codable
 
     /**
         Creates new object at the endpoint specified with `path` value.
@@ -49,6 +48,18 @@ public extension CreateEndpoint {
     }
 
     static func create(_ object: RequestDraft, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
-        create(Mapper<RequestDraft>().toJSON(object), expansion: expansion, result: result)
+        do {
+            let data = try jsonEncoder.encode(object)
+            requestWithTokenAndPath(result, { token, path in
+                let fullPath = pathWithExpansion(path, expansion: expansion)
+                let request = self.request(url: fullPath, method: .post, queryItems: [], json: data, headers: self.headers(token))
+                
+                perform(request: request) { (response: Result<ResponseType>) in
+                    result(response)
+                }
+            })
+        } catch {
+            Log.error(error.localizedDescription)
+        }
     }
 }

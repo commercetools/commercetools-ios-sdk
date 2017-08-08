@@ -2,7 +2,7 @@
 // Copyright (c) 2016 Commercetools. All rights reserved.
 //
 
-import ObjectMapper
+import Foundation
 
 /**
     Used to represent whether a result from an endpoint operation was successful or not.
@@ -13,7 +13,7 @@ import ObjectMapper
                code and an array of errors should be used to examine the origin of the problem.
 */
 public enum Result<T> {
-    case success(Any)
+    case success(Data)
     case failure(Int?, [Error])
 
     /// Returns `true` if the result is a success, `false` otherwise.
@@ -85,22 +85,23 @@ extension Result: CustomDebugStringConvertible {
     }
 }
 
-extension Result where T: BaseMappable {
+extension Result {
     /// Returns the associated JSON response in dictionary format, if the result is a success, `nil` otherwise.
     public var json: [String: Any]? {
-        if case .success(let value as [String: Any]) = self {
-            return value
+        if case .success(let data) = self, let response = try? JSONSerialization.jsonObject(with: data, options: []),
+           let dict = response as? [String: Any] {
+            return dict
         }
         return nil
     }
 }
 
-extension Result where T: ImmutableMappable {
+extension Result where T: Decodable {
     /// Returns the associated response, if the result is a success, `nil` otherwise.
     public var model: T? {
-        if case .success(let value) = self {
+        if case .success(let data) = self {
             do {
-                let model = try T(JSONObject: value)
+                let model = try jsonDecoder.decode(T.self, from: data)
                 return model
             } catch {
                 Log.error("\(error)")
@@ -112,23 +113,24 @@ extension Result where T: ImmutableMappable {
 }
 
 public protocol ArrayResponse {
-    associatedtype ArrayElement: ImmutableMappable
+    associatedtype ArrayElement: Codable
 }
 
 extension Result where T: ArrayResponse {
     /// Returns the associated JSON response in dictionary format, if the result is a success, `nil` otherwise.
     public var json: [[String: Any]]? {
-        if case .success(let value as [[String: Any]]) = self {
-            return value
+        if case .success(let data) = self, let response = try? JSONSerialization.jsonObject(with: data, options: []),
+            let array = response as? [[String: Any]] {
+            return array
         }
         return nil
     }
 
     /// Returns the associated array, if the result is a success, `nil` otherwise.
     public var model: [T.ArrayElement]? {
-        if case .success(let value) = self {
+        if case .success(let data) = self {
             do {
-                let model = try Mapper<T.ArrayElement>().mapArray(JSONObject: value)
+                let model = try jsonDecoder.decode(Array<T.ArrayElement>.self, from: data)
                 return model
             } catch {
                 Log.error("\(error)")
