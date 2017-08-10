@@ -24,6 +24,11 @@ public enum CTError: Error {
 
         /// The detailed description when returned as a value of the `detailedErrorMessage` response field.
         public let details: String?
+        
+        public init(message: String?, details: String?) {
+            self.message = message
+            self.details = details
+        }
     }
     
     case configurationValidationFailed

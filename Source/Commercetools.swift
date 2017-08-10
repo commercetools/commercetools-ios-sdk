@@ -111,9 +111,38 @@ public func loginCustomer(username: String, password: String, activeCartSignInMo
                 if let error = error {
                     result(.failure(nil, [error]))
                 } else {
+                    let tokenStore = AuthManager.sharedInstance.tokenStore
+                    if let refreshToken = tokenStore.refreshToken {
+                        tokenStore.set(refreshToken: refreshToken, for: username)
+                    }
                     result(loginResult)
                 }
             }
+        }
+    }
+}
+
+public func preAuthorize(username: String, result: @escaping (Bool) -> Void) {
+    if authState == .customerToken {
+        logoutCustomer()
+    }
+    
+    let tokenStore = AuthManager.sharedInstance.tokenStore
+    guard let refreshToken = AuthManager.sharedInstance.tokenStore.refreshToken(for: username) else {
+        result(false)
+        return
+    }
+    
+    tokenStore.refreshToken = refreshToken
+    tokenStore.accessToken = nil
+    tokenStore.tokenValidDate = nil
+    tokenStore.tokenState = .customerToken
+    
+    AuthManager.sharedInstance.token { _, error in
+        if error == nil, authState == .customerToken {
+            result(true)
+        } else {
+            result(false)
         }
     }
 }

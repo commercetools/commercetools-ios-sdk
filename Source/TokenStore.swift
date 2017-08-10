@@ -78,6 +78,17 @@ class TokenStore: NSObject {
             #endif
         }
     }
+    
+    func set(refreshToken: String, for username: String) {
+        // Keychain write operation can be expensive, and we can do it asynchronously.
+        serialQueue.async(execute: {
+            self.setObject(refreshToken as NSCoding?, forKey: "refresh-\(username)")
+        })
+    }
+    
+    func refreshToken(for username: String) -> String? {
+        return objectForKey("refresh-\(username)") as? String
+    }
 
     /// The auth token valid before date.
     var tokenValidDate: Date? {
