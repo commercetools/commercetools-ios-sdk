@@ -4,6 +4,7 @@
 
 import Foundation
 #if os(iOS) || os(watchOS)
+import UIKit
 import WatchConnectivity
 #endif
 
@@ -116,7 +117,7 @@ class TokenStore: NSObject {
         super.init()
         reloadTokens()
         #if os(iOS)
-            NotificationCenter.default.addObserver(self, selector: #selector(transferTokens), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(transferTokens), name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
         #endif
     }
 
