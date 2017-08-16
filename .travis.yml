@@ -3,18 +3,14 @@ language: objective-c
 before_install:
   - gem install xcpretty --no-rdoc --no-ri --no-document --quiet
 
-install:
-   - pod repo update
-   - pod install
-
 osx_image: xcode9
 
-xcode_sdk: iphonesimulator10.0
+xcode_sdk: iphonesimulator11.0
 
 script:
   - set -o pipefail
   - xcodebuild -showsdks
-  - xcodebuild -workspace Commercetools.xcworkspace -scheme "Commercetools iOS" -destination "platform=iOS Simulator,name=iPhone 6" test | xcpretty -c;
+  - xcodebuild -project Commercetools.xcodeproj -scheme "Commercetools iOS" -destination "platform=iOS Simulator,name=iPhone 6" test | xcpretty -c;
 
 deploy:
   provider: script
