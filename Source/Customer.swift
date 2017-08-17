@@ -157,6 +157,7 @@ public struct Customer: Endpoint, Codable {
 
     public let id: String
     public let version: UInt
+    public let key: String?
     public let customerNumber: String?
     public let createdAt: Date
     public let lastModifiedAt: Date
