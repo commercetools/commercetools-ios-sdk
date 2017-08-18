@@ -3,16 +3,15 @@
 //
 
 import Foundation
-import ObjectMapper
 
 /**
     Provides set of interactions for querying and retrieving by UUID for categories.
 */
-open class Category: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, ImmutableMappable {
+public class Category: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Codable {
     
     public typealias ResponseType = Category
 
-    open static let path = "categories"
+    public static let path = "categories"
 
     // MARK: - Properties
 
@@ -31,28 +30,26 @@ open class Category: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, ImmutableMappab
     public let metaTitle: LocalizedString?
     public let metaDescription: LocalizedString?
     public let metaKeywords: LocalizedString?
-    public let custom: [String: Any]?
+    public let custom: JsonValue?
     public let assets: [Asset]
-
-    // MARK: - Mappable
-
-    public required init(map: Map) throws {
-        id                      = try map.value("id")
-        version                 = try map.value("version")
-        createdAt               = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt          = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        key                     = try? map.value("key")
-        name                    = try map.value("name")
-        slug                    = try map.value("slug")
-        description             = try? map.value("description")
-        ancestors               = try map.value("ancestors")
-        parent                  = try? map.value("parent")
-        orderHint               = try? map.value("orderHint")
-        externalId              = try? map.value("externalId")
-        metaTitle               = try? map.value("metaTitle")
-        metaDescription         = try? map.value("metaDescription")
-        metaKeywords            = try? map.value("metaKeywords")
-        custom                  = try? map.value("custom")
-        assets                  = try map.value("assets")
+    
+    public init(id: String, version: UInt, createdAt: Date, lastModifiedAt: Date, key: String?, name: LocalizedString, slug: LocalizedString, description: LocalizedString?, ancestors: [Reference<Category>], parent: Reference<Category>?, orderHint: String?, externalId: String?, metaTitle: LocalizedString?, metaDescription: LocalizedString?, metaKeywords: LocalizedString?, custom: JsonValue?, assets: [Asset]) {
+        self.id = id
+        self.version = version
+        self.createdAt = createdAt
+        self.lastModifiedAt = lastModifiedAt
+        self.key = key
+        self.name = name
+        self.slug = slug
+        self.description = description
+        self.ancestors = ancestors
+        self.parent = parent
+        self.orderHint = orderHint
+        self.externalId = externalId
+        self.metaTitle = metaTitle
+        self.metaDescription = metaDescription
+        self.metaKeywords = metaKeywords
+        self.custom = custom
+        self.assets = assets        
     }
 }

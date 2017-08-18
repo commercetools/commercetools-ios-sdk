@@ -3,15 +3,13 @@
 //
 
 import XCTest
-import ObjectMapper
 @testable import Commercetools
 
 class ProductProjectionTests: XCTestCase {
 
-    private class TestTaxCategory: QueryEndpoint, ImmutableMappable {
+    private struct TestTaxCategory: QueryEndpoint, Codable {
         public typealias ResponseType = TestTaxCategory
         static let path = "tax-categories"
-        required init(map: Map) throws {}
     }
 
     override func setUp() {

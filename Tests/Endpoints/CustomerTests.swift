@@ -67,7 +67,7 @@ class CustomerTests: XCTestCase {
         let createProfileExpectation = expectation(description: "create profile expectation")
         let deleteProfileExpectation = expectation(description: "delete profile expectation")
 
-        let signUpDraft = ["email": username, "password": "password"]
+        let signUpDraft = try! JSONSerialization.data(withJSONObject: ["email": username, "password": "password"], options: [])
 
         Customer.signUp(signUpDraft, result: { result in
             if let response = result.json, let customer = response["customer"] as? [String: Any],
@@ -164,7 +164,7 @@ class CustomerTests: XCTestCase {
 
         let createProfileExpectation = expectation(description: "create profile expectation")
 
-        let signUpDraft = ["email": "swift.sdk.test.user2@commercetools.com", "password": "password"]
+        let signUpDraft = try! JSONSerialization.data(withJSONObject: ["email": "swift.sdk.test.user2@commercetools.com", "password": "password"], options: [])
 
         Customer.signUp(signUpDraft, result: { result in
             if let error = result.errors?.first as? CTError, case .generalError(let reason) = error {

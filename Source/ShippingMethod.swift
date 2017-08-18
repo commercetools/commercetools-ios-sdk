@@ -3,13 +3,12 @@
 //
 
 import Foundation
-import ObjectMapper
 
 /**
     Provides set of interactions for querying and retrieving by UUID for shipping methods. Retrieving a shipping method
     for a cart, or a location is also provided.
 */
-public struct ShippingMethod: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, ImmutableMappable {
+public struct ShippingMethod: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Codable {
 
     public typealias ResponseType = ShippingMethod
 
@@ -71,23 +70,9 @@ public struct ShippingMethod: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Immuta
     public let taxCategory: Reference<TaxCategory>
     public let zoneRates: [ZoneRate]
     public let isDefault: Bool
-
-    // MARK: - Mappable
-
-    public init(map: Map) throws {
-        id               = try map.value("id")
-        key              = try? map.value("key")
-        version          = try map.value("version")
-        createdAt        = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt   = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        name             = try map.value("name")
-        description      = try? map.value("description")
-        taxCategory      = try map.value("taxCategory")
-        zoneRates        = try map.value("zoneRates")
-        isDefault        = try map.value("isDefault")
-    }
 }
 
 public struct ShippingMethods: ArrayResponse {
     public typealias ArrayElement = ShippingMethod
 }
+

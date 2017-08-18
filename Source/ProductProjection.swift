@@ -3,18 +3,17 @@
 //
 
 import Foundation
-import ObjectMapper
 
 /**
     Provides complete set of interactions for querying and retrieving product projections.
 */
-open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, ImmutableMappable {
+public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Codable {
 
     public typealias ResponseType = ProductProjection
 
     // MARK: - Properties
 
-    open static let path = "product-projections"
+    public static let path = "product-projections"
 
     // MARK: - Product projection endpoint functionality
 
@@ -49,7 +48,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Immuta
         - parameter priceChannel:             An optional price channel UUID.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func search(staged: Bool? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil,
+    public static func search(staged: Bool? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil,
                             offset: UInt? = nil, lang: Locale = Locale.current, text: String? = nil,
                             fuzzy: Bool? = nil, fuzzyLevel: Int? = nil, filters: [String]? = nil, filterQuery: String? = nil,
                             filterFacets: String? = nil, facets: [String]? = nil, markMatchingVariants: Bool? = nil,
@@ -88,7 +87,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Immuta
                                               the text to analyze.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func suggest(staged: Bool? = nil, limit: UInt? = nil, lang: Locale = Locale.current,
+    public static func suggest(staged: Bool? = nil, limit: UInt? = nil, lang: Locale = Locale.current,
                              searchKeywords: String, fuzzy: Bool? = nil, result: @escaping (Result<NoMapping>) -> Void) {
 
         var parameters = queryParameters(limit: limit)
@@ -119,7 +118,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Immuta
         - parameter offset:                   An optional parameter to set the offset of the first returned result.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func query(staged: Bool? = nil, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
+    public static func query(staged: Bool? = nil, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
                            limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
@@ -147,7 +146,7 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Immuta
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func byId(_ id: String, staged: Bool? = nil, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    public static func byId(_ id: String, staged: Bool? = nil, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
@@ -195,33 +194,6 @@ open class ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Immuta
     public let taxCategory: Reference<TaxCategory>?
     public let state: Reference<State>?
     public let reviewRatingStatistics: ReviewRatingStatistics?
-
-    // MARK: - Mappable
-
-    public required init(map: Map) throws {
-        id                      = try map.value("id")
-        key                     = try? map.value("key")
-        version                 = try map.value("version")
-        createdAt               = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt          = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        productType             = try map.value("productType")
-        name                    = try map.value("name")
-        description             = try? map.value("description")
-        slug                    = try map.value("slug")
-        categories              = try map.value("categories")
-        categoryOrderHints      = try? map.value("categoryOrderHints")
-        metaTitle               = try? map.value("metaTitle")
-        metaDescription         = try? map.value("metaDescription")
-        metaKeywords            = try? map.value("metaKeywords")
-        searchKeywords          = try map.value("searchKeywords")
-        hasStagedChanges        = try map.value("hasStagedChanges")
-        published               = try map.value("published")
-        masterVariant           = try map.value("masterVariant")
-        variants                = try map.value("variants")
-        taxCategory             = try? map.value("taxCategory")
-        state                   = try? map.value("state")
-        reviewRatingStatistics  = try? map.value("reviewRatingStatistics")
-    }
 
     // MARK: - Helpers
 

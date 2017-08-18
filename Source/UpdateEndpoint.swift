@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import ObjectMapper
 
 /**
     All endpoints capable of being updated by UUID should conform to this protocol.
@@ -44,7 +43,7 @@ public protocol UpdateEndpoint: Endpoint {
     All update actions should conform to this protocol.
 */
 public protocol JSONRepresentable {
-    var toJSON: [String: Any] { get }
+    var toJSON: [String: Any]? { get }
 }
 
 /**
@@ -62,8 +61,15 @@ public struct UpdateActions<T: JSONRepresentable>: JSONRepresentable {
     public var version: UInt
     public var actions: [T]
 
-    public var toJSON: [String: Any] {
+    public var toJSON: [String: Any]? {
         return ["version": version, "actions": actions.map({ $0.toJSON })]
+//        do {
+//            let json = ["version": version, "actions": actions.map({ $0.toJSON })] as [String : Any]
+//            return try JSONSerialization.data(withJSONObject: json, options: [])
+//        } catch {
+//            Log.error("\(error)")
+//            return nil
+//        }
     }
 }
 
@@ -95,23 +101,8 @@ public extension UpdateEndpoint {
 }
 
 public extension JSONRepresentable {
-    func filterJSON(parameters: [String: Any?]) -> [String: Any] {
-        var filteredParameters: [String: Any] = [:]
-        parameters.keys.forEach {
-            if let value = parameters[$0] {
-                if let mappable = value as? BaseMappable {
-                    filteredParameters[$0] = mappable.toJSON()
-                } else {
-                    filteredParameters[$0] = value
-                }
-            }
-        }
+    func filterJSON(parameters: [String: Any?]) -> [String: Any]? {
+        let filteredParameters = parameters.filter({ $0.value != nil })
         return filteredParameters
-    }
-}
-
-public extension JSONRepresentable {
-    func toJSON<T: Mappable>(_ options: T) -> [String: Any] {
-        return Mapper<T>().toJSON(options)
     }
 }

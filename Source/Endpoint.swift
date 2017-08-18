@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import ObjectMapper
 
 /**
     Base type which all endpoints must conform to.
@@ -23,7 +22,7 @@ import ObjectMapper
 */
 public protocol Endpoint {
     
-    associatedtype ResponseType: ImmutableMappable
+    associatedtype ResponseType: Codable
 
     static var path: String { get }
 
@@ -32,9 +31,7 @@ public protocol Endpoint {
 /**
     Type used for endpoints which do not have any model specified yet.
 */
-public struct NoMapping: ImmutableMappable {
-    public init(map: Map) throws {}
-}
+public struct NoMapping: Codable {}
 
 public extension Endpoint {
 
@@ -91,8 +88,8 @@ public extension Endpoint {
                                               in dictionary format in case of a successful result.
     */
     static func handleResponse<T>(data: Data?, response: URLResponse?, error: Error?, result: (Result<T>) -> Void) {
-        if let data = data, let responseDict = try? JSONSerialization.jsonObject(with: data, options: []), let statusCode = (response as? HTTPURLResponse)?.statusCode, case 200 ... 299 = statusCode {
-            result(Result.success(responseDict))
+        if let data = data, let statusCode = (response as? HTTPURLResponse)?.statusCode, case 200 ... 299 = statusCode {
+            result(Result.success(data))
         } else {
             checkResponseForErrors(data: data, response: response, error: error, result: result)
         }
@@ -144,10 +141,15 @@ public extension Endpoint {
         urlParameters.forEach {
             queryItems.append(URLQueryItem(name: $0.key, value: $0.value))
         }
-        return request(url: url, method: method, queryItems: queryItems, json: json, headers: headers)
+        
+        var jsonData: Data?
+        if let json = json, let data = try? JSONSerialization.data(withJSONObject: json, options: []) {
+            jsonData = data
+        }
+        return request(url: url, method: method, queryItems: queryItems, json: jsonData, headers: headers)
     }
 
-    static func request(url: String, method: HTTPMethod = .get, queryItems: [URLQueryItem], json: [String: Any]? = nil, headers: [String: String] = [:]) -> URLRequest {
+    static func request(url: String, method: HTTPMethod = .get, queryItems: [URLQueryItem], json: Data? = nil, headers: [String: String] = [:]) -> URLRequest {
         var urlComponents = URLComponents(string: url)!
         urlComponents.queryItems = queryItems + (urlComponents.queryItems ?? [])
 
@@ -157,8 +159,8 @@ public extension Endpoint {
             urlRequest.addValue($0.value, forHTTPHeaderField: $0.key)
         }
 
-        if let json = json, let jsonData = try? JSONSerialization.data(withJSONObject: json, options: []) {
-            urlRequest.httpBody = jsonData
+        if let json = json {
+            urlRequest.httpBody = json
         }
 
         return urlRequest

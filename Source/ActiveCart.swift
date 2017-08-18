@@ -3,12 +3,11 @@
 //
 
 import Foundation
-import ObjectMapper
 
 /**
     Provides access to active cart endpoint.
 */
-class ActiveCart: Endpoint {
+struct ActiveCart: Endpoint {
     
     public typealias ResponseType = Cart
 

@@ -3,17 +3,16 @@
 //
 
 import Foundation
-import ObjectMapper
 
 /**
     Provides complete set of interactions for retrieving current customer profile, signing up,
     updating and profile deletion.
 */
-open class Customer: Endpoint, ImmutableMappable {
+public struct Customer: Endpoint, Codable {
     
     public typealias ResponseType = Customer
 
-    open static let path = "me"
+    public static let path = "me"
 
     // MARK: - Customer endpoint functionality
 
@@ -22,7 +21,7 @@ open class Customer: Endpoint, ImmutableMappable {
 
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func profile(expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    public static func profile(expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         customerProfileAction(method: .get, expansion: expansion, result: result)
     }
 
@@ -56,9 +55,9 @@ open class Customer: Endpoint, ImmutableMappable {
         - parameter profile:                  Dictionary representation of the draft customer profile to be created.
         - parameter result:                   The code to be executed after processing the response.
     */
-    static func signUp(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
+    static func signUp(_ profile: Data, result: @escaping (Result<CustomerSignInResult>) -> Void) {
         requestWithTokenAndPath(result, { token, path in
-            let request = self.request(url: "\(path)signup", method: .post, json: profile, headers: self.headers(token))
+            let request = self.request(url: "\(path)signup", method: .post, queryItems: [], json: profile, headers: self.headers(token))
 
             perform(request: request) { (response: Result<CustomerSignInResult>) in
                 result(response)
@@ -73,7 +72,7 @@ open class Customer: Endpoint, ImmutableMappable {
         - parameter actions:                  `UpdateActions<CustomerUpdateAction>`instance, containing correct version and update actions.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func update(actions: UpdateActions<CustomerUpdateAction>, result: @escaping (Result<ResponseType>) -> Void) {
+    public static func update(actions: UpdateActions<CustomerUpdateAction>, result: @escaping (Result<ResponseType>) -> Void) {        
         customerProfileAction(method: .post, json: actions.toJSON, result: result)
     }
 
@@ -84,7 +83,7 @@ open class Customer: Endpoint, ImmutableMappable {
         - parameter actions:                  An array of actions to be executed, in dictionary representation.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func update(version: UInt, actions: [[String: Any]], result: @escaping (Result<ResponseType>) -> Void) {
+    public static func update(version: UInt, actions: [[String: Any]], result: @escaping (Result<ResponseType>) -> Void) {
         customerProfileAction(method: .post, json: ["version": version, "actions": actions], result: result)
     }
 
@@ -94,7 +93,7 @@ open class Customer: Endpoint, ImmutableMappable {
         - parameter version:                  Customer profile version (for optimistic concurrency control).
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func delete(version: UInt, result: @escaping (Result<ResponseType>) -> Void) {
+    public static func delete(version: UInt, result: @escaping (Result<ResponseType>) -> Void) {
         customerProfileAction(method: .delete, urlParameters: ["version": String(version)], result: result)
     }
 
@@ -108,7 +107,7 @@ open class Customer: Endpoint, ImmutableMappable {
         - parameter version:                  Customer profile version (for optimistic concurrency control).
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func changePassword(currentPassword: String, newPassword: String, version: UInt,
+    public static func changePassword(currentPassword: String, newPassword: String, version: UInt,
                                result: @escaping (Result<ResponseType>) -> Void) {
 
         customerProfileAction(method: .post, basePath: "password", json: ["currentPassword": currentPassword,
@@ -135,7 +134,7 @@ open class Customer: Endpoint, ImmutableMappable {
         - parameter newPassword:              The new password.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func resetPassword(token: String, newPassword: String, result: @escaping (Result<ResponseType>) -> Void) {
+    public static func resetPassword(token: String, newPassword: String, result: @escaping (Result<ResponseType>) -> Void) {
 
         customerProfileAction(method: .post, basePath: "password/reset", json: ["tokenValue": token,
                               "newPassword": newPassword], result: result)
@@ -149,7 +148,7 @@ open class Customer: Endpoint, ImmutableMappable {
                                               Usually parsed from the account activation URL.
         - parameter result:                   The code to be executed after processing the response.
     */
-    open static func verifyEmail(token: String, result: @escaping (Result<ResponseType>) -> Void) {
+    public static func verifyEmail(token: String, result: @escaping (Result<ResponseType>) -> Void) {
 
         customerProfileAction(method: .post, basePath: "email/confirm", json: ["tokenValue": token], result: result)
     }
@@ -158,6 +157,7 @@ open class Customer: Endpoint, ImmutableMappable {
 
     public let id: String
     public let version: UInt
+    public let key: String?
     public let customerNumber: String?
     public let createdAt: Date
     public let lastModifiedAt: Date
@@ -179,38 +179,8 @@ open class Customer: Endpoint, ImmutableMappable {
     public let isEmailVerified: Bool
     public let externalId: String?
     public let customerGroup: Reference<CustomerGroup>?
-    public let custom: [String: Any]?
+    public let custom: JsonValue?
     public let locale: String?
-
-    // MARK: - Mappable
-
-    public required init(map: Map) throws {
-        id                        = try map.value("id")
-        version                   = try map.value("version")
-        customerNumber            = try? map.value("customerNumber")
-        createdAt                 = try map.value("createdAt", using: ISO8601DateTransform())
-        lastModifiedAt            = try map.value("lastModifiedAt", using: ISO8601DateTransform())
-        email                     = try map.value("email")
-        password                  = try map.value("password")
-        firstName                 = try? map.value("firstName")
-        lastName                  = try? map.value("lastName")
-        middleName                = try? map.value("middleName")
-        title                     = try? map.value("title")
-        salutation                = try? map.value("salutation")
-        dateOfBirth               = try? map.value("dateOfBirth", using: ISO8601DateTransform())
-        companyName               = try? map.value("companyName")
-        vatId                     = try? map.value("vatId")
-        addresses                 = try map.value("addresses")
-        defaultShippingAddressId  = try? map.value("defaultShippingAddressId")
-        shippingAddressIds        = try? map.value("shippingAddressIds")
-        defaultBillingAddressId   = try? map.value("defaultBillingAddressId")
-        billingAddressIds         = try? map.value("billingAddressIds")
-        isEmailVerified           = try map.value("isEmailVerified")
-        externalId                = try? map.value("externalId")
-        customerGroup             = try? map.value("customerGroup")
-        custom                    = try? map.value("custom")
-        locale                    = try? map.value("locale")
-    }
     
     // MARK: - Helpers
 

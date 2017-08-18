@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import ObjectMapper
 
 // MARK: - Configuration
 
@@ -49,7 +48,7 @@ public var authState: AuthManager.TokenState {
 
 // MARK: - Project settings
 
-public struct Project: Endpoint, ImmutableMappable {
+public struct Project: Endpoint, Codable {
     public typealias ResponseType = Project
     public static let path = ""
 
@@ -69,6 +68,10 @@ public struct Project: Endpoint, ImmutableMappable {
             }
         })
     }
+    
+    public struct Messages: Codable {
+        let enabled: Bool
+    }
 
     // MARK: - Properties
 
@@ -79,20 +82,7 @@ public struct Project: Endpoint, ImmutableMappable {
     public let languages: [String]
     public let createdAt: Date
     public let trialUntil: Date?
-    public let messagesEnabled: Bool
-
-    // MARK: - Mappable
-
-    public init(map: Map) throws {
-        key                       = try map.value("key")
-        name                      = try map.value("name")
-        countries                 = try map.value("countries")
-        currencies                = try map.value("currencies")
-        languages                 = try map.value("languages")
-        createdAt                 = try map.value("createdAt", using: ISO8601DateTransform())
-        trialUntil                = try? map.value("trialUntil", using: ISO8601DateTransform())
-        messagesEnabled           = try map.value("messages.enabled")
-    }
+    public let messages: Messages
 }
 
 /**
@@ -136,20 +126,36 @@ public func loginCustomer(username: String, password: String, activeCartSignInMo
     - parameter result:                   The code to be executed after processing the response.
 */
 public func signUpCustomer(_ profile: CustomerDraft, result: @escaping (Result<CustomerSignInResult>) -> Void) {
-    signUpCustomer(Mapper<CustomerDraft>().toJSON(profile), result: result)
+    do {
+        let jsonProfile = try jsonEncoder.encode(profile)
+        signUpCustomer(jsonProfile, result: result)
+    } catch {
+        result(.failure(nil, [error]))
+    }
 }
 
 /**
-    Creates new customer with specified profile.
-
-    - parameter profile:                  Dictionary representation of the draft customer profile to be created.
-    - parameter result:                   The code to be executed after processing the response.
-*/
+ Creates new customer with specified profile.
+ 
+ - parameter profile:                  Dictionary representation of the draft customer profile to be created.
+ - parameter result:                   The code to be executed after processing the response.
+ */
 public func signUpCustomer(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
+    do {
+        let jsonProfile = try jsonEncoder.encode(profile)
+        signUpCustomer(jsonProfile, result: result)
+    } catch {
+        result(.failure(nil, [error]))
+    }
+}
+
+public func signUpCustomer(_ profile: Data, result: @escaping (Result<CustomerSignInResult>) -> Void) {
     Customer.signUp(profile, result: { signUpResult in
         if signUpResult.isFailure {
             result(signUpResult)
-        } else if let username = signUpResult.model?.customer.email, let password = profile["password"] as? String {
+        } else if let username = signUpResult.model?.customer.email,
+                  let customerDraft = try? JSONSerialization.jsonObject(with: profile, options: []) as? [String: Any],
+                  let password = (customerDraft ?? [:])["password"] as? String {
             AuthManager.sharedInstance.loginCustomer(username: username, password: password) { error in
                 if let error = error {
                     result(.failure(nil, [error]))
@@ -183,12 +189,21 @@ public func obtainAnonymousToken(usingSession: Bool, anonymousId: String? = nil,
     AuthManager.sharedInstance.obtainAnonymousToken(usingSession: usingSession, anonymousId: anonymousId, completionHandler: completionHandler)
 }
 
-public class ISO8601DateTransform: DateFormatterTransform {
-    public init() {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+var dateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+    return formatter
+}()
 
-        super.init(dateFormatter: formatter)
-    }
-}
+var jsonDecoder: JSONDecoder = {
+    let jsonDecoder = JSONDecoder()
+    jsonDecoder.dateDecodingStrategy = .formatted(dateFormatter)
+    jsonDecoder.dataDecodingStrategy = .deferredToData
+    return jsonDecoder
+}()
+var jsonEncoder: JSONEncoder = {
+    let jsonEncoder = JSONEncoder()
+    jsonEncoder.dateEncodingStrategy = .formatted(dateFormatter)
+    return jsonEncoder
+}()
