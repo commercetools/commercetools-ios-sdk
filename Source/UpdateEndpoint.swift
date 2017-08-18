@@ -63,13 +63,6 @@ public struct UpdateActions<T: JSONRepresentable>: JSONRepresentable {
 
     public var toJSON: [String: Any]? {
         return ["version": version, "actions": actions.map({ $0.toJSON })]
-//        do {
-//            let json = ["version": version, "actions": actions.map({ $0.toJSON })] as [String : Any]
-//            return try JSONSerialization.data(withJSONObject: json, options: [])
-//        } catch {
-//            Log.error("\(error)")
-//            return nil
-//        }
     }
 }
 
