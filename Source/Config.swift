@@ -98,7 +98,10 @@ public class Config {
         - returns: The new `Config` instance if all configuration parameters were valid, 'nil' otherwise.
     */
     public convenience init?(path: String, loggingEnabled: Bool = true, logLevel: LogLevel = .debug) {
-        let plistFileName = path.hasSuffix(".plist") ? path.substring(to: path.characters.index(path.endIndex, offsetBy: -6)) : path
+        var plistFileName = path
+        if plistFileName.hasSuffix(".plist") {
+            plistFileName.removeSubrange(String.Index(encodedOffset: plistFileName.count - 6)...)
+        }
 
         guard let path = Bundle.main.path(forResource: plistFileName, ofType: "plist"),
         let config = NSDictionary(contentsOfFile: path) else {
