@@ -2,18 +2,34 @@
 
 <img src="https://raw.githubusercontent.com/commercetools/press-kit/master/PNG/72DPI/CT%20logo%20horizontal%20RGB%2072dpi.png" height="80" />
 
-[![][travis img]][travis]
-[![][cocoapods img]][cocoapods]
-[![][platforms img]][platforms]
-[![][license img]][license]
+<p>
+<a href="https://travis-ci.org/commercetools/commercetools-ios-sdk" target="_blank">
+<img src="https://travis-ci.org/commercetools/commercetools-ios-sdk.svg?branch=master">
+</a>
+<a href="http://cocoadocs.org/docsets/Commercetools" target="_blank">
+<img src="https://img.shields.io/cocoapods/v/Commercetools.svg">
+</a>
+<a href="https://developer.apple.com/swift/" target="_blank">
+<img src="https://img.shields.io/badge/Swift-4.0-orange.svg?style=flat" alt="Swift 4.0">
+</a>
+<a href="https://developer.apple.com/swift/" target="_blank">
+<img src="https://img.shields.io/badge/Platforms-iOS%20%7C%20macOS%20%7C%20watchOS%20%7C%20tvOS%20%7C%20Linux-4E4E4E.svg?colorA=EF5138" alt="Platforms iOS | macOS | watchOS | tvOS | Linux">
+</a>
+<a href="https://github.com/apple/swift-package-manager" target="_blank">
+<img src="https://img.shields.io/badge/SPM-compatible-brightgreen.svg?style=flat&colorB=64A5DE" alt="SPM compatible">
+</a>
+<a href="LICENSE" target="_blank">
+<img src="https://img.shields.io/badge/License-Apache%202-blue.svg">
+</a>
+</p>
 
 ## Installation
 
 ### Requirements
 
-- iOS 9.0+ / macOS 10.10+ / tvOS 9.0+ / watchOS 2.0+
-- Xcode 8.1+
-- Swift 3.0+
+- iOS 10.0+ / macOS 10.10+ / tvOS 9.0+ / watchOS 2.0+
+- Xcode 9.0+
+- Swift 4.0+
 
 ### CocoaPods
 
@@ -23,16 +39,16 @@
 $ gem install cocoapods
 ```
 
-> CocoaPods 1.1.0+ is required to build CommercetoolsSDK 0.3+.
+> CocoaPods 1.2.1+ is required to build CommercetoolsSDK 0.7+.
 
 To integrate CommercetoolsSDK into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '9.0'
+platform :ios, '10.0'
 use_frameworks!
 
-pod 'Commercetools', '~> 0.5'
+pod 'Commercetools', '~> 0.7'
 ```
 
 Then, run the following command:
@@ -499,17 +515,3 @@ private class Foobar: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoin
     static let path = "foobar"
 }
 ```
-
-[](definitions for the top badges)
-
-[travis]:https://travis-ci.org/commercetools/commercetools-ios-sdk
-[travis img]:https://travis-ci.org/commercetools/commercetools-ios-sdk.svg?branch=master
-
-[cocoapods]:http://cocoadocs.org/docsets/Commercetools
-[cocoapods img]:https://img.shields.io/cocoapods/v/Commercetools.svg
-
-[platforms]:http://cocoadocs.org/docsets/Commercetools
-[platforms img]:https://img.shields.io/cocoapods/p/Commercetools.svg?style=flat
-
-[license]:LICENSE
-[license img]:https://img.shields.io/badge/License-Apache%202-blue.svg
