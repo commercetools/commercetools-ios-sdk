@@ -1303,4 +1303,43 @@ public enum JsonValue: Codable {
             Log.error("Error while trying to encode unknown JsonValue")
         }
     }
+    
+    // MARK: - Convenience
+    
+    public var bool: Bool? {
+        if case .bool(let value) = self {
+            return value
+        }
+        return nil
+    }
+    public var int: Int? {
+        if case .int(let value) = self {
+            return value
+        }
+        return nil
+    }
+    public var double: Double? {
+        if case .double(let value) = self {
+            return value
+        }
+        return nil
+    }
+    public var string: String? {
+        if case .string(let value) = self {
+            return value
+        }
+        return nil
+    }
+    public var dictionary: [String: JsonValue]? {
+        if case .dictionary(let value) = self {
+            return value
+        }
+        return nil
+    }
+    public var array: [JsonValue]? {
+        if case .array(let value) = self {
+            return value
+        }
+        return nil
+    }
 }
