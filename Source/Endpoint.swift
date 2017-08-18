@@ -38,9 +38,11 @@ public extension Endpoint {
     /// The full path used to form requests for endpoints.
     static var fullPath: String? {
         if let config = Config.currentConfig, let apiUrl = config.apiUrl, let projectKey = config.projectKey {
-            return "\(apiUrl)\(projectKey)/"
-                    + (path.hasPrefix("/") ? path.substring(from: path.characters.index(path.startIndex, offsetBy: 1)) : path)
-                    + (path.hasSuffix("/") ? "" : "/")
+            var normalizedPath = path
+            if normalizedPath.hasPrefix("/") {
+                normalizedPath.remove(at: String.Index(encodedOffset: 0))
+            }
+            return "\(apiUrl)\(projectKey)/\(normalizedPath)" + (path.hasSuffix("/") ? "" : "/")
         }
         return nil
     }
@@ -54,8 +56,11 @@ public extension Endpoint {
         - returns: The full path with expansion parameters included.
     */
     static func pathWithExpansion(_ path: String, expansion: [String]?) -> String {
-        if let expansion = expansion, expansion.count > 0 {
-            var pathWithExpansion = path.hasSuffix("/") ? path.substring(to: path.characters.index(path.endIndex, offsetBy: -1)) : path
+        if let expansion = expansion?.map({ $0.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlPathAllowed) ?? "" }), expansion.count > 0 {
+            var pathWithExpansion = path
+            if pathWithExpansion.hasSuffix("/") {
+                pathWithExpansion.remove(at: String.Index(encodedOffset: pathWithExpansion.count - 1))
+            }
             pathWithExpansion += "?expand=" + expansion.joined(separator: "&expand=")
             return pathWithExpansion
 
