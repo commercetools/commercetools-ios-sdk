@@ -81,7 +81,6 @@ public struct Project: Endpoint, Codable {
     public let currencies: [String]
     public let languages: [String]
     public let createdAt: Date
-    public let trialUntil: Date?
     public let messages: Messages
 }
 
