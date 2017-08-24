@@ -125,6 +125,10 @@
 		21C6080A1CE006EE001A68A7 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C608081CE006EE001A68A7 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		21C6534D1CBE6292008E84B2 /* Commercetools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21C653421CBE6291008E84B2 /* Commercetools.framework */; };
 		21C653521CBE6292008E84B2 /* AuthManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C653511CBE6292008E84B2 /* AuthManagerTests.swift */; };
+		21D0939B1F4DEAC600AA167F /* ShoppingList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D0939A1F4DEAC600AA167F /* ShoppingList.swift */; };
+		21D0939C1F4DEAC600AA167F /* ShoppingList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D0939A1F4DEAC600AA167F /* ShoppingList.swift */; };
+		21D0939D1F4DEAC600AA167F /* ShoppingList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D0939A1F4DEAC600AA167F /* ShoppingList.swift */; };
+		21D0939E1F4DEAC600AA167F /* ShoppingList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D0939A1F4DEAC600AA167F /* ShoppingList.swift */; };
 		21D462041D23FD0A00CB8C8E /* CartTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D462031D23FD0A00CB8C8E /* CartTests.swift */; };
 		21DE0C741E70C74E00644A16 /* ShippingMethodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21DE0C731E70C74E00644A16 /* ShippingMethodTests.swift */; };
 		21F26D8F1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F26D8E1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift */; };
@@ -190,6 +194,7 @@
 		21C653421CBE6291008E84B2 /* Commercetools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Commercetools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		21C6534C1CBE6292008E84B2 /* Commercetools iOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Commercetools iOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		21C653511CBE6292008E84B2 /* AuthManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManagerTests.swift; sourceTree = "<group>"; };
+		21D0939A1F4DEAC600AA167F /* ShoppingList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingList.swift; sourceTree = "<group>"; };
 		21D462031D23FD0A00CB8C8E /* CartTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CartTests.swift; sourceTree = "<group>"; };
 		21DE0C731E70C74E00644A16 /* ShippingMethodTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShippingMethodTests.swift; sourceTree = "<group>"; };
 		21F26D8E1CD0B8B100DFFEB8 /* XCTestCase+Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Configuration.swift"; sourceTree = "<group>"; };
@@ -316,6 +321,7 @@
 				210BE39D07091D3D25A8B06A /* ProductType.swift */,
 				210BEA6FB439BA3428416ADA /* Order.swift */,
 				210BEA84C889E6D243236304 /* ShippingMethod.swift */,
+				21D0939A1F4DEAC600AA167F /* ShoppingList.swift */,
 			);
 			name = Endpoints;
 			sourceTree = "<group>";
@@ -614,6 +620,7 @@
 				2147DACB1DEBA9780073DEF4 /* TokenStore.swift in Sources */,
 				2147DAC61DEBA9780073DEF4 /* Commercetools.swift in Sources */,
 				2147DAC91DEBA9780073DEF4 /* AuthManager.swift in Sources */,
+				21D0939C1F4DEAC600AA167F /* ShoppingList.swift in Sources */,
 				2147DACC1DEBA9780073DEF4 /* Result.swift in Sources */,
 				2147DAC71DEBA9780073DEF4 /* Config.swift in Sources */,
 				2147DACA1DEBA9780073DEF4 /* CTError.swift in Sources */,
@@ -646,6 +653,7 @@
 				2147DAD21DEBA9790073DEF4 /* TokenStore.swift in Sources */,
 				2147DACD1DEBA9790073DEF4 /* Commercetools.swift in Sources */,
 				2147DAD01DEBA9790073DEF4 /* AuthManager.swift in Sources */,
+				21D0939D1F4DEAC600AA167F /* ShoppingList.swift in Sources */,
 				2147DAD31DEBA9790073DEF4 /* Result.swift in Sources */,
 				2147DACE1DEBA9790073DEF4 /* Config.swift in Sources */,
 				2147DAD11DEBA9790073DEF4 /* CTError.swift in Sources */,
@@ -678,6 +686,7 @@
 				2147DAD91DEBA9790073DEF4 /* TokenStore.swift in Sources */,
 				2147DAD41DEBA9790073DEF4 /* Commercetools.swift in Sources */,
 				2147DAD71DEBA9790073DEF4 /* AuthManager.swift in Sources */,
+				21D0939E1F4DEAC600AA167F /* ShoppingList.swift in Sources */,
 				2147DADA1DEBA9790073DEF4 /* Result.swift in Sources */,
 				2147DAD51DEBA9790073DEF4 /* Config.swift in Sources */,
 				2147DAD81DEBA9790073DEF4 /* CTError.swift in Sources */,
@@ -710,6 +719,7 @@
 				210BE0FB35AF665054D028C4 /* Commercetools.swift in Sources */,
 				210BEDC4D05E071DA9248E17 /* Config.swift in Sources */,
 				210BE9F03FC6EB74CA205C35 /* Log.swift in Sources */,
+				21D0939B1F4DEAC600AA167F /* ShoppingList.swift in Sources */,
 				210BEE7F0EF61808761BDBB5 /* AuthManager.swift in Sources */,
 				210BE7E502CA456C30566881 /* CTError.swift in Sources */,
 				210BEF7772BC10CA87E61644 /* TokenStore.swift in Sources */,
