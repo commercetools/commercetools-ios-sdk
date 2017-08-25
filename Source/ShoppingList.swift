@@ -20,7 +20,7 @@ public struct ShoppingList: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateE
     public let id: String
     public let key: String?
     public let version: UInt
-    public let DateTime: Date
+    public let createdAt: Date
     public let lastModifiedAt: Date
     public let slug: LocalizedString?
     public let name: LocalizedString

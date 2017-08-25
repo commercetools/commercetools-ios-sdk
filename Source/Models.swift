@@ -303,13 +303,21 @@ public struct ShoppingListDraft: Codable {
         self.custom = custom
         self.deleteDaysAfterLastModification = deleteDaysAfterLastModification
     }
-    
+
     public struct LineItemDraft: Codable {
         public var productId: String
         public var variantId: Int?
         public var quantity: Int?
         public var addedAt: Date?
         public var custom: JsonValue?
+
+        public init(productId: String, variantId: Int? = nil, quantity: Int? = nil, addedAt: Date? = nil, custom: JsonValue? = nil) {
+            self.productId = productId
+            self.variantId = variantId
+            self.quantity = quantity
+            self.addedAt = addedAt
+            self.custom = custom
+        }
     }
 }
 
