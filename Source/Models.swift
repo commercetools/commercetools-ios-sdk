@@ -173,7 +173,7 @@ public struct CartDraft: Codable {
 
     // MARK: - Properties
 
-    public var currency: String!
+    public var currency: String
     public var customerId: String?
     public var customerEmail: String?
     public var anonymousId: String?
@@ -229,8 +229,8 @@ public enum CartUpdateAction: JSONRepresentable {
     case addDiscountCode(code: String)
     case removeDiscountCode(discountCode: Reference<DiscountCode>)
     case recalculate(updateProductData: Bool?)
-    case setCustomType(type: ResourceIdentifier?, fields: [String: Data]?)
-    case setCustomField(name: String, value: Any?)
+    case setCustomType(type: ResourceIdentifier?, fields: JsonValue?)
+    case setCustomField(name: String, value: JsonValue?)
     case setLineItemCustomType(type: ResourceIdentifier?, lineItemId: String, fields: [String: Data]?)
     case setLineItemCustomField(lineItemId: String, name: String, value: Any?)
     case addPayment(payment: Reference<Payment>)
@@ -281,6 +281,122 @@ public enum CartUpdateAction: JSONRepresentable {
             return filterJSON(parameters: ["action": "changeTaxMode", "taxMode": taxMode.rawValue])
         case .setLocale(let locale):
             return filterJSON(parameters: ["action": "setLocale", "locale": locale])
+        case .setDeleteDaysAfterLastModification(let deleteDaysAfterLastModification):
+            return filterJSON(parameters: ["action": "setDeleteDaysAfterLastModification", "deleteDaysAfterLastModification": deleteDaysAfterLastModification])
+        }
+    }
+}
+
+public struct ShoppingListDraft: Codable {
+    public var name: LocalizedString
+    public var description: LocalizedString?
+    public var lineItems: [LineItemDraft]?
+    public var textLineItems: [TextLineItemDraft]?
+    public var custom: JsonValue?
+    public var deleteDaysAfterLastModification: Int?
+
+    public init(name: LocalizedString, description: LocalizedString? = nil, lineItems: [LineItemDraft]? = nil, textLineItems: [TextLineItemDraft]? = nil, custom: JsonValue? = nil, deleteDaysAfterLastModification: Int? = nil) {
+        self.name = name
+        self.description = description
+        self.lineItems = lineItems
+        self.textLineItems = textLineItems
+        self.custom = custom
+        self.deleteDaysAfterLastModification = deleteDaysAfterLastModification
+    }
+
+    public struct LineItemDraft: Codable {
+        public var productId: String
+        public var variantId: Int?
+        public var quantity: Int?
+        public var addedAt: Date?
+        public var custom: JsonValue?
+
+        public init(productId: String, variantId: Int? = nil, quantity: Int? = nil, addedAt: Date? = nil, custom: JsonValue? = nil) {
+            self.productId = productId
+            self.variantId = variantId
+            self.quantity = quantity
+            self.addedAt = addedAt
+            self.custom = custom
+        }
+    }
+}
+
+public struct TextLineItemDraft: Codable {
+    public var name: LocalizedString
+    public var description: LocalizedString?
+    public var quantity: Int?
+    public var addedAt: Date?
+    public var custom: JsonValue?
+
+    public init(name: LocalizedString, description: LocalizedString? = nil, quantity: Int? = nil, addedAt: Date? = nil, custom: JsonValue? = nil) {
+        self.name = name
+        self.description = description
+        self.quantity = quantity
+        self.addedAt = addedAt
+        self.custom = custom
+    }
+}
+
+public enum ShoppingListUpdateAction: JSONRepresentable {
+
+    case changeName(name: LocalizedString)
+    case setDescription(description: LocalizedString?)
+    case setCustomType(type: ResourceIdentifier?, fields: JsonValue?)
+    case setCustomField(name: String, value: JsonValue?)
+    case addLineItem(productId: String, variantId: Int?, quantity: Int?, addedAt: Date?, custom: JsonValue?)
+    case removeLineItem(lineItemId: String, quantity: Int?)
+    case changeLineItemQuantity(lineItemId: String, quantity: Int)
+    case changeLineItemsOrder(lineItemOrder: [String])
+    case setLineItemCustomType(lineItemId: String, type: ResourceIdentifier?, fields: JsonValue?)
+    case setLineItemCustomField(lineItemId: String, name: String, value: JsonValue?)
+    case addTextLineItem(name: LocalizedString, description: LocalizedString?, quantity: Int?, addedAt: Date?, custom: JsonValue?)
+    case removeTextLineItem(textLineItemId: String, quantity: Int?)
+    case changeTextLineItemQuantity(textLineItemId: String, quantity: Int)
+    case changeTextLineItemName(textLineItemId: String, name: LocalizedString)
+    case setTextLineItemDescription(textLineItemId: String, description: LocalizedString?)
+    case changeTextLineItemsOrder(textLineItemOrder: [String])
+    case setTextLineItemCustomType(lineItemId: String, type: ResourceIdentifier?, fields: JsonValue?)
+    case setTextLineItemCustomField(lineItemId: String, name: String, value: JsonValue?)
+    case setDeleteDaysAfterLastModification(deleteDaysAfterLastModification: UInt?)
+
+    public var toJSON: [String: Any]? {
+        switch self {
+        case .changeName(let name):
+            return filterJSON(parameters: ["action": "changeName", "name": name])
+        case .setDescription(let description):
+            return filterJSON(parameters: ["action": "setDescription", "name": description])
+        case .setCustomType(let type, let fields):
+            return filterJSON(parameters: ["action": "setCustomType", "type": type, "fields": fields])
+        case .setCustomField(let name, let value):
+            return filterJSON(parameters: ["action": "setCustomField", "name": name, "value": value])
+        case .addLineItem(let productId, let variantId, let quantity, let addedAt, let custom):
+            return filterJSON(parameters: ["action": "addLineItem", "productId": productId, "variantId": variantId, "quantity": quantity, "addedAt": addedAt, "custom": custom])
+        case .removeLineItem(let lineItemId, let quantity):
+            return filterJSON(parameters: ["action": "removeLineItem", "lineItemId": lineItemId, "quantity": quantity])
+        case .changeLineItemQuantity(let lineItemId, let quantity):
+            return filterJSON(parameters: ["action": "changeLineItemQuantity", "lineItemId": lineItemId, "quantity": quantity])
+        case .changeLineItemsOrder(let lineItemOrder):
+            return filterJSON(parameters: ["action": "changeLineItemsOrder", "lineItemOrder": lineItemOrder])
+        case .setLineItemCustomType(let lineItemId, let type, let fields):
+            return filterJSON(parameters: ["action": "setLineItemCustomType", "lineItemId": lineItemId, "type": type, "fields": fields])
+        case .setLineItemCustomField(let lineItemId, let name, let value):
+            return filterJSON(parameters: ["action": "setLineItemCustomField", "lineItemId": lineItemId, "name": name, "value": value])
+        case .addTextLineItem(let name, let description, let quantity, let addedAt, let custom):
+            return filterJSON(parameters: ["action": "addTextLineItem", "name": name, "description": description, "quantity": quantity, "addedAt": addedAt, "custom": custom])
+        case .removeTextLineItem(let textLineItemId, let quantity):
+            return filterJSON(parameters: ["action": "removeTextLineItem", "textLineItemId": textLineItemId, "quantity": quantity])
+        case .changeTextLineItemQuantity(let textLineItemId, let quantity):
+            return filterJSON(parameters: ["action": "changeTextLineItemQuantity", "textLineItemId": textLineItemId, "quantity": quantity])
+        case .changeTextLineItemName(let textLineItemId, let name):
+            return filterJSON(parameters: ["action": "changeTextLineItemName", "textLineItemId": textLineItemId, "name": name])
+        case .setTextLineItemDescription(let textLineItemId, let description):
+            return filterJSON(parameters: ["action": "setTextLineItemDescription", "textLineItemId": textLineItemId, "description": description])
+        case .changeTextLineItemsOrder(let textLineItemOrder):
+            return filterJSON(parameters: ["action": "changeTextLineItemsOrder", "textLineItemOrder": textLineItemOrder])
+        case .setTextLineItemCustomType(let lineItemId, let type, let fields):
+            return filterJSON(parameters: ["action": "setTextLineItemCustomType", "lineItemId": lineItemId, "type": type, "fields": fields])
+        case .setTextLineItemCustomField(let lineItemId, let name, let value):
+            return filterJSON(parameters: ["action": "setTextLineItemCustomField", "lineItemId": lineItemId, "name": name, "value": value])
         case .setDeleteDaysAfterLastModification(let deleteDaysAfterLastModification):
             return filterJSON(parameters: ["action": "setDeleteDaysAfterLastModification", "deleteDaysAfterLastModification": deleteDaysAfterLastModification])
         }
@@ -347,10 +463,10 @@ public struct CustomLineItemDraft: Codable {
 
     // MARK: - Properties
 
-    public var name: LocalizedString!
+    public var name: LocalizedString
     public var quantity: UInt?
-    public var money: Money!
-    public var slug: String!
+    public var money: Money
+    public var slug: String
     public var taxCategory: Reference<TaxCategory>?
     public var custom: JsonValue?
 
@@ -368,8 +484,8 @@ public struct CustomerDraft: Codable {
 
     // MARK: - Properties
 
-    public var email: String!
-    public var password: String!
+    public var email: String
+    public var password: String
     public var firstName: String?
     public var lastName: String?
     public var middleName: String?
@@ -441,8 +557,8 @@ public enum CustomerUpdateAction: JSONRepresentable {
     case setCompanyName(companyName: String?)
     case setDateOfBirth(dateOfBirth: Date?)
     case setVatId(vatId: String?)
-    case setCustomType(type: ResourceIdentifier?, fields: [String: Data]?)
-    case setCustomField(name: String, value: Any?)
+    case setCustomType(type: ResourceIdentifier?, fields: JsonValue?)
+    case setCustomField(name: String, value: JsonValue?)
     case setLocale(locale: String)
 
     public var toJSON: [String: Any]? {
@@ -591,9 +707,9 @@ public struct ExternalTaxRateDraft: Codable {
 
     // MARK: - Properties
 
-    public var name: String!
+    public var name: String
     public var amount: Double?
-    public var country: String!
+    public var country: String
     public var state: String?
     public var subRates: [SubRate]?
 
@@ -655,6 +771,18 @@ public struct LineItem: Codable {
     public let priceMode: LineItemPriceMode
     public let lineItemMode: LineItemMode
     public let custom: JsonValue?
+}
+
+public struct TextLineItem: Codable {
+    
+    // MARK: - Properties
+    
+    public let id: String
+    public let name: LocalizedString
+    public let description: LocalizedString?
+    public let quantity: Int
+    public let custom: JsonValue?
+    public let addedAt: Date
 }
 
 public class LineItemDraft: Codable {
@@ -973,7 +1101,7 @@ public struct ReturnItem: Codable {
     // MARK: - Properties
 
     public let id: String
-    public let quantity: UInt
+    public let quantity: Int
     public let lineItemId: String
     public let comment: String
     public let shipmentState: ReturnShipmentState
