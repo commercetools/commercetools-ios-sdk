@@ -6,8 +6,5 @@ import PackageDescription
 
 let package = Package(
     name: "Commercetools",
-    dependencies : [
-        .Package(url: "https://github.com/Hearst-DD/ObjectMapper.git", majorVersion: 2),
-    ],
     exclude: ["Tests"]
 )
