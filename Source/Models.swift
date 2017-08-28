@@ -2,7 +2,9 @@
 // Copyright (c) 2016 Commercetools. All rights reserved.
 //
 
-import CoreLocation
+#if !os(Linux)
+    import CoreLocation
+#endif
 
 public struct Address: Codable {
 
@@ -419,16 +421,18 @@ public struct Channel: Codable {
     public let reviewRatingStatistics: ReviewRatingStatistics?
     public let custom: JsonValue?
     public let geoLocation: JsonValue?
-    public var location: CLLocation? {
-        if let geoLocation = geoLocation, case .dictionary(let dictionary) = geoLocation,
-           let coordinatesValue = dictionary["coordinates"], let typeValue = dictionary["type"],
-           case .array(let coordinates) = coordinatesValue, case .string(let type) = typeValue,
-           case .double(let latitude) = coordinates[1], case .double(let longitude) = coordinates[0],
-           coordinates.count == 2 && type == "Point" {
-            return CLLocation(latitude: latitude, longitude: longitude)
+    #if !os(Linux)
+        public var location: CLLocation? {
+            if let geoLocation = geoLocation, case .dictionary(let dictionary) = geoLocation,
+                let coordinatesValue = dictionary["coordinates"], let typeValue = dictionary["type"],
+                case .array(let coordinates) = coordinatesValue, case .string(let type) = typeValue,
+                case .double(let latitude) = coordinates[1], case .double(let longitude) = coordinates[0],
+                coordinates.count == 2 && type == "Point" {
+                return CLLocation(latitude: latitude, longitude: longitude)
+            }
+            return nil
         }
-        return nil
-    }
+    #endif
 }
 
 public enum ChannelRole: String, Codable {
