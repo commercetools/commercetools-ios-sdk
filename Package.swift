@@ -1,10 +1,9 @@
-//
-// Copyright (c) 2016 Commercetools. All rights reserved.
-//
+// swift-tools-version:4.0
 
 import PackageDescription
 
 let package = Package(
     name: "Commercetools",
-    exclude: ["Tests"]
+    products: [.library(name: "Commercetools", targets: ["Commercetools"])],
+    targets: [.target(name: "Commercetools", dependencies: [], path: "Source")]
 )
