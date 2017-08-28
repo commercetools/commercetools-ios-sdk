@@ -12,6 +12,7 @@ class TokenStore: NSObject {
 
     // MARK: - Properties
 
+    #if !os(Linux)
     private let secMatchLimit: String! = kSecMatchLimit as String
     private let secReturnData: String! = kSecReturnData as String
     private let secValueData: String! = kSecValueData as String
@@ -21,6 +22,7 @@ class TokenStore: NSObject {
     private let secAttrGeneric: String! = kSecAttrGeneric as String
     private let secAttrAccount: String! = kSecAttrAccount as String
     private let secAttrAccessGroup: String! = kSecAttrAccessGroup as String
+    #endif
 
     /// The key used for storing access token.
     fileprivate var authAccessTokenKey: String {
@@ -50,6 +52,7 @@ class TokenStore: NSObject {
     /// The auth token which should be included in all requests against Commercetools service.
     var accessToken: String? {
         didSet {
+            #if !os(Linux)
             // Keychain write operation can be expensive, and we can do it asynchronously.
             serialQueue.async(execute: {
                 self.setObject(self.accessToken as NSCoding?, forKey: self.authAccessTokenKey)
@@ -57,12 +60,14 @@ class TokenStore: NSObject {
                     self.transferTokens()
                 #endif
             })
+            #endif
         }
     }
 
     /// The refresh token used to obtain new auth token for password flow.
     var refreshToken: String? {
         didSet {
+            #if !os(Linux)
             // Keychain write operation can be expensive, and we can do it asynchronously.
             serialQueue.async(execute: {
                 self.setObject(self.refreshToken as NSCoding?, forKey: self.authRefreshTokenKey)
@@ -70,12 +75,14 @@ class TokenStore: NSObject {
                     self.transferTokens()
                 #endif
             })
+            #endif
         }
     }
 
     /// The auth token valid before date.
     var tokenValidDate: Date? {
         didSet {
+            #if !os(Linux)
             // Keychain write operation can be expensive, and we can do it asynchronously.
             serialQueue.async(execute: {
                 self.setObject(self.tokenValidDate as NSCoding?, forKey: self.authTokenValidKey)
@@ -83,12 +90,14 @@ class TokenStore: NSObject {
                     self.transferTokens()
                 #endif
             })
+            #endif
         }
     }
 
     /// The auth token state.
     var tokenState: AuthManager.TokenState? {
         didSet {
+            #if !os(Linux)
             // Keychain write operation can be expensive, and we can do it asynchronously.
             serialQueue.async(execute: {
                 self.setObject(self.tokenState?.rawValue as NSCoding?, forKey: self.authTokenStateKey)
@@ -96,9 +105,10 @@ class TokenStore: NSObject {
                     self.transferTokens()
                 #endif
             })
+            #endif
         }
     }
-
+#if !os(Linux)
     /// The serial queue used for storing tokens to keychain.
     private let serialQueue = DispatchQueue(label: "com.commercetools.authQueue", attributes: [])
 
@@ -273,6 +283,7 @@ class TokenStore: NSObject {
 
         return keychainQueryDictionary
     }
+#endif
 }
 
 #if os(iOS) || os(watchOS)

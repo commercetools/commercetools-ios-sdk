@@ -72,7 +72,7 @@ public class Config {
     public private(set) var apiUrl: String?
 
     // MARK: - Lifecycle
-
+#if !os(Linux)
     /**
         Initializes the `Config` by reading configuration from `CommercetoolsConfig.plist` file in your app's bundle.
 
@@ -111,7 +111,7 @@ public class Config {
 
         self.init(config: config, loggingEnabled: loggingEnabled, logLevel: logLevel)
     }
-
+#endif
     /**
         Initializes the `Config` from the configuration dictionary.
 

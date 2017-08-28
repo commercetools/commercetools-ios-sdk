@@ -198,7 +198,6 @@ var dateFormatter: DateFormatter = {
 var jsonDecoder: JSONDecoder = {
     let jsonDecoder = JSONDecoder()
     jsonDecoder.dateDecodingStrategy = .formatted(dateFormatter)
-    jsonDecoder.dataDecodingStrategy = .deferredToData
     return jsonDecoder
 }()
 var jsonEncoder: JSONEncoder = {

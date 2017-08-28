@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import Dispatch
 
 /**
     Responsible for obtaining, refreshing and persisting OAuth token, both for client credentials and password flows.
@@ -218,7 +219,9 @@ open class AuthManager {
         different anonymous token preferences, they will be applied after this method call.
     */
     func updatedConfig() {
+        #if !os(Linux)
         tokenStore.reloadTokens()
+        #endif
 
         if let config = Config.currentConfig, config.validate() {
             usingAnonymousSession = config.anonymousSession

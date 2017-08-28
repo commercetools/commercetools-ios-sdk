@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import Dispatch
 
 /**
     Provides complete set of interactions for querying and retrieving product projections.

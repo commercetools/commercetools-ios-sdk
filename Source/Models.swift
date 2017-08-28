@@ -2,8 +2,9 @@
 // Copyright (c) 2016 Commercetools. All rights reserved.
 //
 
+import Foundation
 #if !os(Linux)
-    import CoreLocation
+import CoreLocation
 #endif
 
 public struct Address: Codable {

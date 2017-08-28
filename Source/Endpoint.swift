@@ -179,7 +179,7 @@ public extension Endpoint {
 }
 
 var urlSession: URLSession = {
-    var configuration = URLSessionConfiguration.ephemeral
+    var configuration = URLSessionConfiguration.default
     configuration.httpMaximumConnectionsPerHost = 8
     return URLSession(configuration: configuration)
 }()
@@ -218,8 +218,12 @@ var defaultHeaders: [String: String] = {
 /// The full user agent header sent with requests to the platform.
 var userAgent: String = {
     let commercetoolsSDK: String = {
+        #if !os(Linux)
         let commercetoolsSDKVersion = Bundle(for: Config.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
         return "commercetools-ios-sdk/\(commercetoolsSDKVersion)"
+        #else
+        return "commercetools-swift-sdk"
+        #endif
     }()
     let osNameVersion: String = {
         let version = ProcessInfo.processInfo.operatingSystemVersion
@@ -243,6 +247,7 @@ var userAgent: String = {
         return "\(osName)/\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
     }()
 
+    #if !os(Linux)
     if let info = Bundle.main.infoDictionary {
         let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
         let appVersion = info["CFBundleShortVersionString"] as? String ?? "Unknown"
@@ -253,6 +258,7 @@ var userAgent: String = {
 
         return "\(commercetoolsSDK) \(osNameVersion) \(executable)/\(appVersion)"
     }
+    #endif
 
     return "\(commercetoolsSDK) \(osNameVersion)"
 }()
