@@ -328,12 +328,12 @@ open class AuthManager {
     private func handleAuthResponse(data: Data?, response: URLResponse?, error: Error?, completionHandler: (String?, Error?) -> Void) {
         if let data = data, let responseJson = try? JSONSerialization.jsonObject(with: data, options: []),
            let responseDict = responseJson as? [String: Any], let accessToken = responseDict["access_token"] as? String,
-           let expiresIn = responseDict["expires_in"] as? Double {
+           let expiresIn = responseDict["expires_in"] as? Int {
 
             self.anonymousId = nil
             self.accessToken = accessToken
             // Subtracting 10 minutes from the valid period to compensate for the latency
-            self.tokenValidDate = Date().addingTimeInterval(expiresIn - 600)
+            self.tokenValidDate = Date().addingTimeInterval(Double(expiresIn - 600))
             self.refreshToken = responseDict["refresh_token"] as? String ?? self.refreshToken
             completionHandler(accessToken, nil)
 
