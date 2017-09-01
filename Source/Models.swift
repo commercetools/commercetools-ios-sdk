@@ -932,14 +932,12 @@ public struct TransactionDraft: Codable {
     public var type: TransactionType
     public var amount: Money
     public var interactionId: String?
-    public var state: TransactionState?
 
-    public init(timestamp: Date? = nil, type: TransactionType, amount: Money, interactionId: String? = nil, state: TransactionState? = nil) {
+    public init(timestamp: Date? = nil, type: TransactionType, amount: Money, interactionId: String? = nil) {
         self.timestamp = timestamp
         self.type = type
         self.amount = amount
         self.interactionId = interactionId
-        self.state = state
     }
 }
 
@@ -1388,7 +1386,7 @@ public struct Transaction: Codable {
 
 public enum TransactionState: String, Codable {
 
-    case pending = "Pending"
+    case initial = "Initial"
     case success = "Success"
     case failure = "Failure"
 }
