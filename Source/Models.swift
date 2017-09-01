@@ -916,7 +916,7 @@ public struct ParcelMeasurements: Codable {
 public struct PaymentDraft: Codable {
     public var amountPlanned: Money
     public var paymentMethodInfo: PaymentMethodInfo?
-	public var custom: JsonValue?
+    public var custom: JsonValue?
     public var transaction: TransactionDraft?
 
     public init(amountPlanned: Money, paymentMethodInfo: PaymentMethodInfo? = nil, custom: JsonValue? = nil, transaction: TransactionDraft? = nil) {
