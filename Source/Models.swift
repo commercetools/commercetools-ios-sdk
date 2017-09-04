@@ -1386,6 +1386,7 @@ public struct Transaction: Codable {
 
 public enum TransactionState: String, Codable {
 
+    case pending = "Pending"
     case initial = "Initial"
     case success = "Success"
     case failure = "Failure"
