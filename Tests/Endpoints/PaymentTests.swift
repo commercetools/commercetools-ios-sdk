@@ -217,28 +217,28 @@ class PaymentTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
     
-//    func testRefundNotAllowed() {
-//        let creationExpectation = expectation(description: "creation expectation")
-//        
-//        let username = "swift.sdk.test.user2@commercetools.com"
-//        let password = "password"
-//        
-//        AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
-//        
-//        let transactionDraft = TransactionDraft(type: .refund, amount: Money(currencyCode: "EUR", centAmount: 808))
-//        let paymentDraft = PaymentDraft(amountPlanned: Money(currencyCode: "EUR", centAmount: 808), paymentMethodInfo: PaymentMethodInfo(paymentInterface: nil, method: "VISA", name: nil), transaction: transactionDraft)
-//        
-//        Payment.create(paymentDraft) { result in
-//            if let error = result.errors?.first as? CTError, case .invalidJsonInputError(let reason) = error {
-//                XCTAssert(result.isFailure)
-//                XCTAssertEqual(result.statusCode, 400)
-//                XCTAssertEqual(reason.message, "Request body does not contain valid JSON.")
-//                XCTAssertEqual(reason.details, "transaction: Only Authorization or Charge allowed")
-//                creationExpectation.fulfill()
-//            }
-//        }
-//        
-//        waitForExpectations(timeout: 10, handler: nil)
-//    }
+    func testRefundNotAllowed() {
+        let creationExpectation = expectation(description: "creation expectation")
+
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+
+        AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
+
+        let transactionDraft = TransactionDraft(type: .refund, amount: Money(currencyCode: "EUR", centAmount: 808))
+        let paymentDraft = PaymentDraft(amountPlanned: Money(currencyCode: "EUR", centAmount: 808), paymentMethodInfo: PaymentMethodInfo(paymentInterface: nil, method: "VISA", name: nil), transaction: transactionDraft)
+
+        Payment.create(paymentDraft) { result in
+            if let error = result.errors?.first as? CTError, case .invalidJsonInputError(let reason) = error {
+                XCTAssert(result.isFailure)
+                XCTAssertEqual(result.statusCode, 400)
+                XCTAssertEqual(reason.message, "Request body does not contain valid JSON.")
+                XCTAssertEqual(reason.details, "transaction: Only Authorization or Charge allowed")
+                creationExpectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
 }
 
