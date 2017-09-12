@@ -229,11 +229,10 @@ class PaymentTests: XCTestCase {
         let paymentDraft = PaymentDraft(amountPlanned: Money(currencyCode: "EUR", centAmount: 808), paymentMethodInfo: PaymentMethodInfo(paymentInterface: nil, method: "VISA", name: nil), transaction: transactionDraft)
 
         Payment.create(paymentDraft) { result in
-            if let error = result.errors?.first as? CTError, case .invalidJsonInputError(let reason) = error {
+            if let error = result.errors?.first as? CTError, case .invalidInputError(let reason) = error {
                 XCTAssert(result.isFailure)
                 XCTAssertEqual(result.statusCode, 400)
-                XCTAssertEqual(reason.message, "Request body does not contain valid JSON.")
-                XCTAssertEqual(reason.details, "transaction: Only Authorization or Charge allowed")
+                XCTAssertEqual(reason.message, "The Transaction Type \'Refund is not allowed to be used on my payments. Only \'Authorization\' or \'Charge\' are allowed.")
                 creationExpectation.fulfill()
             }
         }

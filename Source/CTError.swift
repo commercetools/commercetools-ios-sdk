@@ -29,6 +29,7 @@ public enum CTError: Error {
     case configurationValidationFailed
     case accessTokenRetrievalFailed(reason: FailureReason)
     case invalidJsonInputError(reason: FailureReason)
+    case invalidInputError(reason: FailureReason)
     case resourceNotFoundError(reason: FailureReason)
     case concurrentModificationError(reason: FailureReason, currentVersion: UInt?)
     case insufficientTokenGrantTypeError(reason: FailureReason)
@@ -46,6 +47,8 @@ public enum CTError: Error {
             self = .accessTokenRetrievalFailed(reason: reason)
         case "InvalidJsonInput":
             self = .invalidJsonInputError(reason: reason)
+        case "InvalidInput":
+            self = .invalidInputError(reason: reason)
         case "ResourceNotFound":
             self = .resourceNotFoundError(reason: reason)
         case "ConcurrentModification":
@@ -70,6 +73,9 @@ extension CTError: LocalizedError {
         case .invalidJsonInputError(let reason):
             return "Invalid json input occurred\n\(reason.localizedDescription)\n" +
                     "It's very likely due to invalid 'create' or 'update' dictionary. Have a look at the API documentation."
+        case .invalidInputError(let reason):
+            return "Invalid input occurred\n\(reason.localizedDescription)\n" +
+            "It's very likely due to invalid invalid values, which are not according to our business rules. Have a look at the API documentation."
         case .resourceNotFoundError(let reason):
             return "The requested resource could not be found\n\(reason.localizedDescription)"
         case .concurrentModificationError(let reason, let currentVersion):
