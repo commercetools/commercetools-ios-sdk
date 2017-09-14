@@ -234,8 +234,8 @@ public enum CartUpdateAction: JSONRepresentable {
     case recalculate(updateProductData: Bool?)
     case setCustomType(type: ResourceIdentifier?, fields: JsonValue?)
     case setCustomField(name: String, value: JsonValue?)
-    case setLineItemCustomType(type: ResourceIdentifier?, lineItemId: String, fields: [String: Data]?)
-    case setLineItemCustomField(lineItemId: String, name: String, value: Any?)
+    case setLineItemCustomType(type: ResourceIdentifier?, lineItemId: String, fields: JsonValue?)
+    case setLineItemCustomField(lineItemId: String, name: String, value: JsonValue?)
     case addPayment(payment: Reference<Payment>)
     case removePayment(payment: Reference<Payment>)
     case changeTaxMode(taxMode: TaxMode)
@@ -246,8 +246,8 @@ public enum CartUpdateAction: JSONRepresentable {
         switch self {
         case .addLineItem(let lineItemDraft):
             return filterJSON(parameters: ["action": "addLineItem", "productId": lineItemDraft.productId, "sku": lineItemDraft.sku,
-                                           "quantity": lineItemDraft.quantity, "variantId": lineItemDraft.variantId, "supplyChannel": lineItemDraft.supplyChannel,
-                                           "distributionChannel": lineItemDraft.distributionChannel, "custom": lineItemDraft.custom])
+                                           "quantity": lineItemDraft.quantity, "variantId": lineItemDraft.variantId, "supplyChannel": lineItemDraft.supplyChannel?.toJSON,
+                                           "distributionChannel": lineItemDraft.distributionChannel?.toJSON, "custom": lineItemDraft.custom?.toJSON])
         case .removeLineItem(let lineItemId, let quantity):
             return filterJSON(parameters: ["action": "removeLineItem", "lineItemId": lineItemId, "quantity": quantity])
         case .changeLineItemQuantity(let lineItemId, let quantity):
@@ -255,31 +255,31 @@ public enum CartUpdateAction: JSONRepresentable {
         case .setCustomerEmail(let email):
             return filterJSON(parameters: ["action": "setCustomerEmail", "email": email])
         case .setShippingAddress(let address):
-            return filterJSON(parameters: ["action": "setShippingAddress", "address": address])
+            return filterJSON(parameters: ["action": "setShippingAddress", "address": address?.toJSON])
         case .setBillingAddress(let address):
-            return filterJSON(parameters: ["action": "setBillingAddress", "address": address])
+            return filterJSON(parameters: ["action": "setBillingAddress", "address": address?.toJSON])
         case .setCountry(let country):
             return filterJSON(parameters: ["action": "setCountry", "country": country])
         case .setShippingMethod(let shippingMethod):
-            return filterJSON(parameters: ["action": "setShippingMethod", "shippingMethod": shippingMethod])
+            return filterJSON(parameters: ["action": "setShippingMethod", "shippingMethod": shippingMethod?.toJSON])
         case .addDiscountCode(let code):
             return filterJSON(parameters: ["action": "addDiscountCode", "code": code])
         case .removeDiscountCode(let discountCode):
-            return filterJSON(parameters: ["action": "removeDiscountCode", "discountCode": discountCode])
+            return filterJSON(parameters: ["action": "removeDiscountCode", "discountCode": discountCode.toJSON])
         case .recalculate(let updateProductData):
             return filterJSON(parameters: ["action": "recalculate", "updateProductData": updateProductData])
         case .setCustomType(let type, let fields):
-            return filterJSON(parameters: ["action": "setCustomType", "type": type, "fields": fields])
+            return filterJSON(parameters: ["action": "setCustomType", "type": type?.toJSON, "fields": fields?.toJSON])
         case .setCustomField(let name, let value):
-            return filterJSON(parameters: ["action": "setCustomField", "name": name, "value": value])
+            return filterJSON(parameters: ["action": "setCustomField", "name": name, "value": value?.toJSON])
         case .setLineItemCustomType(let type, let lineItemId, let fields):
-            return filterJSON(parameters: ["action": "setLineItemCustomType", "type": type, "lineItemId": lineItemId, "fields": fields])
+            return filterJSON(parameters: ["action": "setLineItemCustomType", "type": type?.toJSON, "lineItemId": lineItemId, "fields": fields.toJSON])
         case .setLineItemCustomField(let lineItemId, let name, let value):
-            return filterJSON(parameters: ["action": "setLineItemCustomField", "lineItemId": lineItemId, "name": name, "value": value])
+            return filterJSON(parameters: ["action": "setLineItemCustomField", "lineItemId": lineItemId, "name": name, "value": value?.toJSON])
         case .addPayment(let payment):
-            return filterJSON(parameters: ["action": "addPayment", "payment": payment])
+            return filterJSON(parameters: ["action": "addPayment", "payment": payment.toJSON])
         case .removePayment(let payment):
-            return filterJSON(parameters: ["action": "removePayment", "payment": payment])
+            return filterJSON(parameters: ["action": "removePayment", "payment": payment.toJSON])
         case .changeTaxMode(let taxMode):
             return filterJSON(parameters: ["action": "changeTaxMode", "taxMode": taxMode.rawValue])
         case .setLocale(let locale):
@@ -581,9 +581,9 @@ public enum CustomerUpdateAction: JSONRepresentable {
         case .setSalutation(let salutation):
             return filterJSON(parameters: ["action": "setSalutation", "salutation": salutation])
         case .addAddress(let address):
-            return filterJSON(parameters: ["action": "addAddress", "address": address])
+            return filterJSON(parameters: ["action": "addAddress", "address": address.toJSON])
         case .changeAddress(let addressId, let address):
-            return filterJSON(parameters: ["action": "changeAddress", "addressId": addressId, "address": address])
+            return filterJSON(parameters: ["action": "changeAddress", "addressId": addressId, "address": address.toJSON])
         case .removeAddress(let addressId):
             return filterJSON(parameters: ["action": "removeAddress", "addressId": addressId])
         case .setDefaultShippingAddress(let addressId):
@@ -605,9 +605,9 @@ public enum CustomerUpdateAction: JSONRepresentable {
         case .setVatId(let vatId):
             return filterJSON(parameters: ["action": "setVatId", "vatId": vatId])
         case .setCustomType(let type, let fields):
-            return filterJSON(parameters: ["action": "setCustomType", "type": type, "fields": fields])
+            return filterJSON(parameters: ["action": "setCustomType", "type": type?.toJSON, "fields": fields?.toJSON])
         case .setCustomField(let name, let value):
-            return filterJSON(parameters: ["action": "setCustomField", "name": name, "value": value])
+            return filterJSON(parameters: ["action": "setCustomField", "name": name, "value": value?.toJSON])
         case .setLocale(let locale):
             return filterJSON(parameters: ["action": "setLocale", "locale": locale])
         }
@@ -913,27 +913,59 @@ public struct ParcelMeasurements: Codable {
     public let weightInGram: Double
 }
 
-public struct Payment: Codable {
+public struct PaymentDraft: Codable {
+    public var amountPlanned: Money
+    public var paymentMethodInfo: PaymentMethodInfo?
+    public var custom: JsonValue?
+    public var transaction: TransactionDraft?
 
-    // MARK: - Properties
+    public init(amountPlanned: Money, paymentMethodInfo: PaymentMethodInfo? = nil, custom: JsonValue? = nil, transaction: TransactionDraft? = nil) {
+        self.amountPlanned = amountPlanned
+        self.paymentMethodInfo = paymentMethodInfo
+        self.custom = custom
+        self.transaction = transaction
+    }
+}
 
-    public let id: String
-    public let version: UInt
-    public let customer: Reference<Customer>?
-    public let externalId: String?
-    public let interfaceId: String?
-    public let amountPlanned: Money
-    public let amountAuthorized: Money?
-    public let authorizedUntil: String?
-    public let amountPaid: Money?
-    public let amountRefunded: Money?
-    public let paymentMethodInfo: PaymentMethodInfo
-    public let paymentStatus: PaymentStatus
-    public let transactions: [Transaction]
-    public let interfaceInteractions: [[Data]]
-    public let custom: JsonValue?
-    public let createdAt: Date
-    public let lastModifiedAt: Date
+public struct TransactionDraft: Codable {
+    public var timestamp: Date?
+    public var type: TransactionType
+    public var amount: Money
+    public var interactionId: String?
+
+    public init(timestamp: Date? = nil, type: TransactionType, amount: Money, interactionId: String? = nil) {
+        self.timestamp = timestamp
+        self.type = type
+        self.amount = amount
+        self.interactionId = interactionId
+    }
+}
+
+public enum PaymentUpdateAction: JSONRepresentable {
+
+    case setMethodInfoInterface(interface: String)
+    case setMethodInfoMethod(method: String?)
+    case setMethodInfoName(name: LocalizedString?)
+    case addTransaction(transaction: TransactionDraft)
+    case setCustomField(name: String, value: JsonValue?)
+    case changeAmountPlanned(amount: Money)
+
+    public var toJSON: [String: Any]? {
+        switch self {
+        case .setMethodInfoInterface(let interface):
+            return filterJSON(parameters: ["action": "setMethodInfoInterface", "interface": interface])
+        case .setMethodInfoMethod(let method):
+            return filterJSON(parameters: ["action": "setMethodInfoMethod", "method": method])
+        case .setMethodInfoName(let name):
+            return filterJSON(parameters: ["action": "setMethodInfoName", "name": name])
+        case .addTransaction(let transaction):
+            return filterJSON(parameters: ["action": "addTransaction", "transaction": transaction.toJSON])
+        case .setCustomField(let name, let value):
+            return filterJSON(parameters: ["action": "setCustomField", "name": name, "value": value?.toJSON])
+        case .changeAmountPlanned(let amount):
+            return filterJSON(parameters: ["action": "changeAmountPlanned", "amount": amount.toJSON])
+        }
+    }
 }
 
 public struct PaymentInfo: Codable {
@@ -1355,6 +1387,7 @@ public struct Transaction: Codable {
 public enum TransactionState: String, Codable {
 
     case pending = "Pending"
+    case initial = "Initial"
     case success = "Success"
     case failure = "Failure"
 }

@@ -99,3 +99,11 @@ public extension JSONRepresentable {
         return filteredParameters
     }
 }
+
+extension Encodable {
+    public var toJSON: [String: Any]? {
+        guard let data = try? jsonEncoder.encode(self),
+              let json = try? JSONSerialization.jsonObject(with: data, options: []) else { return nil }
+        return json as? [String: Any]
+    }
+}
