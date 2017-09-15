@@ -2,7 +2,7 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
-- `0.7.x` Releases - [0.7.0](#070)
+- `0.7.x` Releases - [0.7.0](#070) | [0.7.1](#071)
 - `0.6.x` Releases - [0.6.0](#060) | [0.6.1](#061)
 - `0.5.x` Releases - [0.5.0](#050) | [0.5.1](#051) | [0.5.2](#052) | [0.5.3](#053) | [0.5.4](#054) | [0.5.5](#055) | [0.5.6](#056) | [0.5.7](#057) | [0.5.8](#058) | [0.5.9](#059)
 - `0.4.x` Releases - [0.4.0](#040) | [0.4.1](#041) | [0.4.2](#042)
@@ -12,6 +12,16 @@ All changes to this project will be documented in this file.
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.7.1](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.7.1)
+Released on 2017-09-15.
+
+#### Added
+- Support for `ShoppingList` endpoint.
+- Support for `Payment` endpoint.
+
+#### Removed
+- `trialUntil` field on `Project` settings.
 
 ## [0.7.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.7.0)
 Released on 2017-08-18.

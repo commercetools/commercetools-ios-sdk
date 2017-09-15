@@ -11,9 +11,3 @@ script:
   - set -o pipefail
   - xcodebuild -showsdks
   - xcodebuild -project Commercetools.xcodeproj -scheme "Commercetools iOS" -destination "platform=iOS Simulator,name=iPhone 6" test | xcpretty -c;
-
-deploy:
-  provider: script
-  script: ./scripts/deploy.sh
-  on:
-    tags: true
