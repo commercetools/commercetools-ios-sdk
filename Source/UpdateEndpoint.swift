@@ -107,3 +107,31 @@ extension Encodable {
         return json as? [String: Any]
     }
 }
+
+extension JsonValue {
+    public var toJSON: Any? {
+        switch self {
+        case .bool(let boolValue):
+            return boolValue
+        case .int(let intValue):
+            return intValue
+        case .double(let doubleValue):
+            return doubleValue
+        case .string(let stringValue):
+            return stringValue
+        case .dictionary(let dictionaryValue):
+            return dictionaryValue.reduce([String: Any]()) {
+                if let value = $1.value.toJSON {
+                    var result = $0
+                    result[$1.key] = value
+                    return result
+                }
+                return $0
+            }
+        case .array(let arrayValue):
+            return arrayValue.map { $0.toJSON }
+        case .unknown:
+            return nil
+        }
+    }
+}
