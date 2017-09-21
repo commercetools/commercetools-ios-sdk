@@ -1442,12 +1442,12 @@ public enum JsonValue: Codable {
         let value = try decoder.singleValueContainer()
         if let string = try? value.decode(String.self) {
             self = .string(value: string)
+        } else if let bool = try? value.decode(Bool.self) {
+            self = .bool(value: bool)
         } else if let int = try? value.decode(Int.self) {
             self = .int(value: int)
         } else if let double = try? value.decode(Double.self) {
             self = .double(value: double)
-        } else if let bool = try? value.decode(Bool.self) {
-            self = .bool(value: bool)
         } else if let dictionary = try? value.decode([String: JsonValue].self) {
             self = .dictionary(value: dictionary)
         } else if let array = try? value.decode([JsonValue].self) {
