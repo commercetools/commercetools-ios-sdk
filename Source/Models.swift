@@ -1313,6 +1313,7 @@ public enum TaxMode: String, Codable {
 
     case platform = "Platform"
     case external = "External"
+    case externalAmount = "ExternalAmount"
     case disabled = "Disabled"
 }
 
