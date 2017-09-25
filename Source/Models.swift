@@ -1230,6 +1230,12 @@ public struct ShippingInfo: Codable {
     public let shippingMethod: Reference<ShippingMethod>?
     public let deliveries: [Delivery]
     public let discountedPrice: DiscountedLineItemPrice?
+    public let shippingMethodState: ShippingMethodState
+}
+
+public enum ShippingMethodState: String, Codable {
+    case doesNotMatchCart = "DoesNotMatchCart"
+    case matchesCart = "MatchesCart"
 }
 
 public struct ShippingRate: Codable {
