@@ -70,6 +70,7 @@ public struct ShippingMethod: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Codabl
     public let taxCategory: Reference<TaxCategory>
     public let zoneRates: [ZoneRate]
     public let isDefault: Bool
+    public let predicate: String?
 }
 
 public struct ShippingMethods: ArrayResponse {
