@@ -272,6 +272,34 @@ class CartTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    func testDiscountCodeCustomFields() {
+        let discountCodeExpectation = expectation(description: "update expectation")
+
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+
+        AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
+
+        let cartDraft = CartDraft(currency: "EUR")
+
+        Cart.create(cartDraft, result: { result in
+            if let cart = result.model, result.isSuccess {
+                let updateActions = UpdateActions<CartUpdateAction>(version: cart.version, actions: [.addDiscountCode(code: "testCode")])
+
+                Cart.update(cart.id, actions: updateActions, expansion: ["discountCodes[0].discountCode"], result: { result in
+                    if let cart = result.model {
+                        let discountCode = cart.discountCodes.first!.discountCode.obj!
+                        XCTAssert(result.isSuccess)
+                        XCTAssertEqual(discountCode.custom?.dictionary?["fields"]?.dictionary?["testField"]?.string, "testValue")
+                        discountCodeExpectation.fulfill()
+                    }
+                })
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
     private func sampleLineItemDraft(_ completion: @escaping (LineItemDraft) -> Void) {
         ProductProjection.query(limit:1, result: { result in
             if let product = result.model?.results.first, result.isSuccess {

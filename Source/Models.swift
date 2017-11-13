@@ -649,6 +649,7 @@ public struct DiscountCode: Codable {
     public let references: [GenericReference]
     public let maxApplications: Int?
     public let maxApplicationsPerCustomer: Int?
+    public let custom: JsonValue?
 }
 
 public struct DiscountCodeInfo: Codable {
