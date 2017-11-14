@@ -153,6 +153,7 @@ public struct CartDiscount: Codable {
     public let validUntil: Date?
     public let requiresDiscountCode: Bool
     public let references: [GenericReference]
+    public let stackingMode: StackingMode
 }
 
 public struct CartDiscountTarget: Codable {
@@ -170,6 +171,14 @@ public struct CartDiscountValue: Codable {
     public let type: String
     public let permyriad: Int?
     public let money: Money?
+}
+
+public enum StackingMode: String, Codable {
+
+    // MARK: - Properties
+
+    case stacking = "Stacking"
+    case stopAfterThisDiscount = "StopAfterThisDiscount"
 }
 
 public struct CartDraft: Codable {
