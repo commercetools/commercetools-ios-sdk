@@ -470,7 +470,7 @@ public struct CustomLineItem: Codable {
     public let taxCategory: Reference<TaxCategory>?
     public let taxRate: TaxRate?
     public let discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]
-    public let custom: Data?
+    public let custom: JsonValue?
 }
 
 public struct CustomLineItemDraft: Codable {
@@ -1183,7 +1183,7 @@ public struct ReviewRatingStatistics: Codable {
     public let highestRating: Double
     public let lowestRating: Double
     public let count: UInt
-    public let ratingsDistribution: [Data]
+    public let ratingsDistribution: JsonValue
 }
 
 public struct ScopedPrice: Codable {
