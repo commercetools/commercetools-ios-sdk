@@ -76,6 +76,7 @@ public struct Asset: Codable {
     // MARK: - Properties
 
     public let id: String
+    public let key: String?
     public let sources: [AssetSource]
     public let name: LocalizedString
     public let description: LocalizedString?
