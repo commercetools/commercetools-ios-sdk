@@ -1055,6 +1055,8 @@ public struct ProductDiscount: Codable {
     public let predicate: String
     public let sortOrder: String
     public let isActive: Bool
+    public let validFrom: Date?
+    public let validUntil: Date?
     public let references: [GenericReference]
 }
 
