@@ -155,6 +155,7 @@ public struct CartDiscount: Codable {
     public let requiresDiscountCode: Bool
     public let references: [GenericReference]
     public let stackingMode: StackingMode
+    public let custom: JsonValue?
 }
 
 public struct CartDiscountTarget: Codable {
