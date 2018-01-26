@@ -672,9 +672,11 @@ public struct DiscountCodeInfo: Codable {
 public enum DiscountCodeState: String, Codable {
 
     case notActive = "NotActive"
+    case notValid = "NotValid"
     case doesNotMatchCart = "DoesNotMatchCart"
     case matchesCart = "MatchesCart"
     case maxApplicationReached = "MaxApplicationReached"
+    case applicationStoppedByPreviousDiscount = "ApplicationStoppedByPreviousDiscount"
 
 }
 
