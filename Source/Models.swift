@@ -124,15 +124,34 @@ public struct AttributeDefinition: Codable {
 
 public class AttributeType: Codable {
     
-    public init(name: String, elementType: AttributeType?) {
+    public init(name: String, elementType: AttributeType?, values: [EnumValue]?) {
         self.name = name
         self.elementType = elementType
+        self.values = values
     }
 
     // MARK: - Properties
 
     public let name: String
     public let elementType: AttributeType?
+    public let values: [EnumValue]?
+
+    public struct EnumValue: Codable {
+
+        public let key: String
+        public let label: JsonValue
+
+        public var stringLabel: String? {
+            return label.string
+        }
+        public var localizedStringLabel: LocalizedString? {
+            return label.dictionary?.keys.reduce(into: [String: String]()) {
+                if let stringValue = label.dictionary?[$1]?.string {
+                    $0[$1] = stringValue
+                }
+            }
+        }
+    }
 }
 
 public struct CartDiscount: Codable {
