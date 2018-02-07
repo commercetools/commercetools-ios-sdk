@@ -58,7 +58,7 @@ class ProductProjectionTests: XCTestCase {
 
         let searchExpectation = expectation(description: "search expectation")
 
-        ProductProjection.search(staged: true, filterFacets: "variants.attributes.color.key:\"red\"",
+        ProductProjection.search(staged: true, filterFacets: ["variants.attributes.color.key:\"red\""],
                                  facets: ["variants.attributes.color.key", "variants.attributes.commonSize.key"], result: { result in
             if let response = result.json, let facets = response["facets"] as? [String: AnyObject],
                     let colorFacets = facets["variants.attributes.color.key"] as? [String: AnyObject],
@@ -88,7 +88,7 @@ class ProductProjectionTests: XCTestCase {
 
         let searchExpectation = expectation(description: "search expectation")
 
-        ProductProjection.search(staged: true, filterFacets: "variants.attributes.color.key:\"red\"",
+        ProductProjection.search(staged: true, filterFacets: ["variants.attributes.color.key:\"red\""],
                                  facets: ["variants.attributes.color.key", "variants.attributes.commonSize.key"], result: { result in
             if let facets = result.model?.facets,
                     let colorFacets = facets.dictionary?["variants.attributes.color.key"]?.dictionary,
@@ -122,7 +122,7 @@ class ProductProjectionTests: XCTestCase {
             if let response = result.json, let results = response["results"] as? [[String: AnyObject]],
                     let taxCategoryId = results.first?["id"] as? String, result.isSuccess {
 
-                ProductProjection.search(staged: true, limit: 1, filterQuery: "taxCategory.id:\"\(taxCategoryId)\"",
+                ProductProjection.search(staged: true, limit: 1, filterQuery: ["taxCategory.id:\"\(taxCategoryId)\""],
                         result: { result in
 
                     if let response = result.json, let total = response["total"] as? Int {
