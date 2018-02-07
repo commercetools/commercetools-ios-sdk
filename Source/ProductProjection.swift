@@ -36,9 +36,9 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
                                               fuzzy level, if `fuzzy` is enabled.
         - parameter filters:                  An optional array of filters to be applied to the search results
                                               (after facets have been calculated).
-        - parameter filterQuery:              An optional filter to be applied to the search results
+        - parameter filterQuery:              An optional array of filters to be applied to the search results
                                               (before facets have been calculated).
-        - parameter filterFacets:             An optional filter for all facets calculations.
+        - parameter filterFacets:             An optional array of filters for all facets calculations.
         - parameter facets:                   An optional facets param used for calculating statistical counts
                                               to aid in faceted navigation.
         - parameter markMatchingVariants:     An optional boolean, specifying whether to mark product variants
@@ -51,10 +51,10 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
     */
     public static func search(staged: Bool? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil,
                             offset: UInt? = nil, lang: Locale = Locale.current, text: String? = nil,
-                            fuzzy: Bool? = nil, fuzzyLevel: Int? = nil, filters: [String]? = nil, filterQuery: String? = nil,
-                            filterFacets: String? = nil, facets: [String]? = nil, markMatchingVariants: Bool? = nil,
+                            fuzzy: Bool? = nil, fuzzyLevel: Int? = nil, filters: [String]? = nil, filterQuery: [String]? = nil,
+                            filterFacets: [String]? = nil, facets: [String]? = nil, markMatchingVariants: Bool? = nil,
                             priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
-                            priceChannel: String? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
+                            priceChannel: String? = nil, result: @escaping (Result<SearchResponse>) -> Void) {
 
         var parameters = queryParameters(predicates: nil, sort: sort, limit: limit, offset: offset)
         if let staged = staged {
@@ -69,7 +69,7 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
             let fullPath = pathWithExpansion("\(path)search", expansion: expansion)
             let request = self.request(url: fullPath, queryItems: parameters, headers: self.headers(token))
 
-            perform(request: request) { (response: Result<QueryResponse<ResponseType>>) in
+            perform(request: request) { (response: Result<SearchResponse>) in
                 result(response)
             }
         })
@@ -199,8 +199,8 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
     // MARK: - Helpers
 
     private static func searchParams(lang: Locale = Locale.current, text: String? = nil, fuzzy: Bool? = nil,
-                                     fuzzyLevel: Int? = nil, filters: [String]? = nil, filterQuery: String? = nil,
-                                     filterFacets: String? = nil, facets: [String]? = nil, markMatchingVariants: Bool? = nil,
+                                     fuzzyLevel: Int? = nil, filters: [String]? = nil, filterQuery: [String]? = nil,
+                                     filterFacets: [String]? = nil, facets: [String]? = nil, markMatchingVariants: Bool? = nil,
                                      priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
                                      priceChannel: String? = nil) -> [URLQueryItem] {
         var queryItems = [URLQueryItem]()
@@ -221,12 +221,12 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
             queryItems.append(URLQueryItem(name: "filter", value: $0))
         }
 
-        if let filterQuery = filterQuery {
-            queryItems.append(URLQueryItem(name: "filter.query", value: filterQuery))
+        filterQuery?.forEach {
+            queryItems.append(URLQueryItem(name: "filter.query", value: $0))
         }
 
-        if let filterFacets = filterFacets {
-            queryItems.append(URLQueryItem(name: "filter.facets", value: filterFacets))
+        filterFacets?.forEach {
+            queryItems.append(URLQueryItem(name: "filter.facets", value: $0))
         }
 
         facets?.forEach {
@@ -276,4 +276,15 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
             return projectLanguages?.first ?? locale.identifier
         }
     }
+}
+
+public struct SearchResponse: Codable {
+
+    // MARK: - Properties
+
+    public let offset: UInt
+    public let count: UInt
+    public let total: UInt
+    public let results: [ProductProjection]
+    public let facets: JsonValue
 }

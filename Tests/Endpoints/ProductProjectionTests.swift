@@ -59,7 +59,7 @@ class ProductProjectionTests: XCTestCase {
         let searchExpectation = expectation(description: "search expectation")
 
         ProductProjection.search(staged: true, filterFacets: "variants.attributes.color.key:\"red\"",
-                facets: ["variants.attributes.color.key", "variants.attributes.commonSize.key"], result: { result in
+                                 facets: ["variants.attributes.color.key", "variants.attributes.commonSize.key"], result: { result in
             if let response = result.json, let facets = response["facets"] as? [String: AnyObject],
                     let colorFacets = facets["variants.attributes.color.key"] as? [String: AnyObject],
                     let colorFacetsTotal = colorFacets["total"] as? UInt, let colorTerms = colorFacets["terms"] as? [[String: AnyObject]],
@@ -68,6 +68,36 @@ class ProductProjectionTests: XCTestCase {
                     let sizeFacets = facets["variants.attributes.commonSize.key"] as? [String: AnyObject],
                     let sizeFacetsTotal = sizeFacets["total"] as? UInt, let sizeTerms = sizeFacets["terms"] as? [[String: AnyObject]],
                     let xxxlTerm = sizeTerms.first!["term"] as? String, let xxxlCount = sizeTerms.first!["count"] as? UInt {
+
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(colorFacetsTotal, 775)
+                XCTAssertEqual(blueTerm, "blue")
+                XCTAssertEqual(blueCount, 130)
+                XCTAssertEqual(sizeFacetsTotal, 29)
+                XCTAssertEqual(xxxlTerm, "xxxl")
+                XCTAssertEqual(xxxlCount, 7)
+
+                searchExpectation.fulfill()
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testSearchFacetsModel() {
+
+        let searchExpectation = expectation(description: "search expectation")
+
+        ProductProjection.search(staged: true, filterFacets: "variants.attributes.color.key:\"red\"",
+                                 facets: ["variants.attributes.color.key", "variants.attributes.commonSize.key"], result: { result in
+            if let facets = result.model?.facets,
+                    let colorFacets = facets.dictionary?["variants.attributes.color.key"]?.dictionary,
+                    let colorFacetsTotal = colorFacets["total"]?.int, let colorTerms = colorFacets["terms"]?.array,
+                    let blueTerm = colorTerms.first?.dictionary?["term"]?.string, let blueCount = colorTerms.first?.dictionary?["count"]?.int,
+
+                    let sizeFacets = facets.dictionary?["variants.attributes.commonSize.key"]?.dictionary,
+                    let sizeFacetsTotal = sizeFacets["total"]?.int, let sizeTerms = sizeFacets["terms"]?.array,
+                    let xxxlTerm = sizeTerms.first?.dictionary?["term"]?.string, let xxxlCount = sizeTerms.first?.dictionary?["count"]?.int {
 
                 XCTAssert(result.isSuccess)
                 XCTAssertEqual(colorFacetsTotal, 775)
