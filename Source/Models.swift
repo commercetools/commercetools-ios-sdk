@@ -675,6 +675,7 @@ public struct DiscountCode: Codable {
     public let code: String
     public let cartDiscounts: [Reference<CartDiscount>]
     public let cartPredicate: String?
+    public let groups: [String]
     public let isActive: Bool
     public let validFrom: Date?
     public let validUntil: Date?
