@@ -780,6 +780,13 @@ public enum InventoryMode: String, Codable {
 
 }
 
+public enum CartOrigin: String, Codable {
+
+    case customer = "Customer"
+    case merchant = "Merchant"
+
+}
+
 public struct ItemState: Codable {
 
     // MARK: - Properties

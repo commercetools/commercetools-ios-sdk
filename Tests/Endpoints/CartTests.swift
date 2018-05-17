@@ -262,7 +262,7 @@ class CartTests: XCTestCase {
                     Cart.update(cart.id, version: cart.version, actions: [["action": "setCustomShippingMethod", "shippingMethodName": "test",
                                                                            "shippingRate": ["currencyCode": "EUR", "centAmount": 8000]]], result: { result in
                         XCTAssert(result.isFailure)
-                        XCTAssertEqual(result.errors!.first!.localizedDescription, "Invalid json input occurred\nRequest body does not contain valid JSON.: actions: Invalid type value \'setCustomShippingMethod\' in \'{\"shippingMethodName\":\"test\",\"action\":\"setCustomShippingMethod\",\"shippingRate\":{\"currencyCode\":\"EUR\",\"centAmount\":8000}}\'\nIt\'s very likely due to invalid \'create\' or \'update\' dictionary. Have a look at the API documentation.")
+                        XCTAssert(result.errors!.first!.localizedDescription.contains("Invalid json input occurred\nRequest body does not contain valid JSON.: actions: Invalid type value \'setCustomShippingMethod\'"))
                         cartExpectation.fulfill()
                     })
                 }

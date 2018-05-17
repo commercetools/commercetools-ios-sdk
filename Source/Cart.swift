@@ -52,6 +52,7 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
     public let paymentInfo: PaymentInfo?
     public let locale: String?
     public let deleteDaysAfterLastModification: UInt?
+    public let origin: CartOrigin
     public let createdAt: Date
     public let lastModifiedAt: Date
 }
