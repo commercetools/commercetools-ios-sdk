@@ -562,6 +562,7 @@ public struct CustomerGroup: Codable {
     public let createdAt: Date
     public let lastModifiedAt: Date
     public let name: String
+    public let custom: JsonValue?
 }
 
 public struct CustomerSignInResult: Codable {
