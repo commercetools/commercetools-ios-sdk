@@ -12,6 +12,7 @@ public struct Address: Codable {
     // MARK: - Properties
 
     public let id: String?
+    public let key: String?
     public let title: String?
     public let salutation: String?
     public let firstName: String?
@@ -36,8 +37,9 @@ public struct Address: Codable {
     public let additionalAddressInfo: String?
     public let externalId: String?
     
-    public init(id: String? = nil, title: String? = nil, salutation: String? = nil, firstName: String? = nil, lastName: String? = nil, streetName: String? = nil, streetNumber: String? = nil, city: String? = nil, region: String? = nil, postalCode: String? = nil, additionalStreetInfo: String? = nil, state: String? = nil, country: String, company: String? = nil, department: String? = nil, building: String? = nil, apartment: String? = nil, pOBox: String? = nil, phone: String? = nil, mobile: String? = nil, email: String? = nil, fax: String? = nil, additionalAddressInfo: String? = nil, externalId: String? = nil) {
+    public init(id: String? = nil, key: String? = nil, title: String? = nil, salutation: String? = nil, firstName: String? = nil, lastName: String? = nil, streetName: String? = nil, streetNumber: String? = nil, city: String? = nil, region: String? = nil, postalCode: String? = nil, additionalStreetInfo: String? = nil, state: String? = nil, country: String, company: String? = nil, department: String? = nil, building: String? = nil, apartment: String? = nil, pOBox: String? = nil, phone: String? = nil, mobile: String? = nil, email: String? = nil, fax: String? = nil, additionalAddressInfo: String? = nil, externalId: String? = nil) {
         self.id = id
+        self.key = key
         self.title = title
         self.salutation = salutation
         self.firstName = firstName
@@ -207,37 +209,33 @@ public struct CartDraft: Codable {
     // MARK: - Properties
 
     public var currency: String
-    public var customerId: String?
     public var customerEmail: String?
-    public var anonymousId: String?
     public var country: String?
     public var inventoryMode: InventoryMode?
     public var taxMode: TaxMode?
     public var lineItems: [LineItemDraft]?
-    public var customLineItems: [CustomLineItemDraft]?
     public var shippingAddress: Address?
     public var billingAddress: Address?
     public var shippingMethod: Reference<ShippingMethod>?
     public var custom: JsonValue?
     public var locale: String?
     public var deleteDaysAfterLastModification: UInt?
+    public var itemShippingAddresses: [Address]
 
-    public init(currency: String, customerId: String? = nil, customerEmail: String? = nil, anonymousId: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, customLineItems: [CustomLineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: Reference<ShippingMethod>? = nil, custom: JsonValue? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil) {
+    public init(currency: String, customerEmail: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: Reference<ShippingMethod>? = nil, custom: JsonValue? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil, itemShippingAddresses: [Address] = []) {
         self.currency = currency
-        self.customerId = customerId
         self.customerEmail = customerEmail
-        self.anonymousId = anonymousId
         self.country = country
         self.inventoryMode = inventoryMode
         self.taxMode = taxMode
         self.lineItems = lineItems
-        self.customLineItems = customLineItems
         self.shippingAddress = shippingAddress
         self.billingAddress = billingAddress
         self.shippingMethod = shippingMethod
         self.custom = custom
         self.locale = locale
         self.deleteDaysAfterLastModification = deleteDaysAfterLastModification
+        self.itemShippingAddresses = itemShippingAddresses
     }
 }
 
@@ -252,7 +250,7 @@ public enum CartState: String, Codable {
 public enum CartUpdateAction: JSONRepresentable {
 
     case addLineItem(lineItemDraft: LineItemDraft)
-    case removeLineItem(lineItemId: String, quantity: UInt?)
+    case removeLineItem(lineItemId: String, quantity: UInt?, shippingDetailsToRemove: ItemShippingDetailsDraft?)
     case changeLineItemQuantity(lineItemId: String, quantity: UInt)
     case setCustomerEmail(email: String?)
     case setShippingAddress(address: Address?)
@@ -271,6 +269,11 @@ public enum CartUpdateAction: JSONRepresentable {
     case changeTaxMode(taxMode: TaxMode)
     case setLocale(locale: String)
     case setDeleteDaysAfterLastModification(deleteDaysAfterLastModification: UInt?)
+    case addItemShippingAddress(address: Address)
+    case removeItemShippingAddress(addressKey: String)
+    case updateItemShippingAddress(address: Address)
+    case applyDeltaToLineItemShippingDetailsTargets(lineItemId: String, targetsDelta: [ItemShippingTarget])
+    case setLineItemShippingDetails(lineItemId: String, shippingDetails: ItemShippingDetailsDraft?)
 
     public var toJSON: [String: Any]? {
         switch self {
@@ -278,8 +281,8 @@ public enum CartUpdateAction: JSONRepresentable {
             return filterJSON(parameters: ["action": "addLineItem", "productId": lineItemDraft.productId, "sku": lineItemDraft.sku,
                                            "quantity": lineItemDraft.quantity, "variantId": lineItemDraft.variantId, "supplyChannel": lineItemDraft.supplyChannel?.toJSON,
                                            "distributionChannel": lineItemDraft.distributionChannel?.toJSON, "custom": lineItemDraft.custom?.toJSON])
-        case .removeLineItem(let lineItemId, let quantity):
-            return filterJSON(parameters: ["action": "removeLineItem", "lineItemId": lineItemId, "quantity": quantity])
+        case .removeLineItem(let lineItemId, let quantity, let shippingDetailsToRemove):
+            return filterJSON(parameters: ["action": "removeLineItem", "lineItemId": lineItemId, "quantity": quantity, "shippingDetailsToRemove": shippingDetailsToRemove])
         case .changeLineItemQuantity(let lineItemId, let quantity):
             return filterJSON(parameters: ["action": "changeLineItemQuantity", "lineItemId": lineItemId, "quantity": quantity])
         case .setCustomerEmail(let email):
@@ -316,6 +319,16 @@ public enum CartUpdateAction: JSONRepresentable {
             return filterJSON(parameters: ["action": "setLocale", "locale": locale])
         case .setDeleteDaysAfterLastModification(let deleteDaysAfterLastModification):
             return filterJSON(parameters: ["action": "setDeleteDaysAfterLastModification", "deleteDaysAfterLastModification": deleteDaysAfterLastModification])
+        case .addItemShippingAddress(let address):
+            return filterJSON(parameters: ["action": "addItemShippingAddress", "address": address])
+        case .removeItemShippingAddress(let addressKey):
+            return filterJSON(parameters: ["action": "removeItemShippingAddress", "addressKey": addressKey])
+        case .updateItemShippingAddress(let address):
+            return filterJSON(parameters: ["action": "updateItemShippingAddress", "address": address])
+        case .applyDeltaToLineItemShippingDetailsTargets(let lineItemId, let targetsDelta):
+            return filterJSON(parameters: ["action": "applyDeltaToLineItemShippingDetailsTargets", "lineItemId": lineItemId, "targetsDelta": targetsDelta.map({ $0.toJSON })])
+        case .setLineItemShippingDetails(let lineItemId, let shippingDetails):
+            return filterJSON(parameters: ["action": "setLineItemShippingDetails", "lineItemId": lineItemId, "shippingDetails": shippingDetails])
         }
     }
 }
@@ -492,27 +505,7 @@ public struct CustomLineItem: Codable {
     public let taxRate: TaxRate?
     public let discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]
     public let custom: JsonValue?
-}
-
-public struct CustomLineItemDraft: Codable {
-
-    // MARK: - Properties
-
-    public var name: LocalizedString
-    public var quantity: UInt?
-    public var money: Money
-    public var slug: String
-    public var taxCategory: Reference<TaxCategory>?
-    public var custom: JsonValue?
-
-    public init(name: LocalizedString, quantity: UInt? = nil, money: Money, slug: String, taxCategory: Reference<TaxCategory>? = nil, custom: JsonValue? = nil) {
-        self.name = name
-        self.quantity = quantity
-        self.money = money
-        self.slug = slug
-        self.taxCategory = taxCategory
-        self.custom = custom
-    }
+    public let shippingDetails: ItemShippingDetails?
 }
 
 public struct CustomerDraft: Codable {
@@ -764,6 +757,27 @@ public struct ExternalTaxRateDraft: Codable {
     }
 }
 
+public struct ItemShippingDetails: Codable {
+
+    // MARK: - Properties
+
+    public let targets: [ItemShippingTarget]
+    public let valid: Bool
+}
+
+public struct ItemShippingTarget: Codable {
+
+    // MARK: - Properties
+
+    public let addressKey: String
+    public let quantity: Int
+
+    public init(addressKey: String, quantity: Int) {
+        self.addressKey = addressKey
+        self.quantity = quantity
+    }
+}
+
 public struct Image: Codable {
 
     // MARK: - Properties
@@ -820,6 +834,7 @@ public struct LineItem: Codable {
     public let priceMode: LineItemPriceMode
     public let lineItemMode: LineItemMode
     public let custom: JsonValue?
+    public let shippingDetails: ItemShippingDetails?
 }
 
 public struct TextLineItem: Codable {
@@ -860,8 +875,9 @@ public class LineItemDraft: Codable {
     public var supplyChannel: Reference<Channel>?
     public var distributionChannel: Reference<Channel>?
     public var custom: JsonValue?
+    public var shippingDetails: ItemShippingDetailsDraft?
 
-    public init(productVariantSelection: ProductVariantSelection, quantity: UInt? = nil, supplyChannel: Reference<Channel>? = nil, distributionChannel: Reference<Channel>? = nil, custom: JsonValue? = nil) {
+    public init(productVariantSelection: ProductVariantSelection, quantity: UInt? = nil, supplyChannel: Reference<Channel>? = nil, distributionChannel: Reference<Channel>? = nil, custom: JsonValue? = nil, shippingDetails: ItemShippingDetailsDraft? = nil) {
         switch productVariantSelection {
         case .productVariant(let productId, let variantId):
             self.productId = productId
@@ -876,7 +892,12 @@ public class LineItemDraft: Codable {
         self.supplyChannel = supplyChannel
         self.distributionChannel = distributionChannel
         self.custom = custom
+        self.shippingDetails = shippingDetails
     }
+}
+
+public struct ItemShippingDetailsDraft: Codable {
+    public var targets: [ItemShippingTarget]
 }
 
 public enum LineItemPriceMode: String, Codable {

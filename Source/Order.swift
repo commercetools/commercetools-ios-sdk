@@ -49,4 +49,6 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
     public let paymentInfo: PaymentInfo?
     public let locale: String?
     public let inventoryMode: InventoryMode
+    public let origin: CartOrigin
+    public let itemShippingAddresses: [Address]
 }
