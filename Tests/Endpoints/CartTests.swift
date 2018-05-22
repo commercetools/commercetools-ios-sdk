@@ -300,6 +300,41 @@ class CartTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
     }
 
+    func testItemShippingAddresses() {
+        let itemAddressExpectation = expectation(description: "item shipping addresses expectation")
+
+        let username = "swift.sdk.test.user2@commercetools.com"
+        let password = "password"
+
+        AuthManager.sharedInstance.loginCustomer(username: username, password: password, completionHandler: { _ in})
+
+        sampleLineItemDraft { lineItemDraft in
+            lineItemDraft.shippingDetails = ItemShippingDetailsDraft(targets: [ItemShippingTarget(addressKey: "test-key-1", quantity: 1), ItemShippingTarget(addressKey: "test-key-2", quantity: 1)])
+            lineItemDraft.quantity = 2
+            let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft], itemShippingAddresses: [Address(key: "test-key-1", country: "DE"), Address(key: "test-key-2", country: "DE")])
+
+            Cart.create(cartDraft, result: { result in
+                if let cart = result.model {
+                    XCTAssert(result.isSuccess)
+                    XCTAssertEqual(cart.itemShippingAddresses.count, 2)
+                    XCTAssertEqual(cart.lineItems.first!.shippingDetails!.targets[0].quantity, 1)
+                    XCTAssertEqual(cart.lineItems.first!.shippingDetails!.targets[1].quantity, 1)
+                    Cart.update(cart.id, actions: UpdateActions(version: cart.version, actions: [.applyDeltaToLineItemShippingDetailsTargets(lineItemId: cart.lineItems.first!.id, targetsDelta: [ItemShippingTarget(addressKey: "test-key-1", quantity: 1), ItemShippingTarget(addressKey: "test-key-2", quantity: -1)])]), result: { result in
+                        if let cart = result.model, result.isSuccess {
+                            XCTAssert(result.isSuccess)
+                            XCTAssertEqual(cart.itemShippingAddresses.count, 2)
+                            XCTAssertEqual(cart.lineItems.first!.shippingDetails!.targets.count, 1)
+                            XCTAssertEqual(cart.lineItems.first!.shippingDetails!.targets.first(where: { $0.addressKey == "test-key-1" })!.quantity, 2)
+                            itemAddressExpectation.fulfill()
+                        }
+                    })
+                }
+            })
+        }
+
+        waitForExpectations(timeout: 100000, handler: nil)
+    }
+
     private func sampleLineItemDraft(_ completion: @escaping (LineItemDraft) -> Void) {
         ProductProjection.query(limit:1, result: { result in
             if let product = result.model?.results.first, result.isSuccess {
