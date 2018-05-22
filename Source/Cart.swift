@@ -55,4 +55,5 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
     public let origin: CartOrigin
     public let createdAt: Date
     public let lastModifiedAt: Date
+    public let itemShippingAddresses: [Address]
 }
