@@ -141,7 +141,7 @@ public func signUpCustomer(_ profile: CustomerDraft, result: @escaping (Result<C
  */
 public func signUpCustomer(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
     do {
-        let jsonProfile = try jsonEncoder.encode(profile)
+        let jsonProfile = try JSONSerialization.data(withJSONObject: profile, options: [])
         signUpCustomer(jsonProfile, result: result)
     } catch {
         result(.failure(nil, [error]))
