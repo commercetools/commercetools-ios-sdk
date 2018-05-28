@@ -495,7 +495,7 @@ public struct CustomLineItem: Codable {
 
     public let id: String
     public let name: LocalizedString
-    public let money: Money
+    public let money: BaseMoney
     public let taxedPrice: TaxedItemPrice?
     public let totalPrice: Money
     public let slug: String
@@ -506,6 +506,63 @@ public struct CustomLineItem: Codable {
     public let discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]
     public let custom: JsonValue?
     public let shippingDetails: ItemShippingDetails?
+
+    // MARK: - Decodable
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = try values.decode(String.self, forKey: .id)
+        name = try values.decode(LocalizedString.self, forKey: .name)
+        let money = try values.decode(MoneyContainer.self, forKey: .money)
+        self.money = money.actualType
+        taxedPrice = try? values.decode(TaxedItemPrice.self, forKey: .taxedPrice)
+        totalPrice = try values.decode(Money.self, forKey: .totalPrice)
+        slug = try values.decode(String.self, forKey: .slug)
+        quantity = try values.decode(Int.self, forKey: .quantity)
+        state = try values.decode(ItemState.self, forKey: .state)
+        taxCategory = try? values.decode(Reference<TaxCategory>.self, forKey: .taxCategory)
+        taxRate = try? values.decode(TaxRate.self, forKey: .taxRate)
+        discountedPricePerQuantity = try values.decode([DiscountedLineItemPriceForQuantity].self, forKey: .discountedPricePerQuantity)
+        custom = try? values.decode(JsonValue.self, forKey: .custom)
+        shippingDetails = try? values.decode(ItemShippingDetails.self, forKey: .shippingDetails)
+    }
+
+    // MARK: Encodable
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(MoneyContainer.container(for: money), forKey: .money)
+        try? container.encode(taxedPrice, forKey: .taxedPrice)
+        try container.encode(totalPrice, forKey: .totalPrice)
+        try container.encode(slug, forKey: .slug)
+        try container.encode(quantity, forKey: .quantity)
+        try container.encode(state, forKey: .state)
+        try? container.encode(taxCategory, forKey: .taxCategory)
+        try? container.encode(taxRate, forKey: .taxRate)
+        try container.encode(discountedPricePerQuantity, forKey: .discountedPricePerQuantity)
+        try? container.encode(custom, forKey: .custom)
+        try? container.encode(shippingDetails, forKey: .shippingDetails)
+    }
+
+    // MARK: - Coding keys
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case money
+        case taxedPrice
+        case totalPrice
+        case slug
+        case quantity
+        case state
+        case taxCategory
+        case taxRate
+        case discountedPricePerQuantity
+        case custom
+        case shippingDetails
+    }
 }
 
 public struct CustomerDraft: Codable {
@@ -703,15 +760,63 @@ public struct DiscountedLineItemPortion: Codable {
     // MARK: - Properties
 
     public let discount: Reference<CartDiscount>
-    public let discountedAmount: Money
+    public let discountedAmount: BaseMoney
+
+    // MARK: - Decodable
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        discount = try values.decode(Reference<CartDiscount>.self, forKey: .discount)
+        let discountedAmount = try values.decode(MoneyContainer.self, forKey: .discountedAmount)
+        self.discountedAmount = discountedAmount.actualType
+    }
+
+    // MARK: Encodable
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(discount, forKey: .discount)
+        try container.encode(MoneyContainer.container(for: discountedAmount), forKey: .discountedAmount)
+    }
+
+    // MARK: - Coding keys
+
+    enum CodingKeys: String, CodingKey {
+        case discount
+        case discountedAmount
+    }
 }
 
 public struct DiscountedLineItemPrice: Codable {
 
     // MARK: - Properties
 
-    public let value: Money
+    public let value: BaseMoney
     public let includedDiscounts: [DiscountedLineItemPortion]
+
+    // MARK: - Decodable
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let value = try values.decode(MoneyContainer.self, forKey: .value)
+        self.value = value.actualType
+        includedDiscounts = try values.decode([DiscountedLineItemPortion].self, forKey: .includedDiscounts)
+    }
+
+    // MARK: Encodable
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(MoneyContainer.container(for: value), forKey: .value)
+        try container.encode(includedDiscounts, forKey: .includedDiscounts)
+    }
+
+    // MARK: - Coding keys
+
+    enum CodingKeys: String, CodingKey {
+        case value
+        case includedDiscounts
+    }
 }
 
 public struct DiscountedLineItemPriceForQuantity: Codable {
@@ -734,8 +839,32 @@ public struct ExternalLineItemTotalPrice: Codable {
 
     // MARK: - Properties
 
-    public let price: Money
+    public let price: BaseMoney
     public let totalPrice: Money
+
+    // MARK: - Decodable
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let price = try values.decode(MoneyContainer.self, forKey: .price)
+        self.price = price.actualType
+        totalPrice = try values.decode(Money.self, forKey: .totalPrice)
+    }
+
+    // MARK: Encodable
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(MoneyContainer.container(for: price), forKey: .price)
+        try container.encode(totalPrice, forKey: .totalPrice)
+    }
+
+    // MARK: - Coding keys
+
+    enum CodingKeys: String, CodingKey {
+        case price
+        case totalPrice
+    }
 }
 
 public struct ExternalTaxRateDraft: Codable {
