@@ -182,7 +182,7 @@ Consuming and managing resources provided through available endpoints is very ea
 
 Depending on the capabilities of the resource, you can retrieve by specific UUID, use more detailed query options, and also perform create or update operations.
 
-All of these functionalities are provided by static methods for any specific supported endpoint. For an example, you can creating shopping cart using provided `Cart` class:
+All of these functionalities are provided by static methods for any specific supported endpoint. For an example, you can create shopping cart using provided `Cart` class:
 ```swift
 var cartDraft = CartDraft()
 cartDraft.currency = "EUR"
@@ -214,7 +214,6 @@ The following list represents currently supported abstract endpoints. For each p
 #### Project settings
 
 In order to get the countries, languages, and currencies supported for the current Commercetools project, you should use the project settings endpoint:
-- Retrieve active cart (user must be logged in)
 ```swift
 Project.settings { result in
     if let settings = result.model {
