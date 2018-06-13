@@ -11,31 +11,31 @@ public struct Address: Codable {
 
     // MARK: - Properties
 
-    public let id: String?
-    public let key: String?
-    public let title: String?
-    public let salutation: String?
-    public let firstName: String?
-    public let lastName: String?
-    public let streetName: String?
-    public let streetNumber: String?
-    public let city: String?
-    public let region: String?
-    public let postalCode: String?
-    public let additionalStreetInfo: String?
-    public let state: String?
-    public let country: String
-    public let company: String?
-    public let department: String?
-    public let building: String?
-    public let apartment: String?
-    public let pOBox: String?
-    public let phone: String?
-    public let mobile: String?
-    public let email: String?
-    public let fax: String?
-    public let additionalAddressInfo: String?
-    public let externalId: String?
+    public var id: String?
+    public var key: String?
+    public var title: String?
+    public var salutation: String?
+    public var firstName: String?
+    public var lastName: String?
+    public var streetName: String?
+    public var streetNumber: String?
+    public var city: String?
+    public var region: String?
+    public var postalCode: String?
+    public var additionalStreetInfo: String?
+    public var state: String?
+    public var country: String
+    public var company: String?
+    public var department: String?
+    public var building: String?
+    public var apartment: String?
+    public var pOBox: String?
+    public var phone: String?
+    public var mobile: String?
+    public var email: String?
+    public var fax: String?
+    public var additionalAddressInfo: String?
+    public var externalId: String?
     
     public init(id: String? = nil, key: String? = nil, title: String? = nil, salutation: String? = nil, firstName: String? = nil, lastName: String? = nil, streetName: String? = nil, streetNumber: String? = nil, city: String? = nil, region: String? = nil, postalCode: String? = nil, additionalStreetInfo: String? = nil, state: String? = nil, country: String, company: String? = nil, department: String? = nil, building: String? = nil, apartment: String? = nil, pOBox: String? = nil, phone: String? = nil, mobile: String? = nil, email: String? = nil, fax: String? = nil, additionalAddressInfo: String? = nil, externalId: String? = nil) {
         self.id = id
@@ -1234,6 +1234,12 @@ public struct PaymentMethodInfo: Codable {
     public let paymentInterface: String?
     public let method: String?
     public let name: LocalizedString?
+
+    public init(paymentInterface: String? = nil, method: String? = nil, name: LocalizedString? = nil) {
+        self.paymentInterface = paymentInterface
+        self.method = method
+        self.name = name
+    }
 }
 
 public enum PaymentState: String, Codable {
