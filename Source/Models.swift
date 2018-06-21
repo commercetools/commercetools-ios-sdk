@@ -1641,7 +1641,7 @@ public struct State: Codable {
     public let key: String
     public let type: StateType
     public let name: LocalizedString
-    public let description: LocalizedString
+    public let description: LocalizedString?
     public let initial: Bool
     public let builtIn: Bool
     public let roles: [StateRole]?
