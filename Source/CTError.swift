@@ -33,6 +33,7 @@ public enum CTError: Error {
     case resourceNotFoundError(reason: FailureReason)
     case concurrentModificationError(reason: FailureReason, currentVersion: UInt?)
     case insufficientTokenGrantTypeError(reason: FailureReason)
+    case invalidToken
     case generalError(reason: FailureReason?)
 
     // MARK: - Lifecycle
@@ -55,6 +56,8 @@ public enum CTError: Error {
             self = .concurrentModificationError(reason: reason, currentVersion: currentVersion)
         case "insufficient_token_grant_type":
             self = .insufficientTokenGrantTypeError(reason: reason)
+        case "invalid_token":
+            self = .invalidToken
         default:
             self = .generalError(reason: reason)
         }
@@ -85,6 +88,9 @@ extension CTError: LocalizedError {
         case .insufficientTokenGrantTypeError(let reason):
             return "\(reason.localizedDescription)\nAccess token obtained using client ID and secret from your config " +
                     "file does not have sufficient privileges for the operation you tried to perform."
+        case .invalidToken:
+            return "Invalid token. Customer might have changed password used to obtain the token, or clientId / " +
+                    "clientSecret used to generate the token are no longer valid."
         case .generalError(let reason):
             return reason?.localizedDescription ?? "No failure reason available"
         }

@@ -342,7 +342,7 @@ open class AuthManager {
                   let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode > 299 {
             // In case we got an error while using refresh token, we want to clear token storage - there's no way
             // to recover from this
-            logoutCustomer()
+            clearAllTokens()
             completionHandler(nil, CTError.accessTokenRetrievalFailed(reason: CTError.FailureReason(message: failureReason, details: responseDict["error_description"] as? String)))
 
         } else {

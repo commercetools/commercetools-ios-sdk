@@ -28,22 +28,22 @@ class TokenStore: NSObject {
     fileprivate var authAccessTokenKey: String {
         // Appending project key from the current configuration if it is set, so we have unique
         // per project token entries.
-        return "com.commercetools.authAccessTokenKey" + (Config.currentConfig?.projectKey ?? "")
+        return "com.commercetools.authAccessTokenKey" + (Config.currentConfig?.projectKey ?? "") + (Config.currentConfig?.clientId ?? "")
     }
 
     /// The key used for storing refresh token.
     fileprivate var authRefreshTokenKey: String {
-        return "com.commercetools.authRefreshTokenKey" + (Config.currentConfig?.projectKey ?? "")
+        return "com.commercetools.authRefreshTokenKey" + (Config.currentConfig?.projectKey ?? "") + (Config.currentConfig?.clientId ?? "")
     }
 
     /// The key used for storing auth token valid date.
     fileprivate var authTokenValidKey: String {
-        return "com.commercetools.authTokenValidKey" + (Config.currentConfig?.projectKey ?? "")
+        return "com.commercetools.authTokenValidKey" + (Config.currentConfig?.projectKey ?? "") + (Config.currentConfig?.clientId ?? "")
     }
 
     /// The key used for storing auth token state.
     fileprivate var authTokenStateKey: String {
-        return "com.commercetools.authTokenStateKey" + (Config.currentConfig?.projectKey ?? "")
+        return "com.commercetools.authTokenStateKey" + (Config.currentConfig?.projectKey ?? "") + (Config.currentConfig?.clientId ?? "")
     }
 
     /// The value for kSecAttrService property which uniquely identifies keychain accessor.
