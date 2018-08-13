@@ -161,7 +161,7 @@ public extension Endpoint {
         var urlRequest = URLRequest(url: urlComponents.url!)
         urlRequest.httpMethod = method.rawValue
         headers.forEach {
-            urlRequest.addValue($0.value, forHTTPHeaderField: $0.key)
+            urlRequest.setValue($0.value, forHTTPHeaderField: $0.key)
         }
 
         if let json = json {
@@ -173,7 +173,26 @@ public extension Endpoint {
 
     static func perform<T>(request: URLRequest, result: @escaping (Result<T>) -> Void) {
         urlSession.dataTask(with: request, completionHandler: { data, response, error in
-            self.handleResponse(data: data, response: response, error: error, result: result)
+            self.handleResponse(data: data, response: response, error: error) { (res: Result<T>) in
+                if res.errors?.contains(where: { ($0 as? CTError) == CTError.invalidToken }) == true {
+                    AuthManager.sharedInstance.recoverFromInvalidTokenError { newToken, error in
+                        if let newToken = newToken {
+                            var updatedRequest = request
+                            self.headers(newToken).forEach {
+                                updatedRequest.setValue($0.value, forHTTPHeaderField: $0.key)
+                            }
+                            DispatchQueue.global().async {
+                                self.perform(request: updatedRequest, result: result)
+                            }
+                        } else {
+                            result(res)
+                        }
+                    }
+
+                } else {
+                    result(res)
+                }
+            }
         }).resume()
     }
 }

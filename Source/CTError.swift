@@ -109,3 +109,30 @@ extension CTError.FailureReason {
         }
     }
 }
+
+extension CTError: Equatable {
+    public static func ==(lhs: CTError, rhs: CTError) -> Bool {
+        switch (lhs, rhs) {
+            case (.configurationValidationFailed, .configurationValidationFailed), (.invalidToken, .invalidToken):
+                return true
+            case (.accessTokenRetrievalFailed(let lhsReason), .accessTokenRetrievalFailed(reason: let rhsReason)),
+                 (.invalidJsonInputError(let lhsReason), .invalidJsonInputError(let rhsReason)),
+                 (.invalidInputError(let lhsReason), .invalidInputError(let rhsReason)),
+                 (.resourceNotFoundError(let lhsReason), .resourceNotFoundError(let rhsReason)),
+                 (.insufficientTokenGrantTypeError(let lhsReason), .insufficientTokenGrantTypeError(let rhsReason)),
+                 (.generalError(let lhsReason?), .generalError(reason: let rhsReason?)):
+                return lhsReason == rhsReason
+            case (.concurrentModificationError(let lhsReason, let lhsVersion?), .concurrentModificationError(let rhsReason, let rhsVersion?)):
+                return lhsReason == rhsReason && lhsVersion == rhsVersion
+            default:
+                return false
+        }
+
+    }
+}
+
+extension CTError.FailureReason: Equatable {
+    public static func ==(lhs: CTError.FailureReason, rhs: CTError.FailureReason) -> Bool {
+        return lhs.message == rhs.message && lhs.details == rhs.details
+    }
+}

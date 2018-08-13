@@ -233,6 +233,26 @@ open class AuthManager {
         }
     }
 
+    /**
+        Tries to recover from `invalidToken` error by removing existing `accessToken` from `TokenStore`.
+
+        - parameter completionHandler:  The code to be executed once the token fetching completes.
+    */
+    func recoverFromInvalidTokenError(_ completionHandler: @escaping (String?, Error?) -> Void) {
+        serialQueue.async(execute: {
+            guard self.accessToken != nil else {
+                self.clearAllTokens()
+                return
+            }
+
+            self.accessToken = nil
+            self.tokenValidDate = nil
+            self.state = .noToken
+            Log.debug("Removing access token, trying to recover from .invalidToken error")
+            self.token(completionHandler)
+        })
+    }
+
     // MARK: - Retrieving tokens from the auth API
 
     private func processTokenRequest(_ completionHandler: @escaping (String?, Error?) -> Void) {
