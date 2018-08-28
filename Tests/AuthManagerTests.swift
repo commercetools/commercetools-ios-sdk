@@ -309,4 +309,52 @@ class AuthManagerTests: XCTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
+
+    func testRecoverFromInvalidToken() {
+        setupTestConfiguration()
+
+        let recoveredExpectation = expectation(description: "recovered expectation")
+
+        let username = "swift.sdk.test.user@commercetools.com"
+        let password = "password"
+        let authManager = AuthManager.sharedInstance
+
+        authManager.loginCustomer(username: username, password: password, completionHandler: { error in
+            authManager.token { token, error in
+                XCTAssertNil(error)
+                authManager.tokenStore.accessToken = "invalidValue"
+                Cart.query { result in
+                    XCTAssertNil(result.errors)
+                    recoveredExpectation.fulfill()
+                }
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testCannotRecoverFromInvalidToken() {
+        setupTestConfiguration()
+
+        let recoveredExpectation = expectation(description: "recovered expectation")
+
+        let username = "swift.sdk.test.user@commercetools.com"
+        let password = "password"
+        let authManager = AuthManager.sharedInstance
+
+        authManager.loginCustomer(username: username, password: password, completionHandler: { error in
+            authManager.token { token, error in
+                XCTAssertNil(error)
+                authManager.tokenStore.accessToken = "invalidValue"
+                authManager.tokenStore.refreshToken = "invalidValue"
+                Cart.query { result in
+                    XCTAssertNotNil(result.errors)
+                    XCTAssert(result.errors!.contains(where: { ($0 as? CTError) == CTError.invalidToken }))
+                    recoveredExpectation.fulfill()
+                }
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
 }
