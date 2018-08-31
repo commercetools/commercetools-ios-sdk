@@ -13,6 +13,13 @@ All changes to this project will be documented in this file.
 
 ---
 
+## [0.7.6](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.7.6)
+Released on 2018-08-31.
+
+#### Added
+- Support for recovering from invalid access token.
+- `invalidToken` error type.
+
 ## [0.7.5](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.7.5)
 Released on 2018-06-11.
 
