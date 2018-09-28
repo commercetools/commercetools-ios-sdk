@@ -184,8 +184,7 @@ Depending on the capabilities of the resource, you can retrieve by specific UUID
 
 All of these functionalities are provided by static methods for any specific supported endpoint. For an example, you can create shopping cart using provided `Cart` class:
 ```swift
-var cartDraft = CartDraft()
-cartDraft.currency = "EUR"
+var cartDraft = CartDraft(currency: "EUR")
 
 Cart.create(cartDraft, result: { result in
 	if let cart = result.model, result.isSuccess {
@@ -257,11 +256,9 @@ Cart.create(cartDraft, result: { result in
 ```
 - Update existing cart (user must be logged in)
 ```swift
-var options = AddLineItemOptions()
-options.productId = productId
-options.variantId = 1 // Set the appropriate current version
+let draft = LineItemDraft(productVariantSelection: .productVariant(productId: productId, variantId: variantId))
 
-let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.addLineItem(options: options)])
+let updateActions = UpdateActions<CartUpdateAction>(version: version, actions: [.addLineItem(lineItemDraft: draft)])
 Cart.update(cartId, actions: updateActions, result: { result in
     if let cart = result.model, result.isSuccess {
         // Cart successfully updated, response contains updated cart
