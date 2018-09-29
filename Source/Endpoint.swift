@@ -158,7 +158,8 @@ public extension Endpoint {
         var urlComponents = URLComponents(string: url)!
         urlComponents.queryItems = queryItems + (urlComponents.queryItems ?? [])
 
-        var urlRequest = URLRequest(url: urlComponents.url!)
+        let urlString = urlComponents.string!.replacingOccurrences(of: "+", with: "%2B")
+        var urlRequest = URLRequest(url: URL(string: urlString)!)
         urlRequest.httpMethod = method.rawValue
         headers.forEach {
             urlRequest.setValue($0.value, forHTTPHeaderField: $0.key)
