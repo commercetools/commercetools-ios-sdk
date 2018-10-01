@@ -154,10 +154,11 @@ public extension Endpoint {
         if let json = json, let data = try? JSONSerialization.data(withJSONObject: json, options: []) {
             jsonData = data
         }
-        return request(url: url, method: method, queryItems: queryItems, json: jsonData, formParameters: formParameters, headers: headers)
+
+        return request(url: url, method: method, queryItems: queryItems, json: jsonData, formParameters: formParameters?.map({ FormParameter(key: $0, value: $1) }), headers: headers)
     }
 
-    static func request(url: String, method: HTTPMethod = .get, queryItems: [URLQueryItem], json: Data? = nil, formParameters: [String: String]? = nil, headers: [String: String] = [:]) -> URLRequest {
+    static func request(url: String, method: HTTPMethod = .get, queryItems: [URLQueryItem], json: Data? = nil, formParameters: [FormParameter]? = nil, headers: [String: String] = [:]) -> URLRequest {
         guard json == nil || formParameters == nil else {
             fatalError("Cannot use both json and formParameters in the same URLRequest")
         }
@@ -175,7 +176,7 @@ public extension Endpoint {
         if let json = json {
             urlRequest.httpBody = json
         } else if let formParameters = formParameters, !formParameters.isEmpty {
-            let body = formParameters.map({ "\($0.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics) ?? "")=\($1.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics) ?? "")" }).joined(separator: "&")
+            let body = formParameters.map({ "\($0.key.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics) ?? "")=\($0.value.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics) ?? "")" }).joined(separator: "&")
             urlRequest.httpBody = body.data(using: .utf8)
         }
 
@@ -292,3 +293,8 @@ var userAgent: String = {
 
     return "\(commercetoolsSDK) \(osNameVersion)"
 }()
+
+public struct FormParameter {
+    public let key: String
+    public let value: String
+}

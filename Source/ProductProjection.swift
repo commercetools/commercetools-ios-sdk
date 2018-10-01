@@ -56,9 +56,9 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
                             priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
                             priceChannel: String? = nil, result: @escaping (Result<SearchResponse>) -> Void) {
 
-        var parameters = queryParameters(predicates: nil, sort: sort, limit: limit, offset: offset)
+        var parameters = formParameters(predicates: nil, sort: sort, limit: limit, offset: offset)
         if let staged = staged {
-            parameters.append(URLQueryItem(name: "staged", value: staged ? "true" : "false"))
+            parameters.append(FormParameter(key: "staged", value: staged ? "true" : "false"))
         }
         parameters += searchParams(lang: lang, text: text, fuzzy: fuzzy, fuzzyLevel: fuzzyLevel, filters: filters,
                 filterQuery: filterQuery, filterFacets: filterFacets, facets: facets, markMatchingVariants: markMatchingVariants,
@@ -67,7 +67,7 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
 
         requestWithTokenAndPath(result, { token, path in
             let fullPath = pathWithExpansion("\(path)search", expansion: expansion)
-            let request = self.request(url: fullPath, queryItems: parameters, headers: self.headers(token))
+            let request = self.request(url: fullPath, method: .post, queryItems: [], formParameters: parameters, headers: self.headers(token))
 
             perform(request: request) { (response: Result<SearchResponse>) in
                 result(response)
@@ -95,7 +95,9 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
         if let staged = staged {
             parameters.append(URLQueryItem(name: "staged", value: staged ? "true" : "false"))
         }
-        parameters += searchParams(fuzzy: fuzzy)
+        if let fuzzy = fuzzy {
+            parameters.append(URLQueryItem(name: "fuzzy", value: fuzzy ? "true" : "false"))
+        }
         parameters.append(URLQueryItem(name: "searchKeywords." + searchLanguage(for: lang), value: searchKeywords))
 
         requestWithTokenAndPath(result, { token, path in
@@ -202,58 +204,58 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
                                      fuzzyLevel: Int? = nil, filters: [String]? = nil, filterQuery: [String]? = nil,
                                      filterFacets: [String]? = nil, facets: [String]? = nil, markMatchingVariants: Bool? = nil,
                                      priceCurrency: String? = nil, priceCountry: String? = nil, priceCustomerGroup: String? = nil,
-                                     priceChannel: String? = nil) -> [URLQueryItem] {
-        var queryItems = [URLQueryItem]()
+                                     priceChannel: String? = nil) -> [FormParameter] {
+        var parameters = [FormParameter]()
 
         if let text = text {
-            queryItems.append(URLQueryItem(name: "text." + searchLanguage(for: lang), value: text))
+            parameters.append(FormParameter(key: "text." + searchLanguage(for: lang), value: text))
         }
 
         if let fuzzy = fuzzy {
-            queryItems.append(URLQueryItem(name: "fuzzy", value: fuzzy ? "true" : "false"))
+            parameters.append(FormParameter(key: "fuzzy", value: fuzzy ? "true" : "false"))
         }
 
         if let fuzzyLevel = fuzzyLevel {
-            queryItems.append(URLQueryItem(name: "fuzzyLevel", value: String(fuzzyLevel)))
+            parameters.append(FormParameter(key: "fuzzyLevel", value: String(fuzzyLevel)))
         }
 
         filters?.forEach {
-            queryItems.append(URLQueryItem(name: "filter", value: $0))
+            parameters.append(FormParameter(key: "filter", value: $0))
         }
 
         filterQuery?.forEach {
-            queryItems.append(URLQueryItem(name: "filter.query", value: $0))
+            parameters.append(FormParameter(key: "filter.query", value: $0))
         }
 
         filterFacets?.forEach {
-            queryItems.append(URLQueryItem(name: "filter.facets", value: $0))
+            parameters.append(FormParameter(key: "filter.facets", value: $0))
         }
 
         facets?.forEach {
-            queryItems.append(URLQueryItem(name: "facet", value: $0))
+            parameters.append(FormParameter(key: "facet", value: $0))
         }
 
         if let markMatchingVariants = markMatchingVariants {
-            queryItems.append(URLQueryItem(name: "markMatchingVariants", value: markMatchingVariants ? "true" : "false"))
+            parameters.append(FormParameter(key: "markMatchingVariants", value: markMatchingVariants ? "true" : "false"))
         }
 
         if let priceCurrency = priceCurrency {
-            queryItems.append(URLQueryItem(name: "priceCurrency", value: priceCurrency))
+            parameters.append(FormParameter(key: "priceCurrency", value: priceCurrency))
         }
 
         if let priceCountry = priceCountry {
-            queryItems.append(URLQueryItem(name: "priceCountry", value: priceCountry))
+            parameters.append(FormParameter(key: "priceCountry", value: priceCountry))
         }
 
         if let priceCustomerGroup = priceCustomerGroup {
-            queryItems.append(URLQueryItem(name: "priceCustomerGroup", value: priceCustomerGroup))
+            parameters.append(FormParameter(key: "priceCustomerGroup", value: priceCustomerGroup))
         }
 
         if let priceChannel = priceChannel {
-            queryItems.append(URLQueryItem(name: "priceChannel", value: priceChannel))
+            parameters.append(FormParameter(key: "priceChannel", value: priceChannel))
         }
 
-        return queryItems
+        return parameters
     }
 
     private static func searchLanguage(for locale: Locale) -> String {
