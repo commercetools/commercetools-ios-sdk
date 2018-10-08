@@ -78,4 +78,23 @@ public extension QueryEndpoint {
         }
         return queryItems
     }
+
+    static func formParameters(predicates: [String]? = nil, sort: [String]? = nil, limit: UInt? = nil,
+                                offset: UInt? = nil) -> [FormParameter] {
+        var parameters = [FormParameter]()
+
+        predicates?.forEach {
+            parameters.append(FormParameter(key: "where", value: $0))
+        }
+        sort?.forEach {
+            parameters.append(FormParameter(key: "sort", value: $0))
+        }
+        if let limit = limit {
+            parameters.append(FormParameter(key: "limit", value: String(limit)))
+        }
+        if let offset = offset {
+            parameters.append(FormParameter(key: "offset", value: String(offset)))
+        }
+        return parameters
+    }
 }

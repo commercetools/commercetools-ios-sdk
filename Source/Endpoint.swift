@@ -141,7 +141,10 @@ public extension Endpoint {
         }
     }
 
-    static func request(url: String, method: HTTPMethod = .get, urlParameters: [String: String] = [:], json: [String: Any]? = nil, headers: [String: String] = [:]) -> URLRequest {
+    static func request(url: String, method: HTTPMethod = .get, urlParameters: [String: String] = [:], json: [String: Any]? = nil, formParameters: [String: String]? = nil, headers: [String: String] = [:]) -> URLRequest {
+        guard json == nil || formParameters == nil else {
+            fatalError("Cannot use both json and formParameters in the same URLRequest")
+        }
         var queryItems = [URLQueryItem]()
         urlParameters.forEach {
             queryItems.append(URLQueryItem(name: $0.key, value: $0.value))
@@ -151,10 +154,14 @@ public extension Endpoint {
         if let json = json, let data = try? JSONSerialization.data(withJSONObject: json, options: []) {
             jsonData = data
         }
-        return request(url: url, method: method, queryItems: queryItems, json: jsonData, headers: headers)
+
+        return request(url: url, method: method, queryItems: queryItems, json: jsonData, formParameters: formParameters?.map({ FormParameter(key: $0, value: $1) }), headers: headers)
     }
 
-    static func request(url: String, method: HTTPMethod = .get, queryItems: [URLQueryItem], json: Data? = nil, headers: [String: String] = [:]) -> URLRequest {
+    static func request(url: String, method: HTTPMethod = .get, queryItems: [URLQueryItem], json: Data? = nil, formParameters: [FormParameter]? = nil, headers: [String: String] = [:]) -> URLRequest {
+        guard json == nil || formParameters == nil else {
+            fatalError("Cannot use both json and formParameters in the same URLRequest")
+        }
         var urlComponents = URLComponents(string: url)!
         urlComponents.queryItems = queryItems + (urlComponents.queryItems ?? [])
 
@@ -164,9 +171,13 @@ public extension Endpoint {
         headers.forEach {
             urlRequest.setValue($0.value, forHTTPHeaderField: $0.key)
         }
+        urlRequest.setValue(json != nil ? "application/json" : "application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
         if let json = json {
             urlRequest.httpBody = json
+        } else if let formParameters = formParameters, !formParameters.isEmpty {
+            let body = formParameters.map({ "\($0.key.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics) ?? "")=\($0.value.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics) ?? "")" }).joined(separator: "&")
+            urlRequest.httpBody = body.data(using: .utf8)
         }
 
         return urlRequest
@@ -282,3 +293,8 @@ var userAgent: String = {
 
     return "\(commercetoolsSDK) \(osNameVersion)"
 }()
+
+public struct FormParameter {
+    public let key: String
+    public let value: String
+}

@@ -286,7 +286,7 @@ open class AuthManager {
                 parameters["scope"] = scope
             }
 
-            let request = Customer.request(url: loginUrl, method: .post, urlParameters: parameters, headers: authHeaders)
+            let request = Customer.request(url: loginUrl, method: .post, formParameters: parameters, headers: authHeaders)
             urlSession.dataTask(with: request, completionHandler: { data, response, error in
                 self.state = .customerToken
                 self.handleAuthResponse(data: data, response: response, error: error, completionHandler: completionHandler)
@@ -307,7 +307,7 @@ open class AuthManager {
             if let anonymousId = anonymousId {
                 parameters["anonymous_id"] = anonymousId
             }
-            let request = Customer.request(url: authUrl, method: .post, urlParameters: parameters, headers: authHeaders)
+            let request = Customer.request(url: authUrl, method: .post, formParameters: parameters, headers: authHeaders)
             urlSession.dataTask(with: request, completionHandler: { data, response, error in
                 self.state = .anonymousToken
                 self.handleAuthResponse(data: data, response: response, error: error, completionHandler: completionHandler)
@@ -321,7 +321,7 @@ open class AuthManager {
             if let scope = Config.currentConfig?.scope {
                 parameters["scope"] = scope
             }
-            let request = Customer.request(url: authUrl, method: .post, urlParameters: parameters, headers: authHeaders)
+            let request = Customer.request(url: authUrl, method: .post, formParameters: parameters, headers: authHeaders)
             urlSession.dataTask(with: request, completionHandler: { data, response, error in
                 self.state = .plainToken
                 self.handleAuthResponse(data: data, response: response, error: error, completionHandler: completionHandler)
@@ -331,7 +331,7 @@ open class AuthManager {
 
     private func refreshToken(_ completionHandler: @escaping (String?, Error?) -> Void) {
         if let authUrl = clientCredentialsUrl, let authHeaders = authHeaders, let refreshToken = refreshToken {
-            let request = Customer.request(url: authUrl, method: .post, urlParameters: ["grant_type": "refresh_token", "refresh_token": refreshToken], headers: authHeaders)
+            let request = Customer.request(url: authUrl, method: .post, formParameters: ["grant_type": "refresh_token", "refresh_token": refreshToken], headers: authHeaders)
             urlSession.dataTask(with: request, completionHandler: { data, response, error in
                 self.handleAuthResponse(data: data, response: response, error: error, completionHandler: completionHandler)
             }).resume()
