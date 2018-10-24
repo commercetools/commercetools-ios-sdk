@@ -323,7 +323,7 @@ var customerDraft = CustomerDraft()
 customerDraft.email = "new.swift.sdk.test.user@commercetools.com"
 customerDraft.password = "password"
 
-Customer.signup(customerDraft, result: { result in
+Commercetools.signUpCustomer(customerDraft, result: { result in
     if let customer = result.model?.customer, let version = customer.version, result.isSuccess {
         // User has been successfully signed up.
         // Now, you'd probably want to present the login form, or simply
