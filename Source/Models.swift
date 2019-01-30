@@ -600,6 +600,43 @@ public struct CustomerDraft: Codable {
         self.custom = custom
         self.locale = locale
     }
+
+    // MARK: - Encodable
+
+    enum CodingKeys: String, CodingKey {
+        case email
+        case password
+        case firstName
+        case lastName
+        case middleName
+        case title
+        case dateOfBirth
+        case companyName
+        case vatId
+        case addresses
+        case defaultBillingAddress
+        case defaultShippingAddress
+        case custom
+        case locale
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(email, forKey: .email)
+        try container.encode(password, forKey: .password)
+        try? container.encode(firstName, forKey: .firstName)
+        try? container.encode(lastName, forKey: .lastName)
+        try? container.encode(middleName, forKey: .middleName)
+        try? container.encode(title, forKey: .title)
+        try? container.encode(dateOfBirth != nil ? dateFormatter.string(from: dateOfBirth!) : nil, forKey: .dateOfBirth)
+        try? container.encode(companyName, forKey: .companyName)
+        try? container.encode(vatId, forKey: .vatId)
+        try? container.encode(addresses, forKey: .addresses)
+        try? container.encode(defaultBillingAddress, forKey: .defaultBillingAddress)
+        try? container.encode(defaultShippingAddress, forKey: .defaultShippingAddress)
+        try? container.encode(custom, forKey: .custom)
+        try? container.encode(locale, forKey: .locale)
+    }
 }
 
 public struct CustomerGroup: Codable {
