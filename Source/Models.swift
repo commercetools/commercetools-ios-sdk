@@ -1937,6 +1937,7 @@ public struct Zone: Codable {
 
     public let id: String
     public let version: UInt
+    public let key: String?
     public let createdAt: Date
     public let lastModifiedAt: Date
     public let name: String
