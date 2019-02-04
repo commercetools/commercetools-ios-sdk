@@ -1501,20 +1501,123 @@ public struct ReturnInfo: Codable {
     public let items: [ReturnItem]
     public let returnTrackingId: String
     public let returnDate: Date
+
+    // MARK: - Coding keys
+
+    enum CodingKeys: String, CodingKey {
+        case items
+        case returnTrackingId
+        case returnDate
+    }
+
+    // MARK: - Decodable
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        items = try container.decode([ReturnItem].self, ofFamily: ReturnItemContainer.self, forKey: .items)
+        returnTrackingId = try container.decode(String.self, forKey: .returnTrackingId)
+        returnDate = try container.decode(Date.self, forKey: .returnDate)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(items, forKey: .items)
+        try container.encode(returnTrackingId, forKey: .returnTrackingId)
+        try container.encode(returnDate, forKey: .returnDate)
+    }
 }
 
-public struct ReturnItem: Codable {
+public class ReturnItem: Codable {
 
     // MARK: - Properties
 
     public let id: String
     public let quantity: Int
-    public let lineItemId: String
     public let comment: String
     public let shipmentState: ReturnShipmentState
     public let paymentState: ReturnPaymentState
     public let lastModifiedAt: Date
     public let createdAt: Date
+}
+
+protocol ContainerClassFamily: Decodable {
+    var actualType: AnyObject.Type { get }
+}
+
+enum ContainerTypeCodingKey: String, CodingKey {
+    case type = "type"
+}
+
+public enum ReturnItemContainer: String, ContainerClassFamily {
+    case lineItemReturnItem = "LineItemReturnItem"
+    case customLineItemReturnItem = "CustomLineItemReturnItem"
+
+    var actualType: AnyObject.Type {
+        switch self {
+            case .lineItemReturnItem:
+                return LineItemReturnItem.self
+            case .customLineItemReturnItem:
+                return  CustomLineItemReturnItem.self
+        }
+    }
+}
+
+extension KeyedDecodingContainer {
+    func decode<T : Decodable, U : ContainerClassFamily>(_ heterogeneousType: [T].Type, ofFamily family: U.Type, forKey key: K) throws -> [T] {
+        var container = try self.nestedUnkeyedContainer(forKey: key)
+        var list = [T]()
+        var tmpContainer = container
+        while !container.isAtEnd {
+            let typeContainer = try container.nestedContainer(keyedBy: ContainerTypeCodingKey.self)
+            let family: U = try typeContainer.decode(U.self, forKey: .type)
+            if let type = family.actualType as? T.Type {
+                list.append(try tmpContainer.decode(type))
+            }
+        }
+        return list
+    }
+}
+
+public class LineItemReturnItem: ReturnItem {
+
+    // MARK: - Properties
+
+    public let lineItemId: String
+
+    // MARK: - Coding keys
+
+    enum CodingKeys: String, CodingKey {
+        case lineItemId
+    }
+
+    // MARK: - Decodable
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        lineItemId = try container.decode(String.self, forKey: .lineItemId)
+        try super.init(from: decoder)
+    }
+}
+
+public class CustomLineItemReturnItem: ReturnItem {
+
+    // MARK: - Properties
+
+    public let customLineItemId: String
+
+    // MARK: - Coding keys
+
+    enum CodingKeys: String, CodingKey {
+        case customLineItemId
+    }
+
+    // MARK: - Decodable
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        customLineItemId = try container.decode(String.self, forKey: .customLineItemId)
+        try super.init(from: decoder)
+    }
 }
 
 public enum ReturnPaymentState: String, Codable {
