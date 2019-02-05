@@ -188,20 +188,37 @@ public func obtainAnonymousToken(usingSession: Bool, anonymousId: String? = nil,
     AuthManager.sharedInstance.obtainAnonymousToken(usingSession: usingSession, anonymousId: anonymousId, completionHandler: completionHandler)
 }
 
-var dateFormatter: DateFormatter = {
+var dateTimeFormatter: DateFormatter = {
     let formatter = DateFormatter()
+    formatter.timeZone = TimeZone(abbreviation: "GMT")!
     formatter.locale = Locale(identifier: "en_US_POSIX")
     formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
     return formatter
 }()
 
+var dateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.timeZone = TimeZone(abbreviation: "GMT")!
+    formatter.dateFormat = "yyyy-MM-dd"
+    return formatter
+}()
+
 var jsonDecoder: JSONDecoder = {
     let jsonDecoder = JSONDecoder()
-    jsonDecoder.dateDecodingStrategy = .formatted(dateFormatter)
+    jsonDecoder.dateDecodingStrategy = .custom { decoder in
+        let container = try decoder.singleValueContainer()
+        let string = try container.decode(String.self)
+        if let date = dateTimeFormatter.date(from: string) {
+            return date
+        } else if let date = dateFormatter.date(from: string) {
+            return date
+        }
+        throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode date: \(string)")
+    }
     return jsonDecoder
 }()
 var jsonEncoder: JSONEncoder = {
     let jsonEncoder = JSONEncoder()
-    jsonEncoder.dateEncodingStrategy = .formatted(dateFormatter)
+    jsonEncoder.dateEncodingStrategy = .formatted(dateTimeFormatter)
     return jsonEncoder
 }()

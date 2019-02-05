@@ -3,9 +3,9 @@ language: objective-c
 before_install:
   - gem install xcpretty --no-rdoc --no-ri --no-document --quiet
 
-osx_image: xcode9.3
+osx_image: xcode10.1
 
-xcode_sdk: iphonesimulator11.3
+xcode_sdk: iphonesimulator12.1
 
 script:
   - set -o pipefail
