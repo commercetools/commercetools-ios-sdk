@@ -1038,12 +1038,12 @@ public class LineItemDraft: Codable {
     internal var variantId: Int?
     internal var sku: String?
     public var quantity: UInt?
-    public var supplyChannel: Reference<Channel>?
-    public var distributionChannel: Reference<Channel>?
+    public var supplyChannel: ResourceIdentifier?
+    public var distributionChannel: ResourceIdentifier?
     public var custom: JsonValue?
     public var shippingDetails: ItemShippingDetailsDraft?
 
-    public init(productVariantSelection: ProductVariantSelection, quantity: UInt? = nil, supplyChannel: Reference<Channel>? = nil, distributionChannel: Reference<Channel>? = nil, custom: JsonValue? = nil, shippingDetails: ItemShippingDetailsDraft? = nil) {
+    public init(productVariantSelection: ProductVariantSelection, quantity: UInt? = nil, supplyChannel: ResourceIdentifier? = nil, distributionChannel: ResourceIdentifier? = nil, custom: JsonValue? = nil, shippingDetails: ItemShippingDetailsDraft? = nil) {
         switch productVariantSelection {
         case .productVariant(let productId, let variantId):
             self.productId = productId
@@ -1456,10 +1456,10 @@ public struct Reference<T: Codable>: Codable {
     // MARK: - Properties
 
     public let id: String
-    public let typeId: String
+    public let typeId: TypeId
     public let obj: T?
     
-    public init(id: String, typeId: String) {
+    public init(id: String, typeId: TypeId) {
         self.id = id
         self.typeId = typeId
         self.obj = nil
@@ -1471,9 +1471,9 @@ public struct GenericReference: Codable {
     // MARK: - Properties
 
     public let id: String
-    public let typeId: String
+    public let typeId: TypeId
     
-    public init(id: String, typeId: String) {
+    public init(id: String, typeId: TypeId) {
         self.id = id
         self.typeId = typeId
     }
@@ -1484,14 +1484,41 @@ public struct ResourceIdentifier: Codable {
     // MARK: - Properties
 
     public let id: String?
-    public let typeId: String?
+    public let typeId: TypeId?
     public let key: String?
 
-    public init(id: String? = nil, typeId: String? = nil, key: String? = nil) {
+    public init(id: String? = nil, key: String? = nil, typeId: TypeId) {
         self.id = id
         self.typeId = typeId
         self.key = key
     }
+}
+
+public enum TypeId: String, Codable {
+
+    // MARK: - Properties
+
+    case cart
+    case cartDiscount = "cart-discount"
+    case category
+    case channel
+    case customer
+    case customerGroup = "customer-group"
+    case discountCode = "discount-code"
+    case keyValueDocument = "key-value-document"
+    case payment
+    case product
+    case productDiscount = "product-discount"
+    case productPrice = "product-price"
+    case productType = "product-type"
+    case order
+    case orderEdit = "order-edit"
+    case shippingMethod = "shipping-method"
+    case shoppingList = "shopping-list"
+    case state
+    case taxCategory = "tax-category"
+    case type
+    case zone
 }
 
 public struct ReturnInfo: Codable {
