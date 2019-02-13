@@ -216,13 +216,13 @@ public struct CartDraft: Codable {
     public var lineItems: [LineItemDraft]?
     public var shippingAddress: Address?
     public var billingAddress: Address?
-    public var shippingMethod: Reference<ShippingMethod>?
+    public var shippingMethod: ResourceIdentifier?
     public var custom: JsonValue?
     public var locale: String?
     public var deleteDaysAfterLastModification: UInt?
     public var itemShippingAddresses: [Address]
 
-    public init(currency: String, customerEmail: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: Reference<ShippingMethod>? = nil, custom: JsonValue? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil, itemShippingAddresses: [Address] = []) {
+    public init(currency: String, customerEmail: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: ResourceIdentifier? = nil, custom: JsonValue? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil, itemShippingAddresses: [Address] = []) {
         self.currency = currency
         self.customerEmail = customerEmail
         self.country = country
@@ -256,7 +256,7 @@ public enum CartUpdateAction: JSONRepresentable {
     case setShippingAddress(address: Address?)
     case setBillingAddress(address: Address?)
     case setCountry(country: String?)
-    case setShippingMethod(shippingMethod: Reference<ShippingMethod>?)
+    case setShippingMethod(shippingMethod: ResourceIdentifier?)
     case addDiscountCode(code: String)
     case removeDiscountCode(discountCode: Reference<DiscountCode>)
     case recalculate(updateProductData: Bool?)
