@@ -7,9 +7,9 @@
 	<key>scope</key>
 	<string>manage_my_payments:swift-development-42 manage_my_orders:swift-development-42 view_project_settings:swift-development-42 manage_my_profile:swift-development-42 create_anonymous_token:swift-development-42 view_products:swift-development-42 manage_my_shopping_lists:swift-development-42</string>
 	<key>clientId</key>
-	<string>EsuJaWFg6QNS34Qzp0AlApAa</string>
+	<string>2BjV8isT4NNNyGjUfdW44IGs</string>
 	<key>clientSecret</key>
-	<string>iJGz0onuWBYBXMfRoRR0wgtiw7eq7XN3</string>
+	<string>D2PPxmXvSHh8Z64CeNdwoW9yivbtZ96I</string>
 	<key>authUrl</key>
 	<string>https://auth.sphere.io</string>
 	<key>apiUrl</key>
