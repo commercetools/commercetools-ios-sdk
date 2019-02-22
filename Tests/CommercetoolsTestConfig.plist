@@ -5,7 +5,7 @@
 	<key>projectKey</key>
 	<string>swift-development-42</string>
 	<key>scope</key>
-	<string>manage_my_payments:swift-development-42 manage_my_orders:swift-development-42 view_project_settings:swift-development-42 manage_my_profile:swift-development-42 create_anonymous_token:swift-development-42 view_products:swift-development-42 manage_my_shopping_lists:swift-development-42</string>
+	<string>manage_my_payments:swift-development-42 manage_my_orders:swift-development-42 view_project_settings:swift-development-42 manage_my_profile:swift-development-42 create_anonymous_token:swift-development-42 view_products:swift-development-42 manage_my_shopping_lists:swift-development-42 view_stores:swift-development-42</string>
 	<key>clientId</key>
 	<string>2BjV8isT4NNNyGjUfdW44IGs</string>
 	<key>clientSecret</key>
