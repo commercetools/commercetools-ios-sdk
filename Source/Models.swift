@@ -216,13 +216,13 @@ public struct CartDraft: Codable {
     public var lineItems: [LineItemDraft]?
     public var shippingAddress: Address?
     public var billingAddress: Address?
-    public var shippingMethod: Reference<ShippingMethod>?
+    public var shippingMethod: ResourceIdentifier?
     public var custom: JsonValue?
     public var locale: String?
     public var deleteDaysAfterLastModification: UInt?
     public var itemShippingAddresses: [Address]
 
-    public init(currency: String, customerEmail: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: Reference<ShippingMethod>? = nil, custom: JsonValue? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil, itemShippingAddresses: [Address] = []) {
+    public init(currency: String, customerEmail: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: ResourceIdentifier? = nil, custom: JsonValue? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil, itemShippingAddresses: [Address] = []) {
         self.currency = currency
         self.customerEmail = customerEmail
         self.country = country
@@ -256,7 +256,7 @@ public enum CartUpdateAction: JSONRepresentable {
     case setShippingAddress(address: Address?)
     case setBillingAddress(address: Address?)
     case setCountry(country: String?)
-    case setShippingMethod(shippingMethod: Reference<ShippingMethod>?)
+    case setShippingMethod(shippingMethod: ResourceIdentifier?)
     case addDiscountCode(code: String)
     case removeDiscountCode(discountCode: Reference<DiscountCode>)
     case recalculate(updateProductData: Bool?)
@@ -1038,12 +1038,12 @@ public class LineItemDraft: Codable {
     internal var variantId: Int?
     internal var sku: String?
     public var quantity: UInt?
-    public var supplyChannel: Reference<Channel>?
-    public var distributionChannel: Reference<Channel>?
+    public var supplyChannel: ResourceIdentifier?
+    public var distributionChannel: ResourceIdentifier?
     public var custom: JsonValue?
     public var shippingDetails: ItemShippingDetailsDraft?
 
-    public init(productVariantSelection: ProductVariantSelection, quantity: UInt? = nil, supplyChannel: Reference<Channel>? = nil, distributionChannel: Reference<Channel>? = nil, custom: JsonValue? = nil, shippingDetails: ItemShippingDetailsDraft? = nil) {
+    public init(productVariantSelection: ProductVariantSelection, quantity: UInt? = nil, supplyChannel: ResourceIdentifier? = nil, distributionChannel: ResourceIdentifier? = nil, custom: JsonValue? = nil, shippingDetails: ItemShippingDetailsDraft? = nil) {
         switch productVariantSelection {
         case .productVariant(let productId, let variantId):
             self.productId = productId
@@ -1456,10 +1456,10 @@ public struct Reference<T: Codable>: Codable {
     // MARK: - Properties
 
     public let id: String
-    public let typeId: String
+    public let typeId: TypeId
     public let obj: T?
     
-    public init(id: String, typeId: String) {
+    public init(id: String, typeId: TypeId) {
         self.id = id
         self.typeId = typeId
         self.obj = nil
@@ -1471,9 +1471,9 @@ public struct GenericReference: Codable {
     // MARK: - Properties
 
     public let id: String
-    public let typeId: String
+    public let typeId: TypeId
     
-    public init(id: String, typeId: String) {
+    public init(id: String, typeId: TypeId) {
         self.id = id
         self.typeId = typeId
     }
@@ -1484,14 +1484,41 @@ public struct ResourceIdentifier: Codable {
     // MARK: - Properties
 
     public let id: String?
-    public let typeId: String?
+    public let typeId: TypeId?
     public let key: String?
 
-    public init(id: String? = nil, typeId: String? = nil, key: String? = nil) {
+    public init(id: String? = nil, key: String? = nil, typeId: TypeId) {
         self.id = id
         self.typeId = typeId
         self.key = key
     }
+}
+
+public enum TypeId: String, Codable {
+
+    // MARK: - Properties
+
+    case cart
+    case cartDiscount = "cart-discount"
+    case category
+    case channel
+    case customer
+    case customerGroup = "customer-group"
+    case discountCode = "discount-code"
+    case keyValueDocument = "key-value-document"
+    case payment
+    case product
+    case productDiscount = "product-discount"
+    case productPrice = "product-price"
+    case productType = "product-type"
+    case order
+    case orderEdit = "order-edit"
+    case shippingMethod = "shipping-method"
+    case shoppingList = "shopping-list"
+    case state
+    case taxCategory = "tax-category"
+    case type
+    case zone
 }
 
 public struct ReturnInfo: Codable {
@@ -1501,20 +1528,123 @@ public struct ReturnInfo: Codable {
     public let items: [ReturnItem]
     public let returnTrackingId: String
     public let returnDate: Date
+
+    // MARK: - Coding keys
+
+    enum CodingKeys: String, CodingKey {
+        case items
+        case returnTrackingId
+        case returnDate
+    }
+
+    // MARK: - Decodable
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        items = try container.decode([ReturnItem].self, ofFamily: ReturnItemContainer.self, forKey: .items)
+        returnTrackingId = try container.decode(String.self, forKey: .returnTrackingId)
+        returnDate = try container.decode(Date.self, forKey: .returnDate)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(items, forKey: .items)
+        try container.encode(returnTrackingId, forKey: .returnTrackingId)
+        try container.encode(returnDate, forKey: .returnDate)
+    }
 }
 
-public struct ReturnItem: Codable {
+public class ReturnItem: Codable {
 
     // MARK: - Properties
 
     public let id: String
     public let quantity: Int
-    public let lineItemId: String
     public let comment: String
     public let shipmentState: ReturnShipmentState
     public let paymentState: ReturnPaymentState
     public let lastModifiedAt: Date
     public let createdAt: Date
+}
+
+protocol ContainerClassFamily: Decodable {
+    var actualType: AnyObject.Type { get }
+}
+
+enum ContainerTypeCodingKey: String, CodingKey {
+    case type = "type"
+}
+
+public enum ReturnItemContainer: String, ContainerClassFamily {
+    case lineItemReturnItem = "LineItemReturnItem"
+    case customLineItemReturnItem = "CustomLineItemReturnItem"
+
+    var actualType: AnyObject.Type {
+        switch self {
+            case .lineItemReturnItem:
+                return LineItemReturnItem.self
+            case .customLineItemReturnItem:
+                return  CustomLineItemReturnItem.self
+        }
+    }
+}
+
+extension KeyedDecodingContainer {
+    func decode<T : Decodable, U : ContainerClassFamily>(_ heterogeneousType: [T].Type, ofFamily family: U.Type, forKey key: K) throws -> [T] {
+        var container = try self.nestedUnkeyedContainer(forKey: key)
+        var list = [T]()
+        var tmpContainer = container
+        while !container.isAtEnd {
+            let typeContainer = try container.nestedContainer(keyedBy: ContainerTypeCodingKey.self)
+            let family: U = try typeContainer.decode(U.self, forKey: .type)
+            if let type = family.actualType as? T.Type {
+                list.append(try tmpContainer.decode(type))
+            }
+        }
+        return list
+    }
+}
+
+public class LineItemReturnItem: ReturnItem {
+
+    // MARK: - Properties
+
+    public let lineItemId: String
+
+    // MARK: - Coding keys
+
+    enum CodingKeys: String, CodingKey {
+        case lineItemId
+    }
+
+    // MARK: - Decodable
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        lineItemId = try container.decode(String.self, forKey: .lineItemId)
+        try super.init(from: decoder)
+    }
+}
+
+public class CustomLineItemReturnItem: ReturnItem {
+
+    // MARK: - Properties
+
+    public let customLineItemId: String
+
+    // MARK: - Coding keys
+
+    enum CodingKeys: String, CodingKey {
+        case customLineItemId
+    }
+
+    // MARK: - Decodable
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        customLineItemId = try container.decode(String.self, forKey: .customLineItemId)
+        try super.init(from: decoder)
+    }
 }
 
 public enum ReturnPaymentState: String, Codable {
@@ -1834,6 +1964,7 @@ public struct Zone: Codable {
 
     public let id: String
     public let version: UInt
+    public let key: String?
     public let createdAt: Date
     public let lastModifiedAt: Date
     public let name: String
