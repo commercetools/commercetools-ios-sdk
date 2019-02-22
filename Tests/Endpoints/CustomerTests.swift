@@ -284,7 +284,7 @@ class CustomerTests: XCTestCase {
 
         let username = "swift.sdk.test.user2@commercetools.com"
 
-        // For generating password reset token we need higher priviledges
+        // For generating password reset token we need higher privileges
         setupProjectManagementConfiguration()
 
         // Obtain password reset token
