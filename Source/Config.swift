@@ -71,6 +71,15 @@ public class Config {
     */
     public private(set) var apiUrl: String?
 
+    /**
+        The current machine learning API server URL.
+
+        Depending on the region the project is hosted on, `machineLearningApiUrl` can have one of the following values:
+        Europe: `https://ml-eu.europe-west1.gcp.commercetools.com/`
+        United States: `https://ml-us.europe-west1.gcp.commercetools.com/`
+    */
+    public private(set) var machineLearningApiUrl: String?
+
     // MARK: - Lifecycle
 #if !os(Linux)
     /**
@@ -131,6 +140,7 @@ public class Config {
         scope = config["scope"] as? String
         authUrl = config["authUrl"] as? String
         apiUrl = config["apiUrl"] as? String
+        machineLearningApiUrl = config["machineLearningApiUrl"] as? String
         anonymousSession = config["anonymousSession"] as? Bool ?? false
         shareWatchSession = config["shareWatchSession"] as? Bool ?? false
         keychainAccessGroupName = config["keychainAccessGroupName"] as? String
@@ -142,6 +152,10 @@ public class Config {
 
         if let authUrl = authUrl, !authUrl.hasSuffix("/") {
             self.authUrl = authUrl + "/"
+        }
+
+        if let machineLearningApiUrl = machineLearningApiUrl, !machineLearningApiUrl.hasSuffix("/") {
+            self.machineLearningApiUrl = machineLearningApiUrl + "/"
         }
 
         if !validate() {
@@ -183,6 +197,11 @@ public class Config {
         if (apiUrl ?? "").isEmpty {
             Log.debug("No apiUrl specified - using deafult: https://api.sphere.io/")
             apiUrl = "https://api.sphere.io/"
+        }
+
+        if (machineLearningApiUrl ?? "").isEmpty {
+            Log.debug("No machineLearningApiUrl specified - using deafult: https://ml-eu.europe-west1.gcp.commercetools.com/")
+            machineLearningApiUrl = "https://ml-eu.europe-west1.gcp.commercetools.com/"
         }
 
         if (!valid) {

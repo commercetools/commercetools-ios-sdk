@@ -14,6 +14,8 @@
 	<string>https://auth.sphere.io</string>
 	<key>apiUrl</key>
 	<string>https://api.sphere.io</string>
+	<key>machineLearningApiUrl</key>
+	<string>https://ml-eu.europe-west1.gcp.commercetools.com</string>
 	<key>anonymousSession</key>
 	<true/>
 	<key>shareWatchSession</key>
