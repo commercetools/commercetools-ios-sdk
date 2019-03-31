@@ -2083,3 +2083,166 @@ public enum JsonValue: Codable {
         return nil
     }
 }
+
+public struct SimilarProductPair: Codable {
+
+    // MARK: - Properties
+
+    public let confidence: Double
+    public let products: [SimilarProduct]
+}
+
+public struct SimilarProduct: Codable {
+
+    // MARK: - Properties
+
+    public let product: Reference<ProductProjection>
+    public let variantId: Int
+    public let meta: SimilarProductMeta?
+}
+
+public struct SimilarProductMeta: Codable {
+
+    // MARK: - Properties
+
+    public let name: LocalizedString?
+    public let description: LocalizedString?
+    public let price: Money?
+    public let variantCount: Int?
+}
+
+public struct TaskStatus<ResponseType: Codable>: Codable {
+
+    // MARK: - Properties
+
+    public let state: TaskStatusState
+    public let expires: Date?
+    public let result: ResponseType?
+
+    // MARK: - Decodable
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        state = try values.decode(TaskStatusState.self, forKey: .state)
+        expires = try? values.decode(Date.self, forKey: .expires)
+        // ML API is returning an empty object when the result is not yet available (i.e the `state` is `.pending`)
+        result = try? values.decode(ResponseType.self, forKey: .result)
+    }
+
+    // MARK: Encodable
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(state, forKey: .state)
+        try? container.encode(expires, forKey: .expires)
+        try? container.encode(result, forKey: .result)
+    }
+
+    // MARK: - Coding keys
+
+    enum CodingKeys: String, CodingKey {
+        case state
+        case expires
+        case result
+    }
+}
+
+public enum TaskStatusState: String, Codable {
+    case pending = "PENDING"
+    case success = "SUCCESS"
+}
+
+public struct PagedQueryResult<ResponseType: Codable, ResponseMeta: Codable>: Codable {
+
+    // MARK: - Properties
+
+    public let offset: UInt
+    public let count: UInt
+    public let total: UInt
+    public let facets: JsonValue?
+    public let meta: ResponseMeta?
+    public let results: [ResponseType]
+}
+
+public struct SimilarProductSearchRequestMeta: Codable {
+
+    // MARK: - Properties
+
+    public let similarityMeasures: [String]
+}
+
+public struct TaskToken: Codable {
+
+    // MARK: - Properties
+
+    public let taskId: String
+    public let uriPath: String
+}
+
+public struct SimilarProductSearchRequest: Codable {
+
+    // MARK: - Properties
+
+    public let limit: Int?
+    public let offset: Int?
+    public let language: String?
+    public let currencyCode: String?
+    public let similarityMeasures: SimilarityMeasures?
+    public let productSetSelectors: [ProductSelector]?
+    public let confidenceMin: Double?
+    public let confidenceMax: Double?
+
+    public init(limit: Int? = nil, offset: Int? = nil, language: String? = nil, currencyCode: String? = nil, similarityMeasures: SimilarityMeasures? = nil, productSetSelectors: [ProductSelector]? = nil, confidenceMin: Double? = nil, confidenceMax: Double? = nil) {
+        self.limit = limit
+        self.offset = offset
+        self.language = language
+        self.currencyCode = currencyCode
+        self.similarityMeasures = similarityMeasures
+        self.productSetSelectors = productSetSelectors
+        self.confidenceMin = confidenceMin
+        self.confidenceMax = confidenceMax
+    }
+}
+
+public struct SimilarityMeasures: Codable {
+
+    // MARK: - Properties
+
+    public let name: Int?
+    public let description: Int?
+    public let attribute: Int?
+    public let variantCount: Int?
+    public let price: Int?
+
+    public init(name: Int? = nil, description: Int? = nil, attribute: Int? = nil, variantCount: Int? = nil, price: Int? = nil) {
+        self.name = name
+        self.description = description
+        self.attribute = attribute
+        self.variantCount = variantCount
+        self.price = price
+    }
+}
+
+public struct ProductSelector: Codable {
+
+    // MARK: - Properties
+
+    public let projectKey: String
+    public let productIds: [String]?
+    public let productTypeIds: [String]?
+    public let staged: Bool?
+    public let includeVariants: Bool?
+    public let productSetLimit: Int?
+
+    public init (productIds: [String]? = nil, productTypeIds: [String]? = nil, staged: Bool? = nil, includeVariants: Bool? = nil, productSetLimit: Int? = nil) {
+        guard let projectKey = Config.currentConfig?.projectKey else {
+            fatalError("Cannot instantiate ProductSelector without previously setting a valid Commercetools configuration.")
+        }
+        self.projectKey = projectKey
+        self.productIds = productIds
+        self.productTypeIds = productTypeIds
+        self.staged = staged
+        self.includeVariants = includeVariants
+        self.productSetLimit = productSetLimit
+    }
+}
