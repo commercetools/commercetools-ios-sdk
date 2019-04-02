@@ -6,29 +6,29 @@ import XCTest
 @testable import Commercetools
 
 class SimilarProductsTests: XCTestCase {
-    
+
     override func setUp() {
         super.setUp()
-        
+
         setupTestConfiguration()
     }
-    
+
     override func tearDown() {
         cleanPersistedTokens()
         super.tearDown()
     }
-    
+
     func testInitiation() {
         let similarProductsExpectation = expectation(description: "similar products initiation expectation")
 
         let request = SimilarProductSearchRequest(limit: 10, similarityMeasures: SimilarityMeasures(name: 1))
-        
+
         SimilarProducts.initiateSearch(request: request) { result in
             XCTAssert(result.isSuccess)
             XCTAssertNotNil(result.model)
             similarProductsExpectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: 10, handler: nil)
     }
 
@@ -43,13 +43,12 @@ class SimilarProductsTests: XCTestCase {
             XCTAssertNotNil(result.model)
             let taskId = result.model!.taskId
             DispatchQueue.main.async {
-                timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
                     SimilarProducts.status(for: taskId) { result in
                         XCTAssert(result.isSuccess)
                         XCTAssertNotNil(result.model)
                         if result.model!.state == .success {
                             XCTAssertEqual(result.model!.result!.results.count, 3)
-                            timer.invalidate()
                             similarProductsExpectation.fulfill()
                         }
                     }
@@ -57,7 +56,9 @@ class SimilarProductsTests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: 100, handler: nil)
+        waitForExpectations(timeout: 100, handler: { _ in
+            timer?.invalidate()
+        })
     }
 
     func testProductSelection() {
@@ -82,7 +83,6 @@ class SimilarProductsTests: XCTestCase {
                             XCTAssertNotNil(result.model)
                             if result.model!.state == .success {
                                 XCTAssertEqual(result.model!.result!.results[0].products.filter({ productIds.contains($0.product.id) }).count, 2)
-                                timer.invalidate()
                                 similarProductsExpectation.fulfill()
                             }
                         }
@@ -91,6 +91,8 @@ class SimilarProductsTests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: 100, handler: nil)
+        waitForExpectations(timeout: 100, handler: { _ in
+            timer?.invalidate()
+        })
     }
 }
