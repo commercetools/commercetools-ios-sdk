@@ -2246,3 +2246,21 @@ public struct ProductSelector: Codable {
         self.productSetLimit = productSetLimit
     }
 }
+
+public struct ProjectCategoryRecommendation: Codable {
+
+    // MARK: - Properties
+
+    public let category: Reference<Category>
+    public let confidence: Double
+    public let path: String
+}
+
+public struct ProjectCategoryRecommendationMeta: Codable {
+
+    // MARK: - Properties
+
+    public let productName: String?
+    public let productImageUrl: String?
+    public let generalCategoryNames: [String]
+}
