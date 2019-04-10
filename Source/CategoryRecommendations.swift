@@ -14,7 +14,7 @@ public struct CategoryRecommendations: MLEndpoint, Codable {
     public static let path = "recommendations/project-categories"
 
     /**
-        Initiates a similar products search.
+        Queries for best-fitting / recommended categories for the specified product.
 
         - parameter productId:                Specific product ID to be used for searching for the best-fitting categories.
         - parameter staged:                   Flag to target either the staged or the current version of a product.
@@ -44,7 +44,7 @@ public struct CategoryRecommendations: MLEndpoint, Codable {
                 urlParameters["offset"] = "\(offset)"
             }
 
-            let request = self.request(url: path + productId, urlParameters: urlParameters, headers: self.headers(token))
+            let request = self.request(url: "\(path)/\(productId)", urlParameters: urlParameters, headers: self.headers(token))
 
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
