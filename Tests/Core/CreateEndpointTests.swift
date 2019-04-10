@@ -60,7 +60,7 @@ class CreateEndpointTests: XCTestCase {
                 XCTAssert(result.isFailure)
                 XCTAssertEqual(result.statusCode, 400)
                 XCTAssertEqual(reason.message, "Request body does not contain valid JSON.")
-                XCTAssertEqual(reason.details, "currency: ISO 4217 code JSON String expected")
+                XCTAssertEqual(reason.details, "currency: Currency 'BAD' not valid as ISO 4217 code.")
                 createExpectation.fulfill()
             }
         })
