@@ -80,4 +80,27 @@ class StoreTests: XCTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
+
+    func testCartStore() {
+
+        let storeExpectation = expectation(description: "cart store expectation")
+
+        Store.byKey("unionSquare") { result in
+            let cartDraft = CartDraft(currency: "EUR", store: ResourceIdentifier(id: result.model!.id, typeId: .store))
+
+            Cart.create(cartDraft) { result in
+                XCTAssert(result.isSuccess)
+
+                let cart = result.model!
+                XCTAssertEqual(cart.store!.key, "unionSquare")
+
+                Cart.delete(cart.id, version: cart.version) { result in
+                    XCTAssert(result.isSuccess)
+                    storeExpectation.fulfill()
+                }
+            }
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
 }

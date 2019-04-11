@@ -210,6 +210,7 @@ public struct CartDraft: Codable {
 
     public var currency: String
     public var customerEmail: String?
+    public var store: ResourceIdentifier?
     public var country: String?
     public var inventoryMode: InventoryMode?
     public var taxMode: TaxMode?
@@ -222,9 +223,10 @@ public struct CartDraft: Codable {
     public var deleteDaysAfterLastModification: UInt?
     public var itemShippingAddresses: [Address]
 
-    public init(currency: String, customerEmail: String? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: ResourceIdentifier? = nil, custom: JsonValue? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil, itemShippingAddresses: [Address] = []) {
+    public init(currency: String, customerEmail: String? = nil, store: ResourceIdentifier? = nil, country: String? = nil, inventoryMode: InventoryMode? = nil, taxMode: TaxMode? = nil, lineItems: [LineItemDraft]? = nil, shippingAddress: Address? = nil, billingAddress: Address? = nil, shippingMethod: ResourceIdentifier? = nil, custom: JsonValue? = nil, locale: String? = nil, deleteDaysAfterLastModification: UInt? = nil, itemShippingAddresses: [Address] = []) {
         self.currency = currency
         self.customerEmail = customerEmail
+        self.store = store
         self.country = country
         self.inventoryMode = inventoryMode
         self.taxMode = taxMode
@@ -1494,6 +1496,19 @@ public struct ResourceIdentifier: Codable {
     }
 }
 
+public struct KeyReference: Codable {
+
+    // MARK: - Properties
+
+    public let typeId: TypeId
+    public let key: String
+
+    public init(key: String, typeId: TypeId) {
+        self.key = key
+        self.typeId = typeId
+    }
+}
+
 public enum TypeId: String, Codable {
 
     // MARK: - Properties
@@ -1519,6 +1534,7 @@ public enum TypeId: String, Codable {
     case taxCategory = "tax-category"
     case type
     case zone
+    case store
 }
 
 public struct ReturnInfo: Codable {
