@@ -28,7 +28,7 @@ open class AuthManager {
     // MARK: - Properties
 
     /// A shared instance of `AuthManager`, which should be used by other SDK objects.
-    open static let sharedInstance = AuthManager()
+    public static let sharedInstance = AuthManager()
 
     /// A property used for setting the `anonymous_id` while obtaining anonymous session access and refresh tokens.
     var anonymousId: String?
