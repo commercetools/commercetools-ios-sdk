@@ -41,7 +41,7 @@ class GraphQLTests: XCTestCase {
                let current = masterData["current"] as? [String: String],
                let name = current["name"] {
                 XCTAssert(result.isSuccess)
-                XCTAssertGreaterThan(name.characters.count, 0)
+                XCTAssertGreaterThan(name.count, 0)
                 XCTAssertEqual(results.count, 1)
                 queryExpectation.fulfill()
             }

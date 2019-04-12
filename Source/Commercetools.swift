@@ -154,7 +154,7 @@ public func signUpCustomer(_ profile: Data, result: @escaping (Result<CustomerSi
             result(signUpResult)
         } else if let username = signUpResult.model?.customer.email,
                   let customerDraft = try? JSONSerialization.jsonObject(with: profile, options: []) as? [String: Any],
-                  let password = (customerDraft ?? [:])["password"] as? String {
+                  let password = customerDraft["password"] as? String {
             AuthManager.sharedInstance.loginCustomer(username: username, password: password) { error in
                 if let error = error {
                     result(.failure(nil, [error]))

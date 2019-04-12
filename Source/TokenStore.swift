@@ -127,7 +127,7 @@ class TokenStore: NSObject {
         super.init()
         reloadTokens()
         #if os(iOS)
-            NotificationCenter.default.addObserver(self, selector: #selector(transferTokens), name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(transferTokens), name: UIApplication.didBecomeActiveNotification, object: nil)
         #endif
     }
 
