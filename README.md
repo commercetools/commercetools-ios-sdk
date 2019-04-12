@@ -495,6 +495,35 @@ ProductType.byKey("main", result: { result in
 })
 ```
 
+#### Store
+
+Using `view_stores` scope, it is possible to retrieve by UUID, key and query for stores.
+- Query for stores
+```swift
+Store.query(limit: 10, offset: 1, result: { result in
+    if let response = result.model, let count = response.count,
+            let stores = response.results, result.isSuccess {
+        // stores contains an array of store objects
+    }
+})
+```
+- Retrieve store by UUID
+```swift
+Store.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
+    if let store = result.model, result.isSuccess {
+        // response contains store object
+    }
+})
+```
+- Retrieve store by key
+```swift
+Store.byKey("unionSquare", result: { result in
+    if let store = result.model, result.isSuccess {
+        // response contains store object
+    }
+})
+```
+
 ## Handling Results
 
 In order to check whether any action with Commercetools services was successfully executed, you should use `isSuccess` or `isFailure` property of the result in question. For all successful operations, there're two properties, which can be used to consume actual responses. Recommended one for all endpoints which have incorporated models is `model`. This property has been used in all of the examples above. Alternatively, in case you are writing a custom endpoint, and do not wish to add model properties and mappings, `json` property will give you access to `[String: Any]` (dictionary representation of the JSON received from the Commercetools platform).

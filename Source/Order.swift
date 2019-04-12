@@ -25,6 +25,7 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
     public let customerId: String?
     public let customerEmail: String?
     public let anonymousId: String?
+    public let store: KeyReference?
     public let lineItems: [LineItem]
     public let customLineItems: [CustomLineItem]
     public let totalPrice: Money
