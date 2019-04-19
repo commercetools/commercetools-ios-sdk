@@ -78,6 +78,8 @@ The Commercetools SDK uses a `.plist` configuration file named `CommercetoolsCon
 	<string>https://auth.sphere.io/</string>
 	<key>apiUrl</key>
 	<string>https://api.sphere.io</string>
+	<key>machineLearningApiUrl</key>
+    <string>https://ml-eu.europe-west1.gcp.commercetools.com</string>
 	<key>anonymousSession</key>
     <true/>
     <key>keychainAccessGroupName</key>
@@ -522,6 +524,33 @@ Store.byKey("unionSquare", result: { result in
         // response contains store object
     }
 })
+```
+
+## Consuming Machine Learning Endpoints
+
+For [machine learning API](https://docs.commercetools.com/http-api-ml) Commercetools provides, the SDK has a separate set of endpoints.
+
+### Currently Supported Machine Learning Endpoints
+
+#### Similar products
+Searching for similar products is possible using one method for initiating a search request, and another for checking the progress and obtaining search results.
+- Initiate a search request for similar products
+```swift
+let request = SimilarProductSearchRequest(limit: 10, similarityMeasures: SimilarityMeasures(name: 1))
+
+SimilarProducts.initiateSearch(request: request) { result in
+    if let taskToken = result.model {
+        // use taskToken.taskId to monitor for progress
+    }
+}
+```
+- Check for status, and obtain results
+```swift
+SimilarProducts.status(for: taskToken.taskId) { result in
+    if let taskStatus = result.model, taskStatus == .success {
+        // task has been completed, use taskStatus.result to get the products from `PagedQueryResult`
+    }
+}
 ```
 
 ## Handling Results

@@ -171,7 +171,9 @@ public extension Endpoint {
         headers.forEach {
             urlRequest.setValue($0.value, forHTTPHeaderField: $0.key)
         }
-        urlRequest.setValue(json != nil ? "application/json" : "application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        if method == .post || method == .put || method == .patch || method == .delete {
+            urlRequest.setValue(json != nil ? "application/json" : "application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        }
 
         if let json = json {
             urlRequest.httpBody = json
@@ -206,6 +208,44 @@ public extension Endpoint {
                 }
             }
         }).resume()
+    }
+}
+
+public protocol MLEndpoint: Endpoint {}
+
+public extension MLEndpoint {
+    /// The full path used to form requests for ML endpoints.
+    static var fullPath: String? {
+        if let config = Config.currentConfig, let apiUrl = config.machineLearningApiUrl, let projectKey = config.projectKey {
+            var normalizedPath = path
+            if normalizedPath.hasPrefix("/") {
+                normalizedPath.remove(at: String.Index(encodedOffset: 0))
+            }
+            return "\(apiUrl)\(projectKey)/\(normalizedPath)"
+        }
+        return nil
+    }
+
+    /**
+        Convenience method for performing ML requests with authorization token, providing general configuration error handling.
+
+        - parameter result:                   The code to be executed in case an error occurs.
+        - parameter requestHandler:           The code to be executed if no error occurs, providing token and path.
+    */
+    static func requestWithTokenAndPath<T>(_ result: @escaping (Result<T>) -> Void, _ requestHandler: @escaping (String, String) -> Void) {
+        guard let config = Config.currentConfig, let path = fullPath, config.validate() else {
+            Log.error("Cannot execute command - check if the configuration is valid.")
+            result(Result.failure(nil, [CTError.generalError(reason: nil)]))
+            return
+        }
+
+        AuthManager.sharedInstance.token { token, error in
+            guard let token = token else {
+                result(Result.failure(nil, [error ?? CTError.generalError(reason: nil)]))
+                return
+            }
+            requestHandler(token, path)
+        }
     }
 }
 
