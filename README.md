@@ -553,6 +553,17 @@ SimilarProducts.status(for: taskToken.taskId) { result in
 }
 ```
 
+#### Category recommendations
+Searching for best-fitting categories for a specific product ID is possible using provided query method.
+- Searching for category recommendations
+```swift
+CategoryRecommendations.query(productId: product.id) { result in
+    if let results = result.model?.results {
+        // results contains an array of `ProjectCategoryRecommendation`s
+    }
+}
+```
+
 ## Handling Results
 
 In order to check whether any action with Commercetools services was successfully executed, you should use `isSuccess` or `isFailure` property of the result in question. For all successful operations, there're two properties, which can be used to consume actual responses. Recommended one for all endpoints which have incorporated models is `model`. This property has been used in all of the examples above. Alternatively, in case you are writing a custom endpoint, and do not wish to add model properties and mappings, `json` property will give you access to `[String: Any]` (dictionary representation of the JSON received from the Commercetools platform).
