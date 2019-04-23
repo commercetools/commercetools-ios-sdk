@@ -134,6 +134,11 @@
 		21A44857224303FE00AFD324 /* SimilarProducts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A44855224303FE00AFD324 /* SimilarProducts.swift */; };
 		21A44858224303FE00AFD324 /* SimilarProducts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A44855224303FE00AFD324 /* SimilarProducts.swift */; };
 		21A44859224303FE00AFD324 /* SimilarProducts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A44855224303FE00AFD324 /* SimilarProducts.swift */; };
+		21B07FEC2253DBBB00C22D21 /* CategoryRecommendations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B07FEB2253DBBB00C22D21 /* CategoryRecommendations.swift */; };
+		21B07FED2253DBBB00C22D21 /* CategoryRecommendations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B07FEB2253DBBB00C22D21 /* CategoryRecommendations.swift */; };
+		21B07FEE2253DBBB00C22D21 /* CategoryRecommendations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B07FEB2253DBBB00C22D21 /* CategoryRecommendations.swift */; };
+		21B07FEF2253DBBB00C22D21 /* CategoryRecommendations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B07FEB2253DBBB00C22D21 /* CategoryRecommendations.swift */; };
+		21B07FF12253E2D800C22D21 /* CategoryRecommendationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B07FF02253E2D800C22D21 /* CategoryRecommendationsTests.swift */; };
 		21BB6F341DDEF8900010127A /* GraphQLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21BB6F331DDEF8900010127A /* GraphQLTests.swift */; };
 		21C0B6321E814AD600D666F5 /* ProjectSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C0B6311E814AD600D666F5 /* ProjectSettingsTests.swift */; };
 		21C6080A1CE006EE001A68A7 /* Commercetools.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C608081CE006EE001A68A7 /* Commercetools.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -208,6 +213,8 @@
 		2163750E22202AAC00EDDAB5 /* StoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreTests.swift; sourceTree = "<group>"; };
 		219B76FA1F536281000C857A /* Payment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Payment.swift; sourceTree = "<group>"; };
 		21A44855224303FE00AFD324 /* SimilarProducts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarProducts.swift; sourceTree = "<group>"; };
+		21B07FEB2253DBBB00C22D21 /* CategoryRecommendations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryRecommendations.swift; sourceTree = "<group>"; };
+		21B07FF02253E2D800C22D21 /* CategoryRecommendationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryRecommendationsTests.swift; sourceTree = "<group>"; };
 		21BB6F331DDEF8900010127A /* GraphQLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphQLTests.swift; sourceTree = "<group>"; };
 		21C0B6311E814AD600D666F5 /* ProjectSettingsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectSettingsTests.swift; sourceTree = "<group>"; };
 		21C608081CE006EE001A68A7 /* Commercetools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Commercetools.h; sourceTree = "<group>"; };
@@ -286,6 +293,7 @@
 			isa = PBXGroup;
 			children = (
 				210883A822455156008BF496 /* SimilarProductsTests.swift */,
+				21B07FF02253E2D800C22D21 /* CategoryRecommendationsTests.swift */,
 			);
 			path = MachineLearningEndpoints;
 			sourceTree = "<group>";
@@ -366,6 +374,7 @@
 			isa = PBXGroup;
 			children = (
 				21A44855224303FE00AFD324 /* SimilarProducts.swift */,
+				21B07FEB2253DBBB00C22D21 /* CategoryRecommendations.swift */,
 			);
 			name = MachineLearningEndpoints;
 			sourceTree = "<group>";
@@ -602,6 +611,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -679,6 +689,7 @@
 				210BE6D061EE9D05445A74E5 /* ProductProjection.swift in Sources */,
 				210BE4548F3C235ECB82C6D4 /* ActiveCart.swift in Sources */,
 				210BE70EB096D488EDBE3A13 /* GraphQL.swift in Sources */,
+				21B07FED2253DBBB00C22D21 /* CategoryRecommendations.swift in Sources */,
 				210BE7665A0C0B192AAD6255 /* ProductType.swift in Sources */,
 				210BECAA37F4E4A1C50AD762 /* Order.swift in Sources */,
 				210BE58576ED1F03720612E8 /* Models.swift in Sources */,
@@ -715,6 +726,7 @@
 				210BE0A21654CA7C3FCC5B7B /* ProductProjection.swift in Sources */,
 				210BEC9F114FFE8E9070E63D /* ActiveCart.swift in Sources */,
 				210BE2D44101246E68061B67 /* GraphQL.swift in Sources */,
+				21B07FEE2253DBBB00C22D21 /* CategoryRecommendations.swift in Sources */,
 				210BEB11D16D1D795228E4E9 /* ProductType.swift in Sources */,
 				210BE2B248108674195B273D /* Order.swift in Sources */,
 				210BE4867740D665BC9481E0 /* Models.swift in Sources */,
@@ -751,6 +763,7 @@
 				210BE49B24AA8A71939BD275 /* ProductProjection.swift in Sources */,
 				210BE9498F7A3C6874DA64F1 /* ActiveCart.swift in Sources */,
 				210BEA28BDE4F67CB57AAFB3 /* GraphQL.swift in Sources */,
+				21B07FEF2253DBBB00C22D21 /* CategoryRecommendations.swift in Sources */,
 				210BE521BC6739DD59127152 /* ProductType.swift in Sources */,
 				210BEBEE015A11BAB91AA3A1 /* Order.swift in Sources */,
 				210BEBA74FEEFE5C3F5A61D2 /* Models.swift in Sources */,
@@ -787,6 +800,7 @@
 				210BE0A61DAE421ED1A5FAD9 /* ProductProjection.swift in Sources */,
 				210BE5E0E615B5F1E8A83EAB /* ActiveCart.swift in Sources */,
 				210BE6620B334E21C42272BB /* GraphQL.swift in Sources */,
+				21B07FEC2253DBBB00C22D21 /* CategoryRecommendations.swift in Sources */,
 				210BE1FB8C6C0D3C45615701 /* ProductType.swift in Sources */,
 				210BE149EDF31C1497850A80 /* Order.swift in Sources */,
 				210BE69D8A9B605889CB3AE6 /* Models.swift in Sources */,
@@ -814,6 +828,7 @@
 				21CDEC4D1F56CF8A00ECF30E /* PaymentTests.swift in Sources */,
 				210BEBAB76278A85D14568D0 /* ByKeyEndpointTests.swift in Sources */,
 				21BB6F341DDEF8900010127A /* GraphQLTests.swift in Sources */,
+				21B07FF12253E2D800C22D21 /* CategoryRecommendationsTests.swift in Sources */,
 				210BEA16377561C1FC741F28 /* CreateEndpointTests.swift in Sources */,
 				210BE69C056B75CF70357AFF /* UpdateEndpointTests.swift in Sources */,
 				213398191CDB8BB2003248BD /* ProductProjectionTests.swift in Sources */,
