@@ -2,6 +2,7 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
+- `0.8.x` Releases - [0.8.0](#080)
 - `0.7.x` Releases - [0.7.0](#070) | [0.7.1](#071) | [0.7.2](#072) | [0.7.3](#073) | [0.7.4](#074) | [0.7.5](#075)
 - `0.6.x` Releases - [0.6.0](#060) | [0.6.1](#061)
 - `0.5.x` Releases - [0.5.0](#050) | [0.5.1](#051) | [0.5.2](#052) | [0.5.3](#053) | [0.5.4](#054) | [0.5.5](#055) | [0.5.6](#056) | [0.5.7](#057) | [0.5.8](#058) | [0.5.9](#059)
@@ -12,6 +13,20 @@ All changes to this project will be documented in this file.
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.8.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.8.0)
+Released on 2018-04-26.
+
+#### Added
+- `SimilarProducts` machine learning endpoint.
+- `CategoryRecommendations` machine learning endpoint.
+- `Store` endpoint.
+- `CustomLineItemReturnItem` to be used on a `ReturnInfo`.
+- `key` attribute on the `Zone`.
+
+#### Updated
+- Use `ResourceIdentifier` for `distributionChannel` and `supplyChannel` on `LineItemDraft`.
+- Use `ResourceIdentifier` for `shippingMethod` on `CartDraft`.
 
 ## [0.7.6](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.7.6)
 Released on 2018-08-31.
