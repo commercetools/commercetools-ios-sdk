@@ -2188,11 +2188,11 @@ public struct SimilarProductSearchRequest: Codable {
     public let language: String?
     public let currencyCode: String?
     public let similarityMeasures: SimilarityMeasures?
-    public let productSetSelectors: [ProductSelector]?
+    public let productSetSelectors: [ProductSetSelector]?
     public let confidenceMin: Double?
     public let confidenceMax: Double?
 
-    public init(limit: Int? = nil, offset: Int? = nil, language: String? = nil, currencyCode: String? = nil, similarityMeasures: SimilarityMeasures? = nil, productSetSelectors: [ProductSelector]? = nil, confidenceMin: Double? = nil, confidenceMax: Double? = nil) {
+    public init(limit: Int? = nil, offset: Int? = nil, language: String? = nil, currencyCode: String? = nil, similarityMeasures: SimilarityMeasures? = nil, productSetSelectors: [ProductSetSelector]? = nil, confidenceMin: Double? = nil, confidenceMax: Double? = nil) {
         self.limit = limit
         self.offset = offset
         self.language = language
@@ -2223,7 +2223,7 @@ public struct SimilarityMeasures: Codable {
     }
 }
 
-public struct ProductSelector: Codable {
+public struct ProductSetSelector: Codable {
 
     // MARK: - Properties
 

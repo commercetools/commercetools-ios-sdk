@@ -70,7 +70,7 @@ class SimilarProductsTests: XCTestCase {
             XCTAssertNotNil(result.model)
             let productIds = result.model!.results.map { $0.id }
 
-            let request = SimilarProductSearchRequest(limit: 3, productSetSelectors: productIds.map { ProductSelector(productIds: [$0]) })
+            let request = SimilarProductSearchRequest(limit: 3, productSetSelectors: productIds.map { ProductSetSelector(productIds: [$0]) })
 
             SimilarProducts.initiateSearch(request: request) { result in
                 XCTAssert(result.isSuccess)
