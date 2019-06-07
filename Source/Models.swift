@@ -2168,7 +2168,7 @@ public struct SimilarProductSearchRequestMeta: Codable {
 
     // MARK: - Properties
 
-    public let similarityMeasures: [String]
+    public let similarityMeasures: SimilarityMeasures
 }
 
 public struct TaskToken: Codable {
