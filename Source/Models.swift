@@ -104,6 +104,26 @@ public struct AssetDimensions: Codable {
     public let h: Double
 }
 
+public struct CreatedBy: Codable {
+
+    // MARK: - Properties
+
+    public let clientId: String?
+    public let externalUserId: String?
+    public let customer: Reference<Customer>?
+    public let anonymousId: String?
+}
+
+public struct LastModifiedBy: Codable {
+
+    // MARK: - Properties
+
+    public let clientId: String?
+    public let externalUserId: String?
+    public let customer: Reference<Customer>?
+    public let anonymousId: String?
+}
+
 public struct Attribute: Codable {
 
     // MARK: - Properties
@@ -164,7 +184,9 @@ public struct CartDiscount: Codable {
     public let version: UInt
     public let key: String?
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let name: LocalizedString
     public let description: LocalizedString?
     public let value: CartDiscountValue
@@ -459,7 +481,9 @@ public struct Channel: Codable {
     public let id: String
     public let version: UInt
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let key: String
     public let roles: [ChannelRole]
     public let name: LocalizedString?
@@ -650,7 +674,9 @@ public struct CustomerGroup: Codable {
     public let key: String?
     public let version: UInt
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let name: String
     public let custom: JsonValue?
 }
@@ -760,7 +786,9 @@ public struct DiscountCode: Codable {
     public let id: String
     public let version: UInt
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let name: LocalizedString?
     public let description: LocalizedString?
     public let code: String
@@ -1406,7 +1434,9 @@ public struct ProductDiscount: Codable {
     public let version: UInt
     public let key: String?
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let name: LocalizedString
     public let description: LocalizedString?
     public let value: ProductDiscountValue
@@ -1822,7 +1852,9 @@ public struct State: Codable {
     public let id: String
     public let version: UInt
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let key: String
     public let type: StateType
     public let name: LocalizedString
@@ -1877,7 +1909,9 @@ public struct TaxCategory: Codable {
     public let version: UInt
     public let key: String?
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let name: String
     public let description: String?
     public let rates: [TaxRate]

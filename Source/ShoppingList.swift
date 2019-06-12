@@ -21,7 +21,9 @@ public struct ShoppingList: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateE
     public let key: String?
     public let version: UInt
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let slug: LocalizedString?
     public let name: LocalizedString
     public let description: LocalizedString?

@@ -18,7 +18,9 @@ public struct ProductType: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Codable {
     public let id: String
     public let version: UInt
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let key: String?
     public let name: String
     public let description: String

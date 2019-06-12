@@ -19,7 +19,9 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
     public let id: String
     public let version: UInt
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let completedAt: Date?
     public let orderNumber: String?
     public let customerId: String?

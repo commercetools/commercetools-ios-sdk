@@ -55,6 +55,8 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
     public let deleteDaysAfterLastModification: UInt?
     public let origin: CartOrigin
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let itemShippingAddresses: [Address]
 }

@@ -8,7 +8,7 @@ import Foundation
     Provides complete set of interactions for retrieving current customer profile, signing up,
     updating and profile deletion.
 */
-public struct Customer: Endpoint, Codable {
+public class Customer: Endpoint, Codable {
     
     public typealias ResponseType = Customer
 
@@ -160,7 +160,9 @@ public struct Customer: Endpoint, Codable {
     public let key: String?
     public let customerNumber: String?
     public let createdAt: Date
+    public let createdBy: CreatedBy?
     public let lastModifiedAt: Date
+    public let lastModifiedBy: LastModifiedBy?
     public let email: String
     public let password: String
     public let firstName: String?
