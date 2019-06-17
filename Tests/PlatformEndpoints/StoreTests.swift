@@ -13,7 +13,19 @@ class StoreTests: XCTestCase {
         static let path = "stores"
     }
 
-    private var storeId: String!
+    private class TestOrder: QueryEndpoint, DeleteEndpoint {
+        public typealias ResponseType = Order
+        public typealias RequestDraft = NoMapping
+        static let path = "in-store/key=unionSquare/orders"
+    }
+
+    private class TestCart: QueryEndpoint, DeleteEndpoint {
+        public typealias ResponseType = Cart
+        public typealias RequestDraft = NoMapping
+        static let path = "in-store/key=unionSquare/carts"
+    }
+
+    private var storeId = "aa3b9e48-638c-460f-85c2-9c1162b3c3da"//: String!
 
     private let storeKey = "unionSquare"
 
@@ -42,15 +54,48 @@ class StoreTests: XCTestCase {
     override func tearDown() {
         cleanPersistedTokens()
 
-        let semaphore = DispatchSemaphore(value: 0)
+        let group = DispatchGroup()
 
         // For deleting a store we need higher privileges
         setupProjectManagementConfiguration()
 
-        TestStore.delete(storeId, version: 1) { _ in
-            semaphore.signal()
+        group.enter()
+        // Remove orders created during tests
+        TestOrder.query() { result in
+            let orders = result.model!.results
+            if !orders.isEmpty {
+                for order in orders {
+                    group.enter()
+                    TestOrder.delete(order.id, version: order.version) { _ in
+                        group.leave()
+                    }
+                }
+            }
+            group.leave()
         }
-        _ = semaphore.wait(timeout: .distantFuture)
+        group.enter()
+        // Remove carts created during tests
+        TestCart.query() { result in
+            let carts = result.model!.results
+            if !carts.isEmpty {
+                for cart in carts {
+                    group.enter()
+                    TestCart.delete(cart.id, version: cart.version) { _ in
+                        group.leave()
+                    }
+                }
+            }
+            group.leave()
+        }
+        group.wait()
+        group.wait()
+
+        group.enter()
+        TestStore.delete(self.storeId, version: 1) { result in
+            print(result)
+            group.leave()
+        }
+        group.wait()
 
         super.tearDown()
     }
@@ -95,11 +140,7 @@ class StoreTests: XCTestCase {
 
                 let cart = result.model!
                 XCTAssertEqual(cart.store!.key, self.storeKey)
-
-                Cart.delete(cart.id, version: cart.version) { result in
-                    XCTAssert(result.isSuccess)
-                    storeExpectation.fulfill()
-                }
+                storeExpectation.fulfill()
             }
         }
 
@@ -128,11 +169,7 @@ class StoreTests: XCTestCase {
                         XCTAssert(result.isSuccess)
 
                         XCTAssertEqual(result.model!.results.first!.store!.key, self.storeKey)
-
-                        Cart.delete(cart.id, storeKey: self.storeKey, version: cart.version) { result in
-                            XCTAssert(result.isSuccess)
-                            storeExpectation.fulfill()
-                        }
+                        storeExpectation.fulfill()
                     }
                 }
             }
@@ -200,5 +237,46 @@ class StoreTests: XCTestCase {
         }
 
         waitForExpectations(timeout: 100, handler: nil)
+    }
+
+    func testCreateAndRetrieveStoreOrder() {
+
+        let storeExpectation = expectation(description: "cart store expectation")
+
+        sampleLineItemDraft { lineItemDraft in
+            let cartDraft = CartDraft(currency: "EUR", lineItems: [lineItemDraft], shippingAddress: Address(country: "DE"))
+
+            Cart.create(cartDraft, storeKey: self.storeKey) { result in
+                XCTAssert(result.isSuccess)
+
+                let cart = result.model!
+                XCTAssertEqual(cart.store!.key, self.storeKey)
+
+                Order.create(OrderDraft(id: cart.id, version: cart.version), storeKey: self.storeKey) { result in
+                    XCTAssert(result.isSuccess)
+
+                    let order = result.model!
+                    XCTAssertEqual(order.store!.key, self.storeKey)
+
+                    Order.byId(order.id, storeKey: self.storeKey) { result in
+                        XCTAssert(result.isSuccess)
+
+                        XCTAssertEqual(result.model!.id, order.id)
+                        storeExpectation.fulfill()
+                    }
+                }
+            }
+        }
+
+        waitForExpectations(timeout: 100, handler: nil)
+    }
+
+    private func sampleLineItemDraft(_ completion: @escaping (LineItemDraft) -> Void) {
+        ProductProjection.query(limit:1, result: { result in
+            if let product = result.model?.results.first, result.isSuccess {
+                let lineItemDraft = LineItemDraft(productVariantSelection: .productVariant(productId: product.id, variantId: product.masterVariant.id), quantity: 3)
+                completion(lineItemDraft)
+            }
+        })
     }
 }

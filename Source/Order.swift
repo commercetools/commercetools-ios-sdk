@@ -54,4 +54,26 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
     public let inventoryMode: InventoryMode
     public let origin: CartOrigin
     public let itemShippingAddresses: [Address]
+
+    // MARK: - In store cart
+
+    static func query(storeKey: String, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
+        query(predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, path: inStorePath(storeKey: storeKey), result: result)
+    }
+
+    static func byId(_ id: String, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        byId(id, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
+    }
+
+    static func create(_ object: [String: Any]?, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        create(object, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
+    }
+
+    static func create(_ object: RequestDraft, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        create(object, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
+    }
+
+    private static func inStorePath(storeKey: String) -> String {
+        return "in-store/key=\(storeKey)/me/orders"
+    }
 }
