@@ -69,27 +69,35 @@ public struct UpdateActions<T: JSONRepresentable>: JSONRepresentable {
 public extension UpdateEndpoint {
 
     static func update(_ id: String, actions: UpdateActions<UpdateAction>, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        update(id, actions: actions, expansion: expansion, path: Self.path, result: result)
+    }
 
-        requestWithTokenAndPath(result, { token, path in
+    static func update(_ id: String, actions: UpdateActions<UpdateAction>, expansion: [String]? = nil, path: String, result: @escaping (Result<ResponseType>) -> Void) {
+
+        requestWithTokenAndPath(relativePath: path, result: result) { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
             let request = self.request(url: fullPath, method: .post, json: actions.toJSON, headers: self.headers(token))
 
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
-    
+
     static func update(_ id: String, version: UInt, actions: [[String: Any]], expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
-        
-        requestWithTokenAndPath(result, { token, path in
+        update(id, version: version, actions: actions, expansion: expansion, path: Self.path, result: result)
+    }
+
+    static func update(_ id: String, version: UInt, actions: [[String: Any]], expansion: [String]? = nil, path: String, result: @escaping (Result<ResponseType>) -> Void) {
+
+        requestWithTokenAndPath(relativePath: path, result: result) { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
             let request = self.request(url: fullPath, method: .post, json: ["version": version, "actions": actions], headers: self.headers(token))
 
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
 }
 

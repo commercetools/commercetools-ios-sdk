@@ -27,14 +27,14 @@ public protocol UpdateByKeyEndpoint: Endpoint {
 public extension UpdateByKeyEndpoint {
     
     static func updateByKey(_ key: String, version: UInt, actions: [[String: Any]], expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
-        
-        requestWithTokenAndPath(result, { token, path in
+
+        requestWithTokenAndPath(result: result) { token, path in
             let fullPath = pathWithExpansion("\(path)key=\(key)", expansion: expansion)
             let request = self.request(url: fullPath, method: .post, json: ["version": version, "actions": actions], headers: self.headers(token))
 
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
 }

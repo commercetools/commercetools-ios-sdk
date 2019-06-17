@@ -60,13 +60,13 @@ public struct Project: Endpoint, Codable {
         - parameter result:                   The code to be executed after processing the response.
     */
     public static func settings(result: @escaping (Result<ResponseType>) -> Void) {
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             let request = Customer.request(url: path, headers: self.headers(token))
 
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
     
     public struct Messages: Codable {

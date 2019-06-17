@@ -23,16 +23,20 @@ public protocol ByIdEndpoint: Endpoint {
 }
 
 public extension ByIdEndpoint {
-    
+
     static func byId(_ id: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
-        
-        requestWithTokenAndPath(result, { token, path in
+        byId(id, expansion: expansion, path: Self.path, result: result)
+    }
+
+    static func byId(_ id: String, expansion: [String]? = nil, path: String, result: @escaping (Result<ResponseType>) -> Void) {
+
+        requestWithTokenAndPath(relativePath: path, result: result) { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
             let request = self.request(url: fullPath, headers: self.headers(token))
-            
+
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
 }

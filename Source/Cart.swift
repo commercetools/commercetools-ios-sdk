@@ -15,6 +15,8 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
 
     public static let path = "me/carts"
 
+    // MARK: - Active cart
+
     /**
      Retrieves the cart with state Active which has the most recent lastModifiedAt.
      
@@ -24,6 +26,40 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
      */
     public static func active(expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         return ActiveCart.get(expansion: expansion, result: result)
+    }
+
+    // MARK: - In store cart
+
+    static func query(storeKey: String, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
+        query(predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, path: inStorePath(storeKey: storeKey), result: result)
+    }
+
+    static func byId(_ id: String, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        byId(id, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
+    }
+
+    static func create(_ object: [String: Any]?, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        create(object, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
+    }
+
+    static func create(_ object: RequestDraft, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        create(object, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
+    }
+
+    static func update(_ id: String, storeKey: String, actions: UpdateActions<UpdateAction>, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        update(id, actions: actions, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
+    }
+
+    static func update(_ id: String, storeKey: String, version: UInt, actions: [[String: Any]], expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        update(id, version: version, actions: actions, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
+    }
+
+    static func delete(_ id: String, storeKey: String, version: UInt, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        delete(id, version: version, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
+    }
+
+    private static func inStorePath(storeKey: String) -> String {
+        return "in-store/key=\(storeKey)/me/carts"
     }
 
     // MARK: - Properties
@@ -78,13 +114,13 @@ struct ActiveCart: Endpoint {
      */
     static func get(expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
 
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
             let request = self.request(url: fullPath, headers: self.headers(token))
 
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
 }

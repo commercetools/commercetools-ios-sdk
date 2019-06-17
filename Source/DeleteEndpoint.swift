@@ -24,16 +24,20 @@ public protocol DeleteEndpoint: Endpoint {
 }
 
 public extension DeleteEndpoint {
-    
+
     static func delete(_ id: String, version: UInt, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
-        
-        requestWithTokenAndPath(result, { token, path in
+        delete(id, version: version, expansion: expansion, path: Self.path, result: result)
+    }
+
+    static func delete(_ id: String, version: UInt, expansion: [String]? = nil, path: String, result: @escaping (Result<ResponseType>) -> Void) {
+
+        requestWithTokenAndPath(relativePath: path, result: result) { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
             let request = self.request(url: fullPath, method: .delete, urlParameters: ["version": String(version)], headers: self.headers(token))
 
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
 }

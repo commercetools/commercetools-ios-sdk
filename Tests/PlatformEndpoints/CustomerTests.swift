@@ -289,7 +289,7 @@ class CustomerTests: XCTestCase {
 
         // Obtain password reset token
         AuthManager.sharedInstance.token { token, error in
-            guard let token = token, let path = TestCustomer.fullPath else { return }
+            guard let token = token, let path = TestCustomer.fullPath() else { return }
             
             let customerResult: ((Commercetools.Result<NoMapping>) -> Void) = { result in
                 if let response = result.json, let token = response["value"] as? String, result.isSuccess {
@@ -324,12 +324,12 @@ class CustomerTests: XCTestCase {
         let username = "swift.sdk.test.user2@commercetools.com"
         let password = "password"
 
-        // For generating account activation token we need higher priviledges
+        // For generating account activation token we need higher privileges
         setupProjectManagementConfiguration()
 
         // Obtain password reset token
         AuthManager.sharedInstance.token { token, error in
-            guard let token = token, let path = TestCustomer.fullPath else {
+            guard let token = token, let path = TestCustomer.fullPath() else {
                 return
             }
 

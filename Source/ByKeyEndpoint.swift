@@ -25,14 +25,14 @@ public protocol ByKeyEndpoint: Endpoint {
 public extension ByKeyEndpoint {
     
     static func byKey(_ key: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
-        
-        requestWithTokenAndPath(result, { token, path in
+
+        requestWithTokenAndPath(result: result) { token, path in
             let fullPath = pathWithExpansion("\(path)key=\(key)", expansion: expansion)
             let request = self.request(url: fullPath, headers: self.headers(token))
 
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
 }

@@ -23,13 +23,13 @@ public struct ShippingMethod: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Codabl
         - parameter result:                   The code to be executed after processing the response.
     */
     public static func `for`(cart: Cart, result: @escaping (Result<ShippingMethods>) -> Void) {
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             let request = self.request(url: path, urlParameters: ["cartId": cart.id], headers: self.headers(token))
 
             perform(request: request) { (response: Result<ShippingMethods>) in
                 result(response)
             }
-        })
+        }
     }
 
     /**
@@ -41,7 +41,7 @@ public struct ShippingMethod: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Codabl
         - parameter result:                   The code to be executed after processing the response.
     */
     public static func `for`(country: String, state: String? = nil, currency: String? = nil, result: @escaping (Result<ShippingMethods>) -> Void) {
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             var parameters = ["country": country]
             if let state = state {
                 parameters["state"] = state
@@ -55,7 +55,7 @@ public struct ShippingMethod: ByIdEndpoint, ByKeyEndpoint, QueryEndpoint, Codabl
             perform(request: request) { (response: Result<ShippingMethods>) in
                 result(response)
             }
-        })
+        }
     }
 
     // MARK: - Properties

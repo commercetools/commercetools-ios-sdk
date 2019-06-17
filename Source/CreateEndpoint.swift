@@ -36,28 +36,36 @@ public protocol CreateEndpoint: Endpoint {
 public extension CreateEndpoint {
 
     static func create(_ object: [String: Any]?, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        create(object, expansion: expansion, path: Self.path, result: result)
+    }
 
-        requestWithTokenAndPath(result, { token, path in
+    static func create(_ object: [String: Any]?, expansion: [String]? = nil, path: String, result: @escaping (Result<ResponseType>) -> Void) {
+
+        requestWithTokenAndPath(relativePath: path, result: result) { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
             let request = self.request(url: fullPath, method: .post, json: object, headers: self.headers(token))
 
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
 
     static func create(_ object: RequestDraft, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        create(object, expansion: expansion, path: Self.path, result: result)
+    }
+
+    static func create(_ object: RequestDraft, expansion: [String]? = nil, path: String, result: @escaping (Result<ResponseType>) -> Void) {
         do {
             let data = try jsonEncoder.encode(object)
-            requestWithTokenAndPath(result, { token, path in
+            requestWithTokenAndPath(relativePath: path, result: result) { token, path in
                 let fullPath = pathWithExpansion(path, expansion: expansion)
                 let request = self.request(url: fullPath, method: .post, queryItems: [], json: data, headers: self.headers(token))
                 
                 perform(request: request) { (response: Result<ResponseType>) in
                     result(response)
                 }
-            })
+            }
         } catch {
             Log.error(error.localizedDescription)
         }

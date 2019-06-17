@@ -36,9 +36,9 @@ public struct NoMapping: Codable {}
 public extension Endpoint {
 
     /// The full path used to form requests for endpoints.
-    static var fullPath: String? {
+    static func fullPath(relativePath: String = Self.path) -> String? {
         if let config = Config.currentConfig, let apiUrl = config.apiUrl, let projectKey = config.projectKey {
-            var normalizedPath = path
+            var normalizedPath = relativePath
             if normalizedPath.hasPrefix("/") {
                 normalizedPath.remove(at: String.Index(encodedOffset: 0))
             }
@@ -125,8 +125,8 @@ public extension Endpoint {
         - parameter result:                   The code to be executed in case an error occurs.
         - parameter requestHandler:           The code to be executed if no error occurs, providing token and path.
     */
-    static func requestWithTokenAndPath<T>(_ result: @escaping (Result<T>) -> Void, _ requestHandler: @escaping (String, String) -> Void) {
-        guard let config = Config.currentConfig, let path = fullPath, config.validate() else {
+    static func requestWithTokenAndPath<T>(relativePath: String = Self.path, result: @escaping (Result<T>) -> Void, requestHandler: @escaping (String, String) -> Void) {
+        guard let config = Config.currentConfig, let path = fullPath(relativePath: relativePath), config.validate() else {
             Log.error("Cannot execute command - check if the configuration is valid.")
             result(Result.failure(nil, [CTError.generalError(reason: nil)]))
             return
