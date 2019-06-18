@@ -22,7 +22,7 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
      
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response, providing model
-                                               instance in case of a successful result.
+                                              instance in case of a successful result.
      */
     public static func active(expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         requestWithTokenAndPath(relativePath: "me/active-cart", result: result) { token, path in
@@ -36,6 +36,25 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
     }
 
     // MARK: - In store cart
+
+    /**
+        Retrieves the cart with state Active which has the most recent lastModifiedAt, for a store specified by key.
+
+        - parameter storeKey:                 Key referencing the store for cart retrieval.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+     */
+    public static func active(storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        requestWithTokenAndPath(relativePath: "in-store/key=\(storeKey)/me/active-cart", result: result) { token, path in
+            let fullPath = pathWithExpansion(path, expansion: expansion)
+            let request = self.request(url: fullPath, headers: self.headers(token))
+
+            perform(request: request) { (response: Result<ResponseType>) in
+                result(response)
+            }
+        }
+    }
 
     /**
         Queries for carts from a store specified by key.

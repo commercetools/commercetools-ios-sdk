@@ -169,7 +169,14 @@ class StoreTests: XCTestCase {
                         XCTAssert(result.isSuccess)
 
                         XCTAssertEqual(result.model!.results.first!.store!.key, self.storeKey)
-                        storeExpectation.fulfill()
+
+                        Cart.active(storeKey: self.storeKey) { result in
+                            XCTAssert(result.isSuccess)
+
+                            XCTAssertEqual(result.model!.store!.key, self.storeKey)
+                            XCTAssertEqual(result.model!.id, cart.id)
+                            storeExpectation.fulfill()
+                        }
                     }
                 }
             }
