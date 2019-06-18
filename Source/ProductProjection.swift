@@ -65,14 +65,14 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
                 priceCurrency: priceCurrency, priceCountry: priceCountry, priceCustomerGroup: priceCustomerGroup,
                 priceChannel: priceChannel)
 
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             let fullPath = pathWithExpansion("\(path)search", expansion: expansion)
             let request = self.request(url: fullPath, method: .post, queryItems: [], formParameters: parameters, headers: self.headers(token))
 
             perform(request: request) { (response: Result<SearchResponse>) in
                 result(response)
             }
-        })
+        }
     }
 
     /**
@@ -100,13 +100,13 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
         }
         parameters.append(URLQueryItem(name: "searchKeywords." + searchLanguage(for: lang), value: searchKeywords))
 
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             let request = self.request(url: "\(path)suggest", queryItems: parameters, headers: self.headers(token))
 
             perform(request: request) { (response: Result<NoMapping>) in
                 result(response)
             }
-        })
+        }
     }
 
     /**
@@ -124,7 +124,7 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
     public static func query(staged: Bool? = nil, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
                            limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
 
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
 
             var parameters = queryParameters(predicates: predicates, sort: sort, limit: limit, offset: offset)
@@ -137,7 +137,7 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
             perform(request: request) { (response: Result<QueryResponse<ResponseType>>) in
                 result(response)
             }
-        })
+        }
     }
 
     /**
@@ -151,7 +151,7 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
     */
     public static func byId(_ id: String, staged: Bool? = nil, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
 
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             let fullPath = pathWithExpansion(path + id, expansion: expansion)
 
             var parameters = [URLQueryItem]()
@@ -164,7 +164,7 @@ public struct ProductProjection: QueryEndpoint, ByIdEndpoint, ByKeyEndpoint, Cod
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
 
     // MARK: - Properties

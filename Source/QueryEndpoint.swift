@@ -22,8 +22,7 @@ public protocol QueryEndpoint: Endpoint {
         - parameter result:                   The code to be executed after processing the response, providing model
                                               instance in case of a successful result.
     */
-    static func query(predicates: [String]?, sort: [String]?, expansion: [String]?,
-                      limit: UInt?, offset: UInt?, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void)
+    static func query(predicates: [String]?, sort: [String]?, expansion: [String]?, limit: UInt?, offset: UInt?, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void)
 
 }
 
@@ -45,11 +44,14 @@ public class QueryResponse<ResponseType: Codable>: Codable {
 }
 
 public extension QueryEndpoint {
-    
-    static func query(predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil,
-                      limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
-        
-        requestWithTokenAndPath(result, { token, path in
+
+    static func query(predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
+        query(predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, path: Self.path, result: result)
+    }
+
+    static func query(predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil, path: String, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
+
+        requestWithTokenAndPath(relativePath: path, result: result) { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
             let parameters = queryParameters(predicates: predicates, sort: sort, limit: limit, offset: offset)
             let request = self.request(url: fullPath, queryItems: parameters, headers: self.headers(token))
@@ -57,11 +59,10 @@ public extension QueryEndpoint {
             perform(request: request) { (response: Result<QueryResponse<ResponseType>>) in
                 result(response)
             }
-        })
+        }
     }
 
-    static func queryParameters(predicates: [String]? = nil, sort: [String]? = nil, limit: UInt? = nil,
-                                offset: UInt? = nil) -> [URLQueryItem] {
+    static func queryParameters(predicates: [String]? = nil, sort: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil) -> [URLQueryItem] {
         var queryItems = [URLQueryItem]()
 
         predicates?.forEach {
@@ -79,8 +80,7 @@ public extension QueryEndpoint {
         return queryItems
     }
 
-    static func formParameters(predicates: [String]? = nil, sort: [String]? = nil, limit: UInt? = nil,
-                                offset: UInt? = nil) -> [FormParameter] {
+    static func formParameters(predicates: [String]? = nil, sort: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil) -> [FormParameter] {
         var parameters = [FormParameter]()
 
         predicates?.forEach {

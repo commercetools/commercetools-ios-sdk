@@ -40,13 +40,13 @@ public class Customer: Endpoint, Codable {
         if let activeCartSignInMode = activeCartSignInMode {
             userDetails["activeCartSignInMode"] = activeCartSignInMode.rawValue
         }
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             let request = self.request(url: "\(path)login", method: .post, json: userDetails, headers: self.headers(token))
 
             perform(request: request) { (response: Result<CustomerSignInResult>) in
                 result(response)
             }
-        })
+        }
     }
 
     /**
@@ -56,13 +56,13 @@ public class Customer: Endpoint, Codable {
         - parameter result:                   The code to be executed after processing the response.
     */
     static func signUp(_ profile: Data, result: @escaping (Result<CustomerSignInResult>) -> Void) {
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             let request = self.request(url: "\(path)signup", method: .post, queryItems: [], json: profile, headers: self.headers(token))
 
             perform(request: request) { (response: Result<CustomerSignInResult>) in
                 result(response)
             }
-        })
+        }
     }
 
     /**
@@ -190,7 +190,7 @@ public class Customer: Endpoint, Codable {
                                               urlParameters: [String: String] = [:], json: [String: Any]? = nil,
                                               result: @escaping (Result<ResponseType>) -> Void) {
 
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
             let request = self.request(url: fullPath + (basePath ?? ""), method: method, urlParameters: urlParameters,
                                        json: json, headers: self.headers(token))
@@ -198,6 +198,6 @@ public class Customer: Endpoint, Codable {
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
 }

@@ -23,7 +23,7 @@ public struct GraphQL: Endpoint {
         - parameter result:                   The code to be executed after processing the response.
     */
     public static func query(_ query: String, variables: [String: Any]? = nil, operationName: String? = nil, result: @escaping (Result<ResponseType>) -> Void) {
-        requestWithTokenAndPath(result, { token, path in
+        requestWithTokenAndPath(result: result) { token, path in
             var parameters: [String: Any] = ["query": query]
             if let variables = variables {
                 parameters["variables"] = variables
@@ -36,6 +36,6 @@ public struct GraphQL: Endpoint {
             perform(request: request) { (response: Result<ResponseType>) in
                 result(response)
             }
-        })
+        }
     }
 }
