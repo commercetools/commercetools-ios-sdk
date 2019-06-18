@@ -55,21 +55,58 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
     public let origin: CartOrigin
     public let itemShippingAddresses: [Address]
 
-    // MARK: - In store cart
+    // MARK: - In store order
 
-    static func query(storeKey: String, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
+    /**
+        Queries for orders from a store specified by key.
+
+        - parameter storeKey:                 Key referencing the store for query operation.
+        - parameter predicate:                An optional array of predicates used for querying for orders.
+        - parameter sort:                     An optional array of sort options used for sorting the results.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter limit:                    An optional parameter to limit the number of returned results.
+        - parameter offset:                   An optional parameter to set the offset of the first returned result.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func query(storeKey: String, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
         query(predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, path: inStorePath(storeKey: storeKey), result: result)
     }
 
-    static func byId(_ id: String, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    /**
+        Retrieves an order by UUID from a store specified by key.
+
+        - parameter id:                       Unique ID of the order to be retrieved.
+        - parameter storeKey:                 Key referencing the store for order retrieval.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func byId(_ id: String, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         byId(id, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
     }
 
-    static func create(_ object: [String: Any]?, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    /**
+        Creates new order in a store specified by key.
+
+        - parameter object:                   Dictionary representation of the order draft to be created.
+        - parameter storeKey:                 Key referencing the store where the new order will be created.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    public static func create(_ object: [String: Any]?, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         create(object, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
     }
 
-    static func create(_ object: RequestDraft, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    /**
+        Creates new order in a store specified by key.
+
+        - parameter object:                   OrderDraft to be created.
+        - parameter storeKey:                 Key referencing the store where the new order will be created.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    public static func create(_ object: RequestDraft, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         create(object, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
     }
 

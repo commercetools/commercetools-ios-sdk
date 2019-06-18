@@ -18,10 +18,10 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
     // MARK: - Active cart
 
     /**
-     Retrieves the cart with state Active which has the most recent lastModifiedAt.
+        Retrieves the cart with state Active which has the most recent lastModifiedAt.
      
-         - parameter expansion:                An optional array of expansion property names.
-         - parameter result:                   The code to be executed after processing the response, providing model
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
                                                instance in case of a successful result.
      */
     public static func active(expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
@@ -37,31 +37,99 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
 
     // MARK: - In store cart
 
-    static func query(storeKey: String, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
+    /**
+        Queries for carts from a store specified by key.
+
+        - parameter storeKey:                 Key referencing the store for query operation.
+        - parameter predicate:                An optional array of predicates used for querying for carts.
+        - parameter sort:                     An optional array of sort options used for sorting the results.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter limit:                    An optional parameter to limit the number of returned results.
+        - parameter offset:                   An optional parameter to set the offset of the first returned result.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func query(storeKey: String, predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
         query(predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, path: inStorePath(storeKey: storeKey), result: result)
     }
 
-    static func byId(_ id: String, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    /**
+        Retrieves a cart by UUID from a store specified by key.
+
+        - parameter id:                       Unique ID of the cart to be retrieved.
+        - parameter storeKey:                 Key referencing the store for cart retrieval.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func byId(_ id: String, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         byId(id, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
     }
 
-    static func create(_ object: [String: Any]?, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    /**
+        Creates new cart in a store specified by key.
+
+        - parameter object:                   Dictionary representation of the cart draft to be created.
+        - parameter storeKey:                 Key referencing the store where the new cart will be created.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    public static func create(_ object: [String: Any]?, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         create(object, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
     }
 
-    static func create(_ object: RequestDraft, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    /**
+        Creates new cart in a store specified by key.
+
+        - parameter object:                   CartDraft to be created.
+        - parameter storeKey:                 Key referencing the store where the new cart will be created.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    public static func create(_ object: RequestDraft, storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         create(object, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
     }
 
-    static func update(_ id: String, storeKey: String, actions: UpdateActions<UpdateAction>, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    /**
+        Updates a cart with the specified UUID in a store.
+
+        - parameter id:                       Unique ID of the cart to be deleted.
+        - parameter storeKey:                 Key referencing the store used for the update.
+        - parameter actions:                  `UpdateActions`instance, containing correct version and update actions.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func update(_ id: String, storeKey: String, actions: UpdateActions<UpdateAction>, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         update(id, actions: actions, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
     }
 
-    static func update(_ id: String, storeKey: String, version: UInt, actions: [[String: Any]], expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    /**
+        Updates a cart with the specified UUID in a store.
+
+        - parameter id:                       Unique ID of the cart to be deleted.
+        - parameter storeKey:                 Key referencing the store used for the update.
+        - parameter version:                  Version of the cart (for optimistic concurrency control).
+        - parameter actions:                  An array of actions to be executed, in dictionary representation.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func update(_ id: String, storeKey: String, version: UInt, actions: [[String: Any]], expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         update(id, version: version, actions: actions, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
     }
 
-    static func delete(_ id: String, storeKey: String, version: UInt, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    /**
+        Deletes a cart by UUID from a store specified by key.
+
+        - parameter id:                       Unique ID of the cart to be deleted.
+        - parameter storeKey:                 Key referencing the store containing the cart.
+        - parameter version:                  Version of the cart (for optimistic concurrency control).
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func delete(_ id: String, storeKey: String, version: UInt, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
         delete(id, version: version, expansion: expansion, path: inStorePath(storeKey: storeKey), result: result)
     }
 
