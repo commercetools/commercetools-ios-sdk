@@ -2,6 +2,7 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
+- `0.9.x` Releases - [0.9.0](#090)
 - `0.8.x` Releases - [0.8.0](#080)
 - `0.7.x` Releases - [0.7.0](#070) | [0.7.1](#071) | [0.7.2](#072) | [0.7.3](#073) | [0.7.4](#074) | [0.7.5](#075)
 - `0.6.x` Releases - [0.6.0](#060) | [0.6.1](#061)
@@ -14,8 +15,31 @@ All changes to this project will be documented in this file.
 
 ---
 
+## [0.9.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.9.0)
+Released on 2019-06-20.
+
+#### Added
+- `key` attribute to the `CartDiscount`.
+- `key` attribute to the `ProductDiscount`.
+- `lastModifiedBy` and `createdBy` fields to a number of endpoints.
+- Following methods for the `Cart`:
+  - Get a Cart in a Store by ID
+  - Get Active Cart in a Store by ID
+  - Query Carts in a Store
+  - Create a Cart in a Store
+  - Update a Cart in a Store
+  - Delete a Cart in a Store
+- Following methods for the `Order`:
+  - Get Order in a Store by ID
+  - Query Orders in a Store by ID
+  - Create Order in a Store from a Cart
+
+#### Updated
+- `SimilarProductSearchRequestMeta` model.
+- Similar Products’s `ProductSetSelector`.
+
 ## [0.8.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.8.0)
-Released on 2018-04-26.
+Released on 2019-04-26.
 
 #### Added
 - `SimilarProducts` machine learning endpoint.

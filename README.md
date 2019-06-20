@@ -48,7 +48,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '10.0'
 use_frameworks!
 
-pod 'Commercetools', '~> 0.7'
+pod 'Commercetools', '~> 0.9'
 ```
 
 Then, run the following command:
@@ -226,7 +226,7 @@ Project.settings { result in
 #### Cart
 
 Cart endpoint supports all common operations:
-- Retrieve active cart (user must be logged in)
+- Retrieve active cart
 ```swift
 Cart.active(result: { result in
     if let cart = result.model, result.isSuccess {
@@ -236,7 +236,7 @@ Cart.active(result: { result in
     }
 })
 ```
-- Query for carts (user must be logged in)
+- Query for carts
 ```swift
 Cart.query(limit: 2, offset: 1, result: { result in
     if let response = result.model, let count = response.count,
@@ -245,7 +245,7 @@ Cart.query(limit: 2, offset: 1, result: { result in
     }
 })
 ```
-- Create new cart (user must be logged in)
+- Create new cart
 ```swift
 var cartDraft = CartDraft()
 cartDraft.currency = "EUR"
@@ -256,7 +256,7 @@ Cart.create(cartDraft, result: { result in
     }
 })
 ```
-- Update existing cart (user must be logged in)
+- Update existing cart
 ```swift
 let draft = LineItemDraft(productVariantSelection: .productVariant(productId: productId, variantId: variantId))
 
@@ -267,7 +267,7 @@ Cart.update(cartId, actions: updateActions, result: { result in
     }
 })
 ```
-- Delete existing cart (user must be logged in)
+- Delete existing cart
 ```swift
 let version = 1 // Set the appropriate current version
 
@@ -277,7 +277,7 @@ Cart.delete(cartId, version: version, result: { result in
     }
 })
 ```
-- Retrieve cart by UUID (user must be logged in)
+- Retrieve cart by UUID
 ```swift
 Cart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
     if let cart = result.model, cart.cartState == .active && result.isSuccess {
@@ -285,6 +285,8 @@ Cart.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
     }
 })
 ```
+
+There is also a subset of Cart methods for in-store actions. The parameters are the same as the methods above, with an additional parameter specifying the store key (`storeKey: String`).
 
 #### Category
 
