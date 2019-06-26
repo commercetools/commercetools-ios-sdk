@@ -174,6 +174,15 @@ public func logoutCustomer() {
     AuthManager.sharedInstance.logoutCustomer()
 }
 
+public var externalToken: String? {
+    get {
+        return AuthManager.sharedInstance.externalToken
+    }
+    set {
+        AuthManager.sharedInstance.externalToken = newValue
+    }
+}
+
 /**
     This method should be used to override `anonymousSession` Bool parameter from the configuration and get new tokens.
     Once this method is invoked, any previously logged in user will be logged out. In case there was an anonymous

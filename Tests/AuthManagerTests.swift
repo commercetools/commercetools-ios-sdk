@@ -357,4 +357,36 @@ class AuthManagerTests: XCTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
+
+    func testExternalToken() {
+        setupTestConfiguration()
+
+        let tokenExpectation = expectation(description: "token expectation")
+
+        let authManager = AuthManager.sharedInstance
+
+        var oldToken: String?
+        authManager.token { token, error in oldToken = token }
+
+        let externalToken = UUID().uuidString
+        authManager.externalToken = externalToken
+
+        authManager.token { token, error in
+            XCTAssertNil(error)
+            XCTAssertEqual(token, externalToken)
+            XCTAssertEqual(authManager.state, .externalToken)
+        }
+
+        authManager.externalToken = nil
+
+        authManager.token { token, error in
+            XCTAssertNil(error)
+            XCTAssertNotEqual(token, externalToken)
+            XCTAssertNotEqual(token, oldToken)
+            XCTAssertEqual(authManager.state, .anonymousToken)
+            tokenExpectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
 }
