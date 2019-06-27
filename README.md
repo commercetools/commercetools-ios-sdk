@@ -1,6 +1,6 @@
 # Commercetools Swift SDK
 
-<img src="https://raw.githubusercontent.com/commercetools/press-kit/master/PNG/72DPI/CT%20logo%20horizontal%20RGB%2072dpi.png" height="80" />
+<img src="https://user-images.githubusercontent.com/14024032/60341258-32f83f80-99ae-11e9-86c0-1eb52f201a0d.png" height="80" />
 
 <p>
 <a href="https://travis-ci.org/commercetools/commercetools-ios-sdk" target="_blank">
@@ -155,6 +155,10 @@ Commercetools.obtainAnonymousToken(usingSession: true, anonymousId: "some-custom
 })
 ```
 When an anonymous sessions ends with a sign up or a login, carts and orders are migrated to the customer, and `CustomerSignInResult` is returned, providing access to both customer profile, and the currently active cart. For the login operation, you can define how to migrate line items from the currently active cart, by explicitly specifying one of two `AnonymousCartSignInMode` values: `.mergeWithExistingCustomerCart` or `.useAsNewActiveCustomerCart`.
+
+## External OAuth tokens
+
+Commercetools platform and the SDK provides the ability to use external OAuth tokens. In order to set a token from your app, use `Commercetools.externalToken` property. Once set, this token will be used for all platform requests from the SDK. In order to stop using external token, simply set this value to `nil`. To get more information on setting up and using external OAuth with commercetools platform, please refer to [this page](https://docs.commercetools.com/http-api-authorization#requesting-an-access-token-using-an-external-oauth-server-beta).
 
 ## Using the SDK in App Extensions
 

@@ -46,6 +46,16 @@ public var authState: AuthManager.TokenState {
     return AuthManager.sharedInstance.state
 }
 
+/// The external token to be used for all commercetools requests. To stop using external OAuth, set this property to `nil`.
+public var externalToken: String? {
+    get {
+        return AuthManager.sharedInstance.externalToken
+    }
+    set {
+        AuthManager.sharedInstance.externalToken = newValue
+    }
+}
+
 // MARK: - Project settings
 
 public struct Project: Endpoint, Codable {
@@ -172,15 +182,6 @@ public func signUpCustomer(_ profile: Data, result: @escaping (Result<CustomerSi
 */
 public func logoutCustomer() {
     AuthManager.sharedInstance.logoutCustomer()
-}
-
-public var externalToken: String? {
-    get {
-        return AuthManager.sharedInstance.externalToken
-    }
-    set {
-        AuthManager.sharedInstance.externalToken = newValue
-    }
 }
 
 /**
