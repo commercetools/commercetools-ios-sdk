@@ -107,6 +107,9 @@ public struct Project: Endpoint, Codable {
 */
 public func loginCustomer(username: String, password: String, activeCartSignInMode: AnonymousCartSignInMode? = nil,
                           result: @escaping (Result<CustomerSignInResult>) -> Void) {
+    guard authState != .externalToken else {
+        fatalError("Customer login using external OAuth is not currently implemented.")
+    }
     if authState == .customerToken {
         logoutCustomer()
     }
@@ -159,6 +162,9 @@ public func signUpCustomer(_ profile: [String: Any], result: @escaping (Result<C
 }
 
 public func signUpCustomer(_ profile: Data, result: @escaping (Result<CustomerSignInResult>) -> Void) {
+    guard authState != .externalToken else {
+        fatalError("Customer sign up using external OAuth is not currently implemented.")
+    }
     Customer.signUp(profile, result: { signUpResult in
         if signUpResult.isFailure {
             result(signUpResult)
