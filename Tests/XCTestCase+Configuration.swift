@@ -38,6 +38,7 @@ extension XCTestCase {
         let tokenStore = authManager.tokenStore
         tokenStore.accessToken = nil
         tokenStore.refreshToken = nil
+        tokenStore.externalToken = nil
         tokenStore.tokenValidDate = nil
         tokenStore.tokenState = nil
     }

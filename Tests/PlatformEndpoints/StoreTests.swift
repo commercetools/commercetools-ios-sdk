@@ -25,7 +25,7 @@ class StoreTests: XCTestCase {
         static let path = "in-store/key=unionSquare/carts"
     }
 
-    private var storeId = "aa3b9e48-638c-460f-85c2-9c1162b3c3da"//: String!
+    private var storeId: String!
 
     private let storeKey = "unionSquare"
 

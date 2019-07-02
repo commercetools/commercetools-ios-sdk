@@ -83,21 +83,12 @@ open class AuthManager {
             return token
         }
         set {
-            serialQueue.addOperation {
-                self.clearAllTokens()
-                self.tokenStore.externalToken = newValue
-                guard newValue != nil else {
-                    Log.debug("Stopped using external token.\nGetting new anonymous access token.")
-                    self.token { _, error in
-                        if let error = error as? CTError {
-                            Log.error("Could not obtain auth token "
-                                    + (error.errorDescription ?? ""))
-                        }
-                    }
-                    return
+            if OperationQueue.current == serialQueue {
+                setExternalToken(externalToken: newValue)
+            } else {
+                serialQueue.addOperation {
+                    self.setExternalToken(externalToken: newValue)
                 }
-                Log.debug("Started using external token.")
-                self.state = .externalToken
             }
         }
     }
@@ -197,8 +188,12 @@ open class AuthManager {
         Most common use case for this method is user logout.
     */
     func logoutCustomer() {
-        serialQueue.addOperation {
-            self.clearAllTokens()
+        if OperationQueue.current == serialQueue {
+            clearAllTokens()
+        } else {
+            serialQueue.addOperation {
+                self.clearAllTokens()
+            }
         }
 
         Log.debug("Getting new anonymous access token after user logout")
@@ -385,9 +380,27 @@ open class AuthManager {
     private func clearAllTokens() {
         accessToken = nil
         refreshToken = nil
-        externalToken = nil
+        tokenStore.externalToken = nil
         tokenValidDate = nil
         state = .noToken
+    }
+
+    private func setExternalToken(externalToken: String?) {
+        guard externalToken != tokenStore.externalToken else { return }
+        clearAllTokens()
+        tokenStore.externalToken = externalToken
+        guard externalToken != nil else {
+            Log.debug("Stopped using external token.\nGetting new anonymous access token.")
+            token { _, error in
+                if let error = error as? CTError {
+                    Log.error("Could not obtain auth token "
+                            + (error.errorDescription ?? ""))
+                }
+            }
+            return
+        }
+        Log.debug("Started using external token.")
+        state = .externalToken
     }
 
     private func handleAuthResponse(data: Data?, response: URLResponse?, error: Error?, completionHandler: (String?, Error?) -> Void) {
