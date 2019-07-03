@@ -158,7 +158,11 @@ When an anonymous sessions ends with a sign up or a login, carts and orders are 
 
 ## External OAuth tokens
 
-Commercetools platform and the SDK provides the ability to use external OAuth tokens. In order to set a token from your app, use `Commercetools.externalToken` property. Once set, this token will be used for all platform requests from the SDK. In order to stop using external token, simply set this value to `nil`. To get more information on setting up and using external OAuth with commercetools platform, please refer to [this page](https://docs.commercetools.com/http-api-authorization#requesting-an-access-token-using-an-external-oauth-server-beta).
+Commercetools platform and the SDK provides the ability to use external OAuth tokens. In order to set a token from your app, use `Commercetools.externalToken` property. Once set, this token will be used for all platform requests from the SDK. In order to stop using external token, simply set this value to `nil`.
+
+When using an external token, it is important to handle expired and invalid token scenarios manually. Completion handler will provide a `CTError` with additional information, and the client should decide whether a token needs to be refreshed, or a recovery is not possible (e.g deleted account).
+
+To get more information on setting up and using external OAuth with commercetools platform, please refer to [this page](https://docs.commercetools.com/http-api-authorization#requesting-an-access-token-using-an-external-oauth-server-beta).
 
 ## Using the SDK in App Extensions
 
