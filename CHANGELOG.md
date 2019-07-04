@@ -2,6 +2,7 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
+- `0.10.x` Releases - [0.10.0](#0100)
 - `0.9.x` Releases - [0.9.0](#090)
 - `0.8.x` Releases - [0.8.0](#080)
 - `0.7.x` Releases - [0.7.0](#070) | [0.7.1](#071) | [0.7.2](#072) | [0.7.3](#073) | [0.7.4](#074) | [0.7.5](#075)
@@ -14,6 +15,12 @@ All changes to this project will be documented in this file.
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.10.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.10.0)
+Released on 2019-07-05.
+
+#### Added
+- Support for external OAuth tokens.
 
 ## [0.9.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.9.0)
 Released on 2019-06-20.
