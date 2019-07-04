@@ -36,6 +36,11 @@ class TokenStore: NSObject {
         return "com.commercetools.authRefreshTokenKey" + (Config.currentConfig?.projectKey ?? "") + (Config.currentConfig?.clientId ?? "")
     }
 
+    /// The key used for storing external token.
+    fileprivate var authExternalTokenKey: String {
+        return "com.commercetools.authExternalTokenKey" + (Config.currentConfig?.projectKey ?? "") + (Config.currentConfig?.clientId ?? "")
+    }
+
     /// The key used for storing auth token valid date.
     fileprivate var authTokenValidKey: String {
         return "com.commercetools.authTokenValidKey" + (Config.currentConfig?.projectKey ?? "") + (Config.currentConfig?.clientId ?? "")
@@ -73,6 +78,21 @@ class TokenStore: NSObject {
                 self.setObject(self.refreshToken as NSCoding?, forKey: self.authRefreshTokenKey)
                 #if os(iOS)
                     self.transferTokens()
+                #endif
+            })
+            #endif
+        }
+    }
+
+    /// The refresh token used to obtain new auth token for password flow.
+    var externalToken: String? {
+        didSet {
+            #if !os(Linux)
+            // Keychain write operation can be expensive, and we can do it asynchronously.
+            serialQueue.async(execute: {
+                self.setObject(self.externalToken as NSCoding?, forKey: self.authExternalTokenKey)
+                #if os(iOS)
+                self.transferTokens()
                 #endif
             })
             #endif
@@ -141,6 +161,7 @@ class TokenStore: NSObject {
 
         accessToken = objectForKey(authAccessTokenKey) as? String
         refreshToken = objectForKey(authRefreshTokenKey) as? String
+        externalToken = objectForKey(authExternalTokenKey) as? String
         tokenValidDate = objectForKey(authTokenValidKey) as? Date
         if let tokenStateValue = objectForKey(authTokenStateKey) as? Int {
             tokenState = AuthManager.TokenState(rawValue: tokenStateValue)
@@ -168,13 +189,21 @@ class TokenStore: NSObject {
         if wcSession == nil {
             initAndConfigureWCSession()
         }
-        guard let accessToken = accessToken, let refreshToken = refreshToken,
-              let tokenValidDate = tokenValidDate, let tokenState = tokenState else { return }
+        guard let tokenState = tokenState else { return }
         if let session = wcSession, session.isPaired && session.isWatchAppInstalled && session.activationState == .activated {
-            let tokenInfo: [String: Any] = [authAccessTokenKey: accessToken,
-                                            authRefreshTokenKey: refreshToken,
-                                            authTokenValidKey: tokenValidDate,
-                                            authTokenStateKey: tokenState.rawValue]
+            var tokenInfo: [String: Any] = [authTokenStateKey: tokenState.rawValue]
+            if let accessToken = accessToken {
+                tokenInfo[authAccessTokenKey] = accessToken
+            }
+            if let refreshToken = refreshToken {
+                tokenInfo[authRefreshTokenKey] = refreshToken
+            }
+            if let externalToken = externalToken {
+                tokenInfo[authExternalTokenKey] = externalToken
+            }
+            if let tokenValidDate = tokenValidDate {
+                tokenInfo[authTokenValidKey] = tokenValidDate
+            }
             Log.debug("Transferring token dictionary to the watch with contents: \(tokenInfo)")
             do {
                 try session.updateApplicationContext(tokenInfo)
@@ -291,18 +320,12 @@ extension TokenStore: WCSessionDelegate {
     #if os(watchOS)
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
         Log.debug("Receiving token dictionary from the phone with contents: \(applicationContext)")
-        if let accessToken = applicationContext[authAccessTokenKey] as? String {
-            self.accessToken = accessToken
-        }
-        if let refreshToken = applicationContext[authRefreshTokenKey] as? String {
-            self.refreshToken = refreshToken
-        }
-        if let tokenValidDate = applicationContext[authTokenValidKey] as? Date {
-            self.tokenValidDate = tokenValidDate
-        }
-        if let tokenStateValue = applicationContext[authTokenStateKey] as? Int {
-            tokenState = AuthManager.TokenState(rawValue: tokenStateValue)
-        }
+        guard let tokenStateValue = applicationContext[authTokenStateKey] as? Int else { return }
+        accessToken = applicationContext[authAccessTokenKey] as? String
+        refreshToken = applicationContext[authRefreshTokenKey] as? String
+        externalToken = applicationContext[authExternalTokenKey] as? String
+        tokenValidDate = applicationContext[authTokenValidKey] as? Date
+        tokenState = AuthManager.TokenState(rawValue: tokenStateValue)
         NotificationCenter.default.post(name: Notification.Name.WatchSynchronization.DidReceiveTokens, object: nil, userInfo: nil)
     }
     #endif

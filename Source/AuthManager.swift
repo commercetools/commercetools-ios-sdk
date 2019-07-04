@@ -23,6 +23,7 @@ open class AuthManager {
         case anonymousToken  = 1
         case plainToken      = 2
         case noToken         = 3
+        case externalToken   = 4
     }
 
     // MARK: - Properties
@@ -63,6 +64,32 @@ open class AuthManager {
         }
         set {
             tokenStore.refreshToken = newValue
+        }
+    }
+
+    /// The external token set by the client for External OAuth.
+    var externalToken: String? {
+        get {
+            guard OperationQueue.current != serialQueue else {
+                return tokenStore.externalToken
+            }
+            let semaphore = DispatchSemaphore(value: 0)
+            var token: String?
+            serialQueue.addOperation {
+                token = self.tokenStore.externalToken
+                semaphore.signal()
+            }
+            _ = semaphore.wait(timeout: .distantFuture)
+            return token
+        }
+        set {
+            if OperationQueue.current == serialQueue {
+                setExternalToken(externalToken: newValue)
+            } else {
+                serialQueue.addOperation {
+                    self.setExternalToken(externalToken: newValue)
+                }
+            }
         }
     }
 
@@ -116,14 +143,17 @@ open class AuthManager {
     }
 
     /// The serial queue used for processing token requests.
-    private let serialQueue = DispatchQueue(label: "com.commercetools.authQueue")
+    private let serialQueue = OperationQueue()
 
     // MARK: - Lifecycle
 
     /**
         Private initializer prevents `AuthManager` usage without using `sharedInstance`.
     */
-    private init() {}
+    private init() {
+        serialQueue.maxConcurrentOperationCount = 1
+        serialQueue.qualityOfService = .userInitiated
+    }
 
     // MARK: - Accessing token
 
@@ -140,7 +170,7 @@ open class AuthManager {
     func loginCustomer(username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
-        serialQueue.async(execute: {
+        serialQueue.addOperation {
             let semaphore = DispatchSemaphore(value: 0)
             if self.state != .plainToken {
                 self.logoutCustomer()
@@ -150,7 +180,7 @@ open class AuthManager {
                 semaphore.signal()
             })
             _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        })
+        }
     }
 
     /**
@@ -158,7 +188,13 @@ open class AuthManager {
         Most common use case for this method is user logout.
     */
     func logoutCustomer() {
-        clearAllTokens()
+        if OperationQueue.current == serialQueue {
+            clearAllTokens()
+        } else {
+            serialQueue.addOperation {
+                self.clearAllTokens()
+            }
+        }
 
         Log.debug("Getting new anonymous access token after user logout")
         token { _, error in
@@ -182,14 +218,14 @@ open class AuthManager {
     open func obtainAnonymousToken(usingSession: Bool, anonymousId: String? = nil, completionHandler: @escaping (Error?) -> Void) {
         // Process session changes using private serial queue to avoid issues with race conditions
         // when switching between anonymous and plain modes.
-        serialQueue.async(execute: {
+        serialQueue.addOperation {
             self.anonymousId = anonymousId
             self.usingAnonymousSession = usingSession
             self.clearAllTokens()
             self.token { _, error in
                 completionHandler(error)
             }
-        })
+        }
     }
 
     /**
@@ -203,14 +239,14 @@ open class AuthManager {
     func token(_ completionHandler: @escaping (String?, Error?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
-        serialQueue.async(execute: {
+        serialQueue.addOperation {
             let semaphore = DispatchSemaphore(value: 0)
             self.processTokenRequest { token, error in
                 completionHandler(token, error)
                 semaphore.signal()
             }
             _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        })
+        }
     }
 
     /**
@@ -239,7 +275,7 @@ open class AuthManager {
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
     func recoverFromInvalidTokenError(_ completionHandler: @escaping (String?, Error?) -> Void) {
-        serialQueue.async(execute: {
+        serialQueue.addOperation {
             guard self.accessToken != nil else {
                 self.clearAllTokens()
                 return
@@ -250,14 +286,17 @@ open class AuthManager {
             self.state = .noToken
             Log.debug("Removing access token, trying to recover from .invalidToken error")
             self.token(completionHandler)
-        })
+        }
     }
 
     // MARK: - Retrieving tokens from the auth API
 
     private func processTokenRequest(_ completionHandler: @escaping (String?, Error?) -> Void) {
         if let config = Config.currentConfig, config.validate() {
-            if let accessToken = accessToken, let tokenValidDate = tokenValidDate, tokenValidDate.compare(Date()) == .orderedDescending {
+            if let externalToken = externalToken, state == .externalToken {
+                completionHandler(externalToken, nil)
+
+            } else if let accessToken = accessToken, let tokenValidDate = tokenValidDate, tokenValidDate.compare(Date()) == .orderedDescending {
                 if refreshToken == nil {
                     self.state = .plainToken
                 }
@@ -341,8 +380,27 @@ open class AuthManager {
     private func clearAllTokens() {
         accessToken = nil
         refreshToken = nil
+        tokenStore.externalToken = nil
         tokenValidDate = nil
         state = .noToken
+    }
+
+    private func setExternalToken(externalToken: String?) {
+        guard externalToken != tokenStore.externalToken else { return }
+        clearAllTokens()
+        tokenStore.externalToken = externalToken
+        guard externalToken != nil else {
+            Log.debug("Stopped using external token.\nGetting new anonymous access token.")
+            token { _, error in
+                if let error = error as? CTError {
+                    Log.error("Could not obtain auth token "
+                            + (error.errorDescription ?? ""))
+                }
+            }
+            return
+        }
+        Log.debug("Started using external token.")
+        state = .externalToken
     }
 
     private func handleAuthResponse(data: Data?, response: URLResponse?, error: Error?, completionHandler: (String?, Error?) -> Void) {
