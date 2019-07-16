@@ -103,6 +103,32 @@ open class AuthManager {
         }
     }
 
+    /// The external user ID, passed using X-External-User-ID header.
+    var externalUserId: String? {
+        get {
+            guard OperationQueue.current != serialQueue else {
+                return tokenStore.externalUserId
+            }
+            let semaphore = DispatchSemaphore(value: 0)
+            var token: String?
+            serialQueue.addOperation {
+                token = self.tokenStore.externalUserId
+                semaphore.signal()
+            }
+            _ = semaphore.wait(timeout: .distantFuture)
+            return token
+        }
+        set {
+            if OperationQueue.current == serialQueue {
+                tokenStore.externalUserId = newValue
+            } else {
+                serialQueue.addOperation {
+                    self.tokenStore.externalUserId = newValue
+                }
+            }
+        }
+    }
+
     /// The URL used for requesting token for client credentials and refresh token flow.
     private var clientCredentialsUrl: String? {
         if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, config.validate() {

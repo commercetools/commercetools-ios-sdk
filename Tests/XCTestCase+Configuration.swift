@@ -41,6 +41,7 @@ extension XCTestCase {
         tokenStore.externalToken = nil
         tokenStore.tokenValidDate = nil
         tokenStore.tokenState = nil
+        tokenStore.externalUserId = nil
     }
 
 }

@@ -67,5 +67,23 @@ class CreateEndpointTests: XCTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-    
+
+    func testExternalUserIdHeader() {
+
+        let createdByHeaderExpectation = expectation(description: "created by header expectation")
+
+        let externalUserId = UUID().uuidString
+        AuthManager.sharedInstance.externalUserId = externalUserId
+
+        TestCart.create(["currency": "EUR"], result: { result in
+            if let cart = result.model {
+                XCTAssert(result.isSuccess)
+                XCTAssertEqual(cart.createdBy!.externalUserId, externalUserId)
+                XCTAssertEqual(cart.lastModifiedBy!.externalUserId, externalUserId)
+                createdByHeaderExpectation.fulfill()
+            }
+        })
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
 }

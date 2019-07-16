@@ -51,6 +51,11 @@ class TokenStore: NSObject {
         return "com.commercetools.authTokenStateKey" + (Config.currentConfig?.projectKey ?? "") + (Config.currentConfig?.clientId ?? "")
     }
 
+    /// The key used for storing external token.
+    fileprivate var externalUserIdKey: String {
+        return "com.commercetools.externalUserIdKey" + (Config.currentConfig?.projectKey ?? "") + (Config.currentConfig?.clientId ?? "")
+    }
+
     /// The value for kSecAttrService property which uniquely identifies keychain accessor.
     private let kKeychainServiceName = "com.commercetools.sdk"
 
@@ -62,7 +67,7 @@ class TokenStore: NSObject {
             serialQueue.async(execute: {
                 self.setObject(self.accessToken as NSCoding?, forKey: self.authAccessTokenKey)
                 #if os(iOS)
-                    self.transferTokens()
+                self.transferTokens()
                 #endif
             })
             #endif
@@ -77,7 +82,7 @@ class TokenStore: NSObject {
             serialQueue.async(execute: {
                 self.setObject(self.refreshToken as NSCoding?, forKey: self.authRefreshTokenKey)
                 #if os(iOS)
-                    self.transferTokens()
+                self.transferTokens()
                 #endif
             })
             #endif
@@ -107,7 +112,7 @@ class TokenStore: NSObject {
             serialQueue.async(execute: {
                 self.setObject(self.tokenValidDate as NSCoding?, forKey: self.authTokenValidKey)
                 #if os(iOS)
-                    self.transferTokens()
+                self.transferTokens()
                 #endif
             })
             #endif
@@ -122,13 +127,29 @@ class TokenStore: NSObject {
             serialQueue.async(execute: {
                 self.setObject(self.tokenState?.rawValue as NSCoding?, forKey: self.authTokenStateKey)
                 #if os(iOS)
-                    self.transferTokens()
+                self.transferTokens()
                 #endif
             })
             #endif
         }
     }
-#if !os(Linux)
+
+    /// The external user ID, passed using X-External-User-ID header.
+    var externalUserId: String? {
+        didSet {
+            #if !os(Linux)
+            // Keychain write operation can be expensive, and we can do it asynchronously.
+            serialQueue.async(execute: {
+                self.setObject(self.externalUserId as NSCoding?, forKey: self.externalUserIdKey)
+                #if os(iOS)
+                self.transferTokens()
+                #endif
+            })
+            #endif
+        }
+    }
+
+    #if !os(Linux)
     /// The serial queue used for storing tokens to keychain.
     private let serialQueue = DispatchQueue(label: "com.commercetools.authQueue", attributes: [])
 
@@ -166,6 +187,7 @@ class TokenStore: NSObject {
         if let tokenStateValue = objectForKey(authTokenStateKey) as? Int {
             tokenState = AuthManager.TokenState(rawValue: tokenStateValue)
         }
+        externalUserId = objectForKey(externalUserIdKey) as? String
     }
 
     #if os(iOS) || os(watchOS)
@@ -203,6 +225,9 @@ class TokenStore: NSObject {
             }
             if let tokenValidDate = tokenValidDate {
                 tokenInfo[authTokenValidKey] = tokenValidDate
+            }
+            if let externalUserId = externalUserId {
+                tokenInfo[externalUserIdKey] = externalUserId
             }
             Log.debug("Transferring token dictionary to the watch with contents: \(tokenInfo)")
             do {
@@ -326,6 +351,7 @@ extension TokenStore: WCSessionDelegate {
         externalToken = applicationContext[authExternalTokenKey] as? String
         tokenValidDate = applicationContext[authTokenValidKey] as? Date
         tokenState = AuthManager.TokenState(rawValue: tokenStateValue)
+        externalUserId = applicationContext[externalUserIdKey] as? String
         NotificationCenter.default.post(name: Notification.Name.WatchSynchronization.DidReceiveTokens, object: nil, userInfo: nil)
     }
     #endif

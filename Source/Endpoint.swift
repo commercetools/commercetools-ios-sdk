@@ -80,6 +80,9 @@ public extension Endpoint {
     static func headers(_ token: String) -> [String: String] {
         var headers = defaultHeaders
         headers["Authorization"] = "Bearer \(token)"
+        if let externalUserId = AuthManager.sharedInstance.externalUserId {
+            headers["X-External-User-ID"] = externalUserId
+        }
         return headers
     }
 
