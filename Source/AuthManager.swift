@@ -268,8 +268,8 @@ open class AuthManager {
         serialQueue.addOperation {
             let semaphore = DispatchSemaphore(value: 0)
             self.processTokenRequest { token, error in
-                completionHandler(token, error)
                 semaphore.signal()
+                completionHandler(token, error)
             }
             _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         }

@@ -56,6 +56,16 @@ public var externalToken: String? {
     }
 }
 
+/// The external user ID, passed using X-External-User-ID header. To remove external user ID from subsequent requests, set this property to `nil`.
+public var externalUserId: String? {
+    get {
+        return AuthManager.sharedInstance.externalUserId
+    }
+    set {
+        AuthManager.sharedInstance.externalUserId = newValue
+    }
+}
+
 // MARK: - Project settings
 
 public struct Project: Endpoint, Codable {

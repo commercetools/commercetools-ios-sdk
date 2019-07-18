@@ -164,6 +164,10 @@ When using an external token, it is important to handle expired and invalid toke
 
 To get more information on setting up and using external OAuth with commercetools platform, please refer to [this page](https://docs.commercetools.com/http-api-authorization#requesting-an-access-token-using-an-external-oauth-server-beta).
 
+## Tracking changes using external user ID
+
+It is possible to track changes initiated by a specific customer’s actions by setting value for `X-External-User-ID` header when performing create / update actions. In order to set an external user ID, use `Commercetools.externalUserId` property. Once set, this header will be included in all subsequent requests to commercetools API. The client should make sure there is no personally identifying information included in the `externalUserId` value. In order to remove the `X-External-User-ID` header from subsequent requests, set the `externalUserId` property to `nil`.
+
 ## Using the SDK in App Extensions
 
 If your app has extensions, and you want to use Commercetools SDK in those extensions, we recommend enabling keychain sharing. By allowing keychain sharing, and setting the appropriate access group name in the configuration `.plist`, the SDK will save all tokens in the shared keychain. Be sure to include _App ID Prefix / Team ID_ in the access group name.
