@@ -1574,8 +1574,8 @@ public struct ReturnInfo: Codable {
     // MARK: - Properties
 
     public let items: [ReturnItem]
-    public let returnTrackingId: String
-    public let returnDate: Date
+    public let returnTrackingId: String?
+    public let returnDate: Date?
 
     // MARK: - Coding keys
 
@@ -1590,15 +1590,15 @@ public struct ReturnInfo: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         items = try container.decode([ReturnItem].self, ofFamily: ReturnItemContainer.self, forKey: .items)
-        returnTrackingId = try container.decode(String.self, forKey: .returnTrackingId)
-        returnDate = try container.decode(Date.self, forKey: .returnDate)
+        returnTrackingId = try? container.decode(String.self, forKey: .returnTrackingId)
+        returnDate = try? container.decode(Date.self, forKey: .returnDate)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(items, forKey: .items)
-        try container.encode(returnTrackingId, forKey: .returnTrackingId)
-        try container.encode(returnDate, forKey: .returnDate)
+        try? container.encode(returnTrackingId, forKey: .returnTrackingId)
+        try? container.encode(returnDate, forKey: .returnDate)
     }
 }
 
