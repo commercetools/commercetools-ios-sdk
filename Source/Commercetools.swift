@@ -102,13 +102,17 @@ public struct Project: Endpoint, Codable {
 
     - parameter username:               The user's username.
     - parameter password:               The user's password.
+    - parameter storeKey:               For customers registered in a specific store, a store key must be specified.
     - parameter activeCartSignInMode:   Optional sign in mode, specifying whether the cart line items should be merged.
     - parameter completionHandler:      The code to be executed once the token fetching completes.
 */
-public func loginCustomer(username: String, password: String, activeCartSignInMode: AnonymousCartSignInMode? = nil,
+public func loginCustomer(username: String, password: String, storeKey: String? = nil, activeCartSignInMode: AnonymousCartSignInMode? = nil,
                           result: @escaping (Result<CustomerSignInResult>) -> Void) {
     guard authState != .externalToken else {
         fatalError("Customer login using external OAuth is not currently implemented.")
+    }
+    guard storeKey == nil || activeCartSignInMode == nil else {
+        fatalError("Cannot set both store key and sign in mode: 'in-store' anonymous sessions are not supported.")
     }
     if authState == .customerToken {
         logoutCustomer()
@@ -120,7 +124,7 @@ public func loginCustomer(username: String, password: String, activeCartSignInMo
         if loginResult.isFailure {
             result(loginResult)
         } else {
-            AuthManager.sharedInstance.loginCustomer(username: username, password: password) { error in
+            AuthManager.sharedInstance.loginCustomer(username: username, password: password, storeKey: storeKey) { error in
                 if let error = error {
                     result(.failure(nil, [error]))
                 } else {

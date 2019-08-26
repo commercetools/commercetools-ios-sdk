@@ -120,11 +120,10 @@ open class AuthManager {
     }
 
     /// The URL used for requesting token for password flow.
-    private var loginUrl: String? {
-        if let config = Config.currentConfig, let baseAuthUrl = config.authUrl, let projectKey = config.projectKey, config.validate() {
-            return "\(baseAuthUrl)oauth/\(projectKey)/customers/token"
-        }
-        return nil
+    private func loginUrl(storeKey: String? = nil) -> String? {
+        guard let config = Config.currentConfig, let baseAuthUrl = config.authUrl, let projectKey = config.projectKey, config.validate() else { return nil }
+        guard let storeKey = storeKey else { return "\(baseAuthUrl)oauth/\(projectKey)/customers/token" }
+        return "\(baseAuthUrl)oauth/\(projectKey)/in-store/key=\(storeKey)/customers/token"
     }
 
     /// Bool property indicating whether the manager should obtain anonymous session token or plain token.
@@ -158,16 +157,17 @@ open class AuthManager {
     // MARK: - Accessing token
 
     /**
-        This method should be used for user login. After successful login the new auth token is used for all
+        This method should be used for customer login. After successful login the new auth token is used for all
         further requests with Commercetools services.
-        In case this method is called before previously logging user out, it will automatically logout (i.e remove
+        In case this method is called before previously logging customer out, it will automatically logout (i.e remove
         previously stored tokens).
 
-        - parameter username:           The user's username.
-        - parameter password:           The user's password.
+        - parameter username:           The customer's username.
+        - parameter password:           The customer's password.
+        - parameter storeKey:           For customers registered in a specific store, a store key must be specified.
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    func loginCustomer(username: String, password: String, completionHandler: @escaping (Error?) -> Void) {
+    func loginCustomer(username: String, password: String, storeKey: String? = nil, completionHandler: @escaping (Error?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
         serialQueue.addOperation {
@@ -175,7 +175,7 @@ open class AuthManager {
             if self.state != .plainToken {
                 self.logoutCustomer()
             }
-            self.processLogin(username: username, password: password, completionHandler: { token, error in
+            self.processLogin(username: username, password: password, storeKey: storeKey, completionHandler: { token, error in
                 completionHandler(error)
                 semaphore.signal()
             })
@@ -318,8 +318,8 @@ open class AuthManager {
         }
     }
 
-    private func processLogin(username: String, password: String, completionHandler: @escaping (String?, Error?) -> Void) {
-        if let loginUrl = loginUrl, let authHeaders = authHeaders {
+    private func processLogin(username: String, password: String, storeKey: String? = nil, completionHandler: @escaping (String?, Error?) -> Void) {
+        if let loginUrl = loginUrl(storeKey: storeKey), let authHeaders = authHeaders {
             var parameters = ["grant_type": "password", "username": username, "password": password]
             if let scope = Config.currentConfig?.scope {
                 parameters["scope"] = scope

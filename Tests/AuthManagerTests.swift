@@ -389,4 +389,33 @@ class AuthManagerTests: XCTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
+
+    func testInStoreCustomerLogin() {
+        setupTestConfiguration()
+
+        let loginExpectation = expectation(description: "login expectation")
+        let tokenExpectation = expectation(description: "token expectation")
+
+        let username = "swift.sdk.test.in.store.user@commercetools.com"
+        let password = "password"
+        let authManager = AuthManager.sharedInstance
+
+        var oldToken: String?
+        authManager.token { token, error in oldToken = token }
+
+        authManager.loginCustomer(username: username, password: password, storeKey: "in-store-customer-test", completionHandler: { error in
+            if error == nil {
+                loginExpectation.fulfill()
+            }
+        })
+
+        authManager.token { token, error in
+            if let token = token, let oldToken = oldToken, !token.isEmpty && token != oldToken &&
+                    error == nil && authManager.state == .customerToken {
+                tokenExpectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
 }
