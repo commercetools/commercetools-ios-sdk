@@ -156,6 +156,21 @@ Commercetools.obtainAnonymousToken(usingSession: true, anonymousId: "some-custom
 ```
 When an anonymous sessions ends with a sign up or a login, carts and orders are migrated to the customer, and `CustomerSignInResult` is returned, providing access to both customer profile, and the currently active cart. For the login operation, you can define how to migrate line items from the currently active cart, by explicitly specifying one of two `AnonymousCartSignInMode` values: `.mergeWithExistingCustomerCart` or `.useAsNewActiveCustomerCart`.
 
+## In-Store Customers
+
+When using stores, a customer can either register globally, or have a registration specific to a store. In the latter case, to login customer in a store, a `storeKey` parameter needs to be set:
+
+```swift
+let username = "swift.sdk.test.in.store.user@commercetools.com"
+let password = "password"
+
+Commercetools.loginCustomer(username, password: password, storeKey: "store-key", completionHandler: { result in
+    if let error = result.errors?.first as? CTError {
+        // Handle error, and possibly get some more information from reason.message
+    }
+})
+```
+
 ## External OAuth tokens
 
 Commercetools platform and the SDK provides the ability to use external OAuth tokens. In order to set a token from your app, use `Commercetools.externalToken` property. Once set, this token will be used for all platform requests from the SDK. In order to stop using external token, simply set this value to `nil`.
