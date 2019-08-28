@@ -33,7 +33,7 @@ class SimilarProductsTests: XCTestCase {
     }
 
     func testStatus() {
-        let similarProductsExpectation = expectation(description: "similar products status expectation")
+        weak var similarProductsExpectation = expectation(description: "similar products status expectation")
         var timer: Timer!
 
         let request = SimilarProductSearchRequest(limit: 3, similarityMeasures: SimilarityMeasures(name: 1))
@@ -49,7 +49,7 @@ class SimilarProductsTests: XCTestCase {
                         XCTAssertNotNil(result.model)
                         if result.model!.state == .success {
                             XCTAssertEqual(result.model!.result!.results.count, 3)
-                            similarProductsExpectation.fulfill()
+                            similarProductsExpectation?.fulfill()
                         }
                     }
                 }
@@ -62,7 +62,7 @@ class SimilarProductsTests: XCTestCase {
     }
 
     func testProductSelection() {
-        let similarProductsExpectation = expectation(description: "similar products selection expectation")
+        weak var similarProductsExpectation = expectation(description: "similar products selection expectation")
         var timer: Timer!
 
         ProductProjection.query(limit: 2) { result in
@@ -83,7 +83,7 @@ class SimilarProductsTests: XCTestCase {
                             XCTAssertNotNil(result.model)
                             if result.model!.state == .success {
                                 XCTAssertEqual(result.model!.result!.results[0].products.filter({ productIds.contains($0.product.id) }).count, 2)
-                                similarProductsExpectation.fulfill()
+                                similarProductsExpectation?.fulfill()
                             }
                         }
                     }

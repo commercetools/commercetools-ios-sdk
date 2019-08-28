@@ -48,7 +48,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '10.0'
 use_frameworks!
 
-pod 'Commercetools', '~> 0.9'
+pod 'Commercetools', '~> 0.11'
 ```
 
 Then, run the following command:

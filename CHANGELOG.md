@@ -2,6 +2,7 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
+- `0.11.x` Releases - [0.11.0](#0110)
 - `0.10.x` Releases - [0.10.0](#0100)
 - `0.9.x` Releases - [0.9.0](#090)
 - `0.8.x` Releases - [0.8.0](#080)
@@ -15,6 +16,12 @@ All changes to this project will be documented in this file.
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.11.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.11.0)
+Released on 2019-08-29.
+
+#### Added
+- Store support for customers.
 
 ## [0.10.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.10.0)
 Released on 2019-07-05.
