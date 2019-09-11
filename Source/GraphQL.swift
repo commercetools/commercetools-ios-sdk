@@ -22,7 +22,7 @@ public struct GraphQL: Endpoint {
         - parameter operationName:            Operation name, in case there are several defined in the query.
         - parameter result:                   The code to be executed after processing the response.
     */
-    public static func query(_ query: String, variables: [String: Any]? = nil, operationName: String? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+    public static func query<T>(_ query: String, variables: [String: Any]? = nil, operationName: String? = nil, result: @escaping (Result<GraphQLResponse<T>>) -> Void) {
         requestWithTokenAndPath(result: result) { token, path in
             var parameters: [String: Any] = ["query": query]
             if let variables = variables {
@@ -33,9 +33,13 @@ public struct GraphQL: Endpoint {
             }
             let request = self.request(url: path, method: .post, json: parameters, headers: self.headers(token))
 
-            perform(request: request) { (response: Result<ResponseType>) in
+            perform(request: request) { (response: Result<GraphQLResponse<T>>) in
                 result(response)
             }
         }
     }
+}
+
+public struct GraphQLResponse<ResponseType: Codable>: Codable {
+    public let data: ResponseType
 }

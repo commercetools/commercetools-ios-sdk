@@ -34,7 +34,7 @@ class GraphQLTests: XCTestCase {
 
         let queryExpectation = expectation(description: "query expectation")
 
-        GraphQL.query(query) { result in
+        GraphQL.query(query) { (result: Result<GraphQLResponse<NoMapping>>) in
             if let products = (result.json?["data"] as? [String: Any])?["products"] as? [String: Any],
                let results = products["results"] as? [[String: Any]],
                let masterData = results.first?["masterData"] as? [String: Any],
