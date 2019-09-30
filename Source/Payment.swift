@@ -19,10 +19,6 @@ public struct Payment: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoi
     
     public let id: String
     public let version: UInt
-    public let createdAt: Date
-    public let createdBy: CreatedBy?
-    public let lastModifiedAt: Date
-    public let lastModifiedBy: LastModifiedBy?
     public let customer: Reference<Customer>?
     public let anonymousId: String?
     public let amountPlanned: Money
