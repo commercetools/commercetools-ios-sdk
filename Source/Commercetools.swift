@@ -111,16 +111,13 @@ public func loginCustomer(username: String, password: String, storeKey: String? 
     guard authState != .externalToken else {
         fatalError("Customer login using external OAuth is not currently implemented.")
     }
-    guard storeKey == nil || activeCartSignInMode == nil else {
-        fatalError("Cannot set both store key and sign in mode: 'in-store' anonymous sessions are not supported.")
-    }
     if authState == .customerToken {
         logoutCustomer()
     }
 
     // If the user is logging after an anonymous session, `/me/login` endpoint is triggered before obtaining
     // access and refresh tokens, so that carts and orders can be migrated
-    Customer.login(username: username, password: password, activeCartSignInMode: activeCartSignInMode) { loginResult in
+    Customer.login(username: username, password: password, activeCartSignInMode: activeCartSignInMode, storeKey: storeKey) { loginResult in
         if loginResult.isFailure {
             result(loginResult)
         } else {
@@ -139,43 +136,36 @@ public func loginCustomer(username: String, password: String, storeKey: String? 
     Creates new customer with specified profile.
 
     - parameter profile:                  Draft of the customer profile to be created.
+    - parameter storeKey:                 If a store key is specified, the customer will be signed up in that store.
     - parameter result:                   The code to be executed after processing the response.
 */
-public func signUpCustomer(_ profile: CustomerDraft, result: @escaping (Result<CustomerSignInResult>) -> Void) {
+public func signUpCustomer(_ profile: CustomerDraft, storeKey: String? = nil, result: @escaping (Result<CustomerSignInResult>) -> Void) {
     do {
         let jsonProfile = try jsonEncoder.encode(profile)
-        signUpCustomer(jsonProfile, result: result)
+        let dictProfile = try JSONSerialization.jsonObject(with: jsonProfile, options: []) as! [String: Any]
+        signUpCustomer(dictProfile, storeKey: storeKey, result: result)
     } catch {
         result(.failure(nil, [error]))
     }
 }
 
 /**
- Creates new customer with specified profile.
- 
- - parameter profile:                  Dictionary representation of the draft customer profile to be created.
- - parameter result:                   The code to be executed after processing the response.
- */
-public func signUpCustomer(_ profile: [String: Any], result: @escaping (Result<CustomerSignInResult>) -> Void) {
-    do {
-        let jsonProfile = try JSONSerialization.data(withJSONObject: profile, options: [])
-        signUpCustomer(jsonProfile, result: result)
-    } catch {
-        result(.failure(nil, [error]))
-    }
-}
+    Creates new customer with specified profile.
 
-public func signUpCustomer(_ profile: Data, result: @escaping (Result<CustomerSignInResult>) -> Void) {
+    - parameter profile:                  Dictionary representation of the draft customer profile to be created.
+    - parameter storeKey:                 If a store key is specified, the customer will be signed up in that store.
+    - parameter result:                   The code to be executed after processing the response.
+*/
+public func signUpCustomer(_ profile: [String: Any], storeKey: String? = nil, result: @escaping (Result<CustomerSignInResult>) -> Void) {
     guard authState != .externalToken else {
         fatalError("Customer sign up using external OAuth is not currently implemented.")
     }
-    Customer.signUp(profile, result: { signUpResult in
+    Customer.signUp(profile, storeKey: storeKey, result: { signUpResult in
         if signUpResult.isFailure {
             result(signUpResult)
         } else if let username = signUpResult.model?.customer.email,
-                  let customerDraft = try? JSONSerialization.jsonObject(with: profile, options: []) as? [String: Any],
-                  let password = customerDraft["password"] as? String {
-            AuthManager.sharedInstance.loginCustomer(username: username, password: password) { error in
+                  let password = profile["password"] as? String {
+            AuthManager.sharedInstance.loginCustomer(username: username, password: password, storeKey: storeKey) { error in
                 if let error = error {
                     result(.failure(nil, [error]))
                 } else {
