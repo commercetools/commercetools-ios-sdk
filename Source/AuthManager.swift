@@ -167,7 +167,7 @@ open class AuthManager {
         - parameter storeKey:           For customers registered in a specific store, a store key must be specified.
         - parameter completionHandler:  The code to be executed once the token fetching completes.
     */
-    func loginCustomer(username: String, password: String, storeKey: String?, completionHandler: @escaping (Error?) -> Void) {
+    func loginCustomer(username: String, password: String, storeKey: String? = nil, completionHandler: @escaping (Error?) -> Void) {
         // Process all token requests using private serial queue to avoid issues with race conditions
         // when multiple credentials / login requests can lead auth manager in an unpredictable state
         serialQueue.addOperation {
