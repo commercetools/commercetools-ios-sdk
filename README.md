@@ -337,6 +337,7 @@ Category.byId("cddddddd-ffff-4b44-b5b0-004e7d4bc2dd", result: { result in
 Customer endpoint offers you several possible actions to use from your iOS app:
 - Retrieve user profile (user must be logged in)
 ```swift
+// Optionally set `storeKey` for customers registered in a specific store.
 Customer.profile { result in
     if let profile = result.model, let firstName = profile.firstName,
             let lastName = profile.lastName, result.isSuccess {
@@ -350,6 +351,7 @@ var customerDraft = CustomerDraft()
 customerDraft.email = "new.swift.sdk.test.user@commercetools.com"
 customerDraft.password = "password"
 
+// Optionally set `storeKey` to sign up the customer in that store.
 Commercetools.signUpCustomer(customerDraft, result: { result in
     if let customer = result.model?.customer, let version = customer.version, result.isSuccess {
         // User has been successfully signed up.
@@ -364,6 +366,7 @@ var options = SetFirstNameOptions()
 options.firstName = "newName"
 
 let updateActions = UpdateActions<CustomerUpdateAction>(version: version, actions: [.setFirstName(options: options)])
+// Optionally set `storeKey` for customers registered in a specific store.
 Customer.update(actions: updateActions, result: { result in
     if let customer = result.model, let version = customer.version, result.isSuccess {
     	// User profile successfully updated
@@ -372,6 +375,7 @@ Customer.update(actions: updateActions, result: { result in
 ```
 - Delete customer account (user must be logged in)
 ```swift
+// Optionally set `storeKey` for customers registered in a specific store.
 Customer.delete(version: version, result: { result in
     if let customer = result.model, result.isSuccess {
         // Customer was successfully deleted
@@ -382,6 +386,7 @@ Customer.delete(version: version, result: { result in
 ```swift
 let  version = 1 // Set the appropriate current version
 
+// Optionally set `storeKey` for customers registered in a specific store.
 Customer.changePassword(currentPassword: "password", newPassword: "newPassword", version: version, result: { result in
     if let customer = result.model, result.isSuccess {
     	// Password has been changed, and now AuthManager has automatically obtained new access token
@@ -392,6 +397,7 @@ Customer.changePassword(currentPassword: "password", newPassword: "newPassword",
 ```swift
 let token = "" // Usually this token is retrieved from the password reset link, in case your app does support universal links
 
+// Optionally set `storeKey` for customers registered in a specific store.
 Customer.resetPassword(token: token, newPassword: "password", result: { result in
     if let customer = result.model, let email = customer.email, result.isSuccess {
         // Password has been successfully reset, now would be a good time to present the login screen
@@ -402,6 +408,7 @@ Customer.resetPassword(token: token, newPassword: "password", result: { result i
 ```swift
 let token = "" // Usually this token is retrieved from the activation link, in case your app does support universal links
 
+// Optionally set `storeKey` for customers registered in a specific store.
 Customer.verifyEmail(token: token, result: { result in
     if let customer = result.model, let email = customer.email, result.isSuccess {
         // Email has been successfully verified, probably show UIAlertController with this info
