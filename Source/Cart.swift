@@ -15,6 +15,129 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
 
     public static let path = "me/carts"
 
+    // MARK: - Basic cart methods
+
+
+    /**
+        Queries for carts.
+
+        - parameter predicate:                An optional array of predicates used for querying for carts.
+        - parameter sort:                     An optional array of sort options used for sorting the results.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter limit:                    An optional parameter to limit the number of returned results.
+        - parameter offset:                   An optional parameter to set the offset of the first returned result.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func query(predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
+        if let storeKey = Config.currentConfig?.storeKey {
+            query(storeKey: storeKey, predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, result: result)
+        } else {
+            query(predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, path: Self.path, result: result)
+        }
+    }
+
+
+    /**
+        Retrieves a cart by UUID.
+
+        - parameter id:                       Unique ID of the cart to be retrieved.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func byId(_ id: String, expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void) {
+        if let storeKey = Config.currentConfig?.storeKey {
+            byId(id, storeKey: storeKey, expansion: expansion, result: result)
+        } else {
+            byId(id, expansion: expansion, path: Self.path, result: result)
+        }
+    }
+
+    /**
+        Creates a new cart.
+
+        - parameter object:                   Dictionary representation of the cart draft to be created.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    public static func create(_ object: [String: Any]?, expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void) {
+        if let storeKey = Config.currentConfig?.storeKey {
+            create(object, storeKey: storeKey, expansion: expansion, result: result)
+        } else {
+            create(object, expansion: expansion, path: Self.path, result: result)
+        }
+    }
+
+    /**
+        Creates a new cart.
+
+        - parameter object:                   CartDraft object to be created.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    public static func create(_ object: RequestDraft, expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void) {
+        if let storeKey = Config.currentConfig?.storeKey {
+            create(object, storeKey: storeKey, expansion: expansion, result: result)
+        } else {
+            create(object, expansion: expansion, path: Self.path, result: result)
+        }
+    }
+
+    /**
+        Updates a cart by UUID.
+
+        - parameter id:                       Unique ID of the cart to be updated.
+        - parameter actions:                  `UpdateActions`instance, containing correct version and update actions.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func update(_ id: String, actions: UpdateActions<UpdateAction>, expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void) {
+        if let storeKey = Config.currentConfig?.storeKey {
+            update(id, storeKey: storeKey, actions: actions, expansion: expansion, result: result)
+        } else {
+            update(id, actions: actions, expansion: expansion, path: Self.path, result: result)
+        }
+
+    }
+
+    /**
+        Updates a cart by UUID.
+
+        - parameter id:                       Unique ID of the cart to be updated.
+        - parameter version:                  Version of the object (for optimistic concurrency control).
+        - parameter actions:                  An array of actions to be executed, in dictionary representation.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func update(_ id: String, version: UInt, actions: [[String: Any]], expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void) {
+        if let storeKey = Config.currentConfig?.storeKey {
+            update(id, storeKey: storeKey, version: version, actions: actions, expansion: expansion, result: result)
+        } else {
+            update(id, version: version, actions: actions, expansion: expansion, path: Self.path, result: result)
+        }
+    }
+
+
+    /**
+        Deletes a cart by UUID from a store specified by key.
+
+        - parameter id:                       Unique ID of the cart to be deleted.
+        - parameter version:                  Version of the cart (for optimistic concurrency control).
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func delete(_ id: String, version: UInt, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        if let storeKey = Config.currentConfig?.storeKey {
+            delete(id, storeKey: storeKey, version: version, expansion: expansion, result: result)
+        } else {
+            delete(id, version: version, expansion: expansion, path: Self.path, result: result)
+        }
+    }
+
     // MARK: - Active cart
 
     /**
@@ -46,6 +169,10 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
                                               instance in case of a successful result.
      */
     public static func active(storeKey: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        guard Config.currentConfig?.storeKey == nil else {
+            active(storeKey: Config.currentConfig!.storeKey!, expansion: expansion, result: result)
+            return
+        }
         requestWithTokenAndPath(relativePath: "in-store/key=\(storeKey)/me/active-cart", result: result) { token, path in
             let fullPath = pathWithExpansion(path, expansion: expansion)
             let request = self.request(url: fullPath, headers: self.headers(token))
@@ -112,7 +239,7 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
     /**
         Updates a cart with the specified UUID in a store.
 
-        - parameter id:                       Unique ID of the cart to be deleted.
+        - parameter id:                       Unique ID of the cart to be updated.
         - parameter storeKey:                 Key referencing the store used for the update.
         - parameter actions:                  `UpdateActions`instance, containing correct version and update actions.
         - parameter expansion:                An optional array of expansion property names.
@@ -126,7 +253,7 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
     /**
         Updates a cart with the specified UUID in a store.
 
-        - parameter id:                       Unique ID of the cart to be deleted.
+        - parameter id:                       Unique ID of the cart to be updated.
         - parameter storeKey:                 Key referencing the store used for the update.
         - parameter version:                  Version of the cart (for optimistic concurrency control).
         - parameter actions:                  An array of actions to be executed, in dictionary representation.

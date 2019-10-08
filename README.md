@@ -88,6 +88,8 @@ The Commercetools SDK uses a `.plist` configuration file named `CommercetoolsCon
     <true/>
     <key>emergencyContactInfo</key>
     <string>you@yourdomain.com</string>
+    <key>storeKey</key>
+    <string>global-store-key</string>
 </dict>
 </plist> 
 ```
@@ -170,6 +172,8 @@ Commercetools.loginCustomer(username, password: password, storeKey: "store-key",
     }
 })
 ```
+
+If the app is only going to work with a specific store, it is recommended that the global store key is set as a part of the configuration `.plist` file. That way, the SDK will use the `storeKey` for all subsequent requests, for store-specific endpoints.
 
 ## External OAuth tokens
 

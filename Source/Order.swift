@@ -55,6 +55,73 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
     public let origin: CartOrigin
     public let itemShippingAddresses: [Address]
 
+    // MARK: - Basic order methods
+
+    /**
+        Queries for orders.
+
+        - parameter predicate:                An optional array of predicates used for querying for orders.
+        - parameter sort:                     An optional array of sort options used for sorting the results.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter limit:                    An optional parameter to limit the number of returned results.
+        - parameter offset:                   An optional parameter to set the offset of the first returned result.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func query(predicates: [String]? = nil, sort: [String]? = nil, expansion: [String]? = nil, limit: UInt? = nil, offset: UInt? = nil, result: @escaping (Result<QueryResponse<ResponseType>>) -> Void) {
+        if let storeKey = Config.currentConfig?.storeKey {
+            query(storeKey: storeKey, predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, result: result)
+        } else {
+            query(predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, path: Self.path, result: result)
+        }
+    }
+
+    /**
+        Retrieves an order by UUID.
+
+        - parameter id:                       Unique ID of the order to be retrieved.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response, providing model
+                                              instance in case of a successful result.
+    */
+    public static func byId(_ id: String, expansion: [String]? = nil, result: @escaping (Result<ResponseType>) -> Void) {
+        if let storeKey = Config.currentConfig?.storeKey {
+            byId(id, storeKey: storeKey, expansion: expansion, result: result)
+        } else {
+            byId(id, expansion: expansion, path: Self.path, result: result)
+        }
+    }
+
+    /**
+        Creates a new order.
+
+        - parameter object:                   Dictionary representation of the order draft to be created.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    public static func create(_ object: [String: Any]?, expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void) {
+        if let storeKey = Config.currentConfig?.storeKey {
+            create(object, storeKey: storeKey, expansion: expansion, result: result)
+        } else {
+            create(object, expansion: expansion, path: Self.path, result: result)
+        }
+    }
+
+    /**
+        Creates a new order.
+
+        - parameter object:                   OrderDraft object to be created.
+        - parameter expansion:                An optional array of expansion property names.
+        - parameter result:                   The code to be executed after processing the response.
+    */
+    public static func create(_ object: RequestDraft, expansion: [String]?, result: @escaping (Result<ResponseType>) -> Void) {
+        if let storeKey = Config.currentConfig?.storeKey {
+            create(object, storeKey: storeKey, expansion: expansion, result: result)
+        } else {
+            create(object, expansion: expansion, path: Self.path, result: result)
+        }
+    }
+
     // MARK: - In store order
 
     /**
@@ -87,7 +154,7 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
     }
 
     /**
-        Creates new order in a store specified by key.
+        Creates a new order in a store specified by key.
 
         - parameter object:                   Dictionary representation of the order draft to be created.
         - parameter storeKey:                 Key referencing the store where the new order will be created.
@@ -99,7 +166,7 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
     }
 
     /**
-        Creates new order in a store specified by key.
+        Creates a new order in a store specified by key.
 
         - parameter object:                   OrderDraft to be created.
         - parameter storeKey:                 Key referencing the store where the new order will be created.

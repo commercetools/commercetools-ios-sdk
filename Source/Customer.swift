@@ -187,7 +187,8 @@ public class Customer: Endpoint, Codable {
                                               json: [String: Any]? = nil, result: @escaping (Result<T>) -> Void) {
 
         requestWithTokenAndPath(result: result) { token, path in
-            let fullPath = pathWithExpansion(storeKeyPathParameter != nil ? "\(path)in-store/key=\(storeKeyPathParameter!)/me/\(basePath ?? "")" : "\(path)me/\(basePath ?? "")", expansion: expansion)
+            let storeKey = storeKeyPathParameter ?? Config.currentConfig?.storeKey
+            let fullPath = pathWithExpansion(storeKey != nil ? "\(path)in-store/key=\(storeKey!)/me/\(basePath ?? "")" : "\(path)me/\(basePath ?? "")", expansion: expansion)
             let request = self.request(url: fullPath, method: method, urlParameters: urlParameters,
                                        json: json, headers: self.headers(token))
 

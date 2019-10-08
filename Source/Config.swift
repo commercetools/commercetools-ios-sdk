@@ -53,6 +53,9 @@ public class Config {
     /// Emergency contact info which is passed to the platform.
     public private(set) var emergencyContactInfo: String?
 
+    /// If set, the `storeKey` is added to all store-specific requests (currently `Customer`, `Cart`, and `Order` endpoints are supported).
+    public private(set) var storeKey: String?
+
     /**
         The current app authorization server URL.
 
@@ -145,6 +148,7 @@ public class Config {
         shareWatchSession = config["shareWatchSession"] as? Bool ?? false
         keychainAccessGroupName = config["keychainAccessGroupName"] as? String
         emergencyContactInfo = config["emergencyContactInfo"] as? String
+        storeKey = config["storeKey"] as? String
 
         if let apiUrl = apiUrl, !apiUrl.hasSuffix("/") {
             self.apiUrl = apiUrl + "/"
@@ -204,7 +208,11 @@ public class Config {
             machineLearningApiUrl = "https://ml-eu.europe-west1.gcp.commercetools.com/"
         }
 
-        if (!valid) {
+        if let storeKey = storeKey {
+            Log.debug("Store key: \"\(storeKey)\" has been set and will be used globally with all subsequent requests on supported endpoints.")
+        }
+
+        if !valid {
             Log.error("Please go to admin.sphere.io, 'Developers' section, 'API clients' tab.")
         }
 
