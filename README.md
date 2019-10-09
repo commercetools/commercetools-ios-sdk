@@ -10,7 +10,7 @@
 <img src="https://img.shields.io/cocoapods/v/Commercetools.svg">
 </a>
 <a href="https://developer.apple.com/swift/" target="_blank">
-<img src="https://img.shields.io/badge/Swift-5-orange.svg?style=flat" alt="Swift 5">
+<img src="https://img.shields.io/badge/Swift-5.1-orange.svg?style=flat" alt="Swift 5.1">
 </a>
 <a href="https://developer.apple.com/swift/" target="_blank">
 <img src="https://img.shields.io/badge/Platforms-iOS%20%7C%20macOS%20%7C%20watchOS%20%7C%20tvOS%20%7C%20Linux-4E4E4E.svg?colorA=EF5138" alt="Platforms iOS | macOS | watchOS | tvOS | Linux">
@@ -29,7 +29,7 @@
 
 - iOS 10.0+ / macOS 10.10+ / tvOS 9.0+ / watchOS 2.0+
 - Xcode 9.0+
-- Swift 5.0+
+- Swift 5.1+
 
 ### CocoaPods
 
