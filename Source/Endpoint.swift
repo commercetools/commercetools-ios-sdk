@@ -38,6 +38,7 @@ public extension Endpoint {
     /// The full path used to form requests for endpoints.
     static func fullPath(relativePath: String = Self.path) -> String? {
         if let config = Config.currentConfig, let apiUrl = config.apiUrl, let projectKey = config.projectKey {
+            guard !relativePath.isEmpty else { return "\(apiUrl)\(projectKey)/" }
             var normalizedPath = relativePath
             if normalizedPath.hasPrefix("/") {
                 normalizedPath.remove(at: String.Index(encodedOffset: 0))

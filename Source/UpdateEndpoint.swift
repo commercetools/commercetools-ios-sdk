@@ -16,7 +16,7 @@ public protocol UpdateEndpoint: Endpoint {
     /**
         Updates an object by UUID at the endpoint specified with `path` value.
 
-        - parameter id:                       Unique ID of the object to be deleted.
+        - parameter id:                       Unique ID of the object to be updated.
         - parameter actions:                  `UpdateActions`instance, containing correct version and update actions.
         - parameter expansion:                An optional array of expansion property names.
         - parameter result:                   The code to be executed after processing the response, providing model
@@ -27,7 +27,7 @@ public protocol UpdateEndpoint: Endpoint {
     /**
         Updates an object by UUID at the endpoint specified with `path` value.
 
-        - parameter id:                       Unique ID of the object to be deleted.
+        - parameter id:                       Unique ID of the object to be updated.
         - parameter version:                  Version of the object (for optimistic concurrency control).
         - parameter actions:                  An array of actions to be executed, in dictionary representation.
         - parameter expansion:                An optional array of expansion property names.
