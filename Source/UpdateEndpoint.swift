@@ -104,7 +104,7 @@ public extension UpdateEndpoint {
 public extension JSONRepresentable {
     func filterJSON(parameters: [String: Any?]) -> [String: Any]? {
         let filteredParameters = parameters.filter({ $0.value != nil })
-        return filteredParameters
+        return filteredParameters as [String : Any]
     }
 }
 

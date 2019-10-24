@@ -72,7 +72,7 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
         if let storeKey = Config.currentConfig?.storeKey {
             query(storeKey: storeKey, predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, result: result)
         } else {
-            query(predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, path: Self.path, result: result)
+            query(predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, path: path, result: result)
         }
     }
 
@@ -88,7 +88,7 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
         if let storeKey = Config.currentConfig?.storeKey {
             byId(id, storeKey: storeKey, expansion: expansion, result: result)
         } else {
-            byId(id, expansion: expansion, path: Self.path, result: result)
+            byId(id, expansion: expansion, path: path, result: result)
         }
     }
 
@@ -103,7 +103,7 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
         if let storeKey = Config.currentConfig?.storeKey {
             create(object, storeKey: storeKey, expansion: expansion, result: result)
         } else {
-            create(object, expansion: expansion, path: Self.path, result: result)
+            create(object, expansion: expansion, path: path, result: result)
         }
     }
 
@@ -118,7 +118,7 @@ public struct Order: QueryEndpoint, ByIdEndpoint, CreateEndpoint, Codable {
         if let storeKey = Config.currentConfig?.storeKey {
             create(object, storeKey: storeKey, expansion: expansion, result: result)
         } else {
-            create(object, expansion: expansion, path: Self.path, result: result)
+            create(object, expansion: expansion, path: path, result: result)
         }
     }
 

@@ -33,7 +33,7 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
         if let storeKey = Config.currentConfig?.storeKey {
             query(storeKey: storeKey, predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, result: result)
         } else {
-            query(predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, path: Self.path, result: result)
+            query(predicates: predicates, sort: sort, expansion: expansion, limit: limit, offset: offset, path: path, result: result)
         }
     }
 
@@ -50,7 +50,7 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
         if let storeKey = Config.currentConfig?.storeKey {
             byId(id, storeKey: storeKey, expansion: expansion, result: result)
         } else {
-            byId(id, expansion: expansion, path: Self.path, result: result)
+            byId(id, expansion: expansion, path: path, result: result)
         }
     }
 
@@ -65,7 +65,7 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
         if let storeKey = Config.currentConfig?.storeKey {
             create(object, storeKey: storeKey, expansion: expansion, result: result)
         } else {
-            create(object, expansion: expansion, path: Self.path, result: result)
+            create(object, expansion: expansion, path: path, result: result)
         }
     }
 
@@ -80,7 +80,7 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
         if let storeKey = Config.currentConfig?.storeKey {
             create(object, storeKey: storeKey, expansion: expansion, result: result)
         } else {
-            create(object, expansion: expansion, path: Self.path, result: result)
+            create(object, expansion: expansion, path: path, result: result)
         }
     }
 
@@ -97,7 +97,7 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
         if let storeKey = Config.currentConfig?.storeKey {
             update(id, storeKey: storeKey, actions: actions, expansion: expansion, result: result)
         } else {
-            update(id, actions: actions, expansion: expansion, path: Self.path, result: result)
+            update(id, actions: actions, expansion: expansion, path: path, result: result)
         }
 
     }
@@ -116,7 +116,7 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
         if let storeKey = Config.currentConfig?.storeKey {
             update(id, storeKey: storeKey, version: version, actions: actions, expansion: expansion, result: result)
         } else {
-            update(id, version: version, actions: actions, expansion: expansion, path: Self.path, result: result)
+            update(id, version: version, actions: actions, expansion: expansion, path: path, result: result)
         }
     }
 
@@ -134,7 +134,7 @@ public struct Cart: QueryEndpoint, ByIdEndpoint, CreateEndpoint, UpdateEndpoint,
         if let storeKey = Config.currentConfig?.storeKey {
             delete(id, storeKey: storeKey, version: version, expansion: expansion, result: result)
         } else {
-            delete(id, version: version, expansion: expansion, path: Self.path, result: result)
+            delete(id, version: version, expansion: expansion, path: path, result: result)
         }
     }
 

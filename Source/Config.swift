@@ -112,7 +112,7 @@ public class Config {
     public convenience init?(path: String, loggingEnabled: Bool = true, logLevel: LogLevel = .debug) {
         var plistFileName = path
         if plistFileName.hasSuffix(".plist") {
-            plistFileName.removeSubrange(String.Index(encodedOffset: plistFileName.count - 6)...)
+            plistFileName.removeLast(6)
         }
 
         guard let path = Bundle.main.path(forResource: plistFileName, ofType: "plist"),

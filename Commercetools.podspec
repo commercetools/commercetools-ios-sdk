@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "Commercetools"
-  s.version      = "0.11.0"
+  s.version      = "0.12.0"
   s.summary      = "The e-commerce Swift SDK from commercetools"
   s.homepage     = "https://github.com/commercetools/commercetools-ios-sdk"
   s.license      = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
@@ -14,5 +14,5 @@ Pod::Spec.new do |s|
   s.tvos.deployment_target = '9.0'
   s.watchos.deployment_target = '2.2'
 
-  s.swift_version = '5.0'
+  s.swift_version = '5.1'
 end

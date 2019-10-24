@@ -2,6 +2,7 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
+- `0.12.x` Releases - [0.12.0](#0120)
 - `0.11.x` Releases - [0.11.0](#0110)
 - `0.10.x` Releases - [0.10.0](#0100)
 - `0.9.x` Releases - [0.9.0](#090)
@@ -16,6 +17,21 @@ All changes to this project will be documented in this file.
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.12.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.12.0)
+Released on 2019-10-24.
+
+#### Added
+- Support for Customer Profile in a Specific Store
+  - Get Customer in a Store
+  - Create Customer (Sign Up) in a Store
+  - Authenticate Customer (Sign In) in a Store
+  - Update Customer in a Store
+  - Change Customer's Password in a Store
+  - Reset Customer's Password in a Store
+  - Verify Customer's Email in a Store
+  - Delete Customer in a Store
+- Ability to set the global store key from the configuration `plist` file.
 
 ## [0.11.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.11.0)
 Released on 2019-08-29.

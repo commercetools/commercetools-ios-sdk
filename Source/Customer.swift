@@ -183,8 +183,8 @@ public class Customer: Endpoint, Codable {
     // MARK: - Helpers
 
     private static func customerProfileAction<T: Codable>(method: HTTPMethod, basePath: String? = nil, expansion: [String]? = nil,
-                                              storeKeyPathParameter: String?, urlParameters: [String: String] = [:],
-                                              json: [String: Any]? = nil, result: @escaping (Result<T>) -> Void) {
+                                                          storeKeyPathParameter: String?, urlParameters: [String: String] = [:],
+                                                          json: [String: Any]? = nil, result: @escaping (Result<T>) -> Void) {
 
         requestWithTokenAndPath(result: result) { token, path in
             let storeKey = storeKeyPathParameter ?? Config.currentConfig?.storeKey

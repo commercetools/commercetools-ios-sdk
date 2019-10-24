@@ -41,7 +41,7 @@ public extension Endpoint {
             guard !relativePath.isEmpty else { return "\(apiUrl)\(projectKey)/" }
             var normalizedPath = relativePath
             if normalizedPath.hasPrefix("/") {
-                normalizedPath.remove(at: String.Index(encodedOffset: 0))
+                normalizedPath.removeFirst()
             }
             return "\(apiUrl)\(projectKey)/\(normalizedPath)" + (path.hasSuffix("/") ? "" : "/")
         }
@@ -60,7 +60,7 @@ public extension Endpoint {
         if let expansion = expansion?.map({ $0.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlPathAllowed) ?? "" }), expansion.count > 0 {
             var pathWithExpansion = path
             if pathWithExpansion.hasSuffix("/") {
-                pathWithExpansion.remove(at: String.Index(encodedOffset: pathWithExpansion.count - 1))
+                pathWithExpansion.removeLast()
             }
             pathWithExpansion += "?expand=" + expansion.joined(separator: "&expand=")
             return pathWithExpansion
@@ -220,7 +220,7 @@ public extension MLEndpoint {
         if let config = Config.currentConfig, let apiUrl = config.machineLearningApiUrl, let projectKey = config.projectKey {
             var normalizedPath = path
             if normalizedPath.hasPrefix("/") {
-                normalizedPath.remove(at: String.Index(encodedOffset: 0))
+                normalizedPath.removeFirst()
             }
             return "\(apiUrl)\(projectKey)/\(normalizedPath)"
         }
