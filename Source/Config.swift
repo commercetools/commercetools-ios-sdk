@@ -58,19 +58,11 @@ public class Config {
 
     /**
         The current app authorization server URL.
-
-        Depending on the region the project is hosted on, `authUrl` can have one of the following values:
-        Europe: `https://auth.sphere.io/`
-        United States: `https://auth.commercetools.co/`
     */
     public private(set) var authUrl: String?
 
     /**
         The current app API server URL.
-
-        Depending on the region the project is hosted on, `apiUrl` can have one of the following values:
-        Europe: `https://api.sphere.io/`
-        United States: `https://api.commercetools.co/`
     */
     public private(set) var apiUrl: String?
 
@@ -194,13 +186,13 @@ public class Config {
         }
 
         if (authUrl ?? "").isEmpty {
-            Log.debug("No authUrl specified - using deafult: https://auth.sphere.io/")
-            authUrl = "https://auth.sphere.io/"
+            Log.error("No authUrl specified")
+            valid = false
         }
 
         if (apiUrl ?? "").isEmpty {
-            Log.debug("No apiUrl specified - using deafult: https://api.sphere.io/")
-            apiUrl = "https://api.sphere.io/"
+            Log.debug("No apiUrl specified")
+            valid = false
         }
 
         if (machineLearningApiUrl ?? "").isEmpty {
@@ -213,7 +205,7 @@ public class Config {
         }
 
         if !valid {
-            Log.error("Please go to admin.sphere.io, 'Developers' section, 'API clients' tab.")
+            Log.error("Please go to the Merchant Center, 'Settings', 'Developer settings' section, 'API clients' tab.")
         }
 
         return valid

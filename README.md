@@ -75,9 +75,9 @@ The Commercetools SDK uses a `.plist` configuration file named `CommercetoolsCon
 	<key>scope</key>
 	<string>Your Client Scope</string>
 	<key>authUrl</key>
-	<string>https://auth.sphere.io/</string>
+	<string>https://auth.europe-west1.gcp.commercetools.com/</string>
 	<key>apiUrl</key>
-	<string>https://api.sphere.io</string>
+	<string>https://api.europe-west1.gcp.commercetools.com</string>
 	<key>machineLearningApiUrl</key>
     <string>https://ml-eu.europe-west1.gcp.commercetools.com</string>
 	<key>anonymousSession</key>
