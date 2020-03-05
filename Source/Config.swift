@@ -196,8 +196,7 @@ public class Config {
         }
 
         if (machineLearningApiUrl ?? "").isEmpty {
-            Log.debug("No machineLearningApiUrl specified - using deafult: https://ml-eu.europe-west1.gcp.commercetools.com/")
-            machineLearningApiUrl = "https://ml-eu.europe-west1.gcp.commercetools.com/"
+            Log.debug("No machineLearningApiUrl specified")
         }
 
         if let storeKey = storeKey {
