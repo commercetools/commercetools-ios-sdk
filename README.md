@@ -75,11 +75,11 @@ The Commercetools SDK uses a `.plist` configuration file named `CommercetoolsCon
 	<key>scope</key>
 	<string>Your Client Scope</string>
 	<key>authUrl</key>
-	<string>https://auth.europe-west1.gcp.commercetools.com/</string>
+	<string>Authorization Url/</string>
 	<key>apiUrl</key>
-	<string>https://api.europe-west1.gcp.commercetools.com</string>
+	<string>API Url</string>
 	<key>machineLearningApiUrl</key>
-    <string>https://ml-eu.europe-west1.gcp.commercetools.com</string>
+    <string>Machine Learning API</string>
 	<key>anonymousSession</key>
     <true/>
     <key>keychainAccessGroupName</key>
@@ -89,12 +89,14 @@ The Commercetools SDK uses a `.plist` configuration file named `CommercetoolsCon
     <key>emergencyContactInfo</key>
     <string>you@yourdomain.com</string>
     <key>storeKey</key>
-    <string>global-store-key</string>
+    <string>your-global-store-key</string>
 </dict>
 </plist> 
 ```
 
 Alternatively, you can specify a path to different `.plist` file containing these properties.
+
+You can also download the configuration `.plist` for your client from the Merchant Center [API Clients](https://docs.commercetools.com/merchant-center/api-clients) section, at the time of creation, by selecting the iOS template from the drop down menu.
 
 Before using any methods from the Commercetools SDK, please make sure you have previously set the desired configuration.
 ```swift
