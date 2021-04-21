@@ -61,7 +61,8 @@ class SimilarProductsTests: XCTestCase {
         })
     }
 
-    func testProductSelection() {
+    func testProductSelection() throws {
+        throw XCTSkip("Similar products still in beta.")
         weak var similarProductsExpectation = expectation(description: "similar products selection expectation")
         var timer: Timer!
 
