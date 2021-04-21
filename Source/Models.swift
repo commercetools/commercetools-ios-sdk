@@ -527,7 +527,7 @@ public struct CustomLineItem: Codable {
     public let totalPrice: Money
     public let slug: String
     public let quantity: Int
-    public let state: ItemState
+    public let state: [ItemState]
     public let taxCategory: Reference<TaxCategory>?
     public let taxRate: TaxRate?
     public let discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity]
@@ -546,7 +546,7 @@ public struct CustomLineItem: Codable {
         totalPrice = try values.decode(Money.self, forKey: .totalPrice)
         slug = try values.decode(String.self, forKey: .slug)
         quantity = try values.decode(Int.self, forKey: .quantity)
-        state = try values.decode(ItemState.self, forKey: .state)
+        state = try values.decode([ItemState].self, forKey: .state)
         taxCategory = try? values.decode(Reference<TaxCategory>.self, forKey: .taxCategory)
         taxRate = try? values.decode(TaxRate.self, forKey: .taxRate)
         discountedPricePerQuantity = try values.decode([DiscountedLineItemPriceForQuantity].self, forKey: .discountedPricePerQuantity)
