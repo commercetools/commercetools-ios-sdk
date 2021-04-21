@@ -3,8 +3,8 @@
 <img src="https://user-images.githubusercontent.com/14024032/60341258-32f83f80-99ae-11e9-86c0-1eb52f201a0d.png" height="80" />
 
 <p>
-<a href="https://travis-ci.org/commercetools/commercetools-ios-sdk" target="_blank">
-<img src="https://travis-ci.org/commercetools/commercetools-ios-sdk.svg?branch=master">
+<a href="https://travis-ci.com/commercetools/commercetools-ios-sdk" target="_blank">
+<img src="https://travis-ci.com/commercetools/commercetools-ios-sdk.svg?branch=master">
 </a>
 <a href="http://cocoadocs.org/docsets/Commercetools" target="_blank">
 <img src="https://img.shields.io/cocoapods/v/Commercetools.svg">
