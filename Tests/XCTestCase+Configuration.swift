@@ -23,7 +23,7 @@ extension XCTestCase {
         if let projectKey = envVars["PROJECT_KEY"], let scope = envVars["SCOPE"], let clientId = envVars["CLIENT_ID"],
         let clientSecret = envVars["CLIENT_SECRET"] {
 
-            let config = ["projectKey": projectKey, "scope": scope, "clientId": clientId, "clientSecret": clientSecret] as NSDictionary
+            let config = ["authUrl": "https://auth.europe-west1.gcp.commercetools.com", "apiUrl": "https://api.europe-west1.gcp.commercetools.com", "projectKey": projectKey, "scope": scope, "clientId": clientId, "clientSecret": clientSecret] as NSDictionary
             Commercetools.config = Config(config: config)
         } else {
             Log.error("No configuration with extended scope found in environment variables. This configuration is" +

@@ -217,14 +217,15 @@ public protocol MLEndpoint: Endpoint {}
 public extension MLEndpoint {
     /// The full path used to form requests for ML endpoints.
     static var fullPath: String? {
-        if let config = Config.currentConfig, let apiUrl = config.machineLearningApiUrl, let projectKey = config.projectKey {
-            var normalizedPath = path
-            if normalizedPath.hasPrefix("/") {
-                normalizedPath.removeFirst()
-            }
-            return "\(apiUrl)\(projectKey)/\(normalizedPath)"
+        guard let config = Config.currentConfig, let apiUrl = config.machineLearningApiUrl, let projectKey = config.projectKey else {
+            Log.error("Cannot use ML endpoints without valid configuration including machineLearningApiUrl.")
+            return nil
         }
-        return nil
+        var normalizedPath = path
+        if normalizedPath.hasPrefix("/") {
+            normalizedPath.removeFirst()
+        }
+        return "\(apiUrl)\(projectKey)/\(normalizedPath)"
     }
 
     /**
