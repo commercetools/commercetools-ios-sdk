@@ -2,7 +2,7 @@
 All changes to this project will be documented in this file.
 
 #### 0.x Releases
-- `0.12.x` Releases - [0.12.0](#0120)
+- `0.12.x` Releases - [0.12.0](#0120) | [0.12.1](#0121)
 - `0.11.x` Releases - [0.11.0](#0110)
 - `0.10.x` Releases - [0.10.0](#0100)
 - `0.9.x` Releases - [0.9.0](#090)
@@ -17,6 +17,13 @@ All changes to this project will be documented in this file.
 - `0.0.x` Releases - [0.0.1](#001) | [0.0.2](#002) | [0.0.3](#003)
 
 ---
+
+## [0.12.1](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.12.1)
+Released on 2021-04-26.
+
+#### Updated
+- `CustomLineItem`.`state` property type.
+- Travis CI configuration.
 
 ## [0.12.0](https://github.com/commercetools/commercetools-ios-sdk/releases/tag/0.12.0)
 Released on 2019-10-24.
