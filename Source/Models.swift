@@ -36,8 +36,9 @@ public struct Address: Codable {
     public var fax: String?
     public var additionalAddressInfo: String?
     public var externalId: String?
+    public var custom: JsonValue?
     
-    public init(id: String? = nil, key: String? = nil, title: String? = nil, salutation: String? = nil, firstName: String? = nil, lastName: String? = nil, streetName: String? = nil, streetNumber: String? = nil, city: String? = nil, region: String? = nil, postalCode: String? = nil, additionalStreetInfo: String? = nil, state: String? = nil, country: String, company: String? = nil, department: String? = nil, building: String? = nil, apartment: String? = nil, pOBox: String? = nil, phone: String? = nil, mobile: String? = nil, email: String? = nil, fax: String? = nil, additionalAddressInfo: String? = nil, externalId: String? = nil) {
+    public init(id: String? = nil, key: String? = nil, title: String? = nil, salutation: String? = nil, firstName: String? = nil, lastName: String? = nil, streetName: String? = nil, streetNumber: String? = nil, city: String? = nil, region: String? = nil, postalCode: String? = nil, additionalStreetInfo: String? = nil, state: String? = nil, country: String, company: String? = nil, department: String? = nil, building: String? = nil, apartment: String? = nil, pOBox: String? = nil, phone: String? = nil, mobile: String? = nil, email: String? = nil, fax: String? = nil, additionalAddressInfo: String? = nil, externalId: String? = nil, custom: JsonValue? = nil) {
         self.id = id
         self.key = key
         self.title = title
@@ -63,6 +64,7 @@ public struct Address: Codable {
         self.fax = fax
         self.additionalAddressInfo = additionalAddressInfo
         self.externalId = externalId
+        self.custom = custom
     }
 }
 
