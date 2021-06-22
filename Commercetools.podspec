@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "Commercetools"
-  s.version      = "0.12.1"
+  s.version      = "0.12.2"
   s.summary      = "The e-commerce Swift SDK from commercetools"
   s.homepage     = "https://github.com/commercetools/commercetools-ios-sdk"
   s.license      = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
