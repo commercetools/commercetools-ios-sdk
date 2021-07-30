@@ -113,7 +113,7 @@ class UpdateEndpointTests: XCTestCase {
             if let error = result.errors?.first as? CTError, case .resourceNotFoundError(let reason) = error {
                 XCTAssert(result.isFailure)
                 XCTAssertEqual(result.statusCode, 404)
-                XCTAssertEqual(reason.message, "The cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found.")
+                XCTAssert(reason.message!.contains("The cart with ID 'cddddddd-ffff-4b44-b5b0-004e7d4bc2dd' was not found"))
                 updateExpectation.fulfill()
             }
         })
