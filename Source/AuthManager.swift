@@ -278,6 +278,7 @@ open class AuthManager {
         serialQueue.addOperation {
             guard self.accessToken != nil else {
                 self.clearAllTokens()
+                completionHandler(nil, nil)
                 return
             }
 
