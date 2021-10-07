@@ -278,6 +278,8 @@ open class AuthManager {
         serialQueue.addOperation {
             guard self.accessToken != nil else {
                 self.clearAllTokens()
+                completionHandler(nil, nil)
+                Log.error("Error while trying to recover from .invalidToken error")
                 return
             }
 
@@ -285,7 +287,12 @@ open class AuthManager {
             self.tokenValidDate = nil
             self.state = .noToken
             Log.debug("Removing access token, trying to recover from .invalidToken error")
-            self.token(completionHandler)
+            let semaphore = DispatchSemaphore(value: 0)
+            self.processTokenRequest { token, error in
+                completionHandler(token, error)
+                semaphore.signal()
+            }
+            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         }
     }
 
