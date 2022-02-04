@@ -169,7 +169,7 @@ class CustomerTests: XCTestCase {
         Customer.signUp(signUpDraft, storeKey: nil, result: { result in
             if let error = result.errors?.first as? CTError, case .generalError(let reason) = error {
                 XCTAssert(result.isFailure)
-                XCTAssertEqual(reason?.message, "There is already an existing customer with the email '\"swift.sdk.test.user2@commercetools.com\"'.")
+                XCTAssertEqual(reason?.message, "There is already an existing customer with the provided email.")
                 createProfileExpectation.fulfill()
             }
         })
